@@ -1,0 +1,8 @@
+#+TITLE: Core Type Classes
+* Introduction
+** What are type classes?
+** What is abstract algebra (and why should we care)?
+** What are the main Scala libraries we'll be using?
+** Setup
+   - sbt and all that
+* Monoids
