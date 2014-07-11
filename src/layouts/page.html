@@ -1,0 +1,44 @@
+---
+layout: default
+---
+<h1>
+  <span class="small visible-print">Underscore Essential Scalaz<br></span>
+  {{ page.title }}
+</h1>
+
+{% if page.lead %}
+  <p class="lead">
+    <small>
+      {{ page.lead }}
+    </small>
+  </p>
+{% endif %}
+
+<hr>
+
+<div class="row">
+  <div id="table-of-contents" class="col-lg-3 col-md-3">
+    {% nav_toc %}
+    <ul class="nav-toc">
+      <li class="nav-toc-group">
+        <a href="http://scala-lang.org/api/current">Reference Docs</a>
+        <ul class="nav-toc-menu active">
+          <li>
+            <a target="_blank" href="http://www.scala-lang.org/api/current">Scala API</a>
+          </li>
+          <li>
+            <a target="_blank" href="http://docs.oracle.com/javase/6/docs/api/">Java API</a>
+          </li>
+          <li>
+            <a target="_blank" href="http://docs.scala-lang.org/overviews/">Scala Guides</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div id="content" class="col-lg-9 col-md-9">
+    {{ content }}
+
+    {% nav_pager %}
+  </div>
+</div>

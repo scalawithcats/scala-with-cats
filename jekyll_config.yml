@@ -1,0 +1,31 @@
+# Table of Contents
+# -----------------
+
+toc:
+  - head: /index.html
+    body: []
+
+
+# Jekyll Configuration
+# --------------------
+
+url         : http://underscore.io
+
+source      : src/pages
+posts       : src/posts
+layouts     : src/layouts
+includes    : src/includes
+
+destination : essential-scalaz
+plugins     : jekyll_plugins
+
+keep_files  : [ 'css', 'js', 'images' ]
+
+permalink   : /:categories/:year/:month/:day/:title
+
+safe        : false
+highlighter : pygments
+markdown    : kramdown
+
+kramdown:
+  parse_block_html: true

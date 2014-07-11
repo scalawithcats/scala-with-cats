@@ -1,0 +1,23 @@
+{
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "~0.5.1",
+    "grunt-exec": "~0.4.2",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-connect": "~0.3.0",
+    "grunt-contrib-less": "~0.6.4",
+    "grunt-bower-task": "~0.3.0"
+  },
+  "name": "essential-scalaz",
+  "description": "Tutorial for Scala.",
+  "version": "0.0.0",
+  "main": "dist/index.html",
+  "dependencies": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@ungit:projects/essential-scalaz"
+  },
+  "author": "Dave Gurnell and Noel Welsh"
+}
