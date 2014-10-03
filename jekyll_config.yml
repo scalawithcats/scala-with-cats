@@ -4,6 +4,8 @@
 toc:
   - head: /index.html
     body: []
+  - head: /monoids/index.html
+    body: []
 
 
 # Jekyll Configuration

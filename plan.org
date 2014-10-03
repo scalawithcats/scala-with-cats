@@ -14,14 +14,21 @@
      - Concrete instances
      - Implicit parameters
      - Enriched syntax
-     - Implementation in Scalaz
-       - Interface trick
-       - Package organisation
-         - Type class packages
-         - Instance packages
-         - Syntax packages
 ** Setup
    - sbt and all that
+* Scalaz
+  - Overview
+    - Utiltiies and extensions to std library
+    - Type classes
+  - Type classes
+    - Operations
+    - Laws
+  - Type class implementation in Scalaz
+    - Interface trick
+    - Package organisation
+      - Type class packages
+      - Instance packages
+      - Syntax packages
 * Monoids
 * Functors
 * Monads
