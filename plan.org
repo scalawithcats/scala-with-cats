@@ -1,8 +1,33 @@
 #+TITLE: Core Type Classes
 * Introduction
+** Overview
+   - Scalaz
+   - How to use its abstractions
+   - How to find your way around
+   - How to write your own abstractions
+   - Focusing on three core abstractions: monoids, monads, and applicative functors
 ** What are type classes?
-** What is abstract algebra (and why should we care)?
-** What are the main Scala libraries we'll be using?
+   - Implement functionality for any class
+   - Implement multiple implementations of functionality
+   - Construction in Scala
+     - Type class trait
+     - Concrete instances
+     - Implicit parameters
+     - Enriched syntax
+     - Implementation in Scalaz
+       - Interface trick
+       - Package organisation
+         - Type class packages
+         - Instance packages
+         - Syntax packages
 ** Setup
    - sbt and all that
 * Monoids
+* Functors
+* Monads
+** Monad Transformers
+* Applicative Functors
+* Applications
+** Pygmy Hadoop
+** Validation
+** CRDTs
