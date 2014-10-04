@@ -5,7 +5,8 @@ toc:
   - head: /index.html
     body: []
   - head: /monoids/index.html
-    body: []
+    body: 
+      - /monoids/scalaz.html 
 
 
 # Jekyll Configuration
