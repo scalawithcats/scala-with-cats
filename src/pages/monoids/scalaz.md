@@ -53,14 +53,33 @@ val instance = Monoid[String]
 instance.append("Monoids FTW!", instance.zero)
 ~~~
 
-A non-exhasutive list of instances includes:
+A non-exhaustive list of instances includes:
 
-- `Unit`, `Boolean` and `Int` in `scalaz.std.anyval`;
+- `Unit`, `Boolean` and `Int` in `scalaz.std.anyVal`;
 - `String` in `scalaz.std.string`;
 - `List` in `scalaz.std.list`;
 - `Set` in `scalaz.std.set`;
 - `Option` in `scalaz.std.option`; and
 - tuple types in `scalaz.std.tuple`.
+
+
+## Monoid Syntax
+
+We access the monoid syntax by importing `scalaz.syntax.monoid._`. This provides:
+
+- the `|+|` operator for appending two values for which there is a monoid instance; and
+- the `mzero` method to access the identity element for a monoid.
+
+When we use `mzero` we usually have to specify a type to avoid ambiguity.
+
+~~~ scala
+import scalaz.syntax.monoid._
+import scalaz.std.string._
+import scalaz.std.anyVal._
+
+"Hi " |+| "there" |+| mzero[String]
+1 |+| 2 |+| mzero[Int]
+~~~
 
 ### Choosing Between Instances
 
