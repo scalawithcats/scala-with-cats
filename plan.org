@@ -17,6 +17,7 @@
      - Concrete instances
      - Implicit parameters
      - Enriched syntax
+     - Context bounds
 ** Setup
    - sbt and all that
 * Scalaz
@@ -104,6 +105,24 @@
    - Is Optional a monad?
 ** Kleisli
 * Applicative Functors
+** Examples
+   - Sometimes monad is too strong an abstraction. We should seek the weakest possible abstraction that fits our needs, as the weaker (and hence more general) the abstraction the more cases will fit that abstraction.
+   - For example if we have a number of `Option[Int]` and we want to add up the elements within them. We can write this wtih flatMap but then we have to choose the kind of Option to return which is obvious -- it is always `Some`.
+   - If we want to compose Futures in parallel. We can write this with flatMap but, as we've seen, this is actually serial composition unless we create the Futures outside of the expression. We also don't need the power of flatMap -- we just want the values inside the Futures not the ability to return a new kind of future.
+   - The core thing thing here is we have a pure function that operates on the A inside an F[A] and we don't want to specify the context -- the F -- of the functor. I.e. all the contexts are known in advance. Specifically for Option ...
+   - We can't use map for this because we want to transform several functors into a single result, which map can't do. (Don't believe me? Try it.)
+   - The answer is the applicative functor ... binary operator to combine varying number of elements ... currying
+** Definition
+   - ap and pure
+   - Laws
+   - Every monad is an applicative (though possibly not a lawful one)
+** Instances
+   - All the usual monads, though not \/
+   - Validation
+** Syntax
+   - Applicative builder. Because currying isn't idiomatic in Scala.
+** Applicative Case Study
+   Parallel composition of Hadoopy stuff or validation or both!
 * Applications
 ** Pygmy Hadoop
 ** Validation
