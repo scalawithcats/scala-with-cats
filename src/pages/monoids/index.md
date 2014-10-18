@@ -78,3 +78,27 @@ The following laws must hold:
 
 - `append` is associative, meaning `append(x, append(y, z)) == append(append(x, y), z)` for all `x`, `y`, and `z`, in `A`.
 - `zero` is an identity of `append`, meaning `append(a, zero) == append(zero, a) == a` for any `a` in `A`.
+
+## Exercises
+
+#### The Truth About Monoids
+
+We've seen a few monoid examples, but there are plenty more available. Consider `Boolean`. How many monoids can you define for this type? For each monoid, define  the `append` and `zero` operations, and convince yourself that the monoid laws hold.
+
+<div class="solution">
+There are three monoids for `Boolean`. They are:
+
+- `&&` with identity `true`;
+- `||` with identity `false`; and
+- exclusive or, with identity `false`.
+
+Showing the identity holds is straightforward. Similarly associativity of the `append` operation can be shown by enumerating the cases.
+</div>
+
+#### All Set for Monoids
+
+What monoids are there for sets?
+
+<div class="solution">
+Set union along with the empty set forms a monoid. Set intersection does not, as there is no identity element. We call this weaker structure a *semigroup*.
+</div>
