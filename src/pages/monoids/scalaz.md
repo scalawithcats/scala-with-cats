@@ -157,3 +157,50 @@ object FoldMap {
 }
 ~~~
 </div>
+
+Let's now implement the `map` part of `foldMap`. Extend `foldMap` so it takes a function of type `A => B`, where there is a monoid for `B`, and returns a result of type `B`. If no function is specified it should default to the identity function `a => a`. Here's an example of use
+
+~~~ scala
+scala> List(1, 2, 3).foldMap[Int]()
+res3: Int = 6
+scala> List("1", "2", "3").foldMap[Int](_.toInt)
+res4: Int = 6
+~~~
+
+Note there no longer needs to be a monoid for `A`.
+
+<div class="solution">
+~~~ scala
+object FoldMap {
+  implicit class ListFoldable[A](base: List[A]) {
+    def foldMap[B : Monoid](f: A => B = (a: A) => a): B =
+      base.foldLeft(mzero[B])(_ |+| f(_))
+  }
+}
+~~~
+</div>
+
+It won't come as a surprise to learn we aren't the first to make this connection between fold and monoids. Scalaz provides an abstraction called [`Foldable`](http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.Foldable) that implements `foldMap`. We can use it as follows:
+
+~~~ scala
+import scalaz.std.anyVal._
+import scalaz.std.list._
+import scalaz.syntax.foldable._
+
+List(1, 2, 3).foldMap[Int]()
+// res: Int = 6
+~~~
+
+Scalaz provides a number of instances for `Foldable`.
+
+~~~ scala
+import scalaz.std.iterable._
+import scalaz.std.tuple._
+import scalaz.std.string._
+
+Map[String, Int]("a" -> 1, "b" -> 2).foldMap()
+// res: (String, Int) = (ab,3)
+
+Set(1, 2, 3).foldMap()
+// res: Int = 6
+~~~
