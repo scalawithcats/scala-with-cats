@@ -113,20 +113,47 @@ def add[A: Monoid](items: List[A]): A =
 SuperAdder is entering the POS (point-of-sale, not the other POS) market. Now we want to add up
 
 ~~~ scala
-case class Order(unitCost: Int, quantity: Int)
+case class Order(unitCost: Double, quantity: Double)
 ~~~
 
 but we need to release this code really soon so we can't make any modifications to `add`. Make it so!
 
 <div class="solution">
-Easy-peasy.
+Easy-peasy. Just define a monoid instance for `Order`. Notice the type signature of `add` -- the second argument must be call-by-name.
 
 ~~~ scala
 object Order {
   val zero = Order(0, 0)
-  def add(o1: Order, o2: Order): Order =
-    Order(o1,unitCost
-  implict val order = Monoid.instance[Order](zero, (a, b) =>
+  def add(o1: Order, o2: => Order): Order =
+    Order(
+      (o1.totalCost + o2.totalCost) / (o1.quantity + o2.quantity),
+      o1.quantity + o2.quantity
+    )
+
+  implicit val orderInstance: Monoid[Order] = Monoid.instance[Order](add _, zero)
+}
+~~~
+</div>
+
+### Folding Without the Hard Work
+
+When doing some of the exercises above, or if you've done our "Essential Scala" course, you might have thought that `fold` implicitly requires a monoid and we might as well make it explicit (but with an implicit). Then we could write code like
+
+~~~ scala
+List(1, 2, 3).foldMap
+~~~
+
+(where I have used `foldMap` as the name for our new fold function) and it would select the appropriate monoid instance for the type we specify (in this case we'd expect addition, and the answer would be `6`).
+
+Sounds like a great idea. Define an enrichment of `List[A]` that implements `foldMap` if there is a monoid for `A`.
+
+<div class="solution">
+~~~ scala
+object FoldMap {
+  implicit class ListFoldable[A : Monoid](base: List[A]) {
+    def foldMap: A =
+      base.foldLeft(mzero[A])(_ |+| _)
+  }
 }
 ~~~
 </div>
