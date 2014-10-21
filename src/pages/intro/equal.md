@@ -1,9 +1,9 @@
 ---
 layout: page
-title: *Equal*
+title: "Example: *Equal*"
 ---
 
-# *Equal*
+# Example: *Equal*
 
  - intro/equal.md
     - Second example - Equal
