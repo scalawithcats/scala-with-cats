@@ -4,6 +4,10 @@
 toc:
   - head: /index.html
     body: []
+  - head: /monoids/index.html
+    body: 
+      - /monoids/scalaz.html 
+      - /monoids/instance-selection.html
 
 
 # Jekyll Configuration
