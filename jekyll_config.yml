@@ -8,6 +8,7 @@ toc:
     body: 
       - /monoids/scalaz.html 
       - /monoids/instance-selection.html
+      - /monoids/pygmy-hadoop.html
 
 
 # Jekyll Configuration
