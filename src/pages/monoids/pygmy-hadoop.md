@@ -12,3 +12,21 @@ It should be fairly obvious we can apply `map` in parallel. In general we cannot
 If this sounds like a monoid, it's because it is a monoid. We're not the first to recognise this. The [monoid design pattern for MapReduce jobs](http://arxiv.org/abs/1304.7544) is at the core of recent big data systems such as Twitter's [Summingbird](https://github.com/twitter/summingbird).
 
 In this project we're going to implement a very simple single-machine MapReduce. In fact, we're just going to parallelize `foldMap` and then look at some of more interesting monoids that are applicable for processing large data sets.
+
+
+## FoldMap
+
+Last time we saw `foldMap` we implemented it as follows:
+
+~~~ scala
+object FoldMap {
+  implicit class ListFoldable[A](base: List[A]) {
+    def foldMap[B : Monoid](f: A => B = (a: A) => a): B =
+      base.foldLeft(mzero[B])(_ |+| f(_))
+  }
+}
+~~~
+
+To run the fold in parallel we need to change the implementation strategy. A simple strategy is to allocate as many threads as we have CPUs, and then evenly partition our sequence amongst the threads. When each thread completes we simply append the results together.
+
+Scala provides some simple tools to distribute work amongst threads. We could in fact just use the [parallel collections library](http://docs.scala-lang.org/overviews/parallel-collections/overview.html) to implement a solution, but I want to go a bit lower level. You might have already used `Future`s. They are a good tool for this sort of job, but we're going to avoid introducing them till we have covered monads. Instead we'll use lower level
