@@ -112,3 +112,5 @@ import scalaz.Tag
 sealed trait ExampleTag
 val ExampleTag = Tag.of[ExampleTag]
 ~~~
+
+There is one important difference between using value classes and tags. A value class creates a new type unrelated to the type it wraps. A tag creates a subtype of the type it tags.
