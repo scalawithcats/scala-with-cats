@@ -160,11 +160,11 @@ object Main extends App {
 
 ## Take Home Points
 
-In this section we introduced a new type class -- [scalaz.Equal] -- that lets us perform type-safe equality checks.
+In this section we introduced a new type class -- [scalaz.Equal] -- that lets us perform type-safe equality checks:
 
-We can create an `Equal` instance for our own type `A` by implementing a single `equal` method comparing two values of type `A`.
+ - we create an instance `Equal[A]` to implement equality-testing functionality for `A`.
 
-[scalaz.syntax.equal] provides two methods of interest -- `===` for testing equality and `=/=` for testing inequality.
+ - [scalaz.syntax.equal] provides two methods of interest -- `===` for testing equality and `=/=` for testing inequality.
 
 Because `Equal` is invariant, we have to be precise about the types of the values we use as arguments. We sometimes need add type hints to ensure the compiler that everything is ok.
 
