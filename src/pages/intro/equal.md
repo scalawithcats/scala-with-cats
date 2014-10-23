@@ -104,9 +104,63 @@ implicit val dateEqual = Equal.equal[Date] { (date1, date2) =>
 }
 ~~~
 
+## Exercises
+
+Implement an instance of `Equal` for our running `Cat` example:
+
+~~~ scala
+case class Cat(name: String, age: Int, owner: Option[String])
+~~~
+
+Use this to compare the following pairs of objects for equality and inequality:
+
+~~~ scala
+val cat1 = Cat("Garfield",   35, "orange and black")
+val cat2 = Cat("Heathcliff", 30, "orange and black")
+
+val optionCat1: Option[Cat] = Some(cat1)
+val optionCat2: Option[Cat] = None
+~~~
+
+<div class="solution">
+~~~ scala
+import scalaz.Equal
+import scalaz.syntax.equal._
+
+case class Cat(name: String, age: Int, color: String)
+
+object Cat {
+  import scalaz.std.anyVal._
+  import scalaz.std.string._
+
+  implicit val catEqual = Equal.equal[Cat] { (cat1, cat2) =>
+    (cat1.name  === cat2.name ) &&
+    (cat1.age   === cat2.age  ) &&
+    (cat1.color === cat2.color)
+  }
+}
+
+object Main extends App {
+  val cat1 = Cat("Garfield",   35, "orange and black")
+  val cat2 = Cat("Heathcliff", 30, "orange and black")
+
+  val optionCat1: Option[Cat] = Some(cat1)
+  val optionCat2: Option[Cat] = None
+
+  println("cat1 === cat2 : " + (cat1 === cat2))
+  println("cat1 =/= cat2 : " + (cat1 =/= cat2))
+
+  import scalaz.std.option._
+
+  println("optionCat1 === optionCat2 : " + (optionCat1 === optionCat2))
+  println("optionCat1 =/= optionCat2 : " + (optionCat1 =/= optionCat2))
+}
+~~~
+</div>
+
 ## Take Home Points
 
-In this section we introduced a new type class -- [scalaz.Equal] --- that lets us perform type-safe equality checks.
+In this section we introduced a new type class -- [scalaz.Equal] -- that lets us perform type-safe equality checks.
 
 We can create an `Equal` instance for our own type `A` by implementing a single `equal` method comparing two values of type `A`.
 
