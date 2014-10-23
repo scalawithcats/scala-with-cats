@@ -9,6 +9,9 @@ toc:
       - /monoids/scalaz.html 
       - /monoids/instance-selection.html
       - /monoids/pygmy-hadoop.html
+  - head: /functors/index.html
+    body:
+      - /functors/scalaz.html
 
 
 # Jekyll Configuration
