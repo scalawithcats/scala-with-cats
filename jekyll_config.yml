@@ -4,9 +4,15 @@
 toc:
   - head: /index.html
     body: []
+  - head: /intro/index.html
+    body:
+      - /intro/type-class.html
+      - /intro/scalaz.html
+      - /intro/equal.html
+      - /intro/summary.html
   - head: /monoids/index.html
-    body: 
-      - /monoids/scalaz.html 
+    body:
+      - /monoids/scalaz.html
       - /monoids/instance-selection.html
       - /monoids/pygmy-hadoop.html
 
