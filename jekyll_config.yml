@@ -18,6 +18,9 @@ toc:
   - head: /functors/index.html
     body:
       - /functors/scalaz.html
+  - head: /monads/index.html
+    body:
+      - /monads/scalaz.html
 
 
 # Jekyll Configuration
