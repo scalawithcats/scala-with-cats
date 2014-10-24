@@ -21,6 +21,7 @@ toc:
   - head: /monads/index.html
     body:
       - /monads/scalaz.html
+      - /monads/either.html
 
 
 # Jekyll Configuration
