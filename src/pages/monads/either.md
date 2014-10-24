@@ -80,6 +80,18 @@ Occasionally we want to run a sequence of steps until one succeeds. We can model
 
 MonadPlus
 
+`<+>`
+
 ### Abstracting Over Error Handling
 
 Optional
+
+## Exercise
+
+#### Folding Over Errors
+
+Let the `map` part of `foldMap` fail.
+
+#### Don't Stop For Nothing
+
+Don't let an error stop our fold. Just replace it with the identity! Model this.
