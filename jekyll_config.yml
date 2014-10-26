@@ -44,6 +44,7 @@ permalink   : /:categories/:year/:month/:day/:title
 safe        : false
 highlighter : pygments
 markdown    : kramdown
+markdown_ext: foo
 
 kramdown:
   parse_block_html: true
