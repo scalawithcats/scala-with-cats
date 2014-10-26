@@ -5,7 +5,26 @@ title: Monads in Scalaz
 
 ## The Monad Type Class
 
-The monad type class is [`scalaz.Monad`](http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.Monad).
+The monad type class is [`scalaz.Monad`](http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.Monad). `Monad` extends `Applicative`, an abstraction we'll discuss later, and `Bind` which defines `bind` (aka `flatMap`).
+
+
+## The User Interface
+
+The main methods on `Monad` are `point` and `bind`. `Point` is a monad constructor.
+
+~~~ scala
+scala> import scalaz.Monad
+scala> import scalaz.std.option._
+scala> import scalaz.std.list._
+
+scala> Monad[Option].point(3)
+res0: Option[Int] = Some(3)
+
+scala> Monad[List].point(3)
+res1: List[Int] = List(3)
+~~~
+
+`Bind` is just another name for the familiar `flatMap`.
 
 There are a many utility methods defined on `Monad`. The one's you're mostly like to use are:
 
@@ -33,7 +52,6 @@ There are a many utility methods defined on `Monad`. The one's you're mostly lik
 
   This method requires a `Traversable`, which is closely related to `Foldable` that we saw in the section on monoids.
 
-## The User Interface
 
 ## Monad Instances
 
@@ -67,3 +85,48 @@ A variant on bind, written `>>`, ignores the value in the monad on which we `fla
 ~~~ scala
 option >> (42.point[Option])
 ~~~
+
+## Exercises
+
+#### Monadic FoldMap
+
+It's useful to allow the user of `foldMap` to perform monadic actions within their mapping function. This, for example, allows the mapping to indicate failure by returning an `Option`.
+
+Implement a variant of `foldMap` called `foldMapM` that allows this. The focus here is on the monadic component, so you can base your code on `foldMap` or `foldMapP` as you see fit.
+
+<div class="solution">
+See `FoldMap.scala` in `monad/src/main/scala/parallel/FoldMap.scala`. Here's the most important bit:
+
+~~~ scala
+def foldMapM[A, M[_] : Monad, B: Monoid](iter: Iterable[A])(f: A => M[B]): M[B] =
+  iter.foldLeft(mzero[B].point[M]){ (accum, elt) =>
+    for {
+      a <- accum
+      b <- f(elt)
+    } yield a |+| b
+  }
+~~~
+</div>
+
+
+## Everything's Monadic
+
+We can unify monadic and normal code by using the `Id` monad. The `Id` monad provides a monad instance (and many other instances) for plain values. Note that such values are not wrapped in any class. They continue to be the plain values we started with. To access it's instances we require `scalaz.Id._`.
+
+~~~ scala
+scala> import scalaz.Id._
+scala> import scalaz.syntax.monad._
+
+scala> 3.point[Id]
+res2: scalaz.Id.Id[Int] = 3
+
+scala> 3.point[Id] flatMap (_ + 2)
+res3: scalaz.Id.Id[Int] = 5
+
+scala> 3.point[Id] + 2
+res4: Int = 5
+~~~
+
+Using this one neat trick, implement a default function for `foldMapM`.
+
+Now implement `foldMap` in terms of `foldMapM`.
