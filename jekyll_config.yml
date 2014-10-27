@@ -18,10 +18,18 @@ toc:
   - head: /functors/index.html
     body:
       - /functors/scalaz.html
+      - /functors/conclusion.html
   - head: /monads/index.html
     body:
       - /monads/scalaz.html
       - /monads/either.html
+      - /monads/error-recovery.html
+      - /monads/writer.html
+      - /monads/reader.html
+  - head: /monad-transformers/index.html
+    body: []
+  - head: /applicatives/index.html
+    body: []
 
 
 # Jekyll Configuration

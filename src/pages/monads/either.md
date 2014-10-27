@@ -57,7 +57,7 @@ The typical usage for `\/` is to implement fail-fast error handling. We can sequ
 
 ### Representing Errors
 
-We could use `type Result[A] = \/[Exception, A]` (or `type Result[A] = Exception \/ A` using infix notation) to represent errors, but then we've lost (almost) all useful information about what kind of errors can occur. I prefer an algebraic data type, with one case used to hold "other" errors. E.g. imagine we're writing something that manipulates the file system. We might write
+We could use `type Result[A] = \/[Exception, A]` (or `type Result[A] = Exception \/ A` using infix notation) to represent errors, but then we've lost (almost) all useful information about what kind of errors can occur. I prefer representing errors using an algebraic data type, with one case reserved to hold "other" errors. E.g. imagine we're writing something that manipulates the file system. We might write
 
 ~~~ scala
 type Result[A] = FileSystemError \/ A
@@ -69,29 +69,40 @@ final case class UnexpectedError(exn: Exception) extends FileSystemError
 
 Then we have the safety of pattern matching on an algebraic data type for handling the errors we expect to occur and be able to handle, and the `UnexpectedError` case to wrap the items we're not expecting or not interested in handling.
 
-
-## Error Handling Patterns
-
 ### Swapping Control Flow
 
 Occasionally we want to run a sequence of steps until one succeeds. We can model this using `\/` by flipping the left and right cases. The `swap` method provides this.
 
-### Succeeding or Choosing a Default
+## Exercises
 
-MonadPlus
+#### Seeing is Believing
 
-`<+>`
+Call `foldMapM` with `\/` as your monad of choice and verify that is really does stop execution as soon an error is encountered. You can force an error by trying to convert a `String` to an `Int` using the method shown below.
 
-### Abstracting Over Error Handling
+~~~ scala
+scala> import scalaz.syntax.std.string._
 
-Optional
+scala> "Cat".parseInt.disjunction
+res8: scalaz.\/[NumberFormatException,Int] = -\/(java.lang.NumberFormatException: For input string: "Cat")
 
-## Exercise
+scala> "1".parseInt.disjunction
+res9: scalaz.\/[NumberFormatException,Int] = \/-(1)
+~~~
 
-#### Folding Over Errors
+<div class="solution">
+You can verify this by adding some `println` statements in judicious places.
+</div>
 
-Let the `map` part of `foldMap` fail.
+#### What is Best?
 
-#### Don't Stop For Nothing
+Is this error handling strategy well suited to the task at hand? What other features might we want from error handling?
 
-Don't let an error stop our fold. Just replace it with the identity! Model this.
+<div class="solution">
+Some points to ponder:
+
+- Error recovery is important when processing large jobs. We don't want to run a job for a day and then find it failed on the last element.
+
+- Error reporting is equally important. We need to know what went wrong, not just that something went wrong.
+
+- In a number of cases we want to collect all the errors, not just the first one we encountered. A typical example is validating a web form. It's a far better experience to report all errors to the user when they submit a form than to report them one at a time.
+</div>

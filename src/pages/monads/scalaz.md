@@ -129,4 +129,23 @@ res4: Int = 5
 
 Using this one neat trick, implement a default function for `foldMapM`.
 
+<div class="solution">
+~~~ scala
+def foldMapM[A, M[_] : Monad, B: Monoid](iter: Iterable[A])(f: A => M[B] = (a: A) => a.point[Id]): M[B] =
+  iter.foldLeft(mzero[B].point[M]){ (accum, elt) =>
+    for {
+      a <- accum
+      b <- f(elt)
+    } yield a |+| b
+  }
+~~~
+</div>
+
 Now implement `foldMap` in terms of `foldMapM`.
+
+<div class="solution">
+~~~ scala
+def foldMap[A, B : Monoid](iter: Iterable[A])(f: A => B = (a: A) => a): B =
+  foldMapM[A, Id, B](iter){ a => f(a).point[Id] }
+~~~
+</div>
