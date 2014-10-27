@@ -47,15 +47,15 @@ If we consider the laws in the context of the functors we've discussed above, we
 
 ## Higher Kinds
 
-Functors are the first type we've seen that has a *higher kind*. Kinds are like types for types. First order types like `Int` and `String` have kind `*`. Higher order types are type constructors like `List`. `List` has kind `* => *`. Given a concrete type like `Double` we can "apply" `List` to it to yield the concrete type `List[Double]`.
+Functors are the first type we've seen that has a *higher kind*. Kinds are like types for types. Concrete types like `Int` and `String` have kind `*`. First order types are type constructors like `List`. `List` has kind `* => *`. Given a concrete type like `Double` we can "apply" `List` to it to yield the concrete type `List[Double]`. Higher order types like `Functor` accept type constructors as parameters. `Functor` has kind `(* => *) => *`. Given a type constructor is constructs a type.
 
-When we declare a generic type variable we must give it's kind. We're used to first order types like
+When we declare a generic type variable we must give it's kind. This is analogous to declaring the type of an expression. We're used to proper types like
 
 ~~~ scala
 def identity[A](a: A): A = a
 ~~~
 
-For a higher-kind we must indicate how many type parameters it takes using notation like `F[_]`. When we actually use this type we need to make it concrete type by supplying a type to it. This could be a concrete type like `Int`, or it could be another type variable. So, for example, we could write
+When first or higher order type variables we must indicate how many type parameters they take using notation like `F[_]`. When we actually use this type we just use it's name. Remember the kind is like the type declaration of a binding (e.g. a `val` declaration like `val foo: String = "Hi"`). When we use a binding we don't repeat the type declaration. We just write, for example, `foo`. Similarly when we use a type variable we don't repeat the kind. So, for example, we could write
 
 ~~~ scala
 def concreteType[F[_]](fa: F[Int]) = ...
@@ -72,3 +72,45 @@ We can also add a context bound, so to indicate our method accepts a `Functor` w
 ~~~ scala
 def functor[F[_] : Functor, A](fa: F[A]) = ...
 ~~~
+
+For reasons I find difficult to understand we should also require `scala.language.higherKinds` in code that uses higher kinds or the compiler will complain at us.
+
+## Exercises
+
+#### FoldMap of a Higher Kind
+
+When we looked at `foldMap` earlier, we couldn't write a type class for it because we didn't know how to write the type of objects that type class should work over. We do now.
+
+Define all the machinery needed for a `FoldMapable` type class: the trait, an interface, some instances, and an enrichment.
+
+<div class="solution">
+This exercise is really intended to drill in the definition and use of higher kinds. Here is my solution.
+
+~~~ scala
+import scala.language.higherKinds
+
+import scalaz.Monoid
+import scalaz.syntax.monoid._
+
+trait FoldMapable[F[_]] {
+  def foldMap[A, B : Monoid](fa: F[A])(f: A => B): B
+}
+
+object FoldMapable {
+  def apply[F[_] : FoldMapable]: FoldMapable[F] =
+    implicitly[FoldMapable[F]]
+
+  implicit object ListFoldMapable extends FoldMapable[List] {
+    def foldMap[A, B : Monoid](fa: List[A])(f: A => B): B =
+      fa.foldLeft(mzero[B]){ _ |+| f(_) }
+  }
+}
+
+object FoldMapableSyntax {
+  implicit class IsFoldMapable[F[_] : FoldMapable, A](fa: F[A]) {
+    def foldMap[B : Monoid](f: A => B): B =
+      FoldMapable[F].foldMap(fa)(f)
+  }
+}
+~~~
+</div>
