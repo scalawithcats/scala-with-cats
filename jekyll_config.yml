@@ -30,6 +30,12 @@ toc:
     body: []
   - head: /applicatives/index.html
     body: []
+  - head: /parser/index.html
+    body: 
+      - /parser/intro.html
+      - /parser/error-handling.html
+      - /parser/transforms.html
+      - /parser/applicative.html
 
 
 # Jekyll Configuration

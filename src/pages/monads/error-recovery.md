@@ -5,7 +5,7 @@ title: Error Recovery
 
 In the previous section we looked at modelling fail fast error handling using monads, and the `\/` monad in particular.
 
-In this section we're going to look at recovering from errors
+In this section we're going to look at approaches for recovering from errors
 
 ### Succeeding or Choosing a Default
 
