@@ -80,6 +80,34 @@ What are some of the tradeoffs made by putting error handling into `foldMapM`?
 By doing so, we ensure we also have error handling. However, our error handling strategy might not always be the most appropriate method, and it restricts the types of monads we can compute with. It might be better to expect the caller to provide their own error handling.
 </div>
 
+#### A Toolkit for Handling Errors
+
+It's not always appropriate for `foldMapM` to assert an error handling strategy. It's easy enough to implement custom error recovery in each function `f` we pass to `foldMap` but it would be better to build a generic toolkit. Implement a method `recover` so that you can write code like
+
+~~~ scala
+import scalaz.std.anyVal._
+import scalaz.std.option._
+import scalaz.syntax.std.string._
+
+Seq("1", "b", "3").foldMapM(recover(_.parseInt.toOption))
+// res: Option[Int] = Some(4)
+~~~
+
+Hint: here's the method header for `recover`
+
+~~~ scala
+def recover[A, M[_] : MonadPlus, B : Monoid](f: A => M[B]): (A => M[B]) = {
+~~~
+
+<div class="solution">
+~~~ scala
+def recover[A, M[_] : MonadPlus, B : Monoid](f: A => M[B]): (A => M[B]) = {
+  val identity = mzero[B].point[M]
+  a => (f(a) <+> identity)
+}
+~~~
+</div>
+
 ## Abstracting Over Optional Values
 
 Scalaz provides another abstraction, `Optional`, that abstracts over ... err ... abstractions that may or may not hold a value. (Think `Option`, `Either`, and `\/`). This is more restrictive than `MonadPlus` but does allow more intricate error handling.
