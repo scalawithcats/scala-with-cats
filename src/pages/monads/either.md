@@ -89,6 +89,30 @@ scala> "1".parseInt.disjunction
 res9: scalaz.\/[NumberFormatException,Int] = \/-(1)
 ~~~
 
+Here is an example of use:
+
+~~~ scala
+scala> Seq("1", "x", "3").foldMapM[Result, Int](_.parseInt.disjunction)
+res25: Result[Int] = -\/(java.lang.NumberFormatException: For input string: "x")
+
+scala> Seq("1", "2", "3").foldMapM[Result, Int](_.parseInt.disjunction)
+res26: Result[Int] = \/-(6)
+~~~
+
+Note that a monad has a single type parameter (it "looks like" `F[A]`) while `\/` has two parameters. To make `\/` have the right kind you'll need to define a type alias fixing one of the types. The syntax for doing so is
+
+~~~ scala
+type Alias = ExpandedType
+~~~
+
+For example
+
+~~~ scala
+type Foo[A] = \/[String, A]
+~~~
+
+I've called the type `Result` in my example above.
+
 <div class="solution">
 You can verify this by adding some `println` statements in judicious places.
 </div>
