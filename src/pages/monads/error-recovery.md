@@ -7,22 +7,79 @@ In the previous section we looked at modelling fail fast error handling using mo
 
 In this section we're going to look at approaches for recovering from errors
 
-### Succeeding or Choosing a Default
+## Succeeding or Choosing a Default
 
-MonadPlus
+The `MonadPlus` type class extends `Monad` with two operations:
 
-`<+>`
+- `empty`, which returns an element of type `F[A]`; and
+- `plus`, which accepts two elements of type `F[A]` and returns an `F[A]`.
 
-### Abstracting Over Error Handling
+This is the functor equivalent of a monoid.
 
-Optional
+The laws for `MonadPlus` are a bit involved, so we're going to skip them.
+
+`MonadPlus` has syntax `<+>` which is the equivalent to `|+|`. `MonadPlus` behaves differently to `Monoid` as illustrated by these examples:
+
+~~~ scala
+some(3) <+> some(1)
+// res27: Option[Int] = Some(3)
+
+some(3) |+| some(1)
+// res32: Option[Int] = Some(4)
+
+some(3) <+> none[Int]
+// res28: Option[Int] = Some(3)
+
+none[Int] <+> some(3)
+// res29: Option[Int] = Some(3)
+~~~
+
+Thus `MonadPlus` allows us to provide an element that is used to recover from a failure.
+
+(Also note `mempty`...)
 
 ## Exercise
 
 #### Folding Over Errors
 
-Let the `map` part of `foldMap` fail.
+It's annoying to stop a large data job because we fail on one element. Let's make `foldMapM` automatically continue when an error is encountered by the mapping function `f`. We can do this by changing the `Monad` to a `MonadPlus` and choosing a suitable value to replace the error with.
 
-#### Don't Stop For Nothing
+What is a suitable value?
 
-Don't let an error stop our fold. Just replace it with the identity! Model this.
+<div class="solution">
+The identity element is the obvious choice, as it won't affect the solution.
+</div>
+
+If calling `f`, the mapping function, fails use the `plus` operation to continue the computation with the value we identified above. Your code should produce a result like so:
+
+~~~ scala
+import scalaz.std.anyVal._
+import scalaz.std.option._
+
+Seq(1, 2, 3).foldMapM(a => if(a % 2 == 0) some(a) else none[Int])
+// res2: Option[Int] = Some(2)
+~~~
+
+<div class="solution">
+Here's the important part of the solution
+
+~~~ scala
+def foldMapM[A, M[_] : MonadPlus, B: Monoid](iter: Iterable[A])(f: A => M[B] = (a: A) => a.point[Id]): M[B] =
+  iter.foldLeft(mzero[B].point[M]){ (accum, elt) =>
+    for {
+      a <- accum
+      b <- f(elt) <+> mzero[B].point[M]
+    } yield a |+| b
+  }
+~~~
+</div>
+
+What are some of the tradeoffs made by putting error handling into `foldMapM`?
+
+<div class="solution">
+By doing so, we ensure we also have error handling. However, our error handling strategy might not always be the most appropriate method, and it restricts the types of monads we can compute with. It might be better to expect the caller to provide their own error handling.
+</div>
+
+## Abstracting Over Optional Values
+
+Scalaz provides another abstraction, `Optional`, that abstracts over ... err ... abstractions that may or may not hold a value. (Think `Option`, `Either`, and `\/`). This is more restrictive than `MonadPlus` but does allow more intricate error handling.
