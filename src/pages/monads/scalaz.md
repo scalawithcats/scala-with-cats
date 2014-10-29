@@ -92,7 +92,24 @@ option >> (42.point[Option])
 
 It's useful to allow the user of `foldMap` to perform monadic actions within their mapping function. This, for example, allows the mapping to indicate failure by returning an `Option`.
 
-Implement a variant of `foldMap` called `foldMapM` that allows this. The focus here is on the monadic component, so you can base your code on `foldMap` or `foldMapP` as you see fit.
+Implement a variant of `foldMap` called `foldMapM` that allows this. The focus here is on the monadic component, so you can base your code on `foldMap` or `foldMapP` as you see fit. Here are some examples of use
+
+~~~ scala
+import scalaz.std.anyVal._
+import scalaz.std.option._
+import scalaz.std.list._
+
+val seq = Seq(1, 2, 3)
+
+seq.foldMapM(a => some(a))
+// res4: Option[Int] = Some(6)
+
+seq.foldMapM(a => List(a))
+// res5: List[Int] = List(6)
+
+seq.foldMap(a => if(a % 2 == 0) some(a) else none[Int])
+// res6: Option[Int] = Some(2)
+~~~
 
 <div class="solution">
 See `FoldMap.scala` in `monad/src/main/scala/parallel/FoldMap.scala`. Here's the most important bit:
@@ -127,7 +144,12 @@ scala> 3.point[Id] + 2
 res4: Int = 5
 ~~~
 
-Using this one neat trick, implement a default function for `foldMapM`.
+Using this one neat trick, implement a default function for `foldMapM`. This allows us to write code like
+
+~~~ scala
+scala> seq.foldMapM()
+res10: scalaz.Id.Id[Int] = 6
+~~~
 
 <div class="solution">
 ~~~ scala
