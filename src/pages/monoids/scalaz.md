@@ -1,7 +1,4 @@
----
-layout: page
-title: Monoids in Scalaz
----
+## Monoids in Scalaz
 
 Now we've seen what a monoid is, let's look at their implementation in Scalaz. The four main points around any type class implementation are:
 
@@ -13,14 +10,14 @@ Now we've seen what a monoid is, let's look at their implementation in Scalaz. T
 We'll address each in turn.
 
 
-## The Monoid Type Class
+### The Monoid Type Class
 
 The monoid type class is [`scalaz.Monoid`](http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.Monoid). If you look at the implementation you'll see that `Monoid` extends `Semigroup`. A semigroup is a monoid without the identity element, leaving only `append`.
 
 There are a few utility methods defined on `Monoid`, mostly to do with checking if an element is `zero` (assuming we have an implemenation for equality on the monoid, denoted by the `Equal` type class). In my experience they are little used in practice.
 
 
-## The User Interface
+### The User Interface
 
 `Monoid` follows the standard Scalaz pattern for the user interface: the companion object has an `apply` method that returns the type class instance. So if we wanted the monoid instance for `String`, and we have the correct implicits in scope, we can write
 
@@ -41,7 +38,7 @@ Monoid.instance[Int](_ * _, 1)
 ~~~
 
 
-## Monoid Instances
+### Monoid Instances
 
 The type class instances are organised in the standard way for Scalaz. Instances for types in the standard libary are found under `scalaz.std`. So if we wanted to pull in the instances for `String` we would import `scalaz.std.string._`. Here is a complete program using the monoid instance for `String`.
 
@@ -63,7 +60,7 @@ A non-exhaustive list of instances includes:
 - tuple types in `scalaz.std.tuple`.
 
 
-## Monoid Syntax
+### Monoid Syntax
 
 We access the monoid syntax by importing `scalaz.syntax.monoid._`. This provides:
 
@@ -81,11 +78,11 @@ import scalaz.std.anyVal._
 1 |+| 2 |+| mzero[Int]
 ~~~
 
-## Exercises
+### Exercises
 
 Doing this exercises will give you experience using the Scalaz monoid API.
 
-### Adding All The Things
+#### Adding All The Things
 
 The cutting edge SuperAdder v3.5a-32, the world's first choice for adding together numbers. The main function in the program has signature `def add(items: List[Int]): Int`. In a tragic accident this code is deleted! Rewrite the method and save the day!
 
@@ -135,7 +132,7 @@ object Order {
 ~~~
 </div>
 
-### Folding Without the Hard Work
+#### Folding Without the Hard Work
 
 When doing some of the exercises above, or if you've done our "Essential Scala" course, you might have thought that `fold` implicitly requires a monoid and we might as well make it explicit (but with an implicit). Then we could write code like
 

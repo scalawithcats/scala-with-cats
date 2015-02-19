@@ -1,0 +1,51 @@
+---
+# Used by Pandoc to print covers:
+title: Essential Scalaz
+author: "Noel Welsh and Dave Gurnell"
+date: "Pre-Release, Feburary 2015"
+# Used by Pandoc to generate the PDF cover...
+# see src/css/book.css for HTML/ePub covers:
+coverColor: "E8515B"
+# Used by Grunt to name output files:
+filenameStem: "essential-scalaz"
+# Used by Grunt to create a ZIP of source code:
+exercisesRepo: null # "git@github.com:underscoreio/essential-scalaz-code.git"
+# Used by Grunt to assemble pandoc command line:
+pages:
+  - src/pages/index.md
+
+  - src/pages/intro/index.md
+  - src/pages/intro/type-class.md
+
+  - src/pages/intro/scalaz.md
+  - src/pages/intro/equal.md
+  - src/pages/intro/summary.md
+
+  - src/pages/monoids/index.md
+  - src/pages/monoids/scalaz.md
+  - src/pages/monoids/instance-selection.md
+  - src/pages/monoids/pygmy-hadoop.md
+
+  - src/pages/functors/index.md
+  - src/pages/functors/scalaz.md
+  - src/pages/functors/conclusions.md
+
+  - src/pages/monads/index.md
+  - src/pages/monads/scalaz.md
+  - src/pages/monads/either.md
+  - src/pages/monads/error-recovery.md
+  - src/pages/monads/writer.md
+  - src/pages/monads/reader.md
+
+  - src/pages/monad-transformers/index.md
+
+  - src/pages/applicatives/index.md
+
+  - src/pages/parser/index.md
+  - src/pages/parser/intro.md
+  - src/pages/parser/error-handling.md
+  - src/pages/parser/transforms.md
+  - src/pages/parser/applicative.md
+
+  - src/pages/solutions.md
+...

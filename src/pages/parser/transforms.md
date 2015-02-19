@@ -1,17 +1,14 @@
----
-layout: page
-title: Transforming Parses
----
+## Transforming Parses
 
 Until now we have built recognisers: we can detect is a string matches a grammar but we can't transform the data we match. In this section we're going to change that.
 
-## An Output Type
+### An Output Type
 
 Right now our parsers return `String`s. If we're going to change the output of our parser we need to introduce a type for the output. Since the type varies according to the use of the parser, it needs to be a generic type.
 
-## Exercise
+### Exercise
 
-#### Parse Output
+### Parse Output
 
 Add a generic type to `Parse` to represent the output type (I've called it `O` in my implementation.) To get the code to compile you'll have to make changes to `Parser` as well:
 
@@ -23,7 +20,7 @@ Add a generic type to `Parse` to represent the output type (I've called it `O` i
 Checkout the tag `parser-output-type`.
 </div>
 
-#### Transforming
+### Transforming
 
 Now we have the infrastructure in place to transform the values produced by our parser. Let's start simple and avoid considering transformations that can fail. In this case the simplest transform is a function with type `O => O1`. So we will write a method on `Parser` that accepts a transformation function of type `O => O1` and applys it on a successfull parse. What is the correct name and type signature of this method?
 
@@ -90,13 +87,13 @@ def map[O1](f: O => O1): Parser[O1] =
 The complete code with tests is tagged with `parser-map`.
 </div>
 
-## Calculators
+### Calculators
 
 With `map` in hand we can extend our calculator example to actually calculate the values of the expressions we parse. This is mostly a repeat of techniques we've seen before, so we'll do this as a series of exercises.
 
-## Exercise
+### Exercise
 
-#### Abstract Syntax Tree
+### Abstract Syntax Tree
 
 Start by implementing data structures to store the result of a successful parse. Such a data structure is known as an abstract syntax tree (AST). Tip 1: The structure of the AST should closely follow the structure of the grammar. Tip 2: Use an algebraic data type.
 
@@ -111,7 +108,7 @@ final case class Number(value: Int) extends Expression
 ~~~
 </div>
 
-#### Parsing Expressions
+### Parsing Expressions
 
 Change your parser to return objects of the AST type you created above.
 
@@ -140,7 +137,7 @@ Note that I used the partial function syntax (e.g. `case ((number, plus), expr) 
 </div>
 
 
-#### Evaluating Expressions
+### Evaluating Expressions
 
 Write a method called `eval` to evalute expressions to the `Int` they represent.
 
@@ -170,7 +167,7 @@ final case class Number(value: Int) extends Expression {
 The code is tagged with `parser-eval`. Pay particular attention to the tests -- I spent longer refactoring them than I did writing `eval`.
 </div>
 
-## Recap
+### Recap
 
 In this section we've added a `map` method to `Parser`, allowing us to transform parsed data into a more useful representation. We have used `map` to implementation a simple evaluator for numeric expressions, and in doing so revisited the algebraic data type and structural recursion patterns.
 

@@ -1,7 +1,4 @@
----
-layout: page
-title: Reader
----
+## Reader
 
 Functions of one argument are monads. Fix the input type, allow the output to vary.
 

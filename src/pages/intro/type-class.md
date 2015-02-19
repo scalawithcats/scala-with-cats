@@ -1,8 +1,3 @@
----
-layout: page
-title: Type Classes
----
-
 # Type Classes
 
 **Type classes** are a programming pattern originating from Haskell. They allow us to extend existing libraries with new functionality, without using traditional inheritance, and without altering the original library source code.

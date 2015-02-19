@@ -1,13 +1,10 @@
----
-layout: page
-title: Error Recovery
----
+## Error Recovery
 
 In the previous section we looked at modelling fail fast error handling using monads, and the `\/` monad in particular.
 
 In this section we're going to look at approaches for recovering from errors
 
-## Succeeding or Choosing a Default
+### Succeeding or Choosing a Default
 
 The `MonadPlus` type class extends `Monad` with two operations:
 
@@ -38,9 +35,9 @@ Thus `MonadPlus` allows us to provide an element that is used to recover from a 
 
 (Also note `mempty`...)
 
-## Exercise
+### Exercise
 
-#### Folding Over Errors
+### Folding Over Errors
 
 It's annoying to stop a large data job because we fail on one element. Let's make `foldMapM` automatically continue when an error is encountered by the mapping function `f`. We can do this by changing the `Monad` to a `MonadPlus` and choosing a suitable value to replace the error with.
 
@@ -80,7 +77,7 @@ What are some of the tradeoffs made by putting error handling into `foldMapM`?
 By doing so, we ensure we also have error handling. However, our error handling strategy might not always be the most appropriate method, and it restricts the types of monads we can compute with. It might be better to expect the caller to provide their own error handling.
 </div>
 
-#### A Toolkit for Handling Errors
+### A Toolkit for Handling Errors
 
 It's not always appropriate for `foldMapM` to assert an error handling strategy. It's easy enough to implement custom error recovery in each function `f` we pass to `foldMap` but it would be better to build a generic toolkit. Implement a method `recover` so that you can write code like
 
@@ -108,6 +105,6 @@ def recover[A, M[_] : MonadPlus, B : Monoid](f: A => M[B]): (A => M[B]) = {
 ~~~
 </div>
 
-## Abstracting Over Optional Values
+### Abstracting Over Optional Values
 
 Scalaz provides another abstraction, `Optional`, that abstracts over ... err ... abstractions that may or may not hold a value. (Think `Option`, `Either`, and `\/`). This is more restrictive than `MonadPlus` but does allow more intricate error handling.

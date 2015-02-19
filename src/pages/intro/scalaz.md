@@ -1,8 +1,3 @@
----
-layout: page
-title: Meet Scalaz
----
-
 # Meet Scalaz
 
 In the previous section we saw how to implement type classes in Scala. In this section we will look at how type classes are implemented in Scalaz.

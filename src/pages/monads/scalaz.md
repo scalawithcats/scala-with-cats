@@ -1,14 +1,11 @@
----
-layout: page
-title: Monads in Scalaz
----
+## Monads in Scalaz
 
-## The Monad Type Class
+### The Monad Type Class
 
 The monad type class is [`scalaz.Monad`](http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.Monad). `Monad` extends `Applicative`, an abstraction we'll discuss later, and `Bind` which defines `bind` (aka `flatMap`).
 
 
-## The User Interface
+### The User Interface
 
 The main methods on `Monad` are `point` and `bind`. `Point` is a monad constructor.
 
@@ -53,11 +50,11 @@ There are a many utility methods defined on `Monad`. The one's you're mostly lik
   This method requires a `Traversable`, which is closely related to `Foldable` that we saw in the section on monoids.
 
 
-## Monad Instances
+### Monad Instances
 
 There are instances for all the monads in the standard library (`Option` etc). There are also some Scalaz-specific instances we'll look at in depth in later section.
 
-## Monad Syntax
+### Monad Syntax
 
 We don't tend to use a great deal of syntax for monads, as for comprehensions are built in to the language. Nonetheless there are a few methods that are used from time-to-time.
 
@@ -86,9 +83,9 @@ A variant on bind, written `>>`, ignores the value in the monad on which we `fla
 option >> (42.point[Option])
 ~~~
 
-## Exercises
+### Exercises
 
-#### Monadic FoldMap
+### Monadic FoldMap
 
 It's useful to allow the user of `foldMap` to perform monadic actions within their mapping function. This, for example, allows the mapping to indicate failure by returning an `Option`.
 
@@ -126,7 +123,7 @@ def foldMapM[A, M[_] : Monad, B: Monoid](iter: Iterable[A])(f: A => M[B]): M[B] 
 </div>
 
 
-## Everything's Monadic
+### Everything's Monadic
 
 We can unify monadic and normal code by using the `Id` monad. The `Id` monad provides a monad instance (and many other instances) for plain values. Note that such values are not wrapped in any class. They continue to be the plain values we started with. To access it's instances we require `scalaz.Id._`.
 

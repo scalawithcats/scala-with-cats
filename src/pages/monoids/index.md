@@ -1,7 +1,4 @@
----
-layout: page
-title: Monoids
----
+# Monoids
 
 In this section we explore our first type class: **monoids**. Let's start by looking a few types and operations on those types, and see what common principles we can extract.
 

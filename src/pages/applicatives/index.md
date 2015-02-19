@@ -1,7 +1,4 @@
----
-layout: page
-title: Applicatives
----
+# Applicatives
 
 Applicative is a weaker abstraction than a monad. All monads are applicative but some applicatives are not monads.
 

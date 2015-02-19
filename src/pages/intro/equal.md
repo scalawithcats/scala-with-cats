@@ -1,15 +1,10 @@
----
-layout: page
-title: "Example: Equal"
----
-
-# Example: *Equal*
+## Example: *Equal*
 
 We will finish off this chapter by looking at another useful type class: [scalaz.Equal].
 
 [scalaz.Equal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Equal
 
-## Equality, Liberty, and Fraternity
+### Equality, Liberty, and Fraternity
 
 We can use `Equal` to define type-safe equality between instances of any given type:
 
@@ -29,7 +24,7 @@ The interface syntax, defined in [scalaz.syntax.equal], provides two methods for
 
 [scalaz.syntax.equal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.Syntaxes$equal$
 
-## Comparing Ints
+### Comparing Ints
 
 Let's look at a few examples. First we import the type class:
 
@@ -65,7 +60,7 @@ import scala.syntax.equal._
 
 [scalaz.syntax.equal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.Syntaxes$equal$
 
-## Comparing Options
+### Comparing Options
 
 Let's look at a more interesting example -- `Option[Int]`. To do this we need to import instances of `Equal` for `Option` as well as `Int`:
 
@@ -92,7 +87,7 @@ some(1) === none[Int] // false
 some(1) =/= none[Int] // true
 ~~~
 
-## Comparing Custom Types
+### Comparing Custom Types
 
 We can define our own instances of `Equal` using the `Equal.equal` method, which accepts a function of type `(A, A) => Boolean` and returns an `Equal[A]`:
 
@@ -104,7 +99,7 @@ implicit val dateEqual = Equal.equal[Date] { (date1, date2) =>
 }
 ~~~
 
-## Exercises
+### Exercises
 
 Implement an instance of `Equal` for our running `Cat` example:
 
@@ -158,7 +153,7 @@ object Main extends App {
 ~~~
 </div>
 
-## Take Home Points
+### Take Home Points
 
 In this section we introduced a new type class -- [scalaz.Equal] -- that lets us perform type-safe equality checks:
 

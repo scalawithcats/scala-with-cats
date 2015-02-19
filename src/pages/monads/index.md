@@ -1,7 +1,4 @@
----
-layout: page
-title: Monads
----
+# Monads
 
 *Monads* are one of the most common abstractions in Scala, and one that most Scala programmers are familiar with even if they don't know the name.
 

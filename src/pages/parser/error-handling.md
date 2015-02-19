@@ -1,7 +1,4 @@
----
-layout: page
-title: Error Handling
----
+## Error Handling
 
 There is much wrong with our initial parser code. In this section we're going to fix error handling. Right now it has many issues:
 
@@ -15,7 +12,7 @@ We will fix this by thinking and coding systematically. The first thing is ask o
 
 Once we make this realisation the code follows straight-away. For this type of data we use the *sealed trait* pattern.
 
-## The Sealed Trait Pattern
+### The Sealed Trait Pattern
 
 If some data `A` can be a `B` or a `C` and nothing else, we should write
 
@@ -27,9 +24,9 @@ final case class C() extends A
 
 Sealed traits. Extension points (final / non-final)
 
-## Exercise
+### Exercise
 
-#### Better ParserResult
+### Better ParserResult
 
 Implement a better `ParserResult`. This exercise is deliberately vague about what exactly you should implement. Use your personal style and flava to fill in the missing details.
 
@@ -45,7 +42,7 @@ final case class Success(result: String, remainder: String) extends Parse
 </div>
 
 
-#### Parser Error Handling
+### Parser Error Handling
 
 Make the necessary chages to `Parser` to use the new `ParserResult` type.
 
@@ -59,7 +56,7 @@ There are a few interesting points to note:
 </div>
 
 
-#### One or More
+### One or More
 
 Implement the `+` operator, which matches a parser one or more times.
 
@@ -75,7 +72,7 @@ def `+`: Parser =
 </div>
 
 
-#### Alternatives
+### Alternatives
 
 Now we can distinguish failure and success implement alternative (`|`), which returns the result of the first parser if it succeeds, and otherwise tries the second parser.
 
@@ -98,13 +95,13 @@ def `|`(that: Parser): Parser =
 </div>
 
 
-## Recognising Expressions
+### Recognising Expressions
 
 With and (`~`), or (`|`), and repetition (`*`) we have the fundamental operators for our parser library. We can't actually do anything useful when we're parsing an expression, but we'll get to that in a moment. Right now we'll take a quick break to explore the power of what we have implemented, by writing a parser to recognise arithemetic expressions.
 
 Let's begin with a very simple grammar. An expression can be either digits (one or more of the characters 0 to 9), or an addition or subtraction expression. We'll approach this in very small pieces
 
-#### Regular Expressions
+### Regular Expressions
 
 It will be handy to be able to construct a parser from a regular expression, so add such a constructor to the `Parser` companion object.
 
@@ -124,7 +121,7 @@ def regex(regex: String): Parser = {
 ~~~
 </div>
 
-#### Digits
+### Digits
 
 Implement a parser for digits using the regular expression `"[0-9]"` to match a digits.
 
@@ -140,7 +137,7 @@ object NumericParser {
 ~~~
 </div>
 
-#### Expressions
+### Expressions
 
 Implement a parser for addition and subtraction expressions. An expression is digits, or `<expression>+<expression>` or `<expression>-<expression>` (we're ignoring whitespace for now).
 
@@ -204,7 +201,7 @@ object NumericParser {
 The code is tagged with `parser-numeric-expression`.
 </div>
 
-## Recap
+### Recap
 
 In this section we've seen many concepts.
 

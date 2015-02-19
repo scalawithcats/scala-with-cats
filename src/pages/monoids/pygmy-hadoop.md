@@ -1,7 +1,4 @@
----
-layout: page
-title: "Project: Pygmy Hadoop"
----
+## Project: Pygmy Hadoop
 
 In a previous section we implemented a function `foldMap` that folded a `List` using an implicit monoid. In this project we're going to extend this idea to parallel processing.
 
@@ -14,7 +11,7 @@ If this sounds like a monoid, it's because it is a monoid. We're not the first t
 In this project we're going to implement a very simple single-machine MapReduce. In fact, we're just going to parallelize `foldMap` and then look at some of more interesting monoids that are applicable for processing large data sets.
 
 
-## FoldMap
+### FoldMap
 
 Last time we saw `foldMap` we implemented it as follows:
 
@@ -32,7 +29,7 @@ To run the fold in parallel we need to change the implementation strategy. A sim
 Scala provides some simple tools to distribute work amongst threads. We could in fact just use the [parallel collections library](http://docs.scala-lang.org/overviews/parallel-collections/overview.html) to implement a solution, but I want to go a bit lower level. You might have already used `Future`s. A `Future` models a computation that may not yet have a value. That is, it represents a value that will become available in the future. They are a good tool for this sort of job.
 
 
-## Futures
+### Futures
 
 To execute an operation in parallel we can construct a `Future` like so
 
@@ -64,7 +61,7 @@ Await.result(Future(1), Duration.Inf) // Wait forever till a result arrives
 ~~~
 
 
-## Partitioning Sequences
+### Partitioning Sequences
 
 We can partition a sequence (actually anything that implements `Iterable`) using the `grouped` method.
 
@@ -77,7 +74,7 @@ res23: List[Seq[Int]] = List(List(1, 2), List(3, 4))
 ~~~
 
 
-## Parallel FoldMap
+### Parallel FoldMap
 
 Implement a parallel version of `foldMap` called `foldMapP` using the tools described above. Compare performance to the sequential `foldMap`. Here's a method you might find useful for benchmarking:
 
@@ -131,6 +128,6 @@ object FoldMap {
 </div>
 
 
-## More Monoids
+### More Monoids
 
 The monoid instances we have considered so far are very simple. Much more complex and interesting monoids are possible. For example, the [HyperLogLog](http://en.wikipedia.org/wiki/HyperLogLog) algorithm is used to approximate the number of distinct elements in a collection and forms a monoid. It is extremely commonly used in big data applications due to its high accuracy and small storage requirements. Other algorithms for which there is a monoid include the [Bloom filter](http://en.wikipedia.org/wiki/Bloom_filter), a space-efficient probabilistic set, [stochastic gradient descent](http://en.wikipedia.org/wiki/Stochastic_gradient_descent), commonly used to train machine learning models, and the [Top-K algorithm](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.114.9563), used to find the *K* frequent items in a collection. Scala implementations of all these algorithms can be found in [Algebird](https://github.com/twitter/algebird).

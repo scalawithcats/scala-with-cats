@@ -1,7 +1,4 @@
----
-layout: page
-title: Parser Combinators
----
+# Parser Combinators
 
 In this section we will implement a parser combinator library. What are parser combinators? They are a simple way of writing parsers by composing them out of small units, such as sequencing and alternation. ...
 

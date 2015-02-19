@@ -1,7 +1,4 @@
----
-layout: page
-title: Either
----
+## Either
 
 The Scala standard library has a type `Either`. Scalaz provides an alternative called [`\/`](http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.$bslash$div) (reminiscent of the math sign for disjunction). Why have this? It provides a few useful methods, and more useful default behaviour for `flatMap`. `Either` is not biased -- it has no `flatMap` method and you have to decide which side you want to be "correct" side for `flatMap` by taking a left- or right-projection. This is incovenient to use, especially as the convention is that `Right` is the success case. `\/` makes the decision that the right side (called `\/-`) is always the success case and thus it can support a `flatMap` method.
 
@@ -51,7 +48,7 @@ scala> "Error".left[Int] orElse 2.right[String]
 res16: scalaz.\/[String,Int] = \/-(2)
 ~~~
 
-## Fail-Fast Error Handling
+### Fail-Fast Error Handling
 
 The typical usage for `\/` is to implement fail-fast error handling. We can sequence a number of computations using `flatMap`, and if one fails we won't run any more.
 
@@ -73,9 +70,9 @@ Then we have the safety of pattern matching on an algebraic data type for handli
 
 Occasionally we want to run a sequence of steps until one succeeds. We can model this using `\/` by flipping the left and right cases. The `swap` method provides this.
 
-## Exercises
+### Exercises
 
-#### Seeing is Believing
+### Seeing is Believing
 
 Call `foldMapM` with `\/` as your monad of choice and verify that is really does stop execution as soon an error is encountered. You can force an error by trying to convert a `String` to an `Int` using the method shown below.
 
@@ -117,7 +114,7 @@ I've called the type `Result` in my example above.
 You can verify this by adding some `println` statements in judicious places.
 </div>
 
-#### What is Best?
+### What is Best?
 
 Is this error handling strategy well suited to the task at hand? What other features might we want from error handling?
 

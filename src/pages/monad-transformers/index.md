@@ -1,7 +1,4 @@
----
-layout: page
-title: Monad Transformers
----
+# Monad Transformers
 
 Squish together some monads.
 

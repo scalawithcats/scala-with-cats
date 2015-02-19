@@ -1,7 +1,4 @@
----
-layout: page
-title: Functors
----
+# Functors
 
 In this section we're investigate **functors**. Functors on their own aren't so useful, but special cases of functors such as as **monads** and **applicative functors** are some of the most commonly used abstractions in Scalaz.
 

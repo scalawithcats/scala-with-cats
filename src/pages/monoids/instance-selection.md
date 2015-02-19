@@ -1,7 +1,4 @@
----
-layout: page
-title: Controlling Type Class Instance Selection
----
+## Controlling Type Class Instance Selection
 
 When working with type classes we must consider two issues the control type class instance selection:
 
@@ -11,7 +8,7 @@ When working with type classes we must consider two issues the control type clas
 
 In this section we explore how Scalaz answers these questions.
 
-## Type Class Variance
+### Type Class Variance
 
 When we define type classes we can add variance annotations like we can for any other generic type. To quickly recap, there are three cases:
 
@@ -57,7 +54,7 @@ scala> none[Int]
 res1: Option[Int] = None
 ~~~
 
-## Instance Selection
+### Instance Selection
 
 The other issue is choosing between type class instances when several are available for a given type. There are two solutions in common use: so-called unboxed tagged types, and value classes.
 

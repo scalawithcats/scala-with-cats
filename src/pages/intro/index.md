@@ -1,8 +1,3 @@
----
-layout: page
-title: Introduction
----
-
 # Introduction
 
 Scalaz contains a wide variety of functional programming tools, and allows developers to pick and choose between them. A large proportion of the code is delivered in the form of *type classes* that we can apply to existing Scala types.

@@ -1,7 +1,4 @@
----
-layout: page
-title: Applicative Parsers
----
+## Applicative Parsers
 
 In the previous sections we have developed all the tools we need to write parsers but they aren't especially convenient to use. One of the issues is how we combine parsers. We end up with nested tuples, as we saw in the numeric expresssion example, which are inconvenient to use. We'd ideally like two things:
 
@@ -10,13 +7,13 @@ In the previous sections we have developed all the tools we need to write parser
 
 We'll attack the second and along the way get the first.
 
-## Abstracting Over Arity
+### Abstracting Over Arity
 
 There is a basic issue in most statically typed languages that we can't easily abstract over arity. What this means is that we can't express a function or tuple of varying size. When we specify, for example, a tuple type it must have a fixed number of elements.
 
 Given a nested tuple like `((1, 2), 3)` we could write an implicit conversion to a flat tuple. It's worth doing this exercise to better understand the issue. We'll use the enrichment pattern here so we can add a method `flatten` to a tuple.
 
-#### Exercise: Flattening
+### Exercise: Flattening
 
 Define a `Tuple2Flatten` enrichment with a method `flatten`, and an instance of `Flattener` for a nested tuple like `((1, 2), 3)`.
 
@@ -34,7 +31,7 @@ It's fairly straightforward to define this class, but we can't abstract over it 
 </div>
 
 
-## A New Hope
+### A New Hope
 
 If we were to use the [Shapeless](https://github.com/milessabin/shapeless/wiki/) project we could its [features to abstract over arity](https://github.com/milessabin/shapeless/wiki/Feature-overview:-shapeless-2.0.0#hlist-style-operations-on-standard-scala-tuples) but we're going to take a somewhat roundabout route to arrive at the same place. Our route will allow us to understand a bit more of the plumbing that goes into libraries like Shapeless and Scalaz.
 
@@ -142,7 +139,7 @@ A few notes:
 - We have to supply the elements in the opposite order to which they are applied, which is a bit annoying.
 
 
-## Applicative Functors
+### Applicative Functors
 
 Scalaz provides some fairly elaborate infrastructure for us:
 
@@ -153,7 +150,7 @@ Scalaz provides some fairly elaborate infrastructure for us:
 
 Let's implement an instance of Scalaz's `Applicative` type class for our `Parser` type, and then we can take advantage of the rest of the support Scalaz provides.
 
-#### Exercise: Applicative Parser
+### Exercise: Applicative Parser
 
 Define a typeclass instance of `Applicative` for `Parser`. You must implement the following trait:
 
@@ -206,7 +203,7 @@ Checkout the `parser-applicative` tag to see the full code and tests.
 </div>
 
 
-## Using Applicative
+### Using Applicative
 
 Once we have our `Applicative` instance we can take it for a spin:
 
@@ -281,9 +278,9 @@ We use a number of carets one less than the number of `Applicative`s we have.
 
 We can combine `<*`, `*>`, and `^` to write expressions involving `Applicative`s in a natural order.
 
-## Exercise
+### Exercise
 
-#### Applicative Expressions
+### Applicative Expressions
 
 Rewrite your numeric expression parser to use `Applicative` style.
 
@@ -307,7 +304,7 @@ val expression: Parser[Expression] =
 ~~~
 </div>
 
-#### Whitespace
+### Whitespace
 
 Now that we can easily drop results we're not interested in, extend your numeric expression parser to handle whitespace around digits and operators.
 
@@ -316,13 +313,13 @@ Now that we can easily drop results we're not interested in, extend your numeric
 Checkout the `parser-applicative-numeric` tag to see the complete solution.
 </div>
 
-## A Note About Caret Syntax and Applicative Builder
+### A Note About Caret Syntax and Applicative Builder
 
 In online tutorials you'll often find reference to "applicative builder" style which uses a `|@|` method to achieve the same thing we did with the caret functions. The reasons we haven't used it here is that evaluates its arguments too eagerly, causing infinite recursion in our numeric expression parser. The caret functions use call-by-name arguments and thus work.
 
 Both the applicative builder and the caret functions are only defined for a finite number of arguments. Neither really gets around the inability to abstract over arity, just that if we use these methods someone else has already done the tedious work for us.
 
-## Recap
+### Recap
 
 Applicatives.
 

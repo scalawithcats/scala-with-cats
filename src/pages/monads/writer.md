@@ -1,7 +1,4 @@
----
-layout: page
-title: Writer
----
+## Writer
 
 Carry a log along with our computation.
 
@@ -37,8 +34,8 @@ val writer = for {
 writer.written.map(println)
 ~~~
 
-## Exercises
+### Exercises
 
-#### Post-Mortem
+### Post-Mortem
 
 Log errors in `foldMap` whilst recovering from them.

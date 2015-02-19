@@ -1,7 +1,4 @@
----
-layout: page
-title: Getting Started
----
+## Getting Started
 
 Checkout the `parser-initial` tag.
 
@@ -88,7 +85,7 @@ On the companion object for `Parser` we have a constructor to create a parser th
 More interesting is the `*` method on `Parser`. It creates a `Parser` that matches zero or more of instances of the `String` matched by the original parser. It's analogous to the `*` in regular expressions, also known as the [Kleene star](http://en.wikipedia.org/wiki/Kleene_star).
 
 <div class="aside">
-#### A Note on Symbolic Method Names
+### A Note on Symbolic Method Names
 
 Symbolic method names are a controversial subject. Restraint is required lest we turn our programs into an incomprehensible mess of symbols. My rules for using symobolic method names are:
 
@@ -103,13 +100,13 @@ There are some small technical details in the implementation of `*`. Firstly, we
 Tail-recursive methods are the fastest way to implement loops in Scala, so let's quickly review how they work. Due to limitations on the JVM a method can only be made tail-recursive if it exclusively calls itself. (In other language runtimes more general forms of recursion can be made tail recursive.) The second condition for a tail recursive function is that it must return immediately from any self call. If these conditions are met the Scala compiler will convert a recursive method into a loop, which runs much faster. Because tail recursion is an important property we can ask the compiler to ensure methods we think are tail-recursive actually are. We do this using the `@tailrec` annotation. If the compiler determines that an annotated method is not infact tail-recursive it will complain.
 
 
-## Exercises
+### Exercises
 
-#### At the Console
+### At the Console
 
 Open up the console in `sbt` (use the `console`) command and play around with the `Parser` code. Create some parsers, parse some data, and see how `*` works. Make sure you are comfortable with the code before continuing.
 
-#### Sequencing
+### Sequencing
 
 Implement the `~` method. This method sequences parsers, so `a ~ b` is the parser that results from parsing first with `a` and then parsing with `b`. If either `a` or `b` fails the combined parser should fail. Inspect the tests to see concrete examples of the expected semantics.
 
