@@ -34,12 +34,12 @@ final case object C extends A
 
 It turns out we can't have both at once. The three choices give us behaviour as follows:
 
-| Type Class Variance           | Invariant | Covariant | Contravariant |
-|-------------------------------|-----------|-----------|---------------|
-| Supertype instance used?      | No        | No        | Yes           |
-| More specific type preferred? | Yes       | Yes       | No            |
-|=======================================================================|
-{: .table .table-bordered }
+----------------------------------------------------------------------- 
+Type Class Variance             Invariant   Covariant   Contravariant  
+------------------------------- ----------- ----------- --------------- 
+Supertype instance used?        No          No          Yes            
+More specific type preferred?   Yes         Yes         No             
+----------------------------------------------------------------------- 
 
 It's clear there is no perfect system. Scalaz generally prefers to use invariant type classes. This allows us to specify more specific instances for subtypes, if we want. It does mean that if we have, for example, a value of type `Some[Int]` our monoid instance for `Option` will not be used. We can solve this problem with a type annotation like `Some(1) : Option[Int]` or by using "smart constructors" that construct values with the type of the base trait in an algebraic data type. Scalaz provides these constructors for `Option`, which are called `some` and `none`.
 

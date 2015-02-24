@@ -1,14 +1,14 @@
-# Type Classes
+## Type Classes
 
 **Type classes** are a programming pattern originating from Haskell. They allow us to extend existing libraries with new functionality, without using traditional inheritance, and without altering the original library source code.
 
 In this section we will learn how to implement type classes in Scala using *implicit values*.
 
-## Anatomy of a Type Class
+### Anatomy of a Type Class
 
 There are three important components to the type class pattern: the *type class* itself, *instances* for particular types, and the *interface* methods that we expose to users:
 
-### The Type Class
+#### The Type Class
 
 The *type class* itself is a generic type that represents the functionality we want to implement. For example, we can represent generic "serialize to JSON" behaviour as a generic trait:
 
@@ -18,7 +18,7 @@ trait JsonWriter[A] {
 }
 ~~~
 
-### Type Class Instances
+#### Type Class Instances
 
 The *instances* of a type class provide implementations for the types we care about, including standard Scala types and types from our domain model.
 
@@ -33,13 +33,13 @@ object DefaultJsonWriters {
 }
 ~~~
 
-### Interfaces
+#### Interfaces
 
 An *interface* is any functionality we expose to users. Interfaces to type classes are generic methods that accept instances of the type class as implicit parameters.
 
 There are two common ways of specifying an interface:
 
-#### Interface Objects
+##### Interface Objects
 
 The simplest way of creating an interface is to place the interface methods in a singleton object:
 
@@ -59,7 +59,7 @@ import DefaultJsonWriters._
 val json: Json = Json.toJson(Person("Dave", "dave@example.com"))
 ~~~
 
-#### Interface Syntax
+##### Interface Syntax
 
 As an alternative, we can use *type enrichment* to "pimp" existing types with interface methods. Scalaz refers to this as *"syntax"* for the type class:
 
@@ -82,9 +82,9 @@ import JsonSyntax._
 val json: Json = Person("Dave", "dave@example.com").toJson
 ~~~
 
-## Exercises
+### Exercises
 
-### Printable Library
+#### Printable Library
 
 Scala provides a `toString` method to let us convert any value to a `String`. However, this method comes with a few disadvantages. It is implemented for *every* type in the language, many implementations are of limited use, and we can't opt-in to specific implementations for specific types.
 
@@ -138,7 +138,7 @@ object Print {
 ~~~
 </div>
 
-### Using the Printable Library
+#### Using the Printable Library
 
 The code above forms a general purpose printing library that we can use in multiple applications. Let's define an "application" now that uses the library:
 
@@ -198,7 +198,7 @@ object Main extends App {
 ~~~
 </div>
 
-### Print Syntax
+#### Print Syntax
 
 Let's make our printing library easier to use by defining some print syntax:
 
@@ -241,7 +241,7 @@ object Main extends App {
 ~~~
 </div>
 
-## Take Home Points
+### Take Home Points
 
 In this section we revisited the concept of a **type class**, which allows us to add new functionality to existing types.
 
