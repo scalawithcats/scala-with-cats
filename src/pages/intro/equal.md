@@ -2,8 +2,6 @@
 
 We will finish off this chapter by looking at another useful type class: [scalaz.Equal].
 
-[scalaz.Equal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Equal
-
 ### Equality, Liberty, and Fraternity
 
 We can use `Equal` to define type-safe equality between instances of any given type:
@@ -21,8 +19,6 @@ The interface syntax, defined in [scalaz.syntax.equal], provides two methods for
 
  - `===` compares two objects for equality;
  - `=/=` compares two objects for inequality.
-
-[scalaz.syntax.equal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.Syntaxes$equal$
 
 ### Comparing Ints
 
@@ -57,8 +53,6 @@ import scala.syntax.equal._
 123 =/= 234 // true
 123 === "abc" // compile error
 ~~~
-
-[scalaz.syntax.equal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.Syntaxes$equal$
 
 ### Comparing Options
 
@@ -163,5 +157,3 @@ In this section we introduced a new type class -- [scalaz.Equal] -- that lets us
 
 Because `Equal` is invariant, we have to be precise about the types of the values we use as arguments. We sometimes need add type hints to ensure the compiler that everything is ok.
 
-[scalaz.Equal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Equal
-[scalaz.syntax.equal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.Syntaxes$equal$

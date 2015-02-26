@@ -48,4 +48,5 @@ pages:
   - src/pages/parser/applicative.md
 
   - src/pages/solutions.md
+  - src/pages/links.md
 ...

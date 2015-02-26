@@ -14,9 +14,6 @@ Scalaz is written using a modular code structure that allows us to choose which 
 
  - `def show(value: A): Cord` -- similar to `shows` but returns a [scalaz.Cord] -- a data structure supporting efficient text manipulation.
 
-[scalaz.Show]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Show
-[scalaz.Cord]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Cord
-
 ### Type Classes
 
 The type classes in Scalaz are defined in the [scalaz] package. We can import `Show` directly from this package:
@@ -34,8 +31,6 @@ val intShow = Show.apply[Int]
 ~~~
 
 Oops - that didn't work! The `apply` method uses *implicits* to look up individual instances, so we'll have to bring some instances into scope.
-
-[scalaz]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.package
 
 ### Importing Default Instances
 
@@ -78,14 +73,6 @@ val stringAsString: String =
 
 Notice that the output for `String` is wrapped in double quotes like a Scala string literal. This hints at `Show's` intended purpose -- to provide useful debugging output for developers.
 
-[scalaz.std]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.package
-[scalaz.std.anyVal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.anyVal$
-[scalaz.std.string]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.string$
-[scalaz.std.list]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.list$
-[scalaz.std.option]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.option$
-[scalaz.std.map]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.map$
-[scalaz.std.tuple]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.tuple$
-
 ### Interface Syntax
 
 We can make `Show` easier to use by importing the *interface syntax* from [scalaz.syntax.show]. This adds `show` and `shows` methods to any type for which we have an instance of `Show` in scope:
@@ -98,8 +85,6 @@ val shownString = "abc".shows // == "\"abc\""
 ~~~
 
 Scalaz provides separate syntax imports for each type class. We will introduce these as we encounter them in later sections and chapters.
-
-[scalaz.syntax.show]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.Syntaxes$show$
 
 ### Defining Custom Instances
 
@@ -154,9 +139,3 @@ Scalaz type classes are defined in the [scalaz] package. For example, the `Show`
 Default instances are defined in the [scalaz.std] package. Imports are organized by parameter type (as opposed to type class).
 
 Interface syntax is defined in the [scalaz.syntax] package. There are separate syntax imports for each type class. For example, the syntax for `Show` is defined in [scalaz.syntax.show].
-
-[scalaz]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.package
-[scalaz.Show]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Show
-[scalaz.std]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.package
-[scalaz.syntax]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.package
-[scalaz.syntax.show]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.Syntaxes$show$
