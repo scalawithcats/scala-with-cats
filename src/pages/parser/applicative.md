@@ -59,7 +59,7 @@ foo.curried
 res0: Int => (Int => (Int => Int)) = <function1>
 ~~~
 
-With curried functions we can fake abstraction over arity. Say we have three `Int`s and our function `foo` above. We can apply each `Int` to `foo` in turn, getting back a new function till we have supplied all three arguments, when we get back an `Int`.
+With curried functions we can fake abstraction over arity. Say we have three `Ints` and our function `foo` above. We can apply each `Int` to `foo` in turn, getting back a new function till we have supplied all three arguments, when we get back an `Int`.
 
 ~~~ scala
 scala> foo.curried(1)(2)(3)
@@ -242,7 +242,7 @@ Method    We have     We provide   We get
 `*>`      F[A]        F[B]         F[B]
 -----------------------------------------------
 
-What this concretely means is they combine two `Parser`s, running them both but only keeping the result that the arrow points towards. With them we can simplify our definition:
+What this concretely means is they combine two `Parsers`, running them both but only keeping the result that the arrow points towards. With them we can simplify our definition:
 
 ~~~ scala
 scala> val parser = Parser.string("dog") *> Parser.string("bites") *> Parser.string("man")
@@ -258,7 +258,7 @@ res10: underscore.parser.Parse[String] = Success(man tastes like chicken!,)
 
 This is much clearer.
 
-Sometime we do need more than one result, so the problem still remains. In these cases we can combine `Applicative`s using the "caret" syntax. The `^` methods (`^`, `^^`, and so on) allow us to apply a method to a number of `Applicative`s in the order we expect.
+Sometime we do need more than one result, so the problem still remains. In these cases we can combine `Applicatives` using the "caret" syntax. The `^` methods (`^`, `^^`, and so on) allow us to apply a method to a number of `Applicatives` in the order we expect.
 
 Here is it in use
 
@@ -275,9 +275,9 @@ scala> parser(taste).parse("dogbitesman")
 res1: underscore.parser.Parse[String] = Success(man tastes like chicken!,)
 ~~~
 
-We use a number of carets one less than the number of `Applicative`s we have.
+We use a number of carets one less than the number of `Applicatives` we have.
 
-We can combine `<*`, `*>`, and `^` to write expressions involving `Applicative`s in a natural order.
+We can combine `<*`, `*>`, and `^` to write expressions involving `Applicatives` in a natural order.
 
 ### Exercise
 
