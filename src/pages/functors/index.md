@@ -4,24 +4,44 @@ In this section we will investigate **functors**. Functors on their own aren't s
 
 Let's start as we did with monoids by looking at a few types and operations and seeing what general principles we can abstract.
 
+**Sequences**
+
 The `map` method is perhaps the most commonly used method on `Seq`. If we have a `Seq[A]` and a function `A => B`, `map` will create a `Seq[B]`.
 
 ~~~ scala
-scala> Seq(1, 2, 3) map (_.toString)
-res31: Seq[String] = List(1, 2, 3)
+Seq(1, 2, 3) map (_ * 2) // == List(2, 4, 6)
 ~~~
+
+**Options**
 
 We can do the same thing with an `Option`. If we have a `Option[A]` and a function `A => B`, `map` will create a `Option[B]`.
 
 ~~~ scala
-scala> Some(1) map (_.toString)
-res32: Option[String] = Some(1)
+Some(1) map (_.toString) // == Some(1)
 ~~~
 
-Now let's think about mapping over functions of a single argument. What would this mean? All our examples above have had the general shape of `F[A]`, supplying a function `A => B` to map, and getting a `F[B]` in return. A function has two types, the input *and* the output type. Let's fix the input type `R` and just consider the output type `A`, meaning a function `R => A`. Then a function has the shape we need, and map, giving us a `F[B]` means a function `R => B`. Thus `map` is just function composition:
+**Functions (?!)**
+
+Now let's think about mapping over functions of a single argument. What would this mean?
+
+All our examples above have had the following general shape:
+
+ - start with `F[A]`;
+ - supply a function `A => B`;
+ - get back `F[B]`.
+
+A function with a single argument has two types: the parameter type and the result type. To get them to the same shape we can fix the parameter and let the result type vary:
+
+ - start with `R => A`;
+ - supply a function `A => B`;
+ - get back `R => B`.
+
+In other words, "mapping" over a `Function1` is just function composition:
 
 ~~~ scala
 import scalaz.std.function._
+import scalaz.syntax.functor._
+
 val func1 = (x: Int) => x.toDouble
 val func2 = (y: Double) => y * 2
 val func3 = func1 map func2
@@ -40,71 +60,67 @@ The following laws must hold:
 
 If we consider the laws in the context of the functors we've discussed above, we can see they make sense and are true.
 
-## Higher Kinds
-
-Functors are the first type we've seen that has a *higher kind*. Kinds are like types for types.
-
-Concrete types like `Int` and `String` have kind `*`. First order types are type constructors like `List`. `List` has kind `* => *`. Given a concrete type like `Double` we can "apply" `List` to it to yield the concrete type `List[Double]`. Higher order types like `Functor` accept type constructors as parameters. `Functor` has kind `(* => *) => *`---it constructs a type given a type constructor of kind `* => *`.
-
-When we declare a generic type variable we must give it's kind. This is analogous to declaring the type of an expression. We're used to proper types like:
+A simplified version of the definition from Scalaz is:
 
 ~~~ scala
-def identity[A](a: A): A = a
+trait Functor[F[_]] {
+  def map[A, B](fa: F[A])(f: A => B): F[B]
+}
 ~~~
 
-When first or higher order type variables we must indicate how many type parameters they take using notation like `F[_]`. When we actually use this type we just use it's name. Remember the kind is like the type declaration of a binding (e.g. a `val` declaration like `val foo: String = "Hi"`). When we use a binding we don't repeat the type declaration. We just write, for example, `foo`. Similarly when we use a type variable we don't repeat the kind. So, for example, we could write:
+If you haven't seen syntax like `F[_]` before, it's time to take a brief detour to discuss *type constructors* and *higher kinded types*.
+
+## Aside: Higher Kinds and Type Constructors
+
+Kinds are like types for types. The describe the number of "holes" in a type. We distinguish between regular types that have no holes, and "type constructors" that have holes that we can fill to produce types.
+
+For example, `List` is a type constructor with one hole. We fill that hole by specifying a parameter to produce a regular type like `List[Int]` or `List[A]`. The trick is not to confuse type constructors with generic types. `List` is a type constructor, `List[A]` is a type:
 
 ~~~ scala
-def concreteType[F[_]](fa: F[Int]) = ...
+List      // type constructor, takes one parameter
+List[A]   // type, produced using a generic parameter
+List[Int] // type, produced using a concrete parameter
 ~~~
 
-or more commonly:
+There's a close analogy here with functions and values. Functions "value constructors"---they produce values when we supply parameters:
 
 ~~~ scala
-def genericType[F[_], A](fa: F[A]) = ...
+math.abs     // function, takes one parameter
+math.abs(x)  // value, produced using a generic parameter
+math.abs(-1) // value, produced using a concrete parameter
 ~~~
 
-We can add a context bound to indicate that our method accepts a `Functor` for our higher order type parameter:
+We sometimes use "kind notation" to describe the shape of types and their constructors. Regular types have a kind `*`. `List` has kind `* => *` to indicate that it produces a type given a single parameter. `Either` has kind `(*, *) => *` because it accepts two parameters, and so on.
+
+In Scala we declare type constructors using underscores but refer to them without:
 
 ~~~ scala
-def functor[F[_] : Functor, A](fa: F[A]) = ...
+// Declare F using underscores:
+def myMethod[F[_]] = {
+
+  // Refer to F without underscores:
+  val functor = Functor.apply[F]
+
+  // ...
+}
 ~~~
 
-Higher kinded types are an optional language feature in Scala. We need to `import scala.language.higherKinds` in code that uses higher kinds to suppress compiler warnings.
+This is analogous to specifying a function's parameters in its definition and omitting them when referring to it:
 
-## Exercise: A Higher Kind of FoldMap
+~~~ scala
+// Declare f specifying parameters:
+val f = (x: Int) => x * 2
 
-When we looked at `foldMap` earlier, we couldn't write a type class for it because we didn't know how to write the type of the objects that type class should work over. We do now.
+// Refer to f without parameters:
+val f2 = f andThen f
+~~~
 
-Define all the machinery needed for a `FoldMappable` type class: the trait, an interface, some instances, and an enrichment.
+Armed with this knowledge of type constructors, we can see that the Scalaz definition of `Functor` allows us to create instances for any single-parameter type constructor, such as `List`, `Option`, or `Future`.
 
-<div class="solution">
-This exercise is really intended to make us practive defining and using higher kinds. Here is the model solution:
+<div class="callout callout-info">
+Higher kinded types are considered an advanced language feature in Scala. We need to "import" the feature to suppress compiler warnings:
 
 ~~~ scala
 import scala.language.higherKinds
-import scalaz.Monoid
-import scalaz.syntax.monoid._
-
-trait FoldMappable[F[_]] {
-  def foldMap[A, B : Monoid](fa: F[A])(f: A => B): B
-}
-
-object FoldMappable {
-  def apply[F[_] : FoldMappable]: FoldMappable[F] =
-    implicitly[FoldMappable[F]]
-
-  implicit object ListFoldMappable extends FoldMappable[List] {
-    def foldMap[A, B : Monoid](fa: List[A])(f: A => B): B =
-      fa.foldLeft(mzero[B]){ _ |+| f(_) }
-  }
-}
-
-object FoldMappableSyntax {
-  implicit class IsFoldMappable[F[_] : FoldMappable, A](fa: F[A]) {
-    def foldMap[B : Monoid](f: A => B): B =
-      FoldMappable[F].foldMap(fa)(f)
-  }
-}
 ~~~
 </div>
