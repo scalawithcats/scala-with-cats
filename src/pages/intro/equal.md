@@ -56,7 +56,7 @@ import scala.syntax.equal._
 
 ### Comparing Options
 
-Let's look at a more interesting example---`Option[Int]`. To do this we need to import instances of `Equal` for `Option` as well as `Int`:
+Now for a more interesting example---`Option[Int]`. To compare values of type `Option[Int]` we need to import instances of `Equal` for `Option` as well as `Int`:
 
 ~~~ scala
 import scalaz.std.anyVal._
@@ -68,13 +68,13 @@ Some(1) === None
 //         ^
 ~~~
 
-We have received a compile error here because `Equal` is invariant. The type class instances we have in scope are for `Int` and `Option[Int]`, not `Some[Int]`. To fix the issue we have to re-type the arguments as `Option[Int]`:
+We have received a compile error here because the `Equal` type class is invariant. The instances we have in scope are for `Int` and `Option[Int]`, not `Some[Int]`. To fix the issue we have to re-type the arguments as `Option[Int]`:
 
 ~~~ scala
 (Some(1) : Option[Int]) === (None : Option[Int])
 ~~~
 
-We can do this in a friendlier fashion using special `Option` syntax from Scalaz:
+We can do this in a friendlier fashion using special `Option` syntax from `scalaz.std.option`:
 
 ~~~ scala
 some(1) === none[Int] // false
@@ -112,23 +112,37 @@ val optionCat2: Option[Cat] = None
 ~~~
 
 <div class="solution">
+First we need our Scalaz imports. In this exercise we'll be using the `Equal` type class and the `Equal` interface syntax. We'll bring instances of `Equal` into scope as we need them below:
+
 ~~~ scala
 import scalaz.Equal
 import scalaz.syntax.equal._
+~~~
 
+Our `Cat` class is the same as ever:
+
+~~~ scala
 case class Cat(name: String, age: Int, color: String)
+~~~
 
+We define our instance of `Equal[Cat]` in the companion object for `Cat` so it is always in scope. We bring the `Equal` instances for `Int` and `String` into scope for the implementation:
+
+~~~ scala
 object Cat {
-  import scalaz.std.anyVal._
-  import scalaz.std.string._
-
   implicit val catEqual = Equal.equal[Cat] { (cat1, cat2) =>
+    import scalaz.std.anyVal._
+    import scalaz.std.string._
+
     (cat1.name  === cat2.name ) &&
     (cat1.age   === cat2.age  ) &&
     (cat1.color === cat2.color)
   }
 }
+~~~
 
+Finally, we test things out in a sample application:
+
+~~~ scala
 object Main extends App {
   val cat1 = Cat("Garfield",   35, "orange and black")
   val cat2 = Cat("Heathcliff", 30, "orange and black")
@@ -138,6 +152,8 @@ object Main extends App {
 
   println("cat1 === cat2 : " + (cat1 === cat2))
   println("cat1 =/= cat2 : " + (cat1 =/= cat2))
+
+  // Bring Equal[Option] into scope for some further tests:
 
   import scalaz.std.option._
 
@@ -157,3 +173,4 @@ In this section we introduced a new type class---[scalaz.Equal]---that lets us p
 
 Because `Equal` is invariant, we have to be precise about the types of the values we use as arguments. We sometimes need add type hints to ensure the compiler that everything is ok.
 
+Scalaz provides the `some` and `none` methods to help us out with `Options`. We can import these from `scalaz.std.option`.
