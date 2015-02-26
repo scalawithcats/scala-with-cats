@@ -10,9 +10,9 @@ Scalaz is written using a modular code structure that allows us to choose which 
 
 `Show` defines two methods of interest:
 
- - `def shows(value: A): String` -- returns a `String` representation of `A`;
+ - `def shows(value: A): String`---returns a `String` representation of `A`;
 
- - `def show(value: A): Cord` -- similar to `shows` but returns a [scalaz.Cord] -- a data structure supporting efficient text manipulation.
+ - `def show(value: A): Cord`---similar to `shows` but returns a [scalaz.Cord]---a data structure supporting efficient text manipulation.
 
 #### Type Classes
 
@@ -76,7 +76,7 @@ val stringAsString: String =
   // == "\"abc\""
 ~~~
 
-Notice that the output for `String` is wrapped in double quotes like a Scala string literal. This hints at `Show's` intended purpose -- to provide useful debugging output for developers.
+Notice that the output for `String` is wrapped in double quotes like a Scala string literal. This hints at `Show's` intended purpose---to provide useful debugging output for developers.
 
 #### Interface Syntax
 

@@ -69,7 +69,7 @@ res2: Int = 6
 
 So long as we have a fixed number of items we can "roll" a curried function down the series of items, applying an element each time, and we get static checking that aren't supplying too many or too few items.
 
-Now imagine a similar curried function, but this time we're going to apply it to a series of `Parsers`. We could do the same trick with curried functions. Let's have a think about the types. We need some way to apply a function `A => B` to a `Parser[A]` and get back a `Parser[B]`. We already have this -- it's `map`. However, in some cases our `B` above is actually going to be a function type like `X => Y`. So we'll have a `Parser[X => Y]` that we then want to apply to a `Parser[X]` to get a `Parser[Y]`. We don't have an operation to do this.
+Now imagine a similar curried function, but this time we're going to apply it to a series of `Parsers`. We could do the same trick with curried functions. Let's have a think about the types. We need some way to apply a function `A => B` to a `Parser[A]` and get back a `Parser[B]`. We already have this---it's `map`. However, in some cases our `B` above is actually going to be a function type like `X => Y`. So we'll have a `Parser[X => Y]` that we then want to apply to a `Parser[X]` to get a `Parser[Y]`. We don't have an operation to do this.
 
 To make it really concrete, here's an example using `Option` which has the same "type shape" as `Parser`.
 
@@ -95,19 +95,19 @@ temp.flatMap(f => Some(2).map(f))
 res4: Option[Int => Int] = Some(<function1>)
 ~~~
 
-but `flatMap` is strictly more powerful than we need. `flatMap` allows us choose the `Option` we return. We don't need this flexibility -- we already have the `Option`, we just need to apply a function wrapped with an `Option` to it.
+but `flatMap` is strictly more powerful than we need. `flatMap` allows us choose the `Option` we return. We don't need this flexibility---we already have the `Option`, we just need to apply a function wrapped with an `Option` to it.
 
 Let's write down a type table to help us. (For consistency I've rearranged the parameters of our mystery method.)
 
------------------------------------------------ 
-Method    We have     We provide   We get      
---------- ----------- ------------ ------------ 
-map       F[A]        A => B       F[B]        
+-----------------------------------------------
+Method    We have     We provide   We get
+--------- ----------- ------------ ------------
+map       F[A]        A => B       F[B]
 
-flatMap   F[A]        A => F[B]    F[B]        
+flatMap   F[A]        A => F[B]    F[B]
 
-???       F[A]        F[A => B]    F[B]        
------------------------------------------------ 
+???       F[A]        F[A => B]    F[B]
+-----------------------------------------------
 
 The method is called `ap` and types `F[A]` that implement it are called **applicative functors**.
 
@@ -234,13 +234,13 @@ To parse `"dogbitesman"` we have to specify the `Parser` in reverse order. We al
 
 The first part of the solution is the methods `<*` and `*>` that `Applicative` defines for us. They have types
 
------------------------------------------------ 
-Method    We have     We provide   We get      
---------- ----------- ------------ ------------ 
-`<*`      F[A]        F[B]         F[A]        
+-----------------------------------------------
+Method    We have     We provide   We get
+--------- ----------- ------------ ------------
+`<*`      F[A]        F[B]         F[A]
 
-`*>`      F[A]        F[B]         F[B]        
------------------------------------------------ 
+`*>`      F[A]        F[B]         F[B]
+-----------------------------------------------
 
 What this concretely means is they combine two `Parser`s, running them both but only keeping the result that the arrow points towards. With them we can simplify our definition:
 

@@ -142,7 +142,7 @@ Note that I used the partial function syntax (e.g. `case ((number, plus), expr) 
 Write a method called `eval` to evalute expressions to the `Int` they represent.
 
 <div class="solution">
-There are two ways we could write this method: as a method on `Expression` using polymorphism or as method on a companion object using pattern matching. As `eval` depends only on data already stored in `Expression` I have decided to use polymorphism. If we expected to write many tree traversal methods -- if we were writing a compiler for example and wanted to optimise expressions before evaluation -- we might decide to extract our method to a companion object so we don't clutter `Expression` with a huge number of similar methods.
+There are two ways we could write this method: as a method on `Expression` using polymorphism or as method on a companion object using pattern matching. As `eval` depends only on data already stored in `Expression` I have decided to use polymorphism. If we expected to write many tree traversal methods---if we were writing a compiler for example and wanted to optimise expressions before evaluation---we might decide to extract our method to a companion object so we don't clutter `Expression` with a huge number of similar methods.
 
 Either way, `eval` is a straightforward application of structural recursion. My implementation is:
 
@@ -164,7 +164,7 @@ final case class Number(value: Int) extends Expression {
 }
 ~~~
 
-The code is tagged with `parser-eval`. Pay particular attention to the tests -- I spent longer refactoring them than I did writing `eval`.
+The code is tagged with `parser-eval`. Pay particular attention to the tests---I spent longer refactoring them than I did writing `eval`.
 </div>
 
 ### Recap

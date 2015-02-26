@@ -30,7 +30,7 @@ This is just warmup stuff. Examples. Show how we can implement our own instances
 - We can think of things like Option and List as boxes containing values. An Option contains zero or one values. A List contains zero or more values.
 - A basic operation on these boxes is transforming the values they contain. You probably already know the `map` function, which does this.
 - A Functor is just a generalisation of this idea. A container of values with a `map` operation is a Functor.
-- Example: Option. Replace with List -- it still works!
+- Example: Option. Replace with List---it still works!
 - So Functors aren't that exciting, but being able to name this concept (mappable) is useful as it allows us to abstract over it, and also to discuss it.
 - Example: Option and \/. Introduce type lambda (might as well get that horror out the way amongst the easy stuff.)
 - Derived functions on Functor.## Applicative
@@ -38,7 +38,7 @@ This is just warmup stuff. Examples. Show how we can implement our own instances
 - ???
 - \/
 - Writer
-- MonadPlus -- monads that are monoids.
+- MonadPlus---monads that are monoids.
 ## Monad Transformers
 ## Controlling Implicit Selection
 - Unboxed tagged types

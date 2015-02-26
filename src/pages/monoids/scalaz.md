@@ -116,7 +116,7 @@ case class Order(unitCost: Double, quantity: Double)
 but we need to release this code really soon so we can't make any modifications to `add`. Make it so!
 
 <div class="solution">
-Easy-peasy. Just define a monoid instance for `Order`. Notice the type signature of `add` -- the second argument must be call-by-name.
+Easy-peasy. Just define a monoid instance for `Order`. Notice the type signature of `add`---the second argument must be call-by-name.
 
 ~~~ scala
 object Order {
