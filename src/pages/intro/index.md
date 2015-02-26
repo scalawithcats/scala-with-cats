@@ -8,4 +8,4 @@ Quoting the introduction to Scalaz on [Github](https://github.com/scalaz/scalaz)
 >
 > It provides purely functional data structures to complement those from the Scala standard library. It defines a set of foundational *type classes* (e.g. `Functor`, `Monad`) and corresponding instances for a large number of data structures.
 
-In this chapter we will refresh our memory of type classes from Underscore's Essential Scala, and take a first look at Scalaz codebase. We will look at two example type classes -- `Show` and `Equal` -- and use them to identify patterns that will lay the foundations for the rest of the course.
+In this chapter we will refresh our memory of type classes from Underscore's [Essential Scala][link-essential-scala], and take a first look at Scalaz codebase. We will look at two example type classes---`Show` and `Equal`---and use them to identify patterns that will lay the foundations for the rest of the course.

@@ -185,7 +185,7 @@ res5: Int = 4
 
 If `add` was a normal method we'ld only print `"Hi"` once.
 
-If we make the parameter of `~` and `|` call-by-name, our `Parser` will work. Try it and you'll see another issue -- the way the grammar is written we'll stop after parsing the first number. (Try `expression.parse("123+456")` and you'll see.) The solution is to rewrite the grammar so we look for compound expressions first and we proceed left-to-right.
+If we make the parameter of `~` and `|` call-by-name, our `Parser` will work. Try it and you'll see another issue---the way the grammar is written we'll stop after parsing the first number. (Try `expression.parse("123+456")` and you'll see.) The solution is to rewrite the grammar so we look for compound expressions first and we proceed left-to-right.
 
 ~~~ scala
 object NumericParser {

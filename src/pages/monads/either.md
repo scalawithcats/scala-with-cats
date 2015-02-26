@@ -1,6 +1,6 @@
 ## Either
 
-The Scala standard library has a type `Either`. Scalaz provides an alternative called [`\/`](http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.$bslash$div) (reminiscent of the math sign for disjunction). Why have this? It provides a few useful methods, and more useful default behaviour for `flatMap`. `Either` is not biased -- it has no `flatMap` method and you have to decide which side you want to be "correct" side for `flatMap` by taking a left- or right-projection. This is incovenient to use, especially as the convention is that `Right` is the success case. `\/` makes the decision that the right side (called `\/-`) is always the success case and thus it can support a `flatMap` method.
+The Scala standard library has a type `Either`. Scalaz provides an alternative called [`\/`](http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.$bslash$div) (reminiscent of the math sign for disjunction). Why have this? It provides a few useful methods, and more useful default behaviour for `flatMap`. `Either` is not biased---it has no `flatMap` method and you have to decide which side you want to be "correct" side for `flatMap` by taking a left- or right-projection. This is incovenient to use, especially as the convention is that `Right` is the success case. `\/` makes the decision that the right side (called `\/-`) is always the success case and thus it can support a `flatMap` method.
 
 ~~~ scala
 scala> \/.right(1).flatMap(x => \/.right(x + 2))

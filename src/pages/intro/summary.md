@@ -1,6 +1,6 @@
 ## Summary
 
-In this chapter we took a first look at type classes. We implemented our own `Printable` type class using plain Scala, before looking at two examples from Scalaz -- `Show` and `Equal`.
+In this chapter we took a first look at type classes. We implemented our own `Printable` type class using plain Scala before looking at two examples from Scalaz---`Show` and `Equal`.
 
 We have now seen the general patterns in Scalaz type classes:
 
@@ -19,4 +19,4 @@ We have now seen the general patterns in Scalaz type classes:
 
  - Many type classes have *syntax* provided via the [scalaz.syntax] package.
 
-In the remaining chapters of this course we will look at four broad and powerful type classes -- `Monoids`, `Functors`, `Monads`, and `Applicatives`. In each case we will learn what functionality the type class provides, the formal rules it follows, and how it is implemented in Scalaz.
+In the remaining chapters of this course we will look at four broad and powerful type classes---`Monoids`, `Functors`, `Monads`, and `Applicatives`. In each case we will learn what functionality the type class provides, the formal rules it follows, and how it is implemented in Scalaz.

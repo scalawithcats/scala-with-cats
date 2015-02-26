@@ -12,3 +12,7 @@
 [scalaz.syntax.show]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.Syntaxes$show$
 [scalaz.syntax]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.package
 [scalaz]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.package
+
+[link-don-stewart]: https://donsbot.wordpress.com
+[link-don-stewart-so]: http://stackoverflow.com/questions/27852709/enterprise-patterns-with-functional-programming/27860072#27860072
+[link-essential-scala]: http://underscore.io/training/courses/essential-scala/
