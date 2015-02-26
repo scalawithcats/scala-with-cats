@@ -34,8 +34,6 @@ val writer = for {
 writer.written.map(println)
 ~~~
 
-### Exercises
-
-### Post-Mortem
+### Exercise: Post-Mortem
 
 Log errors in `foldMap` whilst recovering from them.

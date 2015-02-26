@@ -209,7 +209,7 @@ We've used Scala's sealed trait pattern to implement algebraic data types. Algeb
 
 We've have implemented the core of our parser combinator library. A combinator library consists of three things:
 
-- the primitive data objects, in our the methods for constructing basic `Parser`s;
+- the primitive data objects, in our the methods for constructing basic `Parsers`;
 - the operators for combining objects into new objects, in our case `~`, `*`, `|`, and derived operations; and
 - some way of using the objects we build, in our case the `parse` method on `Parser`.
 

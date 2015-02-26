@@ -1,6 +1,9 @@
 [scalaz.Cord]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Cord
 [scalaz.Equal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Equal
+[scalaz.Foldable]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Foldable
+[scalaz.Monoid]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Monoid
 [scalaz.Show]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Show
+[scalaz.Tag]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Tag$
 [scalaz.std.anyVal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.anyVal$
 [scalaz.std.list]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.list$
 [scalaz.std.map]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.map$
@@ -13,6 +16,16 @@
 [scalaz.syntax]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.package
 [scalaz]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.package
 
+[link-algebird]: https://github.com/twitter/algebird
+[link-bloom-filter]: http://en.wikipedia.org/wiki/Bloom_filter
 [link-don-stewart]: https://donsbot.wordpress.com
 [link-don-stewart-so]: http://stackoverflow.com/questions/27852709/enterprise-patterns-with-functional-programming/27860072#27860072
 [link-essential-scala]: http://underscore.io/training/courses/essential-scala/
+[link-hyperloglog]: http://en.wikipedia.org/wiki/HyperLogLog
+[link-mapreduce]: http://research.google.com/archive/mapreduce.html
+[link-mapreduce-monoid]: http://arxiv.org/abs/1304.7544
+[link-parallel-collections]: http://docs.scala-lang.org/overviews/parallel-collections/overview.html
+[link-stochastic-gradient-descent]: http://en.wikipedia.org/wiki/Stochastic_gradient_descent
+[link-summingbird]: https://github.com/twitter/summingbird
+[link-topk]: http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.114.9563
+[link-value-classes]: http://docs.scala-lang.org/overviews/core/value-classes.html

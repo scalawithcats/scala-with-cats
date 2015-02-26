@@ -4,7 +4,7 @@ Until now we have built recognisers: we can detect is a string matches a grammar
 
 ### An Output Type
 
-Right now our parsers return `String`s. If we're going to change the output of our parser we need to introduce a type for the output. Since the type varies according to the use of the parser, it needs to be a generic type.
+Right now our parsers return `Strings`. If we're going to change the output of our parser we need to introduce a type for the output. Since the type varies according to the use of the parser, it needs to be a generic type.
 
 ### Exercise
 

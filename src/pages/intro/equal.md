@@ -93,7 +93,7 @@ implicit val dateEqual = Equal.equal[Date] { (date1, date2) =>
 }
 ~~~
 
-### Exercises
+### Exercise: Equality, Liberty, and Felinity
 
 Implement an instance of `Equal` for our running `Cat` example:
 

@@ -25,8 +25,6 @@ A monad must obey three laws:
 2. *Right identity*: `m flatMap point == m`
 3. *Associativity*: `(m flatMap f) flatMap g == m flatMap (x => (f(x) flatMap g))`
 
-## Exercises
-
-#### Getting Funcy
+## Exercise: Getting Func-y
 
 A monad is also a functor. Write `map` in terms of `flatMap` and `point`.

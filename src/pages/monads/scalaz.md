@@ -83,9 +83,7 @@ A variant on bind, written `>>`, ignores the value in the monad on which we `fla
 option >> (42.point[Option])
 ~~~
 
-### Exercises
-
-### Monadic FoldMap
+### Exercise: Monadic FoldMap
 
 It's useful to allow the user of `foldMap` to perform monadic actions within their mapping function. This, for example, allows the mapping to indicate failure by returning an `Option`.
 
@@ -122,8 +120,7 @@ def foldMapM[A, M[_] : Monad, B: Monoid](iter: Iterable[A])(f: A => M[B]): M[B] 
 ~~~
 </div>
 
-
-### Everything's Monadic
+### Exercise: Everything is Monadic
 
 We can unify monadic and normal code by using the `Id` monad. The `Id` monad provides a monad instance (and many other instances) for plain values. Note that such values are not wrapped in any class. They continue to be the plain values we started with. To access it's instances we require `scalaz.Id._`.
 
