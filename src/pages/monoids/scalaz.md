@@ -1,25 +1,16 @@
 ## Monoids in Scalaz
 
-Now we've seen what a monoid is, let's look at their implementation in Scalaz. The four main points around any type class implementation are:
-
-- the type class trait;
-- the user interface;
-- the type class instances; and
-- any convenience syntax
-
-We'll address each in turn.
-
+Now we've seen what a monoid is, let's look at their implementation in Scalaz. Once again we'll look at the three main aspects of the implementation: the *type class*, the *instances*, and the *interface*.
 
 ### The Monoid Type Class
 
-The monoid type class is [`scalaz.Monoid`](http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.Monoid). If you look at the implementation you'll see that `Monoid` extends `Semigroup`. A semigroup is a monoid without the identity element, leaving only `append`.
+The monoid type class is [`scalaz.Monoid`][scalaz.Monoid]. If you look at the implementation you'll see that `Monoid` extends `Semigroup`. A semigroup is a monoid without the identity element, leaving only `append`.
 
-There are a few utility methods defined on `Monoid`, mostly to do with checking if an element is `zero` (assuming we have an implemenation for equality on the monoid, denoted by the `Equal` type class). In my experience they are little used in practice.
+There are a few utility methods defined on `Monoid`, mostly to do with checking if an element is `zero` (assuming we have an implemenation for equality on the monoid, denoted by the `Equal` type class). These are not commonly used in practice.
 
+### Obtaining Instances
 
-### The User Interface
-
-`Monoid` follows the standard Scalaz pattern for the user interface: the companion object has an `apply` method that returns the type class instance. So if we wanted the monoid instance for `String`, and we have the correct implicits in scope, we can write
+`Monoid` follows the standard Scalaz pattern for the user interface: the companion object has an `apply` method that returns the type class instance. So if we wanted the monoid instance for `String`, and we have the correct implicits in scope, we can write the following:
 
 ~~~ scala
 Monoid[String].append("Hi ", "there")
@@ -31,16 +22,9 @@ which is equivalent to
 Monoid.apply[String].append("Hi ", "there")
 ~~~
 
-There is another useful method on the `Monoid` companion object that creates an instance of the `Monoid` type class.
+### Default Instances
 
-~~~ scala
-Monoid.instance[Int](_ * _, 1)
-~~~
-
-
-### Monoid Instances
-
-The type class instances are organised in the standard way for Scalaz. Instances for types in the standard libary are found under `scalaz.std`. So if we wanted to pull in the instances for `String` we would import `scalaz.std.string._`. Here is a complete program using the monoid instance for `String`.
+The type class instances for `Monoid` are organised under `scalaz.std` in the standard way described in [Chapter 1](#importing-default-instances). For example, if we want to pull in instances for `String` we `import scalaz.std.string._`:
 
 ~~~ scala
 import scalaz.Monoid
@@ -50,15 +34,16 @@ val instance = Monoid[String]
 instance.append("Monoids FTW!", instance.zero)
 ~~~
 
-A non-exhaustive list of instances includes:
+Refer back to [Chapter 1](#importing-default-instances) for a more comprehensive list of imports.
 
-- `Unit`, `Boolean` and `Int` in `scalaz.std.anyVal`;
-- `String` in `scalaz.std.string`;
-- `List` in `scalaz.std.list`;
-- `Set` in `scalaz.std.set`;
-- `Option` in `scalaz.std.option`; and
-- tuple types in `scalaz.std.tuple`.
+### Instances for Custom Types
 
+There is a useful helper method on the `Monoid` companion object to help us declare instances for our own types:
+
+~~~ scala
+val bitwiseXorInstance: Monoid[Int] =
+  Monoid.instance[Int](_ ^ _, 0)
+~~~
 
 ### Monoid Syntax
 
@@ -67,137 +52,176 @@ We access the monoid syntax by importing `scalaz.syntax.monoid._`. This provides
 - the `|+|` operator for appending two values for which there is a monoid instance; and
 - the `mzero` method to access the identity element for a monoid.
 
-When we use `mzero` we usually have to specify a type to avoid ambiguity.
+When we use `mzero` we usually have to specify a type to avoid ambiguity:
 
 ~~~ scala
 import scalaz.syntax.monoid._
 import scalaz.std.string._
 import scalaz.std.anyVal._
 
-"Hi " |+| "there" |+| mzero[String]
-1 |+| 2 |+| mzero[Int]
+val stringResult =
+  "Hi " |+| "there" |+| mzero[String] // == "Hi there"
+
+val intResult =
+  1 |+| 2 |+| mzero[Int]              // == 3
 ~~~
 
-### Exercises
+### Exercise: Adding All The Things
 
-Doing this exercises will give you experience using the Scalaz monoid API.
-
-#### Adding All The Things
-
-The cutting edge SuperAdder v3.5a-32, the world's first choice for adding together numbers. The main function in the program has signature `def add(items: List[Int]): Int`. In a tragic accident this code is deleted! Rewrite the method and save the day!
+The cutting edge *SuperAdder v3.5a-32* is the world's first choice for adding together numbers. The main function in the program has signature `def add(items: List[Int]): Int`. In a tragic accident this code is deleted! Rewrite the method and save the day!
 
 <div class="solution">
+We can write the addition as a simple `foldLeft` using `0` and the `+` operator:
+
 ~~~ scala
 def add(items: List[Int]): Int =
   items.foldLeft(0){ _ + _ }
 ~~~
-</div>
 
-Well dome! SuperAdder's market share continues to grow, and now there is demand for additional functionality. People now want to add `List[Option[Int]]`. Change `add` so this is possible. The SuperAdder code base is of the highest quality, so make sure there is no code duplication.
-
-<div class="solution">
-Hey, we can use a monoid for this!
+We can alternatively write the fold using `Monoids`, although there's not a compelling use case for this yet:
 
 ~~~ scala
 import scalaz.Monoid
 import scalaz.syntax.monoid._
 
-def add[A: Monoid](items: List[A]): A =
-    items.foldLeft(mzero[A]){ _ |+| _ }
+def add(items: List[Int]): Int =
+  items.foldLeft(mzero[Int]){ _ |+| _ }
 ~~~
 </div>
 
-SuperAdder is entering the POS (point-of-sale, not the other POS) market. Now we want to add up
-
-~~~ scala
-case class Order(unitCost: Double, quantity: Double)
-~~~
-
-but we need to release this code really soon so we can't make any modifications to `add`. Make it so!
+Well done! SuperAdder's market share continues to grow, and now there is demand for additional functionality. People now want to add `List[Option[Int]]`. Change `add` so this is possible. The SuperAdder code base is of the highest quality, so make sure there is no code duplication:
 
 <div class="solution">
-Easy-peasy. Just define a monoid instance for `Order`. Notice the type signature of `add`---the second argument must be call-by-name.
+Now there is a use case for `Monoids`. We need a single method that adds `Ints` and instances of `Option[Int]`. We can write this as a generic method that accepts an implicit `Monoid` as a parameter:
+
+~~~ scala
+import scalaz.Monoid
+import scalaz.syntax.monoid._
+
+def add[A](items: List[A])(implicit monoid: Monoid[A]): A =
+  items.foldLeft(mzero[A]){ _ |+| _ }
+~~~
+
+We can optionally use Scala's *context bound* syntax to write the same code in a friendlier way:
+
+~~~ scala
+def add[A: Monoid](items: List[A]): A =
+  items.foldLeft(mzero[A]){ _ |+| _ }
+~~~
+</div>
+
+SuperAdder is entering the POS (point-of-sale, not the other POS) market. Now we want to add up `Orders`:
+
+~~~ scala
+case class Order(totalCost: Double, quantity: Double)
+~~~
+
+We need to release this code really soon so we can't make any modifications to `add`. Make it so!
+
+<div class="solution">
+Easy---we simply define a monoid instance for `Order`!
+Notice the type signature of `append`---the second argument must be call-by-name:
 
 ~~~ scala
 object Order {
-  val zero = Order(0, 0)
-  def add(o1: Order, o2: => Order): Order =
-    Order(
-      (o1.totalCost + o2.totalCost) / (o1.quantity + o2.quantity),
-      o1.quantity + o2.quantity
-    )
+  implicit val monoid: Monoid[Order] = new Monoid[Order] {
+    def append(o1: Order, o2: => Order) =
+      Order(o1.totalCost + o2.totalCost, o1.quantity + o2.quantity)
 
-  implicit val orderInstance: Monoid[Order] = Monoid.instance[Order](add _, zero)
-}
-~~~
-</div>
-
-#### Folding Without the Hard Work
-
-When doing some of the exercises above, or if you've done our "Essential Scala" course, you might have thought that `fold` implicitly requires a monoid and we might as well make it explicit (but with an implicit). Then we could write code like
-
-~~~ scala
-List(1, 2, 3).foldMap
-~~~
-
-(where I have used `foldMap` as the name for our new fold function) and it would select the appropriate monoid instance for the type we specify (in this case we'd expect addition, and the answer would be `6`).
-
-Sounds like a great idea. Define an enrichment of `List[A]` that implements `foldMap` if there is a monoid for `A`.
-
-<div class="solution">
-~~~ scala
-object FoldMap {
-  implicit class ListFoldable[A : Monoid](base: List[A]) {
-    def foldMap: A =
-      base.foldLeft(mzero[A])(_ |+| _)
+    def zero = Order(0, 0)
   }
 }
 ~~~
 </div>
 
-Let's now implement the `map` part of `foldMap`. Extend `foldMap` so it takes a function of type `A => B`, where there is a monoid for `B`, and returns a result of type `B`. If no function is specified it should default to the identity function `a => a`. Here's an example of use
+### Exercise: Folding Without the Hard Work
+
+Given a `Monoid[A]` we can easily define a default operation for folding over instances of `List[A]`. Let's call this new method `foldMap` (we'll come to the `map` part in a bit):
 
 ~~~ scala
-scala> List(1, 2, 3).foldMap[Int]()
-res3: Int = 6
-scala> List("1", "2", "3").foldMap[Int](_.toInt)
-res4: Int = 6
+List(1, 2, 3).foldMap   // == 6
 ~~~
 
-Note there no longer needs to be a monoid for `A`.
+Implement `foldMap` now. Use an `implicit class` to add the method to `List[A]` for any `A`. The method should automatically select an appropriate `Monoid[A]` using implicits:
+
+<div class="solution">
+There are two possible solutions to this. Each involves defining an `implicit class` to wrap `List[A]` and provide the `foldMap` method. We'll call this implicit class `FoldMapOps`.
+
+The first solution puts a context bound on the type parameter for `FoldMapOps`. This restricts the compiler so it can only materialize a `FoldMapOps[A]` if there is a `Monoid[A]` in scope:
+
+~~~ scala
+implicit class FoldMapOps[A: Monoid](base: List[A]) {
+  def foldMap: A =
+    base.foldLeft(mzero[A])(_ |+| _)
+}
+~~~
+
+The second solution moves the implicit parameter to the `foldMap` method. This allows the compiler to materialize `FoldMapOps` for any `A`, but prevents us calling `foldMap` unless there is a `Monoid` in scope.
+
+~~~ scala
+implicit class FoldMapOps[A](base: List[A]) {
+  def foldMap(implicit monoid: Monoid[A]): A =
+    base.foldLeft(mzero[A])(_ |+| _)
+}
+~~~
+
+Either of these approaches works just fine, but the second implementation is mildly preferable because of the error messages it generates when there is no matching `Monoid` in scope. Putting the context bound on the constructor gives us the following:
+
+~~~ scala
+scala> List('a, 'b, 'c).foldMap
+<console>:16: error: value foldMap is not a member of List[Symbol]
+              List('a, 'b, 'c).foldMap
+                               ^
+~~~
+
+whereas putting the parameter on `foldMap` gives us a much more precise error message:
+
+~~~ scala
+scala> List('a, 'b, 'c).foldMap
+<console>:16: error: could not find implicit value ↩
+   for parameter monoid: scalaz.Monoid[Symbol]
+              List('a, 'b, 'c).foldMap
+                               ^
+~~~
+</div>
+
+Now let's implement the `map` part of `foldMap`. Extend `foldMap` so it takes a function of type `A => B`, where there is a monoid for `B`, and returns a result of type `B`. If no function is specified it should default to the identity function `a => a`. Here's an example:
+
+~~~ scala
+List(1, 2, 3).foldMap[Int]()              // 6
+
+List("1", "2", "3").foldMap[Int](_.toInt) // 6
+~~~
+
+Note: we no longer need a monoid for `A`.
 
 <div class="solution">
 ~~~ scala
-object FoldMap {
-  implicit class ListFoldable[A](base: List[A]) {
-    def foldMap[B : Monoid](f: A => B = (a: A) => a): B =
-      base.foldLeft(mzero[B])(_ |+| f(_))
-  }
+implicit class FoldMapOps[A](base: List[A]) {
+  def foldMap[B : Monoid](f: A => B = (a: A) => a): B =
+    base.foldLeft(mzero[B])(_ |+| f(_))
 }
 ~~~
 </div>
 
-It won't come as a surprise to learn we aren't the first to make this connection between fold and monoids. Scalaz provides an abstraction called [`Foldable`](http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.Foldable) that implements `foldMap`. We can use it as follows:
+It won't come as a surprise to learn we aren't the first to make this connection between fold and monoids. Scalaz provides an abstraction called [`Foldable`][scalaz.Foldable] that implements `foldMap`. We can use it by importing `scalaz.syntax.foldable._`:
 
 ~~~ scala
 import scalaz.std.anyVal._
 import scalaz.std.list._
 import scalaz.syntax.foldable._
 
-List(1, 2, 3).foldMap[Int]()
-// res: Int = 6
+List(1, 2, 3).foldMap()           // == 6
+List(1, 2, 3).foldMap(_.toString) // == "123"
 ~~~
 
-Scalaz provides a number of instances for `Foldable`.
+Scalaz provides a number of instances for `Foldable`:
 
 ~~~ scala
 import scalaz.std.iterable._
 import scalaz.std.tuple._
 import scalaz.std.string._
 
-Map[String, Int]("a" -> 1, "b" -> 2).foldMap()
-// res: (String, Int) = (ab,3)
-
-Set(1, 2, 3).foldMap()
-// res: Int = 6
+Map("a" -> 1, "b" -> 2).foldMap() // == (ab, 3)
+Set(1, 2, 3).foldMap(_.toString)  // == "123"
 ~~~

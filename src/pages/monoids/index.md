@@ -1,8 +1,10 @@
 # Monoids
 
-In this section we explore our first type class: **monoids**. Let's start by looking a few types and operations on those types, and see what common principles we can extract.
+In this section we explore our first type class: **monoids**. Let's start by looking a few types and operations, and see what common principles we can extract.
 
-Addition of `Int`s is a binary operation that is *closed*, meaning given two `Int`s we always get another `Int` back. There is also the *identity* element `0` with the property that `a + 0 = + 0 + a = a` for any `Int` `a`.
+**Integer addition**
+
+Addition of `Ints` is a binary operation that is *closed*, meaning given two `Ints` we always get another `Int` back. There is also the *identity* element `0` with the property that `a + 0 = 0 + a = a` for any `Int` `a`.
 
 ~~~ scala
 scala> 2 + 1
@@ -22,6 +24,8 @@ scala> 1 + (2 + 3)
 res1: Int = 6
 ~~~
 
+**Integer multiplication**
+
 We can do the same things with multiplication that we did with addition if we use `1` as the identity.
 
 ~~~ scala
@@ -34,6 +38,8 @@ res3: Int = 6
 scala> 2 * 3
 res4: Int = 6
 ~~~
+
+**String and sequence concatenation**
 
 We can do the same things with `String`, using string concatenation as our binary operator and the empty string as the identity.
 
@@ -51,9 +57,11 @@ scala> "One" ++ ("Two" ++ "Three")
 res9: String = OneTwoThree
 ~~~
 
-Note I used `++` for string concatentation, instead of the more usual `+`, to suggest a parallel with sequence concatenation. And we can do exactly the same with sequence concatenation and the empty sequence as our identity.
+Note I used `++` for string concatentation instead of the more usual `+` to suggest a parallel with sequence concatenation. We can do exactly the same with sequence concatenation and the empty sequence as our identity.
 
-We've seen a number of types that we can "add" and have an identity element. It will be no surprise to learn that this is a monoid. A simplified definition of it in Scalaz is:
+**Monoids in general**
+
+We've seen a number of types that we can "add" and have an identity element. It will be no surprise to learn that this is a monoid. A simplified version of the definition from Scalaz is:
 
 ~~~ scala
 trait Monoid[A] {
@@ -78,24 +86,68 @@ The following laws must hold:
 
 ## Exercises
 
-#### The Truth About Monoids
+### The Truth About Monoids
 
 We've seen a few monoid examples, but there are plenty more available. Consider `Boolean`. How many monoids can you define for this type? For each monoid, define  the `append` and `zero` operations, and convince yourself that the monoid laws hold.
 
 <div class="solution">
-There are three monoids for `Boolean`. They are:
+There are three monoids for `Boolean`.
 
-- `&&` with identity `true`;
-- `||` with identity `false`; and
-- exclusive or, with identity `false`.
+First, we have *and* with operator `&&` and identity `true`:
 
-Showing the identity holds is straightforward. Similarly associativity of the `append` operation can be shown by enumerating the cases.
+~~~ scala
+implicit val booleanAndMonoid: Monoid[Boolean] = new Monoid[Boolean] {
+  def append(a: Boolean, b: => Boolean) = a && b
+  def zero = true
+}
+~~~
+
+Second, we have *or* with operator `||` and identity `false`:
+
+~~~ scala
+implicit val booleanOrMonoid: Monoid[Boolean] = new Monoid[Boolean] {
+  def append(a: Boolean, b: => Boolean) = a || b
+  def zero = false
+}
+~~~
+
+Third, we have *exclusive or* with identity `false`:
+
+~~~ scala
+implicit val booleanXorMonoid: Monoid[Boolean] = new Monoid[Boolean] {
+  def append(a: Boolean, b: => Boolean) = (a && !b) || (!a && b)
+  def zero = false
+}
+~~~
+
+Showing that the identity law holds in each case is straightforward. Similarly associativity of the `append` operation can be shown by enumerating the cases.
 </div>
 
-#### All Set for Monoids
+### All Set for Monoids
 
 What monoids are there for sets?
 
 <div class="solution">
-Set union along with the empty set forms a monoid. Set intersection does not, as there is no identity element. We call this weaker structure a *semigroup*.
+*Set union* forms a monoid along with the empty set:
+
+~~~ scala
+implicit def setUnionMonoid[A]: Monoid[Set[A]] = new Monoid[Set[A]] {
+  def append(a: Set[A], b: => Set[A]) = a union b
+  def zero = Set.empty[A]
+}
+~~~
+
+We need to define `setUnionMonoid` as a method rather than a value so we can accept the type parameter `A`. Scala's implicit resolution algorithm is fine with this---it is capable of determining the correct type parameter to create a `Monoid` of the desired type:
+
+~~~ scala
+val intSetMonoid = Monoid[Set[Int]] // this will work
+~~~
+
+Set intersection does not form a monoid as there is no identity element. We call this weaker structure a *semigroup*---an append operation without a zero. Scala provides the `Semigroup` type class for this, of which `Monoid` is a subtype:
+
+~~~ scala
+implicit def setIntersectionSemigroup[A]: Semigroup[Set[A]] = new Semigroup[Set[A]] {
+  def append(a: Set[A], b: => Set[A]) = a intersect b
+}
+~~~
 </div>

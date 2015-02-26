@@ -10,7 +10,6 @@ If this sounds like a monoid, it's because it is a monoid. We're not the first t
 
 In this project we're going to implement a very simple single-machine MapReduce. In fact, we're just going to parallelize `foldMap` and then look at some of more interesting monoids that are applicable for processing large data sets.
 
-
 ### FoldMap
 
 Last time we saw `foldMap` we implemented it as follows:
@@ -26,7 +25,7 @@ object FoldMap {
 
 To run the fold in parallel we need to change the implementation strategy. A simple strategy is to allocate as many threads as we have CPUs, and then evenly partition our sequence amongst the threads. When each thread completes we simply append the results together.
 
-Scala provides some simple tools to distribute work amongst threads. We could in fact just use the [parallel collections library](http://docs.scala-lang.org/overviews/parallel-collections/overview.html) to implement a solution, but I want to go a bit lower level. You might have already used `Future`s. A `Future` models a computation that may not yet have a value. That is, it represents a value that will become available in the future. They are a good tool for this sort of job.
+Scala provides some simple tools to distribute work amongst threads. We could in fact just use the [parallel collections library](http://docs.scala-lang.org/overviews/parallel-collections/overview.html) to implement a solution, but I want to go a bit lower level. You might have already used `Futures`. A `Future` models a computation that may not yet have a value. That is, it represents a value that will become available in the future. They are a good tool for this sort of job.
 
 
 ### Futures
@@ -46,7 +45,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 We sequence operations on a `Future` using the familiar `map` and `flatMap` methods.
 
-If we have a sequence containing `Future`s we can convert them into a `Future` of a sequence using the method `Future.sequence`.
+If we have a sequence containing `Futures` we can convert them into a `Future` of a sequence using the method `Future.sequence`.
 
 ~~~ scala
 scala> Future.sequence(Seq(Future(1), Future(2), Future(3)))
