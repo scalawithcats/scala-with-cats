@@ -1,8 +1,8 @@
-# Meet Scalaz
+## Meet Scalaz
 
 In the previous section we saw how to implement type classes in Scala. In this section we will look at how type classes are implemented in Scalaz.
 
-## The Structure of Scalaz
+### The Structure of Scalaz
 
 Scalaz is written using a modular code structure that allows us to choose which type classes, instances, and interface methods we want to use. Let's take a first look using [scalaz.Show] as an example.
 
@@ -14,7 +14,7 @@ Scalaz is written using a modular code structure that allows us to choose which 
 
  - `def show(value: A): Cord` -- similar to `shows` but returns a [scalaz.Cord] -- a data structure supporting efficient text manipulation.
 
-### Type Classes
+#### Type Classes
 
 The type classes in Scalaz are defined in the [scalaz] package. We can import `Show` directly from this package:
 
@@ -32,22 +32,27 @@ val intShow = Show.apply[Int]
 
 Oops - that didn't work! The `apply` method uses *implicits* to look up individual instances, so we'll have to bring some instances into scope.
 
-### Importing Default Instances
+#### Importing Default Instances
 
 The [scalaz.std] package provides default instances for a wide variety of types. We can import these from the [scalaz.std] package as shown in the table below. Each import provides instances for a wide variety of type classes and one or several parameter types:
 
-|------------------------------|------------------------------------------|
-| Import                       | Parameter types                          |
-|------------------------------|------------------------------------------|
-| [scalaz.std.anyVal]          | `Int`, `Double`, `Boolean`, etc...       |
-| [scalaz.std.string]          | `String`                                 |
-| [scalaz.std.list]            | `List`                                   |
-| [scalaz.std.option]          | `Option`                                 |
-| [scalaz.std.map]             | `Map` and subtypes                       |
-| [scalaz.std.tuple]           | `Tuple1` to `Tuple8`                     |
-| and so on...                 | and so on...                             |
-|==============================|==========================================|
-{: .table .table-bordered .table-responsive }
+-------------------------------------------------------------------------
+Import                         Parameter types
+------------------------------ ------------------------------------------
+[scalaz.std.anyVal]            `Int`, `Double`, `Boolean`, etc...
+
+[scalaz.std.string]            `String`
+
+[scalaz.std.list]              `List`
+
+[scalaz.std.option]            `Option`
+
+[scalaz.std.map]               `Map` and subtypes
+
+[scalaz.std.tuple]             `Tuple1` to `Tuple8`
+
+and so on...                   and so on...
+-------------------------------------------------------------------------
 
 Let's import the instances of `Show` for `Int` and `String`:
 
@@ -73,7 +78,7 @@ val stringAsString: String =
 
 Notice that the output for `String` is wrapped in double quotes like a Scala string literal. This hints at `Show's` intended purpose -- to provide useful debugging output for developers.
 
-### Interface Syntax
+#### Interface Syntax
 
 We can make `Show` easier to use by importing the *interface syntax* from [scalaz.syntax.show]. This adds `show` and `shows` methods to any type for which we have an instance of `Show` in scope:
 
@@ -86,7 +91,7 @@ val shownString = "abc".shows // == "\"abc\""
 
 Scalaz provides separate syntax imports for each type class. We will introduce these as we encounter them in later sections and chapters.
 
-### Defining Custom Instances
+#### Defining Custom Instances
 
 There are two methods for defining instances on the companion object of `Show`:
 
@@ -103,7 +108,7 @@ implicit val dateShow = Show.shows { date =>
 }
 ~~~
 
-## Exercises
+### Exercises
 
 Re-implement the `Cat` application from the previous section using `Show` instead of `Printable`.
 
@@ -132,7 +137,7 @@ object Main extends App {
 ~~~
 </div>
 
-## Take Home Points
+### Take Home Points
 
 Scalaz type classes are defined in the [scalaz] package. For example, the `Show` type class is defined as [scalaz.Show].
 

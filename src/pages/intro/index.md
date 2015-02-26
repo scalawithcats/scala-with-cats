@@ -2,7 +2,7 @@
 
 Scalaz contains a wide variety of functional programming tools, and allows developers to pick and choose between them. A large proportion of the code is delivered in the form of *type classes* that we can apply to existing Scala types.
 
-Quoting the introduction to Scalaz on [Github]:
+Quoting the introduction to Scalaz on [Github](https://github.com/scalaz/scalaz):
 
 > Scalaz is a Scala library for functional programming.
 >

@@ -99,14 +99,15 @@ but `flatMap` is strictly more powerful than we need. `flatMap` allows us choose
 
 Let's write down a type table to help us. (For consistency I've rearranged the parameters of our mystery method.)
 
-|---------+-----------+------------+------------|
-| Method  | We have   | We provide | We get     |
-|---------+-----------+------------+------------|
-| map     | F[A]      | A => B     | F[B]       |
-| flatMap | F[A]      | A => F[B]  | F[B]       |
-| ???     | F[A]      | F[A => B]  | F[B]       |
-|---------+-----------+------------+------------|
-{: .table .table-bordered .table-responsive }
+----------------------------------------------- 
+Method    We have     We provide   We get      
+--------- ----------- ------------ ------------ 
+map       F[A]        A => B       F[B]        
+
+flatMap   F[A]        A => F[B]    F[B]        
+
+???       F[A]        F[A => B]    F[B]        
+----------------------------------------------- 
 
 The method is called `ap` and types `F[A]` that implement it are called **applicative functors**.
 
@@ -233,13 +234,13 @@ To parse `"dogbitesman"` we have to specify the `Parser` in reverse order. We al
 
 The first part of the solution is the methods `<*` and `*>` that `Applicative` defines for us. They have types
 
-|---------+-----------+------------+------------|
-| Method  | We have   | We provide | We get     |
-|---------+-----------+------------+------------|
-| <*      | F[A]      | F[B]       | F[A]       |
-| *>      | F[A]      | F[B]       | F[B]       |
-|---------+-----------+------------+------------|
-{: .table .table-bordered .table-responsive }
+----------------------------------------------- 
+Method    We have     We provide   We get      
+--------- ----------- ------------ ------------ 
+`<*`      F[A]        F[B]         F[A]        
+
+`*>`      F[A]        F[B]         F[B]        
+----------------------------------------------- 
 
 What this concretely means is they combine two `Parser`s, running them both but only keeping the result that the arrow points towards. With them we can simplify our definition:
 
