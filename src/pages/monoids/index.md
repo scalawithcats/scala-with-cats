@@ -84,9 +84,7 @@ The following laws must hold:
 - `append` is associative, meaning `append(x, append(y, z)) == append(append(x, y), z)` for all `x`, `y`, and `z`, in `A`.
 - `zero` is an identity of `append`, meaning `append(a, zero) == append(zero, a) == a` for any `a` in `A`.
 
-## Exercises
-
-### The Truth About Monoids
+## Exercise: The Truth About Monoids
 
 We've seen a few monoid examples, but there are plenty more available. Consider `Boolean`. How many monoids can you define for this type? For each monoid, define  the `append` and `zero` operations, and convince yourself that the monoid laws hold.
 
@@ -123,7 +121,7 @@ implicit val booleanXorMonoid: Monoid[Boolean] = new Monoid[Boolean] {
 Showing that the identity law holds in each case is straightforward. Similarly associativity of the `append` operation can be shown by enumerating the cases.
 </div>
 
-### All Set for Monoids
+## Exercise: All Set for Monoids
 
 What monoids are there for sets?
 

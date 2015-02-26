@@ -70,9 +70,7 @@ Then we have the safety of pattern matching on an algebraic data type for handli
 
 Occasionally we want to run a sequence of steps until one succeeds. We can model this using `\/` by flipping the left and right cases. The `swap` method provides this.
 
-### Exercises
-
-### Seeing is Believing
+### Exercise: Seeing is Believing
 
 Call `foldMapM` with `\/` as your monad of choice and verify that is really does stop execution as soon an error is encountered. You can force an error by trying to convert a `String` to an `Int` using the method shown below.
 
@@ -114,7 +112,7 @@ I've called the type `Result` in my example above.
 You can verify this by adding some `println` statements in judicious places.
 </div>
 
-### What is Best?
+### Exercise: What is Best?
 
 Is this error handling strategy well suited to the task at hand? What other features might we want from error handling?
 
