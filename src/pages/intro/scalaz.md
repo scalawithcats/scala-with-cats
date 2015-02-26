@@ -30,7 +30,7 @@ val intShow = Show.apply[Int]
 
 Oops - that didn't work! The `apply` method uses *implicits* to look up individual instances, so we'll have to bring some instances into scope.
 
-### Importing Default Instances
+### Importing Default Instances {#importing-default-instances}
 
 The [scalaz.std] package provides default instances for a wide variety of types. We can import these from the [scalaz.std] package as shown in the table below. Each import provides instances for a wide variety of type classes and one or several parameter types:
 
@@ -109,7 +109,7 @@ implicit val dateShow = Show.shows { date =>
 
 These definition helpers exist for `Show` but don't make sense for all Scalaz type classes. We will introduce further helpers as we come to then.
 
-### Exercises
+### Exercise: Cat Show
 
 Re-implement the `Cat` application from the previous section using `Show` instead of `Printable`.
 
