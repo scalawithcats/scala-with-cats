@@ -3,7 +3,7 @@
   "description": "The essential guide to Scalaz",
   "version": "0.0.1",
   "devDependencies": {
-    "underscore-ebook-template": "git+https://github.com/underscoreio/underscore-ebook-template.git#0.0.8"
+    "underscore-ebook-template": "git+https://github.com/underscoreio/underscore-ebook-template.git#0.0.11"
   },
   "scripts": {
     "test": "echo \"Error: no test specificed\" && exit 1"      
