@@ -1,12 +1,14 @@
 ## Project: Pygmy Hadoop
 
-In a previous section we implemented a function `foldMap` that folded a `List` using an implicit monoid. In this project we're going to extend this idea to parallel processing.
+In a previous section we implemented a function `foldMap` that folded a `List` using an implicit `Monoid`. In this project we're going to extend this idea to parallel processing.
 
-If you have used Hadoop or otherwise worked in the "big data" field you will have heard of the [MapReduce](http://research.google.com/archive/mapreduce.html) programming model. MapReduce is a model for parallel data processing that is commonly used to process data cross tens or hundreds of machines. As the name suggests, it is built around a map phase, which is the same `map` function we know from Scala, and a reduce phase, which we usually call `fold`. (In Hadoop there is also a shuffle phase, which we are going to ignore.)
+If you have used Hadoop or otherwise worked in "big data" you will have heard of [MapReduce][link-mapreduce], which is a programming model for doing parallel data processing across tens or hundreds of machines. As the name suggests, model is built around a *map* phase, which is the same `map` function we know from Scala, and a *reduce* phase, which we usually call `fold`[^hadoop-shuffle].
 
-It should be fairly obvious we can apply `map` in parallel. In general we cannot parallelize `fold`, but if we are prepared to restrict the type of functions we allow in fold we can do so. What kind of restrictions should be apply? If the function we provide to `fold` is associative (so `(x + y) + z == x + (y + z)`, for some binary function `+`) we can perform our fold in any order so long as we preserve ordering on the sequence of elements we're processing. If we have an identity element (so `x + 0 == 0 + x` for any `x`) we can introduce the identity at any point to in our fold and know we won't affect the result.
+[^hadoop-shuffle]: In Hadoop there is also a shuffle phase that we will ignore here.
 
-If this sounds like a monoid, it's because it is a monoid. We're not the first to recognise this. The [monoid design pattern for MapReduce jobs](http://arxiv.org/abs/1304.7544) is at the core of recent big data systems such as Twitter's [Summingbird](https://github.com/twitter/summingbird).
+It should be fairly obvious we can apply `map` in parallel. We cannot parallelize `fold` in general, but we can if we restrict the type of reduction functions we allow. What kind of restrictions should be apply? If the function we provide to `fold` is *associative*, we can perform our fold in any order so long as we preserve the ordering on the sequence of elements we're processing. If we have an *identity* element, we can introduce the identity at any point to in our fold and know we won't affect the result.
+
+If this sounds like a monoid, that's because it *is* a monoid. We are not the first to recognise this. The [monoid design pattern for MapReduce jobs][link-mapreduce-monoid] is at the core of recent big data systems such as Twitter's [Summingbird][link-summingbird].
 
 In this project we're going to implement a very simple single-machine MapReduce. In fact, we're just going to parallelize `foldMap` and then look at some of more interesting monoids that are applicable for processing large data sets.
 
@@ -15,26 +17,26 @@ In this project we're going to implement a very simple single-machine MapReduce.
 Last time we saw `foldMap` we implemented it as follows:
 
 ~~~ scala
-object FoldMap {
-  implicit class ListFoldable[A](base: List[A]) {
-    def foldMap[B : Monoid](f: A => B = (a: A) => a): B =
-      base.foldLeft(mzero[B])(_ |+| f(_))
-  }
+implicit class ListFoldable[A](base: List[A]) {
+  def foldMap[B : Monoid](f: A => B = (a: A) => a): B =
+    base.foldLeft(mzero[B])(_ |+| f(_))
 }
 ~~~
 
-To run the fold in parallel we need to change the implementation strategy. A simple strategy is to allocate as many threads as we have CPUs, and then evenly partition our sequence amongst the threads. When each thread completes we simply append the results together.
+To run the fold in parallel we need to change the implementation strategy. A simple strategy is to allocate as many threads as we have CPUs and evenly partition our sequence amongst the threads. We can simply append the results together as we each thread completes.
 
-Scala provides some simple tools to distribute work amongst threads. We could in fact just use the [parallel collections library](http://docs.scala-lang.org/overviews/parallel-collections/overview.html) to implement a solution, but I want to go a bit lower level. You might have already used `Futures`. A `Future` models a computation that may not yet have a value. That is, it represents a value that will become available in the future. They are a good tool for this sort of job.
-
+Scala provides some simple tools to distribute work amongst threads. We could simply use the [parallel collections library][link-parallel-collections] to implement a solution, but let's dive a bit deeper. You might have already used `Futures`. A `Future` models a computation that may not yet have a value. That is, it represents a value that will become available "in the future". They are a good tool for this sort of job.
 
 ### Futures
 
-To execute an operation in parallel we can construct a `Future` like so
+To execute an operation in parallel we can construct a `Future` as follows:
 
 ~~~ scala
 import scala.concurrent.Future
-val future: Future[String] = Future { "construct this string in parallel!" }
+
+val future: Future[String] = Future {
+  "construct this string in parallel!"
+}
 ~~~
 
 We need to have an implicit `ExecutionContext` in scope, which determines which thread pool runs the operation. The default `ExecutionContext` is a good choice. We get hold of it with
@@ -43,22 +45,19 @@ We need to have an implicit `ExecutionContext` in scope, which determines which 
 import scala.concurrent.ExecutionContext.Implicits.global
 ~~~
 
-We sequence operations on a `Future` using the familiar `map` and `flatMap` methods.
-
-If we have a sequence containing `Futures` we can convert them into a `Future` of a sequence using the method `Future.sequence`.
+We operate on the value in a `Future` using the familiar `map` and `flatMap` methods. If we have a `Seq[Future[A]]` we can convert it to a `Future[Seq[A]]` using the method `Future.sequence`.
 
 ~~~ scala
 scala> Future.sequence(Seq(Future(1), Future(2), Future(3)))
-res27: scala.concurrent.Future[Seq[Int]] = scala.concurrent.impl.Promise$DefaultPromise@3ded31af
+res27: scala.concurrent.Future[Seq[Int]] = // ...
 ~~~
 
-Finally, if we want to block on a `Future` till a result is available we can use `Await.result`.
+Finally, we can use `Await.result` to block on a `Future` till a result is available.
 
 ~~~ scala
 import scala.concurrent.duration.Duration
 Await.result(Future(1), Duration.Inf) // Wait forever till a result arrives
 ~~~
-
 
 ### Partitioning Sequences
 
@@ -91,9 +90,9 @@ def time[A](msg: String)(f: => A): A = {
 ~~~
 
 <div class="solution">
-My solution can be found in the accompanying code repository in `monoid/src/main/scala/parallel`. The important bits are repeated below.
+The complete model solution can be found in the accompanying code repository in `monoid/src/main/scala/parallel`. The important parts are repeated below.
 
-I found very little difference between parallel and sequential code in terms of performance. This could be an artifact of the benchmarks I used, my hardware, or the overhead of constructing and running parallel code.
+We found very little difference between parallel and sequential code in terms of performance. This could be an artifact of the benchmarks we used, our hardware, or the overhead of constructing and running parallel code:
 
 ~~~ scala
 object FoldMap {
@@ -103,7 +102,9 @@ object FoldMap {
 
     val groups = iter.grouped(groupSize)
     val futures: Iterator[Future[B]] = groups map { group =>
-      Future { group.foldLeft(mzero[B])(_ |+| f(_)) }
+      Future {
+        group.foldLeft(mzero[B])(_ |+| f(_))
+      }
     }
     val result: Future[B] = Future.sequence(futures) map { iterable =>
       iterable.foldLeft(mzero[B])(_ |+| _)
@@ -115,7 +116,7 @@ object FoldMap {
   def foldMap[A, B : Monoid](iter: Iterable[A])(f: A => B = (a: A) => a): B =
     iter.foldLeft(mzero[B])(_ |+| f(_))
 
-  implicit class IterableFoldMappable[A](iter: Iterable[A]) {
+  implicit class IterableFoldMapOps[A](iter: Iterable[A]) {
     def foldMapP[B : Monoid](f: A => B = (a: A) => a)(implicit ec: ExecutionContext): B =
       FoldMap.foldMap(iter)(f)
 
@@ -129,4 +130,4 @@ object FoldMap {
 
 ### More Monoids
 
-The monoid instances we have considered so far are very simple. Much more complex and interesting monoids are possible. For example, the [HyperLogLog](http://en.wikipedia.org/wiki/HyperLogLog) algorithm is used to approximate the number of distinct elements in a collection and forms a monoid. It is extremely commonly used in big data applications due to its high accuracy and small storage requirements. Other algorithms for which there is a monoid include the [Bloom filter](http://en.wikipedia.org/wiki/Bloom_filter), a space-efficient probabilistic set, [stochastic gradient descent](http://en.wikipedia.org/wiki/Stochastic_gradient_descent), commonly used to train machine learning models, and the [Top-K algorithm](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.114.9563), used to find the *K* frequent items in a collection. Scala implementations of all these algorithms can be found in [Algebird](https://github.com/twitter/algebird).
+The monoid instances we have considered so far are very simple. Much more complex and interesting monoids are possible. For example, the [HyperLogLog][link-hyperloglog] algorithm is used to approximate the number of distinct elements in a collection and forms a monoid. It is extremely commonly used in big data applications due to its high accuracy and small storage requirements. Other algorithms for which there is a monoid include the [Bloom filter][link-bloom-filter], a space-efficient probabilistic set, [stochastic gradient descent][link-stochastic-gradient-descent], commonly used to train machine learning models, and the [Top-K algorithm][link-topk], used to find the *K* frequent items in a collection. Scala implementations of all these algorithms can be found in [Algebird][link-algebird].
