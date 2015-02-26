@@ -1,8 +1,8 @@
-# Essential Scalaz
+# Foreword {-}
 
 The title of this book is "Essential Scalaz" and this book does cover the what and how of using Scalaz. However this book is not really about Scalaz per se, but Scalaz as a vehicle for exploring patterns for functional program design.
 
-Let me quote [Don Stewart](https://donsbot.wordpress.com/), Haskell hacker extraordinaire at Standard Chartered Bank, [on the design of large systems in functional programming](http://stackoverflow.com/questions/27852709/enterprise-patterns-with-functional-programming/27860072#27860072) 
+Let me quote [Don Stewart][link-don-stewart], Haskell hacker extraordinaire at Standard Chartered Bank, [on the design of large systems in functional programming][link-don-stewart-so]:
 
 > In my experience, almost all designs fall into the 'compiler' or
 > 'interpreter' pattern, using a model of the data and functions on
@@ -12,3 +12,5 @@ Let me quote [Don Stewart](https://donsbot.wordpress.com/), Haskell hacker extra
 > the "category theory" design pattern(!)
 
 In this book, and the supplement, we are going to explore the many variations on this pattern.
+
+Ok, let's get started!
