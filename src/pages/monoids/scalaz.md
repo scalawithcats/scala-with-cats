@@ -4,7 +4,7 @@ Now we've seen what a monoid is, let's look at their implementation in Scalaz. O
 
 ### The Monoid Type Class
 
-The monoid type class is [`scalaz.Monoid`][scalaz.Monoid]. If you look at the implementation you'll see that `Monoid` extends `Semigroup`. A semigroup is a monoid without the identity element, leaving only `append`.
+The monoid type class is [`scalaz.Monoid`][scalaz.Monoid]. If we look at the implementation we see that `Monoid` extends `Semigroup`. A semigroup is a monoid without the identity element, leaving only `append`.
 
 There are a few utility methods defined on `Monoid`, mostly to do with checking if an element is `zero` (assuming we have an implemenation for equality on the monoid, denoted by the `Equal` type class). These are not commonly used in practice.
 

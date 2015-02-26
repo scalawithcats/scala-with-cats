@@ -57,11 +57,21 @@ scala> "One" ++ ("Two" ++ "Three")
 res9: String = OneTwoThree
 ~~~
 
-Note I used `++` for string concatentation instead of the more usual `+` to suggest a parallel with sequence concatenation. We can do exactly the same with sequence concatenation and the empty sequence as our identity.
+Note that we used `++` for string concatentation instead of the more usual `+` to suggest a parallel with sequence concatenation. We can do exactly the same with sequence concatenation and the empty sequence as our identity.
 
-**Monoids in general**
+## Definition of a Monoid
 
-We've seen a number of types that we can "add" and have an identity element. It will be no surprise to learn that this is a monoid. A simplified version of the definition from Scalaz is:
+We've seen a number of types that we can "add" and have an identity element. It will be no surprise to learn that this is a monoid. Formally, a monoid for a type `A` is:
+
+- an operation `append` with type `(A, A) => A`; and
+- an element `zero` of type `A.
+
+The following laws must hold:
+
+- `append` is associative, meaning `append(x, append(y, z)) == append(append(x, y), z)` for all `x`, `y`, and `z`, in `A`.
+- `zero` is an identity of `append`, meaning `append(a, zero) == append(zero, a) == a` for any `a` in `A`.
+
+A simplified version of the definition from Scalaz is:
 
 ~~~ scala
 trait Monoid[A] {
@@ -71,18 +81,6 @@ trait Monoid[A] {
 ~~~
 
 where `append` is the binary operation and `zero` is the identity.
-
-## Monoid Definition
-
-Formally, a monoid for a type `A` is:
-
-- an operation `append` with type `(A, A) => A`; and
-- an element `zero` of type `A.
-
-The following laws must hold:
-
-- `append` is associative, meaning `append(x, append(y, z)) == append(append(x, y), z)` for all `x`, `y`, and `z`, in `A`.
-- `zero` is an identity of `append`, meaning `append(a, zero) == append(zero, a) == a` for any `a` in `A`.
 
 ## Exercise: The Truth About Monoids
 
