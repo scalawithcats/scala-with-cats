@@ -1,15 +1,16 @@
 ---
 # Used by Pandoc to print covers:
-title: Essential Scalaz
-author: "Noel Welsh and Dave Gurnell"
+title: Advanced Scala
+subtitle: Composable Abstractions
+author: Noel Welsh and Dave Gurnell
 date: "Pre-Release, Feburary 2015"
 # Used by Pandoc to generate the PDF cover...
 # see src/css/book.css for HTML/ePub covers:
-coverColor: "E8515B"
+coverColor: "D62A7C"
 # Used by Grunt to name output files:
-filenameStem: "essential-scalaz"
+filenameStem: "advanced-scala"
 # Used by Grunt to create a ZIP of source code:
-exercisesRepo: null # "git@github.com:underscoreio/essential-scalaz-code.git"
+exercisesRepo: null # "git@github.com:underscoreio/advanced-scala-code.git"
 # Used by Grunt to assemble pandoc command line:
 pages:
   - src/pages/index.md

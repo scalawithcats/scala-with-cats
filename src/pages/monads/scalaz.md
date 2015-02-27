@@ -1,13 +1,12 @@
 ## Monads in Scalaz
 
+It's time to give monads our standard Scalaz treatment, looking at the type class, instances, and syntax.
+
 ### The Monad Type Class
 
-The monad type class is [`scalaz.Monad`](http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.Monad). `Monad` extends `Applicative`, an abstraction we'll discuss later, and `Bind` which defines `bind` (aka `flatMap`).
+The monad type class is [`scalaz.Monad`][scalaz.Monad]. `Monad` extends `Applicative`, an abstraction we'll discuss later, and `Bind`, which defines `bind` (aka `flatMap`).
 
-
-### The User Interface
-
-The main methods on `Monad` are `point` and `bind`. `Point` is a monad constructor.
+The main methods on `Monad` are `point` and `bind`. As we saw in the last section, `bind` is our `flatMap` operation and `point` is our constructor:
 
 ~~~ scala
 scala> import scalaz.Monad
@@ -19,40 +18,44 @@ res0: Option[Int] = Some(3)
 
 scala> Monad[List].point(3)
 res1: List[Int] = List(3)
+
+scala> Monad[List].bind(List(1, 2, 3))(x => List(x, x * 10))
+res2: List[Int] = List(1, 10, 2, 20, 3, 30)
 ~~~
 
-`Bind` is just another name for the familiar `flatMap`.
+There are a many utility methods defined on `Monad`. The ones you're mostly like to use are:
 
-There are a many utility methods defined on `Monad`. The one's you're mostly like to use are:
+ -  `lift`, which converts an function of type `A => B` to one that operates over a monad and has type `F[A] => F[B]`:
 
-- `lift`, which converts an function of type `A => B` to one that operates over a monad and has type `F[A] => F[B]`.
+    ~~~ scala
+    scala> val lifted = Monad[Option].lift((x: Int) => x + 1)
+    lifted: Option[Int] => Option[Int] = <function1>
 
-  ~~~ scala
-  val f = Monad[Option].lift((x: Int) => x + 1)
-  ~~~
+    scala> lifted(Some(1))
+    res0: Option[Int] = Some(2)
+    ~~~
 
-  This is actually defined on `Functor`, and monad uses it by inheritance. We mention it here because you're more likely to use it in the context of moands
+    This is actually defined on `Functor`, and monad uses it by inheritance. We mention it here because you're more likely to use it in the context of monads.
 
-- `tuple`, which converts a tuple of monads into a monad of tuples
+ -  `tuple`, which converts a tuple of monads into a monad of tuples:
 
-  ~~~ scala
-  val tupled: Option[(Int, String, Double)] =
-    Monad[Option].tuple3(some(1), some("hi"), some(3.0))
-  ~~~
+    ~~~ scala
+    val tupled: Option[(Int, String, Double)] =
+      Monad[Option].tuple3(some(1), some("hi"), some(3.0))
+    ~~~
 
-- `sequence`, which converts a type like `F[G[A]]` to `G[F[A]]`. For example, we can convert a `List[Option[Int]]` to a `Option[List[Int]]`
+ -  `sequence`, which converts a type like `F[G[A]]` to `G[F[A]]`. For example, we can convert a `List[Option[Int]]` to a `Option[List[Int]]`:
 
-  ~~~ scala
-  val sequence: Option[List[Int]] =
-    Monad[Option].sequence(List(some(1), some(2), some(3)))
-  ~~~
+    ~~~ scala
+    val sequence: Option[List[Int]] =
+      Monad[Option].sequence(List(some(1), some(2), some(3)))
+    ~~~
 
-  This method requires a `Traversable`, which is closely related to `Foldable` that we saw in the section on monoids.
-
+    This method requires a `Traversable`, which is closely related to `Foldable` that we saw in the section on monoids.
 
 ### Monad Instances
 
-There are instances for all the monads in the standard library (`Option` etc). There are also some Scalaz-specific instances we'll look at in depth in later section.
+There are instances for all the monads in the standard library (`Option` etc). There are also some Scalaz-specific instances that we'll look at in depth later on.
 
 ### Monad Syntax
 

@@ -2,6 +2,7 @@
 [scalaz.Equal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Equal
 [scalaz.Foldable]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Foldable
 [scalaz.Functor]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Functor
+[scalaz.Monad]: http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.Monad
 [scalaz.Monoid]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Monoid
 [scalaz.Show]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Show
 [scalaz.Tag]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Tag$
