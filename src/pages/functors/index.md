@@ -128,3 +128,40 @@ Higher kinded types are considered an advanced language feature in Scala. We nee
 import scala.language.higherKinds
 ~~~
 </div>
+
+### Exercise: A Higher Kind of FoldMap
+
+When we looked at `foldMap` earlier, we couldn't write a type class for it because we didn't know how to write the type of the objects that type class should work over. Now we know about higher kinds, we can revisit this problem.
+
+Define all the machinery needed for a `FoldMappable` type class: the trait, an interface, some instances, and an enrichment.
+
+<div class="solution">
+This exercise is really intended to make us practive defining and using higher kinds. Here is the model solution:
+
+~~~ scala
+import scala.language.higherKinds
+import scalaz.Monoid
+import scalaz.syntax.monoid._
+
+trait FoldMappable[F[_]] {
+  def foldMap[A, B : Monoid](fa: F[A])(f: A => B): B
+}
+
+object FoldMappable {
+  def apply[F[_] : FoldMappable]: FoldMappable[F] =
+    implicitly[FoldMappable[F]]
+
+  implicit object ListFoldMappable extends FoldMappable[List] {
+    def foldMap[A, B : Monoid](fa: List[A])(f: A => B): B =
+      fa.foldLeft(mzero[B]){ _ |+| f(_) }
+  }
+}
+
+object FoldMappableSyntax {
+  implicit class IsFoldMappable[F[_] : FoldMappable, A](fa: F[A]) {
+    def foldMap[B : Monoid](f: A => B): B =
+      FoldMappable[F].foldMap(fa)(f)
+  }
+}
+~~~
+</div>
