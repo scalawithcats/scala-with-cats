@@ -16,6 +16,16 @@ Functor[List].map(List(1, 2, 3))(x => x * 2)
 Functor[Option].map(Some(123))(_.toString)
 ~~~
 
+`Functor` also provides the `lift` method, which converts an function of type `A => B` to one that operates over a monad and has type `F[A] => F[B]`:
+
+~~~ scala
+scala> val lifted = Functor[Option].lift((x: Int) => x + 1)
+lifted: Option[Int] => Option[Int] = <function1>
+
+scala> lifted(Some(1))
+res0: Option[Int] = Some(2)
+~~~
+
 ### Functor Syntax
 
 The main method provided by the syntax for `Functor` is `map`:

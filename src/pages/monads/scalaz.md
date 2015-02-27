@@ -23,39 +23,27 @@ scala> Monad[List].bind(List(1, 2, 3))(x => List(x, x * 10))
 res2: List[Int] = List(1, 10, 2, 20, 3, 30)
 ~~~
 
-There are a many utility methods defined on `Monad`. The ones you're mostly like to use are:
+`Monad` provides all of the methods from `Functor` including `map` and `lift`, and adds plenty of new ones as well. Here are a couple of examples:
 
- -  `lift`, which converts an function of type `A => B` to one that operates over a monad and has type `F[A] => F[B]`:
+The `tuple` method converts a tuple of monads into a monad of tuples:
 
-    ~~~ scala
-    scala> val lifted = Monad[Option].lift((x: Int) => x + 1)
-    lifted: Option[Int] => Option[Int] = <function1>
+~~~ scala
+val tupled: Option[(Int, String, Double)] =
+  Monad[Option].tuple3(some(1), some("hi"), some(3.0))
+~~~
 
-    scala> lifted(Some(1))
-    res0: Option[Int] = Some(2)
-    ~~~
+The `sequence` method converts a type like `F[G[A]]` to `G[F[A]]`. For example, we can convert a `List[Option[Int]]` to a `Option[List[Int]]`:
 
-    This is actually defined on `Functor`, and monad uses it by inheritance. We mention it here because you're more likely to use it in the context of monads.
+~~~ scala
+val sequence: Option[List[Int]] =
+  Monad[Option].sequence(List(some(1), some(2), some(3)))
+~~~
 
- -  `tuple`, which converts a tuple of monads into a monad of tuples:
+`sequence` requires an instance of `Traversable` to be in scope. `Traversable` is closely related to the `Foldable` type class that we saw in the chapter on monoids.
 
-    ~~~ scala
-    val tupled: Option[(Int, String, Double)] =
-      Monad[Option].tuple3(some(1), some("hi"), some(3.0))
-    ~~~
+### Default Instances
 
- -  `sequence`, which converts a type like `F[G[A]]` to `G[F[A]]`. For example, we can convert a `List[Option[Int]]` to a `Option[List[Int]]`:
-
-    ~~~ scala
-    val sequence: Option[List[Int]] =
-      Monad[Option].sequence(List(some(1), some(2), some(3)))
-    ~~~
-
-    This method requires a `Traversable`, which is closely related to `Foldable` that we saw in the section on monoids.
-
-### Monad Instances
-
-There are instances for all the monads in the standard library (`Option` etc). There are also some Scalaz-specific instances that we'll look at in depth later on.
+Scalaz provides instances for all the monads in the standard library (`Option`, `List`, and so on) via `scalaz.std`. There are also some Scalaz-specific instances that we'll look at in depth later on.
 
 ### Monad Syntax
 
