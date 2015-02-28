@@ -39,13 +39,15 @@ val f = ((a: Int) => a + 1) map ((a: Int) => a * 2)
 f(123) // == 248
 ~~~
 
-Scalaz also provides the `as` method, which is equivalent to mapping by a function that returns a constant value:
+We can also use `lift` as an enriched method:
 
 ~~~ scala
-some(123) as 234 // == Some(234)
+val func = ((x: Int) => x + 1) lift Monad[Option]
+
+func(some(1)) // == Some(2)
 ~~~
 
-Other methods are also available, but we won't discuss them here. `Functors` are more important to us as building blocks for later abstrations.
+Other methods are also available but we won't discuss them here. `Functors` are more important to us as building blocks for later abstrations than they are as a tool for direct use.
 
 ### Instances for Custom Types
 

@@ -17,13 +17,13 @@ Formally, a monad for a type `F[A]` has:
 
 We will sometimes see the name `bind` used in place of `flatMap`. These are the same operation, but the former is the name usually used in the academic literature. We'll use the two names interchangably.
 
-`point` is not an operation we're used to in Scala. It essentially abstracts over the constructor. We'll see some examples of this in the next section. `point` also goes by the name `return`.
+`point` abstracts over the constructor of our monad. We'll see some examples of this in the next section. `point` also goes by the name `return`.
 
 A monad must obey three laws:
 
 1. *Left identity*: `(point(a) flatMap f) == f(a)`
 2. *Right identity*: `(m flatMap point) == m`
-3. *Associativity*: `((m flatMap f) flatMap g) == (m flatMap (x => (f(x) flatMap g)))`
+3. *Associativity*: `(m flatMap f flatMap g) == (m flatMap (x => f(x) flatMap g))`
 
 ## Exercise: Getting Func-y
 

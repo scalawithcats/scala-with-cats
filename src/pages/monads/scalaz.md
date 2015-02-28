@@ -1,31 +1,29 @@
 ## Monads in Scalaz
 
-It's time to give monads our standard Scalaz treatment, looking at the type class, instances, and syntax.
+It's time to give monads our standard Scalaz treatment. As usual we'll look at the type class, instances, and syntax.
 
 ### The Monad Type Class
 
-The monad type class is [`scalaz.Monad`][scalaz.Monad]. `Monad` extends `Applicative`, an abstraction we'll discuss later, and `Bind`, which defines `bind` (aka `flatMap`).
+The monad type class is [`scalaz.Monad`][scalaz.Monad]. `Monad` extends `Applicative`, which we'll discuss later, and `Bind`, which defines the `bind` method.
 
 The main methods on `Monad` are `point` and `bind`. As we saw in the last section, `bind` is our `flatMap` operation and `point` is our constructor:
 
 ~~~ scala
-scala> import scalaz.Monad
-scala> import scalaz.std.option._
-scala> import scalaz.std.list._
+import scalaz.Monad
+import scalaz.std.option._
+import scalaz.std.list._
 
-scala> Monad[Option].point(3)
-res0: Option[Int] = Some(3)
+Monad[Option].point(3) // == Some(3)
 
-scala> Monad[List].point(3)
-res1: List[Int] = List(3)
+Monad[List].point(3) // == List(3)
 
-scala> Monad[List].bind(List(1, 2, 3))(x => List(x, x * 10))
-res2: List[Int] = List(1, 10, 2, 20, 3, 30)
+Monad[List].bind(List(1, 2, 3))(x => List(x, x*10))
+// == List(1, 10, 2, 20, 3, 30)
 ~~~
 
-`Monad` provides all of the methods from `Functor` including `map` and `lift`, and adds plenty of new ones as well. Here are a couple of examples:
+`Monad` provides all of the methods from `Functor`, including `map` and `lift`, and adds plenty of new methods as well. Here are a couple of examples:
 
-The `tuple` method converts a tuple of monads into a monad of tuples:
+The `tupleN` methods convert a tuple of monads into a monad of tuples:
 
 ~~~ scala
 val tupled: Option[(Int, String, Double)] =
@@ -39,46 +37,163 @@ val sequence: Option[List[Int]] =
   Monad[Option].sequence(List(some(1), some(2), some(3)))
 ~~~
 
-`sequence` requires an instance of `Traversable` to be in scope. `Traversable` is closely related to the `Foldable` type class that we saw in the chapter on monoids.
+`sequence` requires an instance of [`scalaz.Traversable`][scalaz.Traversable] to be in scope. `Traversable` is closely related to the `Foldable` type class we saw in the exercise [Folding Wwithout the Hard Work](#folding-without-the-hard-work).
 
 ### Default Instances
 
-Scalaz provides instances for all the monads in the standard library (`Option`, `List`, and so on) via `scalaz.std`. There are also some Scalaz-specific instances that we'll look at in depth later on.
+Scalaz provides instances for all the monads in the standard library (`Option`, `List`, `Vector` and so on) via `scalaz.std`:
+
+~~~ scala
+Monad[Option].bind(some(1))(x => some(x*2)) // == Some(2)
+
+Monad[List].bind(List(1, 2, 3))(x => List(x, x*10))
+// == List(1, 10, 2, 20, 3, 30)
+
+Monad[Vector].bind(Vector(1, 2, 3))(x => Vector(x, x*10))
+// == Vector(1, 10, 2, 20, 3, 30)
+~~~
+
+There are also some Scalaz-specific instances that we'll see later on.
+
+### Defining Custom Instances
+
+We can define a `Monad` for a custom type simply by providing the implementations of `bind` and `point`. Other methods such as `map` are provided for us based on these definitions.
+
+Here is an implementation of `Monad` for `Option` as an example. Note that the `point` method takes a by-name argument:
+
+~~~ scala
+val optionMonad = new Monad[Option] {
+  def bind[A, B](value: A)(func: A => Option[B]): Option[B] =
+    value flatMap func
+
+  def point[A](value: => A): Option[A] =
+    Some(A)
+}
+~~~
 
 ### Monad Syntax
 
-We don't tend to use a great deal of syntax for monads, as for comprehensions are built in to the language. Nonetheless there are a few methods that are used from time-to-time.
+`scalaz.syntax.monad` provides us with syntax versions of `flatMap` and `point`, as well as `map` and `lift` from `scalaz.syntax.functor`.
 
-We can construct a monad from a value using `point`, supplying the type of the monad we want to construct.
-
-~~~ scala
-scala> 3.point[Option]
-res0: Option[Int] = Some(3)
-~~~
-
-We can also use `lift` as an enriched method
+It's difficult to demonstrate the `flatMap` and `map` directly on Scala monads, because most of them already define these methods explicitly. Instead we'll write a contrived generic function that returns `3*3 + 4*4` wrapped in a monad of the user's choice:
 
 ~~~ scala
-((x: Int) => x + 1).lift(Monad[Option])
+import scalaz.Monad
+import scalaz.std.option._
+import scalaz.std.list._
+import scalaz.syntax.monad._
+
+def sumSquare[A[_] : Monad]: A[Int] = {
+  val a = 3.point[A]
+  val b = 4.point[A]
+  a flatMap (x => b map (y => x*x + y*y))
+}
+
+sumSquare[Option] // == Some(25)
+sumSquare[List]   // == List(25)
 ~~~
 
-There is a short-cut for `flatMap`, written `>>=`. This is the symbol used in Haskell for `flatMap` and is usually called "bind".
+We can rewrite this code using for comprehensions. The Scala compiler will "do the right thing" by rewriting our comprehension in terms of `flatMap` and `map` and inserting the correct implicit conversions to use our `Monad`:
 
 ~~~ scala
-option >>= ((x: Int) => (x + 39).point[Option])
+def sumSquare[A[_] : Monad]: A[Int] = {
+  for {
+    x <- 3.point[A]
+    y <- 4.point[A]
+  } yield x*x + y*y
+}
+
+sumSquare[Option] // == Some(25)
+sumSquare[List]   // == List(25)
 ~~~
 
-A variant on bind, written `>>`, ignores the value in the monad on which we `flatMap`.
+### Exercise: My Monad is Way More Valid Than Your Functor
+
+Let's write a `Monad` for our `Result` data type from last chapter:
 
 ~~~ scala
-option >> (42.point[Option])
+sealed trait Result[+A]
+final case class Success[A](value: A) extends Result[A]
+final case class Warning[A](value: A, message: String) extends Result[A]
+final case class Failure(message: String) extends Result[Nothing]
 ~~~
+
+Assume similar fail-fast semantics to the `Functor` we wrote previously: apply the mapping function to `Successes` and `Warnings` and return `Failures` unaltered.
+
+Verify that the code works on instances of `Success`, `Warning`, and `Failure`, and that the `Monad` provides `Functor`-like behaviour for free.
+
+Finally, verify that having a `Monad` in scope allows us to use for comprehensions, despite the fact that we haven't directly implemented `flatMap` or `map` on `Result`.
+
+<div class="solution">
+We'll keep the same semantics as our previous `Functor`---apply the mapping function to instances of `Success` and `Warning` but not `Failures`.
+
+There is a wrinkle here. What should we do when we `flatMap` from a `Warning` to another `Result`? Do we keep the message from the old warning? Do we throw it away? Do we ignore any new error messages and stick with the original?
+
+This is a design decision. The "correct" answer depends on the semantics we want to create. This ambiguity perhaps indicates why types like our `Result` are not more commonly available in libraries.
+
+In this solution we'll opt to preserve all messages as we go. You may choose different semantics. This will give you different results from your tests, which is fine.
+
+~~~ scala
+import scalaz.Monad
+
+implicit val resultMonad = new Monad[Result] {
+  def bind[A, B](result: Result[A])(func: A => Result[B]): Result[B] =
+    result match {
+      case Success(value)           => func(value)
+      case Failure(message)         => Failure(message)
+      case Warning(value, message1) =>
+        func(value) match {
+          case Success(value) =>
+            Warning(value, message1)
+          case Warning(value, message2) =>
+            Warning(value, s"$message1 $message2")
+          case Failure(message2) =>
+            Failure(s"$message1 $message2")
+        }
+    }
+
+  def point[A](value: => A): Result[A] =
+    Success(value)
+}
+~~~
+
+We'll pre-empt any compile errors concerning variance by defining our usual smart constructors:
+
+~~~ scala
+def success[A](value: A): Result[A] = Success(value)
+def warning[A](value: A, message: String): Result[A] = Warning(value, message)
+def failure[A](message: String): Result[A] = Failure(message)
+~~~
+
+Now we can use our `Monad` to `flatMap` and `map`:
+
+~~~ scala
+import scalaz.syntax.monad._
+
+warning(100, "Message1") flatMap (x => Warning(x*2, "Message2"))
+// == Warning(200, "Message1 Message2")
+
+warning(10, "Too low") map (_ - 5)
+// == Warning(20, "Too low")
+~~~
+
+We can also `Results` in for comprehensions:
+
+~~~ scala
+for {
+  a <- success(1)
+  b <- warning(2, "Message1")
+  c <- warning(a + b, "Message2")
+} yield c * 10
+// == Warning(30, "Message1 Message2")
+~~~
+</div>
 
 ### Exercise: Monadic FoldMap
 
 It's useful to allow the user of `foldMap` to perform monadic actions within their mapping function. This, for example, allows the mapping to indicate failure by returning an `Option`.
 
-Implement a variant of `foldMap` called `foldMapM` that allows this. The focus here is on the monadic component, so you can base your code on `foldMap` or `foldMapP` as you see fit. Here are some examples of use
+Implement a variant of `foldMap` called `foldMapM` that allows this. The focus here is on the monadic component, so you can base your code on `foldMap` or `foldMapP` as you see fit. Here are some examples of use:
 
 ~~~ scala
 import scalaz.std.anyVal._
@@ -98,7 +213,7 @@ seq.foldMap(a => if(a % 2 == 0) some(a) else none[Int])
 ~~~
 
 <div class="solution">
-See `FoldMap.scala` in `monad/src/main/scala/parallel/FoldMap.scala`. Here's the most important bit:
+The full solution is implemented in `monad/src/main/scala/parallel/FoldMap.scala`. Here's the most important part:
 
 ~~~ scala
 def foldMapM[A, M[_] : Monad, B: Monoid](iter: Iterable[A])(f: A => M[B]): M[B] =
@@ -148,7 +263,7 @@ def foldMapM[A, M[_] : Monad, B: Monoid](iter: Iterable[A])(f: A => M[B] = (a: A
 ~~~
 </div>
 
-Now implement `foldMap` in terms of `foldMapM`.
+Now implement `foldMap` in terms of `foldMapM`:
 
 <div class="solution">
 ~~~ scala
