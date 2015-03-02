@@ -1,4 +1,4 @@
-## Either and Disjunction (\/)
+## Either and Disjunction (\\/)
 
 The Scala standard library has a type `Either`. Scalaz provides an alternative called [`scalaz.\/`][scalaz.\/] (pronounced "disjunction", reminiscent of the mathematical symbol). Why have this? Aside from providing a few useful methods, the main reason is that `\/` is *right biased*.
 
