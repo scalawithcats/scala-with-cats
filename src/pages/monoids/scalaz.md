@@ -134,7 +134,7 @@ object Order {
 ~~~
 </div>
 
-### Exercise: Folding Without the Hard Work
+### Exercise: Folding Without the Hard Work {#folding-without-the-hard-work}
 
 Given a `Monoid[A]` we can easily define a default operation for folding over instances of `List[A]`. Let's call this new method `foldMap` (we'll come to the `map` part in a bit):
 

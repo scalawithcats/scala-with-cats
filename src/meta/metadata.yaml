@@ -34,9 +34,12 @@ pages:
   - src/pages/monads/index.md
   - src/pages/monads/scalaz.md
   - src/pages/monads/either.md
-  - src/pages/monads/error-recovery.md
-  - src/pages/monads/writer.md
-  - src/pages/monads/reader.md
+  # Sections on MonadPlus, Reader, and Writer removed from v1 of the book.
+  # Although the tools are useful, they're not as fundamental as \/ and
+  # they don't teach new concepts.
+  # - src/pages/monads/error-recovery.md
+  # - src/pages/monads/writer.md
+  # - src/pages/monads/reader.md
 
   - src/pages/monad-transformers/index.md
 
