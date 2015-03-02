@@ -160,27 +160,23 @@ A call-by-name method parameter has the syntax `(name: => Type)` instead of `(na
 Start by defining a method with a call-by-name parameter:
 
 ~~~ scala
-scala> def add(x: => Int) = x + x
 def add(x: => Int) = x + x
-add: (x: => Int)Int
+// add: (x: => Int)Int
 ~~~
 
 We can call it with an `Int` just like a normal method.
 
 ~~~ scala
-scala> add(2)
 add(2)
-res4: Int = 4
+// res4: Int = 4
 ~~~
 
 However if we replace our `Int` with an expression that prints and then returns an `Int`, we'll see that we actually print twice:
 
 ~~~ scala
-scala> add({println("Hi"); 2})
 add({println("Hi"); 2})
-Hi
-Hi
-res5: Int = 4
+// Hi
+// res5: Int = 4
 ~~~
 
 If `add` was a normal method we'ld only print `"Hi"` once.

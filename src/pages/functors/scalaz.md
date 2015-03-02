@@ -19,11 +19,11 @@ Functor[Option].map(Some(123))(_.toString)
 `Functor` also provides the `lift` method, which converts an function of type `A => B` to one that operates over a monad and has type `F[A] => F[B]`:
 
 ~~~ scala
-scala> val lifted = Functor[Option].lift((x: Int) => x + 1)
-lifted: Option[Int] => Option[Int] = <function1>
+val lifted = Functor[Option].lift((x: Int) => x + 1)
+// lifted: Option[Int] => Option[Int] = <function1>
 
-scala> lifted(Some(1))
-res0: Option[Int] = Some(2)
+lifted(Some(1))
+// res0: Option[Int] = Some(2)
 ~~~
 
 ### Functor Syntax
@@ -36,7 +36,8 @@ import scalaz.syntax.functor._
 
 val f = ((a: Int) => a + 1) map ((a: Int) => a * 2)
 
-f(123) // == 248
+f(123)
+// res1: Int = 248
 ~~~
 
 We can also use `lift` as an enriched method:
@@ -44,7 +45,8 @@ We can also use `lift` as an enriched method:
 ~~~ scala
 val func = ((x: Int) => x + 1) lift Monad[Option]
 
-func(some(1)) // == Some(2)
+func(some(1))
+// res2: Option[Int] = Some(2)
 ~~~
 
 Other methods are also available but we won't discuss them here. `Functors` are more important to us as building blocks for later abstrations than they are as a tool for direct use.
@@ -96,10 +98,10 @@ implicit val resultFunctor = new Functor[Result] {
 Let's use our `Functor` in a sample application:
 
 ~~~ scala
-scala> Success(100) map (_ * 2)
-<console>:23: error: value map is not a member of Success[Int]
-              Success(100) map (_ * 2)
-                           ^
+Success(100) map (_ * 2)
+// <console>:23: error: value map is not a member of Success[Int]
+//               Success(100) map (_ * 2)
+//                            ^
 ~~~
 
 Oops! This is the same inavariance problem we saw with `Monoids`. Let's add some smart constructors to compensate:
@@ -113,13 +115,13 @@ def failure[A](message: String): Result[A] = Failure(message)
 Now we can use our `Functor` properly:
 
 ~~~ scala
-scala> success(100) map (_ * 2)
-res1: Result[Int] = Success(200)
+success(100) map (_ * 2)
+// res1: Result[Int] = Success(200)
 
-scala> warning(10, "Too low") map (_ * 2)
-res2: Result[Int] = Warning(20,Too low)
+warning(10, "Too low") map (_ * 2)
+// res2: Result[Int] = Warning(20,Too low)
 
-scala> failure[Int]("Far too low") map (_ * 2)
-res3: Result[Int] = Failure(Far too low)
+failure[Int]("Far too low") map (_ * 2)
+// res3: Result[Int] = Failure(Far too low)
 ~~~
 </div>

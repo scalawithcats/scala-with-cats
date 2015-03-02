@@ -7,21 +7,21 @@ The Scala standard library has a type `Either`. Scalaz provides an alternative c
 `Either` is unbiased. It has no `map` or `flatMap` method---you have to decide which side you want to be "correct" side for `flatMap` by taking a left- or right-projection:
 
 ~~~ scala
-scala> Right[String, Int](123).flatMap(x => Right(x * 2))
-<console>:40: error: value flatMap is not a member of scala.util.Right[String,Int]
+Right[String, Int](123).flatMap(x => Right(x * 2))
+// <console>:40: error: value flatMap is not a member of scala.util.Right[String,Int]
 
-scala> Right[String, Int](123).right.flatMap(x => Right(x * 2))
-res0: scala.util.Either[String,Int] = Right(246)
+Right[String, Int](123).right.flatMap(x => Right(x * 2))
+// res0: scala.util.Either[String,Int] = Right(246)
 
-scala> Right[String, Int](123).left.flatMap(x => Left(x + "!!!"))
-res1: scala.util.Either[String,Int] = Right(123)
+Right[String, Int](123).left.flatMap(x => Left(x + "!!!"))
+// res1: scala.util.Either[String,Int] = Right(123)
 ~~~
 
 This makes `Either` incovenient to use as a monad, especially as the convention in most functional languages is that `Right` is the success case. `\/` makes the decision that the right side (called `\/-`) is always the success case and thus it supports `map` and `flatMap` directly:
 
 ~~~ scala
-scala> \/.right(1).flatMap(x => \/-(x + 2))
-res2: scalaz.\/[Nothing,Int] = \/-(3)
+\/.right(1).flatMap(x => \/-(x + 2))
+// res2: scalaz.\/[Nothing,Int] = \/-(3)
 ~~~
 
 ### Creating Disjunctions
@@ -31,14 +31,14 @@ The `\/` object provides factory the `\/.left` and `\/.right` methods as we saw 
 ~~~ scala
 import scalaz.syntax.either._
 
-scala> 1.right[String].flatMap(x => (x + 2).right)
-res3: scalaz.\/[String,Int] = \/-(3)
+1.right[String].flatMap(x => (x + 2).right)
+// res3: scalaz.\/[String,Int] = \/-(3)
 
-scala> for {
-     |   x <- 1.right[String]
-     |   y <- 2.right[String]
-     | } yield x*x + y*y
-res4: scalaz.\/[String,Int] = \/-(5)
+for {
+  x <- 1.right[String]
+  y <- 2.right[String]
+} yield x*x + y*y
+// res4: scalaz.\/[String,Int] = \/-(5)
 ~~~
 
 ### Transforming Disjunctions
@@ -46,31 +46,31 @@ res4: scalaz.\/[String,Int] = \/-(5)
 `\/` supports familiar methods like `fold`, `getOrElse`, and `orElse`. We use `fold` to convert a `\/` to some other type, by supplying transform functions for the left and right sides:
 
 ~~~ scala
-scala> 1.right[String].fold(
-     |   l = l => s"FAIL!",
-     |   r = r => s"SUCCESS: $r!"
-     | )
-res5: String = SUCCESS: 1!
+1.right[String].fold(
+  l = l => s"FAIL!",
+  r = r => s"SUCCESS: $r!"
+)
+// res5: String = SUCCESS: 1!
 ~~~
 
 We can use `getOrElse` to extract the right value or return a default:
 
 ~~~ scala
-scala> 1.right[String].getOrElse(0)
-res6: Int = 1
+1.right[String].getOrElse(0)
+// res6: Int = 1
 
-scala> "Error".left[Int].getOrElse(0)
-res7: Int = 0
+"Error".left[Int].getOrElse(0)
+// res7: Int = 0
 ~~~
 
 We can use `orElse` if we want to default to another `\/`:
 
 ~~~ scala
-scala> 1.right[String] orElse 2.right[String]
-res8: scalaz.\/[String,Int] = \/-(1)
+1.right[String] orElse 2.right[String]
+// res8: scalaz.\/[String,Int] = \/-(1)
 
-scala> "Error".left[Int] orElse 2.right[String]
-res9: scalaz.\/[String,Int] = \/-(2)
+"Error".left[Int] orElse 2.right[String]
+// res9: scalaz.\/[String,Int] = \/-(2)
 ~~~
 
 ### Fail-Fast Error Handling
@@ -78,12 +78,12 @@ res9: scalaz.\/[String,Int] = \/-(2)
 `\/` is typically used to implement fail-fast error handling. We sequence a number of computations using `flatMap`, and if one computation fails the remaining computations are not run:
 
 ~~~ scala
-scala> for {
-     |   a <- 1.right[String]
-     |   b <- 0.right[String]
-     |   c <- if(b == 0) "DIV0".left[Int] else (a/b).right[String]
-     | } yield c * 100
-res10: scalaz.\/[String,Int] = -\/(DIV0)
+for {
+  a <- 1.right[String]
+  b <- 0.right[String]
+  c <- if(b == 0) "DIV0".left[Int] else (a/b).right[String]
+} yield c * 100
+// res10: scalaz.\/[String,Int] = -\/(DIV0)
 ~~~
 
 ### Representing Errors {#representing-errors}
@@ -117,8 +117,8 @@ This approach solves the problems we saw with `Exception`. It gives us a fixed s
 Occasionally we want to run a sequence of steps until one succeeds. We can model this using `\/` by flipping the left and right cases. The `swap` method provides this:
 
 ~~~ scala
-scala> 123.right[String].swap
-res0: scalaz.\/[Int,String] = -\/(123)
+123.right[String].swap
+// res0: scalaz.\/[Int,String] = -\/(123)
 ~~~
 
 ### Exercise: Seeing is Believing
@@ -126,13 +126,14 @@ res0: scalaz.\/[Int,String] = -\/(123)
 Call `foldMapM` using the `\/` monad and verify that it really does stop execution as soon an error is encountered. You can force an error by trying to convert a `String` to an `Int` using the method shown below:
 
 ~~~ scala
-scala> import scalaz.syntax.std.string._
+import scalaz.syntax.std.string._
+//
+"Cat".parseInt.disjunction
+// res8: scalaz.\/[NumberFormatException,Int] = ↩
+//   -\/(java.lang.NumberFormatException: For input string: "Cat")
 
-scala> "Cat".parseInt.disjunction
-res8: scalaz.\/[NumberFormatException,Int] = -\/(java.lang.NumberFormatException: For input string: "Cat")
-
-scala> "1".parseInt.disjunction
-res9: scalaz.\/[NumberFormatException,Int] = \/-(1)
+"1".parseInt.disjunction
+// res9: scalaz.\/[NumberFormatException,Int] = \/-(1)
 ~~~
 
 <div class="callout callout-info">
@@ -157,11 +158,11 @@ type ParseResult[A] = NumberFormatException \/ A
 Now we can use `foldMapM`. The resulting code iterates over the sequence, adding up numbers using the `Monoid` for `Int` until a `NumberFormatException` is encountered. At that point the `Monad` for `\/` fails fast, returning the failure without processing the rest of the list:
 
 ~~~ scala
-scala> Seq("1", "2", "3").foldMapM[ParseResult, Int](_.parseInt.disjunction)
-res0: ParseResult[Int] = \/-(6)
+Seq("1", "2", "3").foldMapM[ParseResult, Int](_.parseInt.disjunction)
+// res0: ParseResult[Int] = \/-(6)
 
-scala> Seq("1", "x", "3").foldMapM[ParseResult, Int](_.parseInt.disjunction)
-res1: ParseResult[Int] = -\/(java.lang.NumberFormatException: For input string: "x")
+Seq("1", "x", "3").foldMapM[ParseResult, Int](_.parseInt.disjunction)
+// res1: ParseResult[Int] = -\/(java.lang.NumberFormatException: For input string: "x")
 ~~~
 </div>
 

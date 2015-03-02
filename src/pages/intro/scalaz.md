@@ -66,10 +66,12 @@ That's better! We now have access to two instances of `Show`, and can use them t
 
 ~~~ scala
 val intAsString: String =
-  intShow.shows(123)        // == "123"
+  intShow.shows(123)
+// res0: String = "123"
 
 val stringAsString: String =
-  stringShow.shows("abc")   // == "\"abc\""
+  stringShow.shows("abc")
+// res1: String = "\"abc\""
 ~~~
 
 Notice that the output for `String` is wrapped in double quotes like a Scala string literal. This hints at `Show's` intended purpose---to provide useful debugging output for developers.
@@ -81,11 +83,17 @@ We can make `Show` easier to use by importing the *interface syntax* from [scala
 ~~~ scala
 import scalaz.syntax.show._
 
-val shownInt    = 123.shows   // == "123"
-val shownString = "abc".shows // == "\"abc\""
+val shownInt = 123.shows
+// shownInt: String = "123"
 
-123.println                   // prints "123"
-"abc".println                 // prints "\"abc\""
+val shownString = "abc".shows
+// shownString: String = "\"abc\""
+
+123.println
+// 123
+
+"abc".println
+// "abc"
 ~~~
 
 Scalaz provides separate syntax imports for each type class. We will introduce these as we encounter them in later sections and chapters.

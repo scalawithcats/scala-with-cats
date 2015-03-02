@@ -48,8 +48,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 We operate on the value in a `Future` using the familiar `map` and `flatMap` methods. If we have a `Seq[Future[A]]` we can convert it to a `Future[Seq[A]]` using the method `Future.sequence`.
 
 ~~~ scala
-scala> Future.sequence(Seq(Future(1), Future(2), Future(3)))
-res27: scala.concurrent.Future[Seq[Int]] = // ...
+Future.sequence(Seq(Future(1), Future(2), Future(3)))
+// res27: scala.concurrent.Future[Seq[Int]] = // ...
 ~~~
 
 Finally, we can use `Await.result` to block on a `Future` till a result is available.
@@ -64,11 +64,11 @@ Await.result(Future(1), Duration.Inf) // Wait forever till a result arrives
 We can partition a sequence (actually anything that implements `Iterable`) using the `grouped` method.
 
 ~~~ scala
-scala> Seq(1, 2, 3, 4).grouped(2)
-res22: Iterator[Seq[Int]] = non-empty iterator
+Seq(1, 2, 3, 4).grouped(2)
+// res22: Iterator[Seq[Int]] = non-empty iterator
 
-scala> Seq(1, 2, 3, 4).grouped(2).toList
-res23: List[Seq[Int]] = List(List(1, 2), List(3, 4))
+Seq(1, 2, 3, 4).grouped(2).toList
+// res23: List[Seq[Int]] = List(List(1, 2), List(3, 4))
 ~~~
 
 
