@@ -2,7 +2,7 @@
 
 It's time to give monads our standard Scalaz treatment. As usual we'll look at the type class, instances, and syntax.
 
-### The Monad Type Class
+### The Monad Type Class {#monad-type-class}
 
 The monad type class is [`scalaz.Monad`][scalaz.Monad]. `Monad` extends `Applicative`, which we'll discuss later, and `Bind`, which defines the `bind` method.
 

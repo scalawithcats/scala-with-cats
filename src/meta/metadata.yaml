@@ -44,7 +44,8 @@ pages:
   - src/pages/monad-transformers/index.md
 
   - src/pages/applicatives/index.md
-  - src/pages/applicatives/arity.md
+  - src/pages/applicatives/combine.md
+  - src/pages/applicatives/scalaz.md
 
   - src/pages/parser/index.md
   - src/pages/parser/intro.md

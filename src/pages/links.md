@@ -1,4 +1,5 @@
 [scalaz.\/]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.$bslash$div
+[scalaz.Applicative]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Applicative
 [scalaz.Cord]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Cord
 [scalaz.Equal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Equal
 [scalaz.Foldable]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Foldable
