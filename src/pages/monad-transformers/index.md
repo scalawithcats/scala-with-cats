@@ -83,9 +83,8 @@ This is the basics of using monad transformers. Let's now look in depth.
 Monad transformers are  a little different to the other abstractions we've seen. Although there is a [monad transformer type class][scala.MonadTrans] it is very uncommon to use it. We normally only use monad transformers to build monads, which we then use via the `Monad` type class. Thus the main points of interest when using monad transformers are:
 
 - the available transformer classes;
-- building stacks of monads using transformers;
-- constructing instances of a monad stack; and
-- pulling apart a stack to access the wrapped monads.
+- building stacks of monads using transformers; and 
+- constructing and deconstructing instances of a monad stack.
 
 ### The Monad Transformer Classes
 
@@ -135,7 +134,7 @@ This is the general pattern for constructing a monad stack:
 2. Build a stack from the bottom up using the type aliases just defined.
 
 
-### Constructing Instances
+### Constructing and Deconstructing Instances
 
 We can construct an instance of our monad stack using `point`, as is normal for monads. Let's create an instance of the `Future` \ `List` \ `Option` monad we defined above. To get the type class instances for `Future` into scope we need to import `scalaz.std.scalaFuture` and have an implicit `ExecutionContext` in scope.
 
@@ -155,7 +154,7 @@ type Result[A] = OptionT[FutureList, A]
 // res: Result[Int] = OptionT(ListT(scala.concurrent.impl.Promise$DefaultPromise@3a3670a8))
 ~~~
 
-Using `point` we constructed a monad instance on the `Some` branch of `OptionT`, but what about the `None` branch? Many monads encode some notion of failure, no how in general can we construct a "failed" monad? There is no general way to do this. We can either look for useful functions on the monad transformers we use, or we construct an entire monad stack by hand.
+Using `point` we constructed a monad instance on the `Some` branch of `OptionT`, but what about the `None` branch? Many monads encode some notion of failure, so how in general can we construct a "failed" monad? There is no general way to do this. We can either look for useful functions on the specific monad transformers we use, or we can construct an entire monad stack by hand.
 
 For the specific case of `OptionT`, we can call the `none` method on the companion object. I've put a type annotation in the example to show that we really are creating a value with the correct type (the code would not compile otherwise).
 
@@ -164,12 +163,14 @@ OptionT.none[FutureList, Int] : Result[Int]
 // res: Result[Int] = OptionT(ListT(scala.concurrent.impl.Promise$DefaultPromise@57afaaf7))
 ~~~
 
+What about constructing an instance of `Result` with an empty list? We can't use our previous strategies here because there is no actual `Option` in our stack. To understand this construction we need to understand how monad stacks are made. Let's start with the code and then explain what is going on.
+
+~~~ scala
 OptionT[FutureList, Int](ListT.empty[Future, Option[Int]]) : Result[Int]
-res12: Result[Int] = OptionT(ListT(scala.concurrent.impl.Promise$DefaultPromise@7f5f2483))
+// res: Result[Int] = OptionT(ListT(scala.concurrent.impl.Promise$DefaultPromise@7f5f2483))
+~~~ 
 
 `liftM`
-
-### Taking Apart Instances
 
 `run`
 
