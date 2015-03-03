@@ -163,36 +163,50 @@ OptionT.none[FutureList, Int] : Result[Int]
 // res: Result[Int] = OptionT(ListT(scala.concurrent.impl.Promise$DefaultPromise@57afaaf7))
 ~~~
 
-What about constructing an instance of `Result` with an empty list? We can't use our previous strategies here because there is no actual `Option` in our stack. To understand this construction we need to understand how monad stacks are made. Let's start with the code and then explain what is going on.
+Let's pull apart this instance to understand how it's constructed.
+
+~~~ scala
+val stack = OptionT.none[FutureList, Int]
+// stack: scalaz.OptionT[FutureList,Int] = OptionT(ListT(scala.concurrent.impl.Promise$DefaultPromise@6f32915e))
+
+stack.run // Peel off the OptionT
+// res: FutureList[Option[Int]] = ListT(scala.concurrent.impl.Promise$DefaultPromise@3c7c538e)
+stack.run.run // Peel off the OptionT and ListT
+// res: scala.concurrent.Future[List[Option[Int]]] = scala.concurrent.impl.Promise$DefaultPromise@6f32915e
+
+// We've stripped away the monad transformer implementations. Now let's look inside the Future
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+
+Await.result(stack.run.run, Duration.Inf)
+// res: List[Option[Int]] = List(None)
+~~~
+
+So we see that our `OptionT` instance `stack` stores inside it a `FutureList` wrapped around a plain `Option`. This value is called by convention `run`. In general a monad transformer instance with type `FooT[M, A]` will have a value `run` of type `F[Foo[A]]`.
+
+Once we know this convention we are just following the types. We know we have a `FutureList` around our `OptionT` and a `FutureList[A]` is a `ListT[Future, A]`, and so on.
+
+We can reverse the process to construct an instance of `Result` by hand. Monad transformers by convention have constructors using apply methods on the companion object. It is sometimes necessary to supply type parameters to assist type inference.
+
+~~~ scala
+val stack: Result[Int] = OptionT[FutureList, Int](ListT(Future(List(Some(1)))))
+// stack: Result[Int] = OptionT(ListT(scala.concurrent.impl.Promise$DefaultPromise@1291a3cd))
+~~~
+
+Now we know how to construct monad stacks we can do things like constructing a `Result[Int]` with an empty list (and hence no `Option` inside it). Here I've used the convenience `empty` method on the `ListT` companion object.
 
 ~~~ scala
 OptionT[FutureList, Int](ListT.empty[Future, Option[Int]]) : Result[Int]
 // res: Result[Int] = OptionT(ListT(scala.concurrent.impl.Promise$DefaultPromise@7f5f2483))
 ~~~ 
 
-`liftM`
-
-`run`
-
-### Default Instances
-
-Most monads in Scalaz are just the transformer with `Id` wrapped around them.
-
-### Custom Instances
-
-### Syntax
-
-None.
-
-Example.
+`liftM` for lifting into a monad transformer.
 
 
-## Using Monad Transformers
+## Exercises
 
-`run`
+Construct a chunky stack of monads! Tasty!
 
-type aliases / patterns.
+Construct instances of this tasty stack!
 
-constructing instances.
-
-`liftM`.
+Do things with the stack!
