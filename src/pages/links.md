@@ -4,10 +4,17 @@
 [scalaz.Foldable]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Foldable
 [scalaz.Functor]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Functor
 [scalaz.Monad]: http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.Monad
+[scalaz.MonadTrans]: http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.MonadTrans
 [scalaz.Monoid]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Monoid
 [scalaz.Show]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Show
 [scalaz.Tag]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Tag$
 [scalaz.Traversable]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Traversable
+[scalaz.OptionT]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.OptionT
+[scalaz.ListT]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.ListT
+[scalaz.EitherT]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.EitherT
+[scalaz.ReaderT]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.ReaderT
+[scalaz.WriterT]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.WriterT
+[scalaz.IdT]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.IdT
 [scalaz.std.anyVal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.anyVal$
 [scalaz.std.list]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.list$
 [scalaz.std.map]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.map$
