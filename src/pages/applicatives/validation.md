@@ -60,32 +60,75 @@ Applicative[ListOr].apply2(List("Hello").failure[Int], List("world").failure[Int
 // res3: ListOr[Int] = Failure(List(Hello, world))
 
 Applicative[VectorOr].apply2(Vector(404).failure[Int], Vector(500).failure[Int])(_ * _)
-// res10: VectorOr[Int] = Failure(Vector(404, 500))
+// res4: VectorOr[Int] = Failure(Vector(404, 500))
 ~~~
 
-The main differences between the two types are tabulated below:
+### Validation Methods and Syntax
 
---------------------------------------------------------------------------------------
-                     `\/`                       `Validation`
--------------------- -------------------------- --------------------------------------
-Success constructor  `\/-(value)`               `Success(value)`
+`Validation` has two subtypes, `Success` and `Failure`, that correspond loosely to the `Right` and `Left` subtypes of `Either`:
 
-Failure constructor  `-\/(error)`               `Failure(error)`
+~~~ scala
+import scalaz.{ Validation, Success, Failure }
 
-Success syntax       `value.right[ErrorType]`   `value.success[ErrorType]`
+val s: Validation[String, Int] = Success(123)
+// s: scalaz.Validation[String,Int] = Success(123)
 
-Failure syntax       `error.left[ValueType]`    `error.failure[ValueType]`
+val f: Validation[String, Int] = Failure("message")
+// f: scalaz.Validation[String,Int] = Failure(message)
+~~~
 
-Failure accumulation Fail-fast,                 Accumulate errors using a `Semigroup`.
-                     keep first error only.
---------------------------------------------------------------------------------------
+We can import enriched `success` and `failure` methods from `scalaz.syntax.validation` to simplify construction:
 
-### Useful Validation Methods
+~~~ scala
+123.success[String]
+// res5: scalaz.Validation[String,Int] = Success(123)
 
-TODO: Complete:
+"message".failure[Int]
+// res6: scalaz.Validation[String,Int] = Failure(message)
+~~~
 
- - `parseInt`
- - `leftMap`
+The enriched `parseInt` method we saw in exercises for `\/` is available from `scalaz.syntax.std.string`. It returns a `Validation[NumberFormatException, Int]`:
+
+~~~ scala
+"123".parseInt
+// res7: scalaz.Validation[NumberFormatException,Int] = Success(123)
+~~~
+
+We can convert back and forth between `Validation` and `\/` using the `disjuction` and `validation` methods:
+
+~~~ scala
+"123".parseInt.disjunction
+// res8: scalaz.\/[NumberFormatException,Int] = \/-(123)
+
+"123".parseInt.disjunction.validation
+// res9: scalaz.Validation[NumberFormatException,Int] = Success(123)
+~~~
+
+We can `map`, `leftMap`, and `biMap` to transform the success and failure values in a `Validation`, just as we can to transform the left and right values in a disjunction:
+
+~~~ scala
+123.success.map(_ * 100)
+// res11: scalaz.Validation[Nothing,Int] = Success(12300)
+
+456.failure.leftMap(_.toString)
+// res12: scalaz.Validation[String,Nothing] = Failure(456)
+
+123.success[String].bimap(_ + "!", _ * 100)
+// res13: scalaz.Validation[String,Int] = Success(12300)
+
+"fail".failure[Int].bimap(_ + "!", _ * 100)
+// res14: scalaz.Validation[String,Int] = Failure(fail!)
+~~~
+
+Finally, we can `getOrElse` or `fold` on a `Validation` to extract the values:
+
+~~~ scala
+"fail".failure[Int].getOrElse(0)
+// res15: Int = 0
+
+"fail".failure[Int].fold(_ + "!!!", _.toString)
+// res16: String = fail!!!
+~~~
 
 ### Exercise: Form Validation
 
@@ -121,6 +164,8 @@ Now define two methods to read the `"name"` and `"age"` fields:
 
  - `readAge` should take a `Map[String, String]` parameter, extract the `"age"` field, check the relevant validation rules, and return a `Result[Int]`.
 
+Tip: Use the `parseInt` and `leftMap` methods described in the previous section to parse the age as an `Int`.
+
 <div class="solution">
 Here are the methods:
 
@@ -144,22 +189,13 @@ def readAge(data: Map[String, String]): Result[Int] =
 Finally, use an `Applicative` to combine the results of `readName` and `readAge` to produce a `User`:
 
 <div class="solution">
-There are several ways to do this. We can use the `apply2` method of `Applicative`:
+There are several ways to do this. Probably the simplest option is to use `apply2`:
 
 ~~~ scala
-def readUser(data): Result[User] =
+def readUser(data: Map[String, String]): Result[User] =
   Applicative[Result].apply2(readName(data), readAge(data))(User.apply)
 
 readUser(Map("name" -> "Dave", "age" -> "36"))
-// res13: Result[User] = Success(User(Dave,36))
+// res2: Result[User] = Success(User(Dave,36))
 ~~~
-
-Alternatively we can *lift* `User.apply` into `Result`:
-
-~~~ scala
-
-Applicative[Result].apply2(readName(data), readAge(data))(User.apply)
-// res13: Result[User] = Success(User(Dave,36))
-~~~
-
 </div>
