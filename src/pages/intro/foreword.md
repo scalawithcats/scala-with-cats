@@ -1,6 +1,6 @@
 # Foreword {-}
 
-The title of this book is "Essential Scalaz" and this book does cover the what and how of using Scalaz. However this book is not really about Scalaz per se, but Scalaz as a vehicle for exploring patterns for functional program design.
+The title of this book is "Advanced Scala with Scalaz", and it does cover the what and how of using Scalaz. However this book is not really about Scalaz per se, but Scalaz as a vehicle for exploring patterns for functional program design.
 
 Let me quote [Don Stewart][link-don-stewart], Haskell hacker extraordinaire at Standard Chartered Bank, [on the design of large systems in functional programming][link-don-stewart-so]:
 

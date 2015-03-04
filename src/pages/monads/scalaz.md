@@ -2,7 +2,7 @@
 
 It's time to give monads our standard Scalaz treatment. As usual we'll look at the type class, instances, and syntax.
 
-### The Monad Type Class
+### The Monad Type Class {#monad-type-class}
 
 The monad type class is [`scalaz.Monad`][scalaz.Monad]. `Monad` extends `Applicative`, which we'll discuss later, and `Bind`, which defines the `bind` method.
 
@@ -13,12 +13,14 @@ import scalaz.Monad
 import scalaz.std.option._
 import scalaz.std.list._
 
-Monad[Option].point(3) // == Some(3)
+Monad[Option].point(3)
+// res0: Option[Int] = Some(3)
 
-Monad[List].point(3) // == List(3)
+Monad[List].point(3)
+// res1: List[Int] = List(3)
 
 Monad[List].bind(List(1, 2, 3))(x => List(x, x*10))
-// == List(1, 10, 2, 20, 3, 30)
+// res2: List[Int] = List(1, 10, 2, 20, 3, 30)
 ~~~
 
 `Monad` provides all of the methods from `Functor`, including `map` and `lift`, and adds plenty of new methods as well. Here are a couple of examples:
@@ -44,13 +46,14 @@ val sequence: Option[List[Int]] =
 Scalaz provides instances for all the monads in the standard library (`Option`, `List`, `Vector` and so on) via `scalaz.std`:
 
 ~~~ scala
-Monad[Option].bind(some(1))(x => some(x*2)) // == Some(2)
+Monad[Option].bind(some(1))(x => some(x*2))
+// res4: Option[Int] = Some(2)
 
 Monad[List].bind(List(1, 2, 3))(x => List(x, x*10))
-// == List(1, 10, 2, 20, 3, 30)
+// res5: List[Int] = List(1, 10, 2, 20, 3, 30)
 
 Monad[Vector].bind(Vector(1, 2, 3))(x => Vector(x, x*10))
-// == Vector(1, 10, 2, 20, 3, 30)
+// res6: Vector[Int] = Vector(1, 10, 2, 20, 3, 30)
 ~~~
 
 There are also some Scalaz-specific instances that we'll see later on.
@@ -89,8 +92,11 @@ def sumSquare[A[_] : Monad]: A[Int] = {
   a flatMap (x => b map (y => x*x + y*y))
 }
 
-sumSquare[Option] // == Some(25)
-sumSquare[List]   // == List(25)
+sumSquare[Option]
+// res7: Option[Int] = Some(25)
+
+sumSquare[List]
+// res8: List[Int] = List(25)
 ~~~
 
 We can rewrite this code using for comprehensions. The Scala compiler will "do the right thing" by rewriting our comprehension in terms of `flatMap` and `map` and inserting the correct implicit conversions to use our `Monad`:
@@ -103,8 +109,11 @@ def sumSquare[A[_] : Monad]: A[Int] = {
   } yield x*x + y*y
 }
 
-sumSquare[Option] // == Some(25)
-sumSquare[List]   // == List(25)
+sumSquare[Option]
+// res9: Option[Int] = Some(25)
+
+sumSquare[List]
+// res10: List[Int] = List(25)
 ~~~
 
 ### Exercise: My Monad is Way More Valid Than Your Functor
@@ -171,10 +180,10 @@ Now we can use our `Monad` to `flatMap` and `map`:
 import scalaz.syntax.monad._
 
 warning(100, "Message1") flatMap (x => Warning(x*2, "Message2"))
-// == Warning(200, "Message1 Message2")
+// res11: Result[Int] = Warning(200, "Message1 Message2")
 
 warning(10, "Too low") map (_ - 5)
-// == Warning(20, "Too low")
+// res12: Result[Int] = Warning(20, "Too low")
 ~~~
 
 We can also `Results` in for comprehensions:
@@ -185,7 +194,7 @@ for {
   b <- warning(2, "Message1")
   c <- warning(a + b, "Message2")
 } yield c * 10
-// == Warning(30, "Message1 Message2")
+// res13: Result[Int] = Warning(30, "Message1 Message2")
 ~~~
 </div>
 
@@ -231,24 +240,24 @@ def foldMapM[A, M[_] : Monad, B: Monoid](iter: Iterable[A])(f: A => M[B]): M[B] 
 We can unify monadic and normal code by using the `Id` monad. The `Id` monad provides a monad instance (and many other instances) for plain values. Note that such values are not wrapped in any class. They continue to be the plain values we started with. To access it's instances we require `scalaz.Id._`.
 
 ~~~ scala
-scala> import scalaz.Id._
-scala> import scalaz.syntax.monad._
+import scalaz.Id._
+import scalaz.syntax.monad._
 
-scala> 3.point[Id]
-res2: scalaz.Id.Id[Int] = 3
+3.point[Id]
+// res2: scalaz.Id.Id[Int] = 3
 
-scala> 3.point[Id] flatMap (_ + 2)
-res3: scalaz.Id.Id[Int] = 5
+3.point[Id] flatMap (_ + 2)
+// res3: scalaz.Id.Id[Int] = 5
 
-scala> 3.point[Id] + 2
-res4: Int = 5
+3.point[Id] + 2
+// res4: Int = 5
 ~~~
 
 Using this one neat trick, implement a default function for `foldMapM`. This allows us to write code like
 
 ~~~ scala
-scala> seq.foldMapM()
-res10: scalaz.Id.Id[Int] = 6
+seq.foldMapM()
+// res10: scalaz.Id.Id[Int] = 6
 ~~~
 
 <div class="solution">

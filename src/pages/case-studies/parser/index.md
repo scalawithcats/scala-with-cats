@@ -1,5 +1,10 @@
-# Parser Combinators
+# Case Study: Parser Combinators
 
+<div class="callout callout-danger">
+  TODO: Add content from parsers workshop
+</div>
+
+<!--
 In this section we will implement a parser combinator library. What are parser combinators? They are a simple way of writing parsers by composing them out of small units, such as sequencing and alternation. ...
 
 Via the medium of parser combinators we will explore many aspects of programming in Scala, including:
@@ -15,3 +20,4 @@ Via the medium of parser combinators we will explore many aspects of programming
 
 
 ... more about parser combinators here ...
+-->

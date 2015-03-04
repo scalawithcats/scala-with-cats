@@ -1,5 +1,10 @@
-## Project: Pygmy Hadoop
+# Case Study: Pygmy Hadoop
 
+<div class="callout callout-danger">
+  TODO: Add content from mapreduce workshop
+</div>
+
+<!--
 In a previous section we implemented a function `foldMap` that folded a `List` using an implicit `Monoid`. In this project we're going to extend this idea to parallel processing.
 
 If you have used Hadoop or otherwise worked in "big data" you will have heard of [MapReduce][link-mapreduce], which is a programming model for doing parallel data processing across tens or hundreds of machines. As the name suggests, model is built around a *map* phase, which is the same `map` function we know from Scala, and a *reduce* phase, which we usually call `fold`[^hadoop-shuffle].
@@ -48,8 +53,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 We operate on the value in a `Future` using the familiar `map` and `flatMap` methods. If we have a `Seq[Future[A]]` we can convert it to a `Future[Seq[A]]` using the method `Future.sequence`.
 
 ~~~ scala
-scala> Future.sequence(Seq(Future(1), Future(2), Future(3)))
-res27: scala.concurrent.Future[Seq[Int]] = // ...
+Future.sequence(Seq(Future(1), Future(2), Future(3)))
+// res27: scala.concurrent.Future[Seq[Int]] = // ...
 ~~~
 
 Finally, we can use `Await.result` to block on a `Future` till a result is available.
@@ -64,11 +69,11 @@ Await.result(Future(1), Duration.Inf) // Wait forever till a result arrives
 We can partition a sequence (actually anything that implements `Iterable`) using the `grouped` method.
 
 ~~~ scala
-scala> Seq(1, 2, 3, 4).grouped(2)
-res22: Iterator[Seq[Int]] = non-empty iterator
+Seq(1, 2, 3, 4).grouped(2)
+// res22: Iterator[Seq[Int]] = non-empty iterator
 
-scala> Seq(1, 2, 3, 4).grouped(2).toList
-res23: List[Seq[Int]] = List(List(1, 2), List(3, 4))
+Seq(1, 2, 3, 4).grouped(2).toList
+// res23: List[Seq[Int]] = List(List(1, 2), List(3, 4))
 ~~~
 
 
@@ -131,3 +136,4 @@ object FoldMap {
 ### More Monoids
 
 The monoid instances we have considered so far are very simple. Much more complex and interesting monoids are possible. For example, the [HyperLogLog][link-hyperloglog] algorithm is used to approximate the number of distinct elements in a collection and forms a monoid. It is extremely commonly used in big data applications due to its high accuracy and small storage requirements. Other algorithms for which there is a monoid include the [Bloom filter][link-bloom-filter], a space-efficient probabilistic set, [stochastic gradient descent][link-stochastic-gradient-descent], commonly used to train machine learning models, and the [Top-K algorithm][link-topk], used to find the *K* frequent items in a collection. Scala implementations of all these algorithms can be found in [Algebird][link-algebird].
+-->

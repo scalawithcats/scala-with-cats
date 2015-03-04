@@ -48,20 +48,20 @@ More specific type preferred?   Yes         Yes         No
 It's clear there is no perfect system. Scalaz generally prefers to use invariant type classes. This allows us to specify more specific instances for subtypes if we want. It does mean that if we have, for example, a value of type `Some[Int]`, our monoid instance for `Option` will not be used. We can solve this problem with a type annotation like `Some(1) : Option[Int]` or by using "smart constructors" that construct values with the type of the base trait in an algebraic data type. For example, Scalaz provides `some` and `none` constructors for `Option`:
 
 ~~~ scala
-scala> import scalaz.std.option._
+import scalaz.std.option._
 import scalaz.std.option._
 
-scala> Some(1)   // direct construction yields `Some[Int]`
-res0: Some[Int] = Some(1)
+Some(1)   // direct construction yields `Some[Int]`
+// res0: Some[Int] = Some(1)
 
-scala> some(1)   // smart constructor yields `Option[Int]`
-res1: Option[Int] = Some(1)
+some(1)   // smart constructor yields `Option[Int]`
+// res1: Option[Int] = Some(1)
 
-scala> None      // direct construction yields `None.type`
-res2: None.type = None
+None      // direct construction yields `None.type`
+// res2: None.type = None
 
-scala> none[Int] // smart constructor yields `Option[Int]`
-res3: Option[Int] = None
+none[Int] // smart constructor yields `Option[Int]`
+// res3: Option[Int] = None
 ~~~
 
 ### Identically Typed Instances
@@ -96,14 +96,14 @@ Multiplication(1) |+| Multiplication(4)
 The result is wrapped in a type tag, although this doesn't alter the runtime representation. To remove the type tag we can do the following
 
 ~~~ scala
-scala> Multiplication.unwrap(Multiplication(1))
-res7: Int = 1
+Multiplication.unwrap(Multiplication(1))
+// res7: Int = 1
 
-scala> import scalaz.syntax.tag._
 import scalaz.syntax.tag._
+// import scalaz.syntax.tag._
 
-scala> Multiplication(1).unwrap
-res8: Int = 1
+Multiplication(1).unwrap
+// res8: Int = 1
 ~~~
 
 To define methods that accept tagged values we write types like `type @@ tag` (which is an infix version of `@@[type, tag]`).

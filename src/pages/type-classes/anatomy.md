@@ -1,9 +1,3 @@
-## Type Classes
-
-**Type classes** are a programming pattern originating from Haskell. They allow us to extend existing libraries with new functionality, without using traditional inheritance, and without altering the original library source code.
-
-In this section we will learn how to implement type classes in Scala using *implicit values*.
-
 ## Anatomy of a Type Class
 
 There are three important components to the type class pattern: the *type class* itself, *instances* for particular types, and the *interface* methods that we expose to users:

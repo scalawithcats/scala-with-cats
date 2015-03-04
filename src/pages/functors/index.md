@@ -9,7 +9,8 @@ Let's start as we did with monoids by looking at a few types and operations and 
 The `map` method is perhaps the most commonly used method on `Seq`. If we have a `Seq[A]` and a function `A => B`, `map` will create a `Seq[B]`.
 
 ~~~ scala
-Seq(1, 2, 3) map (_ * 2) // == List(2, 4, 6)
+Seq(1, 2, 3) map (_ * 2)
+// res0: List[Int] = List(2, 4, 6)
 ~~~
 
 **Options**
@@ -17,7 +18,8 @@ Seq(1, 2, 3) map (_ * 2) // == List(2, 4, 6)
 We can do the same thing with an `Option`. If we have a `Option[A]` and a function `A => B`, `map` will create a `Option[B]`.
 
 ~~~ scala
-Some(1) map (_.toString) // == Some(1)
+Some(1) map (_.toString)
+// res1: Option[String] = Some(1)
 ~~~
 
 **Functions (?!)**
@@ -46,7 +48,8 @@ val func1 = (x: Int) => x.toDouble
 val func2 = (y: Double) => y * 2
 val func3 = func1 map func2
 
-func3(1) // == 2.0
+func3(1)
+// res2: Double = 2.0
 ~~~
 
 ## Definition of a Functor

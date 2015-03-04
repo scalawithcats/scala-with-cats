@@ -59,11 +59,11 @@ import scalaz.syntax.monoid._
 import scalaz.std.string._
 import scalaz.std.anyVal._
 
-val stringResult =
-  "Hi " |+| "there" |+| mzero[String] // == "Hi there"
+val stringResult = "Hi " |+| "there" |+| mzero[String]
+// stringResult: String = Hi there
 
-val intResult =
-  1 |+| 2 |+| mzero[Int]              // == 3
+val intResult = 1 |+| 2 |+| mzero[Int]
+// intResult: Int = 3
 ~~~
 
 ### Exercise: Adding All The Things
@@ -139,7 +139,8 @@ object Order {
 Given a `Monoid[A]` we can easily define a default operation for folding over instances of `List[A]`. Let's call this new method `foldMap` (we'll come to the `map` part in a bit):
 
 ~~~ scala
-List(1, 2, 3).foldMap   // == 6
+List(1, 2, 3).foldMap
+// res0: List[Int] = 6
 ~~~
 
 Implement `foldMap` now. Use an `implicit class` to add the method to `List[A]` for any `A`. The method should automatically select an appropriate `Monoid[A]` using implicits:
@@ -168,29 +169,31 @@ implicit class FoldMapOps[A](base: List[A]) {
 Either of these approaches works just fine, but the second implementation is mildly preferable because of the error messages it generates when there is no matching `Monoid` in scope. Putting the context bound on the constructor gives us the following:
 
 ~~~ scala
-scala> List('a, 'b, 'c).foldMap
-<console>:16: error: value foldMap is not a member of List[Symbol]
-              List('a, 'b, 'c).foldMap
-                               ^
+List('a, 'b, 'c).foldMap
+// <console>:16: error: value foldMap is not a member of List[Symbol]
+//               List('a, 'b, 'c).foldMap
+//                                ^
 ~~~
 
 whereas putting the parameter on `foldMap` gives us a much more precise error message:
 
 ~~~ scala
-scala> List('a, 'b, 'c).foldMap
-<console>:16: error: could not find implicit value ↩
-   for parameter monoid: scalaz.Monoid[Symbol]
-              List('a, 'b, 'c).foldMap
-                               ^
+List('a, 'b, 'c).foldMap
+// <console>:16: error: could not find implicit value ↩
+//    for parameter monoid: scalaz.Monoid[Symbol]
+//               List('a, 'b, 'c).foldMap
+//                                ^
 ~~~
 </div>
 
 Now let's implement the `map` part of `foldMap`. Extend `foldMap` so it takes a function of type `A => B`, where there is a monoid for `B`, and returns a result of type `B`. If no function is specified it should default to the identity function `a => a`. Here's an example:
 
 ~~~ scala
-List(1, 2, 3).foldMap[Int]()              // 6
+List(1, 2, 3).foldMap[Int]()
+// res0: Int = 6
 
-List("1", "2", "3").foldMap[Int](_.toInt) // 6
+List("1", "2", "3").foldMap[Int](_.toInt)
+// res1: Int = 6
 ~~~
 
 Note: we no longer need a monoid for `A`.
@@ -211,8 +214,11 @@ import scalaz.std.anyVal._
 import scalaz.std.list._
 import scalaz.syntax.foldable._
 
-List(1, 2, 3).foldMap()           // == 6
-List(1, 2, 3).foldMap(_.toString) // == "123"
+List(1, 2, 3).foldMap()
+// res2: Int = 6
+
+List(1, 2, 3).foldMap(_.toString)
+// res3: String = "123"
 ~~~
 
 Scalaz provides a number of instances for `Foldable`:
@@ -222,6 +228,9 @@ import scalaz.std.iterable._
 import scalaz.std.tuple._
 import scalaz.std.string._
 
-Map("a" -> 1, "b" -> 2).foldMap() // == (ab, 3)
-Set(1, 2, 3).foldMap(_.toString)  // == "123"
+Map("a" -> 1, "b" -> 2).foldMap()
+// res4: (String, Int) = (ab, 3)
+
+Set(1, 2, 3).foldMap(_.toString)
+// res5: String = "123"
 ~~~

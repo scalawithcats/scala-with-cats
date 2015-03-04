@@ -13,23 +13,24 @@ filenameStem: "advanced-scala"
 exercisesRepo: null # "git@github.com:underscoreio/advanced-scala-code.git"
 # Used by Grunt to assemble pandoc command line:
 pages:
-  - src/pages/index.md
+  - src/pages/intro/foreword.md
+  - src/pages/intro/early-access.md
+  - src/pages/intro/conventions.md
 
-  - src/pages/intro/index.md
-  - src/pages/intro/type-class.md
-
-  - src/pages/intro/scalaz.md
-  - src/pages/intro/equal.md
-  - src/pages/intro/summary.md
+  - src/pages/type-classes/index.md
+  - src/pages/type-classes/anatomy.md
+  - src/pages/type-classes/scalaz.md
+  - src/pages/type-classes/equal.md
+  - src/pages/type-classes/summary.md
 
   - src/pages/monoids/index.md
   - src/pages/monoids/scalaz.md
   - src/pages/monoids/instance-selection.md
-  - src/pages/monoids/pygmy-hadoop.md
+  - src/pages/monoids/summary.md
 
   - src/pages/functors/index.md
   - src/pages/functors/scalaz.md
-  - src/pages/functors/conclusions.md
+  - src/pages/functors/summary.md
 
   - src/pages/monads/index.md
   - src/pages/monads/scalaz.md
@@ -40,16 +41,26 @@ pages:
   # - src/pages/monads/error-recovery.md
   # - src/pages/monads/writer.md
   # - src/pages/monads/reader.md
+  - src/pages/monads/summary.md
 
   - src/pages/monad-transformers/index.md
+  - src/pages/monad-transformers/summary.md
 
   - src/pages/applicatives/index.md
+  - src/pages/applicatives/combine.md
+  - src/pages/applicatives/scalaz.md
+  - src/pages/applicatives/validation.md
+  - src/pages/applicatives/summary.md
 
-  - src/pages/parser/index.md
-  - src/pages/parser/intro.md
-  - src/pages/parser/error-handling.md
-  - src/pages/parser/transforms.md
-  - src/pages/parser/applicative.md
+  - src/pages/case-studies/mapreduce/index.md
+
+  - src/pages/case-studies/validation/index.md
+
+  - src/pages/case-studies/parser/index.md
+  # - src/pages/case-studies/parser/intro.md
+  # - src/pages/case-studies/parser/error-handling.md
+  # - src/pages/case-studies/parser/transforms.md
+  # - src/pages/case-studies/parser/applicative.md
 
   - src/pages/solutions.md
   - src/pages/links.md
