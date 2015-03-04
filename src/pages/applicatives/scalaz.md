@@ -152,3 +152,46 @@ failFast.apply3(readInt("foo"), readInt("bar"), readInt("baz"))(sum3)
 // res4: Result[Int] = Fail(List(Error reading foo))
 ~~~
 </div>
+
+### Applicative Builder Syntax
+
+`apply2` through `apply12` are some of the most useful methods of `Applicative`. In fact, we use them so often, Scalaz provides a special *applicative builder* syntax to make them more convenient to use. Here's an example:
+
+~~~ scala
+(readInt("123") |@| readInt("bar") |@| readInt("baz"))(sum3)
+~~~
+
+`|@|` is an enriched method provided via `scalaz.syntax.applicative` that creates an `ApplicativeBuilder`. This is an object that has an `apply` method that behaves like `Applicative.apply2`:
+
+~~~ scala
+readInt("123") |@| readInt("456")
+// Reading 123
+// Reading bar
+// res5: scalaz.syntax.ApplicativeBuilder[Result,Int,Int] = scalaz.syntax.ApplyOps$$anon$1@2c2e72e
+
+res5.apply(sum2)
+// res6: result[Int] = Pass(579)
+~~~
+
+In addition to `apply`, `ApplicativeBuilder` has another `|@|` method that builds a new builder for three arguments:
+
+~~~ scala
+readInt("123") |@| readInt("456") |@| readInt("789")
+// Reading 123
+// Reading 456
+// Reading 789
+// res7: scalaz.syntax.ApplicativeBuilder[Result,Int,Int]#ApplicativeBuilder3[Int] = ↩
+//   scalaz.syntax.ApplicativeBuilder$$anon$1@18379284
+
+res7.apply(sum3)
+// res8: Result[Int] = Pass(1368)
+~~~
+
+As you have probably guessed, the three-argument builder has a `|@|` method to produce a four-argument builder, and so on up to 12 arguments. This system makes it incredibly easy to lift a function of multiple arguments into the context of an `Applicative`. The syntax is:
+
+~~~ scala
+(wrappedArg1 |@| wrappedArg2 |@| arappedArg3 |@| ...) {
+  (arg1, arg2, arg3, ...) =>
+    resultExpression
+}
+~~~

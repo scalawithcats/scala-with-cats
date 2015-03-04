@@ -181,7 +181,11 @@ def readAge(data: Map[String, String]): Result[Int] =
   data.get("age").map(_.trim) match {
     case None            => List("No age specified").failure
     case Some("")        => List("Age cannot be blank").failure
-    case Some(ageString) => ageString.parseInt.leftMap(_ => List("Age must be an integer"))
+    case Some(ageString) => ageString.parseInt match {
+      case Failure(exn)            => List("Age must be a number").failure
+      case Success(num) if num < 0 => List("Age must not be negative").failure
+      case Success(num)            => num.success
+    }
   }
 ~~~
 </div>
@@ -189,7 +193,7 @@ def readAge(data: Map[String, String]): Result[Int] =
 Finally, use an `Applicative` to combine the results of `readName` and `readAge` to produce a `User`:
 
 <div class="solution">
-There are several ways to do this. Probably the simplest option is to use `apply2`:
+There are several ways to do this. One option is to use `apply2`:
 
 ~~~ scala
 def readUser(data: Map[String, String]): Result[User] =
@@ -197,5 +201,16 @@ def readUser(data: Map[String, String]): Result[User] =
 
 readUser(Map("name" -> "Dave", "age" -> "36"))
 // res2: Result[User] = Success(User(Dave,36))
+
+readUser(Map("age" -> "-1"))
+// res3: Result[User] = Failure(List(No name specified, ↩
+//   Age must not be negative))
+~~~
+
+Alternatively, we can use the applicative builder syntax for identical semantics but slightly shorter code:
+
+~~~ scala
+def readUser(data: Map[String, String]): Result[User] =
+  (readName(data) |@| readAge(data))(User.apply)
 ~~~
 </div>
