@@ -1,5 +1,5 @@
-Essential Scalaz
---------------
+Advanced Scala with Scalaz
+--------------------------
 
 Getting Started
 ---------------
@@ -8,7 +8,7 @@ You'll need to install the grunt project dependencies the first time you check t
 
 ~~~
 brew install pandoc
-npm install -g grunt-cli
+npm install -g grunt-cli coffee-script
 npm install
 ~~~
 
