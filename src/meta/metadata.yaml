@@ -46,6 +46,7 @@ pages:
   - src/pages/applicatives/index.md
   - src/pages/applicatives/combine.md
   - src/pages/applicatives/scalaz.md
+  - src/pages/applicatives/validation.md
 
   - src/pages/parser/index.md
   - src/pages/parser/intro.md

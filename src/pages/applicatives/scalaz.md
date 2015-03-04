@@ -70,7 +70,7 @@ val myApplicative = new Applicative[MyType] {
 We also get an `Applicative` for free whenever we define a `Monad`. The implementation of `ap` in this case is the same monadic sequencing we saw for `apply2_monadic` earlier:
 
 ~~~ scala
-def ap[A, B](value: MyType[A])(func: MyType[A => B]): MyType[B] =
+def ap[A, B](value: => MyType[A])(func: => MyType[A => B]): MyType[B] =
   bind(func)(map(value)(_))
 ~~
 

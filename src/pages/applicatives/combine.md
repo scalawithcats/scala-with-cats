@@ -1,6 +1,8 @@
-## Combining Pairs of Values
+## Combining Values using Applicatives
 
-Applicatives are used to combine values within a context. The `ap` method defines how to combine the contexts, and the `func` parameter defines how to define the values within those contexts. The types on the `ap` method are difficult to parse at first, so we'll start with a simpler example---combining pairs of precisely two values.
+Applicatives are used to combine values within a context. The `ap` method defines how to combine the contexts, and the `func` parameter defines how to define the values within those contexts. The types on the `ap` method are difficult to parse at first, so we'll start with a simpler example---*combining pairs* of values.
+
+### Combining Pairs of Values
 
 Imagine we want to read two numbers from a user and combine them by adding them together. Reading a number may succeed or fail, so the computation as a whole can also fail. Existing Scalaz types such as `\/` presuppose certain combination semantics so we'll define our own `Result` type to model failure in this example. Here's the code:
 
@@ -189,10 +191,17 @@ As we shall see in a moment, Scalaz provides several convenience methods and syn
 
 ### Take Home Points
 
- - Applicative provide mechanisms for combining values within a context.
+ - Applicatives allow us to apply a function to a value within a context such as `\/`,
+   `Option`, or `Result`.
 
- - If we have a monad, we can already define a default applicative.
+ - The user provides a function that operates on the value within the context,
+   and the `ap` method provides rules for combining the contexts.
+
+ - A monad is a particular type of applicative that provides sequencing behaviour.
    However, not all applicatives are monads.
+
+ - We can use applicatives in conjunction with currying to *combine* arbitrary
+   numbers of values.
 
  - The type signature on the `ap` method is designed so we can generalise over arity
    using recursive calls and curried functions.
