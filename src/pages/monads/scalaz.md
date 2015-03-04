@@ -2,7 +2,7 @@
 
 It's time to give monads our standard Scalaz treatment. As usual we'll look at the type class, instances, and syntax.
 
-### The Monad Type Class {#monad-type-class}
+### The *Monad* Type Class {#monad-type-class}
 
 The monad type class is [`scalaz.Monad`][scalaz.Monad]. `Monad` extends `Applicative`, which we'll discuss later, and `Bind`, which defines the `bind` method.
 
@@ -39,7 +39,7 @@ val sequence: Option[List[Int]] =
   Monad[Option].sequence(List(some(1), some(2), some(3)))
 ~~~
 
-`sequence` requires an instance of [`scalaz.Traversable`][scalaz.Traversable] to be in scope. `Traversable` is closely related to the `Foldable` type class we saw in the exercise [Folding Wwithout the Hard Work](#folding-without-the-hard-work).
+`sequence` requires an instance of [`scalaz.Traversable`][scalaz.Traversable] to be in scope.
 
 ### Default Instances
 
@@ -74,7 +74,7 @@ val optionMonad = new Monad[Option] {
 }
 ~~~
 
-### Monad Syntax
+### *Monad* Syntax
 
 `scalaz.syntax.monad` provides us with syntax versions of `flatMap` and `point`, as well as `map` and `lift` from `scalaz.syntax.functor`.
 
@@ -195,43 +195,6 @@ for {
   c <- warning(a + b, "Message2")
 } yield c * 10
 // res13: Result[Int] = Warning(30, "Message1 Message2")
-~~~
-</div>
-
-### Exercise: Monadic FoldMap
-
-It's useful to allow the user of `foldMap` to perform monadic actions within their mapping function. This, for example, allows the mapping to indicate failure by returning an `Option`.
-
-Implement a variant of `foldMap` called `foldMapM` that allows this. The focus here is on the monadic component, so you can base your code on `foldMap` or `foldMapP` as you see fit. Here are some examples of use:
-
-~~~ scala
-import scalaz.std.anyVal._
-import scalaz.std.option._
-import scalaz.std.list._
-
-val seq = Seq(1, 2, 3)
-
-seq.foldMapM(a => some(a))
-// res4: Option[Int] = Some(6)
-
-seq.foldMapM(a => List(a))
-// res5: List[Int] = List(6)
-
-seq.foldMap(a => if(a % 2 == 0) some(a) else none[Int])
-// res6: Option[Int] = Some(2)
-~~~
-
-<div class="solution">
-The full solution is implemented in `monad/src/main/scala/parallel/FoldMap.scala`. Here's the most important part:
-
-~~~ scala
-def foldMapM[A, M[_] : Monad, B: Monoid](iter: Iterable[A])(f: A => M[B]): M[B] =
-  iter.foldLeft(mzero[B].point[M]){ (accum, elt) =>
-    for {
-      a <- accum
-      b <- f(elt)
-    } yield a |+| b
-  }
 ~~~
 </div>
 

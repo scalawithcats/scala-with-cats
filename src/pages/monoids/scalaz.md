@@ -2,7 +2,7 @@
 
 Now we've seen what a monoid is, let's look at their implementation in Scalaz. Once again we'll look at the three main aspects of the implementation: the *type class*, the *instances*, and the *interface*.
 
-### The Monoid Type Class
+### The *Monoid* Type Class
 
 The monoid type class is [`scalaz.Monoid`][scalaz.Monoid]. If we look at the implementation we see that `Monoid` extends `Semigroup`. A semigroup is a monoid without the identity element, leaving only `append`.
 
@@ -45,7 +45,7 @@ val bitwiseXorInstance: Monoid[Int] =
   Monoid.instance[Int](_ ^ _, 0)
 ~~~
 
-### Monoid Syntax
+### *Monoid* Syntax
 
 We access the monoid syntax by importing `scalaz.syntax.monoid._`. This provides:
 
@@ -133,104 +133,3 @@ object Order {
 }
 ~~~
 </div>
-
-### Exercise: Folding Without the Hard Work {#folding-without-the-hard-work}
-
-Given a `Monoid[A]` we can easily define a default operation for folding over instances of `List[A]`. Let's call this new method `foldMap` (we'll come to the `map` part in a bit):
-
-~~~ scala
-List(1, 2, 3).foldMap
-// res0: List[Int] = 6
-~~~
-
-Implement `foldMap` now. Use an `implicit class` to add the method to `List[A]` for any `A`. The method should automatically select an appropriate `Monoid[A]` using implicits:
-
-<div class="solution">
-There are two possible solutions to this. Each involves defining an `implicit class` to wrap `List[A]` and provide the `foldMap` method. We'll call this implicit class `FoldMapOps`.
-
-The first solution puts a context bound on the type parameter for `FoldMapOps`. This restricts the compiler so it can only materialize a `FoldMapOps[A]` if there is a `Monoid[A]` in scope:
-
-~~~ scala
-implicit class FoldMapOps[A: Monoid](base: List[A]) {
-  def foldMap: A =
-    base.foldLeft(mzero[A])(_ |+| _)
-}
-~~~
-
-The second solution moves the implicit parameter to the `foldMap` method. This allows the compiler to materialize `FoldMapOps` for any `A`, but prevents us calling `foldMap` unless there is a `Monoid` in scope.
-
-~~~ scala
-implicit class FoldMapOps[A](base: List[A]) {
-  def foldMap(implicit monoid: Monoid[A]): A =
-    base.foldLeft(mzero[A])(_ |+| _)
-}
-~~~
-
-Either of these approaches works just fine, but the second implementation is mildly preferable because of the error messages it generates when there is no matching `Monoid` in scope. Putting the context bound on the constructor gives us the following:
-
-~~~ scala
-List('a, 'b, 'c).foldMap
-// <console>:16: error: value foldMap is not a member of List[Symbol]
-//               List('a, 'b, 'c).foldMap
-//                                ^
-~~~
-
-whereas putting the parameter on `foldMap` gives us a much more precise error message:
-
-~~~ scala
-List('a, 'b, 'c).foldMap
-// <console>:16: error: could not find implicit value ↩
-//    for parameter monoid: scalaz.Monoid[Symbol]
-//               List('a, 'b, 'c).foldMap
-//                                ^
-~~~
-</div>
-
-Now let's implement the `map` part of `foldMap`. Extend `foldMap` so it takes a function of type `A => B`, where there is a monoid for `B`, and returns a result of type `B`. If no function is specified it should default to the identity function `a => a`. Here's an example:
-
-~~~ scala
-List(1, 2, 3).foldMap[Int]()
-// res0: Int = 6
-
-List("1", "2", "3").foldMap[Int](_.toInt)
-// res1: Int = 6
-~~~
-
-Note: we no longer need a monoid for `A`.
-
-<div class="solution">
-~~~ scala
-implicit class FoldMapOps[A](base: List[A]) {
-  def foldMap[B : Monoid](f: A => B = (a: A) => a): B =
-    base.foldLeft(mzero[B])(_ |+| f(_))
-}
-~~~
-</div>
-
-It won't come as a surprise to learn we aren't the first to make this connection between fold and monoids. Scalaz provides an abstraction called [`Foldable`][scalaz.Foldable] that implements `foldMap`. We can use it by importing `scalaz.syntax.foldable._`:
-
-~~~ scala
-import scalaz.std.anyVal._
-import scalaz.std.list._
-import scalaz.syntax.foldable._
-
-List(1, 2, 3).foldMap()
-// res2: Int = 6
-
-List(1, 2, 3).foldMap(_.toString)
-// res3: String = "123"
-~~~
-
-Scalaz provides a number of instances for `Foldable`:
-
-~~~ scala
-import scalaz.std.iterable._
-import scalaz.std.tuple._
-import scalaz.std.string._
-
-Map("a" -> 1, "b" -> 2).foldMap()
-// res4: (String, Int) = (ab, 3)
-
-Set(1, 2, 3).foldMap(_.toString)
-// res5: String = "123"
-~~~

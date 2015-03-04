@@ -2,7 +2,7 @@
 
 Let's look at the implementation of functors in Scalaz. We'll follow the usual pattern of looking at the three main aspects of the implementation: the *type class*, the *instances*, and the *interface*.
 
-### The Functor Type Class
+### The *Functor* Type Class
 
 The functor type class is [`scalaz.Functor`][scalaz.Functor]. We obtain instances using the standard `Functor.apply`. As usual, default instances are arranged by type in the [`scalaz.std`][scalaz.std] package:
 
@@ -26,7 +26,7 @@ lifted(Some(1))
 // res0: Option[Int] = Some(2)
 ~~~
 
-### Functor Syntax
+### *Functor* Syntax
 
 The main method provided by the syntax for `Functor` is `map`:
 

@@ -20,7 +20,7 @@ The interface syntax, defined in [scalaz.syntax.equal], provides two methods for
  - `===` compares two objects for equality;
  - `=/=` compares two objects for inequality.
 
-### Comparing Ints
+### Comparing *Ints*
 
 Let's look at a few examples. First we import the type class:
 
@@ -54,7 +54,7 @@ import scala.syntax.equal._
 123 === "abc" // compile error
 ~~~
 
-### Comparing Options
+### Comparing *Options*
 
 Now for a more interesting example---`Option[Int]`. To compare values of type `Option[Int]` we need to import instances of `Equal` for `Option` as well as `Int`:
 

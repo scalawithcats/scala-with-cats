@@ -34,23 +34,24 @@ Oops - that didn't work! The `apply` method uses *implicits* to look up individu
 
 The [scalaz.std] package provides default instances for a wide variety of types. We can import these from the [scalaz.std] package as shown in the table below. Each import provides instances for a wide variety of type classes and one or several parameter types:
 
--------------------------------------------------------------------------
-Import                         Parameter types
------------------------------- -------------------------------------
-[scalaz.std.anyVal]            `Int`, `Double`, `Boolean`, etc...
+------------------------------------------------------------------------------
+Import                                   Parameter types
+---------------------------------------- -------------------------------------
+[`scalaz.std.anyVal`][scalaz.std.anyVal] `Int`, `Double`, `Boolean`, etc...
 
-[scalaz.std.string]            `String`
+[`scalaz.std.string`][scalaz.std.string] `String`
 
-[scalaz.std.list]              `List`
+[`scalaz.std.list`][scalaz.std.list]     `List`
 
-[scalaz.std.option]            `Option`
+[`scalaz.std.option`][scalaz.std.option] `Option`
 
-[scalaz.std.map]               `Map` and subtypes
+[`scalaz.std.map`][scalaz.std.map]       `Map` and subtypes
 
-[scalaz.std.tuple]             `Tuple1` to `Tuple8`
+[`scalaz.std.tuple`][scalaz.std.tuple]   `Tuple1` to `Tuple8`
 
-and so on...                   See the [scalaz.std] package for more
---------------------------------------------------------------------
+and so on...                             See the [`scalaz.std`][scalaz.std]
+                                         package for more
+------------------------------------------------------------------------------
 
 Let's import the instances of `Show` for `Int` and `String`:
 

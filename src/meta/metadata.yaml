@@ -11,6 +11,7 @@ coverColor: "D62A7C"
 filenameStem: "advanced-scala"
 # Used by Grunt to create a ZIP of source code:
 exercisesRepo: null # "git@github.com:underscoreio/advanced-scala-code.git"
+tocDepth: 3
 # Used by Grunt to assemble pandoc command line:
 pages:
   - src/pages/intro/foreword.md

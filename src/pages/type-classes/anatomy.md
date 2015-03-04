@@ -76,7 +76,7 @@ import JsonSyntax._
 val json: Json = Person("Dave", "dave@example.com").toJson
 ~~~
 
-### Exercise: Printable Library
+### Exercise: *Printable* Library
 
 Scala provides a `toString` method to let us convert any value to a `String`. However, this method comes with a few disadvantages. It is implemented for *every* type in the language, many implementations are of limited use, and we can't opt-in to specific implementations for specific types.
 
