@@ -1,8 +1,6 @@
 ## Validations
 
-Scalaz provides two types for modelling error handling: `\/` and a new type called `Validation`.
-
-We've met `\/` already. It is a monad that provides fail-fast error handling semantics. In the following example, we never call `fail2` because `fail1` returns and error:
+Scalaz provides two types for modelling error handling: `\/` and a new type called `Validation`. We've met `\/` already---it is a monad that provides fail-fast error handling semantics. In the following example, we never call `fail2` because `fail1` returns and error:
 
 ~~~ scala
 type ErrorOr[A] = List[String] \/ A

@@ -1,18 +1,24 @@
 # Applicatives
 
-In previous chapters we saw how monads and monad transformers help us *sequence* computations. In this chapter we will *applicatives*, which allow us to *apply functions to values within a context* such as `Option` or `\/`. Perhaps the most common use of applicatives is to *combine values*, which we will discuss in detail this chapter.
+In previous chapters we saw how functors and monads let us transform values within a context. While these are both immensely useful abstractions, there are types of transformation that we can't represent with either `map` or `flatMap`.
 
-You might reasonably ask: what is the difference between sequencing computations and applying functions? After all, you could argue that a for comprehension is transforming the values from each of its clauses:
+One great example is form validation, where we want to accumulate errors as we go along. If we model this with a monad like `\/`, we fail fast and lose errors:
 
 ~~~ scala
+def readInt(str: String): String \/ Int =
+  str.parseInt.disjunction.leftMap(_ => s"Couldn't read $str")
+
 for {
-  a <- Some(1)
-  b <- Some(2)
-  c <- Some(3)
+  a <- readInt("abc")
+  b <- readInt("def")
+  c <- readInt("ghi")
 } yield (a + b + c)
+// res0: scalaz.\/[List[String],Int] = -\/(List(Couldn't read abc))
 ~~~
 
-If you remember from the section on the [`Monad` type class](#monad-type-class), `Monad` is a subtype of `Applicative`. This means all `Monads` are `Applicatives` but not all `Applicatives` are `Monads`. Monadic comprehension is *one* way of transforming the results of computations, but it is not the *only* way---applicatives allow more flexibility than monads.
+To validate forms we need a more general form of combinator called an *applicative*. Monads and functors can both be modelled using applicatives, but applicatives also permit other types of combination that we haven't encountered yet.
+
+We will start with a formal definition of applicatives, and then look in some detail at using applicatives to *combine* values in various ways. We'll then turn our attention to Scalaz' `Applicative` type class and `Validation` type.
 
 ## Definition of an Applicative
 
