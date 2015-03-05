@@ -310,4 +310,97 @@ object FoldMappableSyntax {
 }
 ~~~
 </div>
+
+### Exercise: Everything is Monadic
+
+We can unify monadic and normal code by using the `Id` monad. The `Id` monad provides a monad instance (and many other instances) for plain values. Note that such values are not wrapped in any class. They continue to be the plain values we started with. To access it's instances we require `scalaz.Id._`.
+
+~~~ scala
+import scalaz.Id._
+import scalaz.syntax.monad._
+
+3.point[Id]
+// res2: scalaz.Id.Id[Int] = 3
+
+3.point[Id] flatMap (_ + 2)
+// res3: scalaz.Id.Id[Int] = 5
+
+3.point[Id] + 2
+// res4: Int = 5
+~~~
+
+Using this one neat trick, implement a default function for `foldMapM`. This allows us to write code like
+
+~~~ scala
+seq.foldMapM()
+// res10: scalaz.Id.Id[Int] = 6
+~~~
+
+<div class="solution">
+~~~ scala
+def foldMapM[A, M[_] : Monad, B: Monoid](iter: Iterable[A])(f: A => M[B] = (a: A) => a.point[Id]): M[B] =
+  iter.foldLeft(mzero[B].point[M]){ (accum, elt) =>
+    for {
+      a <- accum
+      b <- f(elt)
+    } yield a |+| b
+  }
+~~~
+</div>
+
+Now implement `foldMap` in terms of `foldMapM`:
+
+<div class="solution">
+~~~ scala
+def foldMap[A, B : Monoid](iter: Iterable[A])(f: A => B = (a: A) => a): B =
+  foldMapM[A, Id, B](iter){ a => f(a).point[Id] }
+~~~
+</div>
+
+
+### Exercise: Seeing is Believing
+
+Call `foldMapM` using the `\/` monad and verify that it really does stop execution as soon an error is encountered. You can force an error by trying to convert a `String` to an `Int` using the method shown below:
+
+~~~ scala
+import scalaz.syntax.std.string._
+//
+"Cat".parseInt.disjunction
+// res8: scalaz.\/[NumberFormatException,Int] = ↩
+//   -\/(java.lang.NumberFormatException: For input string: "Cat")
+
+"1".parseInt.disjunction
+// res9: scalaz.\/[NumberFormatException,Int] = \/-(1)
+~~~
+
+<div class="callout callout-info">
+*A brief explanation*
+
+This code is a little cryptic. Here's what's going on. `"123".parseInt` is using an enriched `parseInt` method from `scalaz.syntax.std.string`. This returns a `Validation` - another Scalaz error handling datatype that we will meet later - which has a `disjunction` method that converts it to an `\/`.
+</div>
+
+Note that a monad has a single type parameter (it "looks like" `F[A]`) while `\/` has two parameters. To convert `\/` to the correct kind you'll need to define a type alias fixing one of the types. The syntax for doing so is as follows:
+
+~~~ scala
+type MyAlias[A] = ErrorType \/ A
+~~~
+
+<div class="solution">
+Let's start by defining our type alias. The `"123".parseInt.disunction` approach gives us a `NumberFormatException \/ Int` so we'll go with `NumberFormatException` as our error type:
+
+~~~ scala
+type ParseResult[A] = NumberFormatException \/ A
+~~~
+
+Now we can use `foldMapM`. The resulting code iterates over the sequence, adding up numbers using the `Monoid` for `Int` until a `NumberFormatException` is encountered. At that point the `Monad` for `\/` fails fast, returning the failure without processing the rest of the list:
+
+~~~ scala
+Seq("1", "2", "3").foldMapM[ParseResult, Int](_.parseInt.disjunction)
+// res0: ParseResult[Int] = \/-(6)
+
+Seq("1", "x", "3").foldMapM[ParseResult, Int](_.parseInt.disjunction)
+// res1: ParseResult[Int] = -\/(java.lang.NumberFormatException: For input string: "x")
+~~~
+</div>
+
 -->

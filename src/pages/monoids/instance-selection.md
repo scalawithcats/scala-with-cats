@@ -42,6 +42,7 @@ It turns out we can't have both at once. The three choices give us behaviour as 
 Type Class Variance             Invariant   Covariant   Contravariant
 ------------------------------- ----------- ----------- ---------------
 Supertype instance used?        No          No          Yes
+
 More specific type preferred?   Yes         Yes         No
 -----------------------------------------------------------------------
 

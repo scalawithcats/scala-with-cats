@@ -31,10 +31,11 @@ pages:
 
   - src/pages/functors/index.md
   - src/pages/functors/scalaz.md
-  - src/pages/functors/summary.md
+  # - src/pages/functors/summary.md
 
   - src/pages/monads/index.md
   - src/pages/monads/scalaz.md
+  - src/pages/monads/id.md
   - src/pages/monads/either.md
   # Sections on MonadPlus, Reader, and Writer removed from v1 of the book.
   # Although the tools are useful, they're not as fundamental as \/ and
@@ -42,10 +43,10 @@ pages:
   # - src/pages/monads/error-recovery.md
   # - src/pages/monads/writer.md
   # - src/pages/monads/reader.md
-  - src/pages/monads/summary.md
+  # - src/pages/monads/summary.md
 
   - src/pages/monad-transformers/index.md
-  - src/pages/monad-transformers/summary.md
+  # - src/pages/monad-transformers/summary.md
 
   - src/pages/applicatives/index.md
   - src/pages/applicatives/combine.md

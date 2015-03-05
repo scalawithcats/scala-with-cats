@@ -121,54 +121,9 @@ Occasionally we want to run a sequence of steps until one succeeds. We can model
 // res0: scalaz.\/[Int,String] = -\/(123)
 ~~~
 
-### Exercise: Seeing is Believing
-
-Call `foldMapM` using the `\/` monad and verify that it really does stop execution as soon an error is encountered. You can force an error by trying to convert a `String` to an `Int` using the method shown below:
-
-~~~ scala
-import scalaz.syntax.std.string._
-//
-"Cat".parseInt.disjunction
-// res8: scalaz.\/[NumberFormatException,Int] = ↩
-//   -\/(java.lang.NumberFormatException: For input string: "Cat")
-
-"1".parseInt.disjunction
-// res9: scalaz.\/[NumberFormatException,Int] = \/-(1)
-~~~
-
-<div class="callout callout-info">
-*A brief explanation*
-
-This code is a little cryptic. Here's what's going on. `"123".parseInt` is using an enriched `parseInt` method from `scalaz.syntax.std.string`. This returns a `Validation`---another Scalaz error handling datatype that we will meet later---which has a `disjunction` method that converts it to an `\/`.
-</div>
-
-Note that a monad has a single type parameter (it "looks like" `F[A]`) while `\/` has two parameters. To convert `\/` to the correct kind you'll need to define a type alias fixing one of the types. The syntax for doing so is as follows:
-
-~~~ scala
-type MyAlias[A] = ErrorType \/ A
-~~~
-
-<div class="solution">
-Let's start by defining our type alias. The `"123".parseInt.disunction` approach gives us a `NumberFormatException \/ Int` so we'll go with `NumberFormatException` as our error type:
-
-~~~ scala
-type ParseResult[A] = NumberFormatException \/ A
-~~~
-
-Now we can use `foldMapM`. The resulting code iterates over the sequence, adding up numbers using the `Monoid` for `Int` until a `NumberFormatException` is encountered. At that point the `Monad` for `\/` fails fast, returning the failure without processing the rest of the list:
-
-~~~ scala
-Seq("1", "2", "3").foldMapM[ParseResult, Int](_.parseInt.disjunction)
-// res0: ParseResult[Int] = \/-(6)
-
-Seq("1", "x", "3").foldMapM[ParseResult, Int](_.parseInt.disjunction)
-// res1: ParseResult[Int] = -\/(java.lang.NumberFormatException: For input string: "x")
-~~~
-</div>
-
 ### Exercise: What is Best?
 
-Is the error handling strategy in the previous exercise well suited to the task at hand? What other features might we want from error handling?
+Is the error handling strategy in the previous exercises well suited for all purposes? What other features might we want from error handling?
 
 <div class="solution">
 This is an open question. It's also kind of a trick question---the answer depends on the semantics we're looking for. Some points to ponder:
