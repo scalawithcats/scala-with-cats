@@ -38,7 +38,7 @@ object MonadCompose {
         // This is impossible to implement in general for a monad
         ???
     }
-  } 
+  }
 }
 ~~~
 
@@ -169,19 +169,30 @@ OptionT[FutureList, Int](ListT.empty[Future, Option[Int]]) : Result[Int]
 res12: Result[Int] = OptionT(ListT(scala.concurrent.impl.Promise$DefaultPromise@7f5f2483))
 ~~~
 
-`liftM`
-
+<div class="callout callout-danger">
+TODO: `liftM`
+</div>
 
 ### Default Instances
 
-Most monads in Scalaz are just the transformer with `Id` wrapped around them.
+<div class="callout callout-danger">
+TODO: Complete
 
+Most monads in Scalaz are just the transformer with `Id` wrapped around them.
+</div>
 
 ### Syntax
 
+<div class="callout callout-danger">
+TODO: Complete
+
 None.
+</div>
 
 ## Exercise: Using Monad Transformers
+
+<div class="callout callout-danger">
+TODO: Complete
 
 `run`
 
@@ -190,3 +201,4 @@ type aliases / patterns.
 constructing instances.
 
 `liftM`.
+</div>

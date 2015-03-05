@@ -72,7 +72,7 @@ We also get an `Applicative` for free whenever we define a `Monad`. The implemen
 ~~~ scala
 def ap[A, B](value: => MyType[A])(func: => MyType[A => B]): MyType[B] =
   bind(func)(map(value)(_))
-~~
+~~~
 
 ### Exercise: An Applicative for Result
 
