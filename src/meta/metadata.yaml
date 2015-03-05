@@ -1,7 +1,7 @@
 ---
 # Used by Pandoc to print covers:
-title: Advanced Scala
-subtitle: Composable Abstractions
+title: "Advanced Scala"
+subtitle: "with Scalaz"
 author: Noel Welsh and Dave Gurnell
 date: "Early Access, Feburary 2015"
 # Used by Pandoc to generate the PDF cover...
