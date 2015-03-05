@@ -3,7 +3,7 @@
 title: Advanced Scala
 subtitle: Composable Abstractions
 author: Noel Welsh and Dave Gurnell
-date: "Pre-Release, Feburary 2015"
+date: "Early Access, Feburary 2015"
 # Used by Pandoc to generate the PDF cover...
 # see src/css/book.css for HTML/ePub covers:
 coverColor: "D62A7C"
