@@ -161,32 +161,27 @@ For the specific case of `OptionT`, we can call the `none` method on the compani
 
 ~~~ scala
 OptionT.none[FutureList, Int] : Result[Int]
-// res: Result[Int] = OptionT(ListT(scala.concurrent.impl.Promise$DefaultPromise@57afaaf7))
+// res: Result[Int] = OptionT(ListT(scala.concurrent.impl.Promise$DefaultPromise@57afar7))
 ~~~
 
+~~~ scala
 OptionT[FutureList, Int](ListT.empty[Future, Option[Int]]) : Result[Int]
 res12: Result[Int] = OptionT(ListT(scala.concurrent.impl.Promise$DefaultPromise@7f5f2483))
+~~~
 
 `liftM`
 
-### Taking Apart Instances
-
-`run`
 
 ### Default Instances
 
 Most monads in Scalaz are just the transformer with `Id` wrapped around them.
 
-### Custom Instances
 
 ### Syntax
 
 None.
 
-Example.
-
-
-## Using Monad Transformers
+## Exercise: Using Monad Transformers
 
 `run`
 
