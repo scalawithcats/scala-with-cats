@@ -44,3 +44,4 @@
 [link-topk]: http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.114.9563
 [link-value-classes]: http://docs.scala-lang.org/overviews/core/value-classes.html
 [link-monads-burritos]: http://blog.plover.com/prog/burritos.html
+[link-scalaz-contrib]: https://github.com/typelevel/scalaz-contrib
