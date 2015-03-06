@@ -55,7 +55,9 @@ val json: Json = Json.toJson(Person("Dave", "dave@example.com"))
 
 **Interface Syntax**
 
-As an alternative, we can use *type enrichment* to "pimp" existing types with interface methods. Scalaz refers to this as *"syntax"* for the type class:
+As an alternative, we can use *type enrichment* to extend existing types with interface methods[^pimping]. Scalaz refers to this as *"syntax"* for the type class:
+
+[^pimping]: You may occasionally see enrichment referred to as "pimping". This is an older term that we don't use anymore.
 
 ~~~ scala
 object JsonSyntax {
@@ -217,7 +219,7 @@ Let's make our printing library easier to use by defining some print syntax:
     use `PrintSyntax`.
 
 <div class="solution">
-First we define an `implicit class` to "enrich" our target classes with extra methods. This is generally referred to as "type enrichment" or "pimping" in Scala. Similar features exist in other languages, for example "extension methods" in C# and "categories" in Objective C:
+First we define an `implicit class` to "enrich" our target classes with extra methods. This is generally referred to as "type enrichment" in Scala. Similar features exist in other languages, for example "extension methods" in C# and "categories" in Objective C:
 
 ~~~ scala
 object PrintSyntax {
