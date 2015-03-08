@@ -9,7 +9,8 @@ Let's start as we did with monoids by looking at a few types and operations and 
 The `map` method is perhaps the most commonly used method on `Seq`. If we have a `Seq[A]` and a function `A => B`, `map` will create a `Seq[B]`.
 
 ~~~ scala
-Seq(1, 2, 3) map (_ * 2) // == List(2, 4, 6)
+Seq(1, 2, 3) map (_ * 2)
+// res0: List[Int] = List(2, 4, 6)
 ~~~
 
 **Options**
@@ -17,7 +18,8 @@ Seq(1, 2, 3) map (_ * 2) // == List(2, 4, 6)
 We can do the same thing with an `Option`. If we have a `Option[A]` and a function `A => B`, `map` will create a `Option[B]`.
 
 ~~~ scala
-Some(1) map (_.toString) // == Some(1)
+Some(1) map (_.toString)
+// res1: Option[String] = Some(1)
 ~~~
 
 **Functions (?!)**
@@ -46,7 +48,8 @@ val func1 = (x: Int) => x.toDouble
 val func2 = (y: Double) => y * 2
 val func3 = func1 map func2
 
-func3(1) // == 2.0
+func3(1)
+// res2: Double = 2.0
 ~~~
 
 ## Definition of a Functor
@@ -126,42 +129,5 @@ Higher kinded types are considered an advanced language feature in Scala. We nee
 
 ~~~ scala
 import scala.language.higherKinds
-~~~
-</div>
-
-### Exercise: A Higher Kind of FoldMap
-
-When we looked at `foldMap` earlier, we couldn't write a type class for it because we didn't know how to write the type of the objects that type class should work over. Now we know about higher kinds, we can revisit this problem.
-
-Define all the machinery needed for a `FoldMappable` type class: the trait, an interface, some instances, and an enrichment.
-
-<div class="solution">
-This exercise is really intended to make us practive defining and using higher kinds. Here is the model solution:
-
-~~~ scala
-import scala.language.higherKinds
-import scalaz.Monoid
-import scalaz.syntax.monoid._
-
-trait FoldMappable[F[_]] {
-  def foldMap[A, B : Monoid](fa: F[A])(f: A => B): B
-}
-
-object FoldMappable {
-  def apply[F[_] : FoldMappable]: FoldMappable[F] =
-    implicitly[FoldMappable[F]]
-
-  implicit object ListFoldMappable extends FoldMappable[List] {
-    def foldMap[A, B : Monoid](fa: List[A])(f: A => B): B =
-      fa.foldLeft(mzero[B]){ _ |+| f(_) }
-  }
-}
-
-object FoldMappableSyntax {
-  implicit class IsFoldMappable[F[_] : FoldMappable, A](fa: F[A]) {
-    def foldMap[B : Monoid](f: A => B): B =
-      FoldMappable[F].foldMap(fa)(f)
-  }
-}
 ~~~
 </div>

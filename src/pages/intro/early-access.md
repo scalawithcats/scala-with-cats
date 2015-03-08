@@ -15,13 +15,8 @@ please let us know!
 and Noel Welsh ( [noel@underscore.io](mailto:noel@underscore.io) ).
 </div>
 
-The major things missing from this version of the book are:
+There are two major things missing from this version of the book:
 
-1. The case studies are currently missing or incomplete.
-   The case studies bring together the concepts introduced in the book,
-   and completing them is our priority.
+1.  We are missing a few summary chapters. These include a condensed discussion of the concepts we've covered in the book.
 
-2. Some of the existing chapters lack exercises or are otherwise incomplete.
-
-3. The book needs copy-editing.
-   There are numerous spelling mistakes and other minor errors.
+2.  We are missing the case studies that make up the last third of the book. These are in various states of completion so we have chosen to hold them back until we have a better idea of what they will look like.

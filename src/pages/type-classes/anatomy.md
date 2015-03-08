@@ -1,9 +1,3 @@
-## Type Classes
-
-**Type classes** are a programming pattern originating from Haskell. They allow us to extend existing libraries with new functionality, without using traditional inheritance, and without altering the original library source code.
-
-In this section we will learn how to implement type classes in Scala using *implicit values*.
-
 ## Anatomy of a Type Class
 
 There are three important components to the type class pattern: the *type class* itself, *instances* for particular types, and the *interface* methods that we expose to users:
@@ -61,7 +55,9 @@ val json: Json = Json.toJson(Person("Dave", "dave@example.com"))
 
 **Interface Syntax**
 
-As an alternative, we can use *type enrichment* to "pimp" existing types with interface methods. Scalaz refers to this as *"syntax"* for the type class:
+As an alternative, we can use *type enrichment* to extend existing types with interface methods[^pimping]. Scalaz refers to this as *"syntax"* for the type class:
+
+[^pimping]: You may occasionally see enrichment referred to as "pimping". This is an older term that we don't use anymore.
 
 ~~~ scala
 object JsonSyntax {
@@ -82,7 +78,7 @@ import JsonSyntax._
 val json: Json = Person("Dave", "dave@example.com").toJson
 ~~~
 
-### Exercise: Printable Library
+### Exercise: *Printable* Library
 
 Scala provides a `toString` method to let us convert any value to a `String`. However, this method comes with a few disadvantages. It is implemented for *every* type in the language, many implementations are of limited use, and we can't opt-in to specific implementations for specific types.
 
@@ -223,7 +219,7 @@ Let's make our printing library easier to use by defining some print syntax:
     use `PrintSyntax`.
 
 <div class="solution">
-First we define an `implicit class` to "enrich" our target classes with extra methods. This is generally referred to as "type enrichment" or "pimping" in Scala. Similar features exist in other languages, for example "extension methods" in C# and "categories" in Objective C:
+First we define an `implicit class` to "enrich" our target classes with extra methods. This is generally referred to as "type enrichment" in Scala. Similar features exist in other languages, for example "extension methods" in C# and "categories" in Objective C:
 
 ~~~ scala
 object PrintSyntax {

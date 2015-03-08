@@ -1,13 +1,23 @@
+[scala.Option]: http://www.scala-lang.org/api/current/#scala.Option
+
 [scalaz.\/]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.$bslash$div
+[scalaz.Applicative]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Applicative
 [scalaz.Cord]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Cord
 [scalaz.Equal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Equal
 [scalaz.Foldable]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Foldable
 [scalaz.Functor]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Functor
 [scalaz.Monad]: http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.Monad
+[scalaz.MonadTrans]: http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.MonadTrans
 [scalaz.Monoid]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Monoid
 [scalaz.Show]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Show
 [scalaz.Tag]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Tag$
 [scalaz.Traversable]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Traversable
+[scalaz.OptionT]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.OptionT
+[scalaz.ListT]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.ListT
+[scalaz.EitherT]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.EitherT
+[scalaz.ReaderT]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.ReaderT
+[scalaz.WriterT]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.WriterT
+[scalaz.IdT]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.IdT
 [scalaz.std.anyVal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.anyVal$
 [scalaz.std.list]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.list$
 [scalaz.std.map]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.std.map$
@@ -33,3 +43,4 @@
 [link-summingbird]: https://github.com/twitter/summingbird
 [link-topk]: http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.114.9563
 [link-value-classes]: http://docs.scala-lang.org/overviews/core/value-classes.html
+[link-monads-burritos]: http://blog.plover.com/prog/burritos.html

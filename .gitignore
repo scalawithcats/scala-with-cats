@@ -14,5 +14,5 @@ Thumbs.db
 /essential-scalaz.zip
 /node_modules/
 
-essential-scalaz.sublime-workspace
+*.sublime-workspace
 

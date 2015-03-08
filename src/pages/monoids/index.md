@@ -7,21 +7,21 @@ In this section we explore our first type class: **monoids**. Let's start by loo
 Addition of `Ints` is a binary operation that is *closed*, meaning given two `Ints` we always get another `Int` back. There is also the *identity* element `0` with the property that `a + 0 = 0 + a = a` for any `Int` `a`.
 
 ~~~ scala
-scala> 2 + 1
-res0: Int = 3
+2 + 1
+// res0: Int = 3
 
-scala> 2 + 0
-res1: Int = 2
+2 + 0
+// res1: Int = 2
 ~~~
 
 There are also other properties of addition. For instance, it doesn't matter in what order we add elements as we always get the same result. This is a property known as *associativity*.
 
 ~~~ scala
-scala> (1 + 2) + 3
-res0: Int = 6
+(1 + 2) + 3
+// res0: Int = 6
 
-scala> 1 + (2 + 3)
-res1: Int = 6
+1 + (2 + 3)
+// res1: Int = 6
 ~~~
 
 **Integer multiplication**
@@ -29,14 +29,14 @@ res1: Int = 6
 We can do the same things with multiplication that we did with addition if we use `1` as the identity.
 
 ~~~ scala
-scala> (1 * 2) * 3
-res2: Int = 6
+(1 * 2) * 3
+// res2: Int = 6
 
-scala> 1 * (2 * 3)
-res3: Int = 6
+1 * (2 * 3)
+// res3: Int = 6
 
-scala> 2 * 3
-res4: Int = 6
+2 * 3
+// res4: Int = 6
 ~~~
 
 **String and sequence concatenation**
@@ -44,17 +44,17 @@ res4: Int = 6
 We can do the same things with `String`, using string concatenation as our binary operator and the empty string as the identity.
 
 ~~~ scala
-scala> "" ++ "Hello"
-res6: String = Hello
+"" ++ "Hello"
+// res6: String = Hello
 
-scala> "Hello" ++ ""
-res7: String = Hello
+"Hello" ++ ""
+// res7: String = Hello
 
-scala> ("One" ++ "Two") ++ "Three"
-res8: String = OneTwoThree
+("One" ++ "Two") ++ "Three"
+// res8: String = OneTwoThree
 
-scala> "One" ++ ("Two" ++ "Three")
-res9: String = OneTwoThree
+"One" ++ ("Two" ++ "Three")
+// res9: String = OneTwoThree
 ~~~
 
 Note that we used `++` for string concatentation instead of the more usual `+` to suggest a parallel with sequence concatenation. We can do exactly the same with sequence concatenation and the empty sequence as our identity.

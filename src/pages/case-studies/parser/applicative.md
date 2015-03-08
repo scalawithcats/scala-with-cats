@@ -50,21 +50,18 @@ can be represented as a curried function as
 Scala defined a method `curried` on each `Function` type to convert a function to its curried equivalent.
 
 ~~~ scala
-scala> val foo = (x: Int, y: Int, z: Int) => x + y + z
 val foo = (x: Int, y: Int, z: Int) => x + y + z
-foo: (Int, Int, Int) => Int = <function3>
+// foo: (Int, Int, Int) => Int = <function3>
 
-scala> foo.curried
 foo.curried
-res0: Int => (Int => (Int => Int)) = <function1>
+// res0: Int => (Int => (Int => Int)) = <function1>
 ~~~
 
 With curried functions we can fake abstraction over arity. Say we have three `Ints` and our function `foo` above. We can apply each `Int` to `foo` in turn, getting back a new function till we have supplied all three arguments, when we get back an `Int`.
 
 ~~~ scala
-scala> foo.curried(1)(2)(3)
 foo.curried(1)(2)(3)
-res2: Int = 6
+// res2: Int = 6
 ~~~
 
 So long as we have a fixed number of items we can "roll" a curried function down the series of items, applying an element each time, and we get static checking that aren't supplying too many or too few items.
@@ -74,25 +71,21 @@ Now imagine a similar curried function, but this time we're going to apply it to
 To make it really concrete, here's an example using `Option` which has the same "type shape" as `Parser`.
 
 ~~~ scala
-scala> val adder = ((x: Int, y: Int, z: Int) => x + y + z).curried
 val adder = ((x: Int, y: Int, z: Int) => x + y + z).curried
-adder: Int => (Int => (Int => Int)) = <function1>
+// adder: Int => (Int => (Int => Int)) = <function1>
 
-scala> Some(1).map(adder)
 Some(1).map(adder)
-res3: Option[Int => (Int => Int)] = Some(<function1>)
+// res3: Option[Int => (Int => Int)] = Some(<function1>)
 ~~~
 
 Note the result of the `map`, an `Option` containing a function of type `Int => Int => Int`. How do we apply this function inside the `Option` to another `Option`? The more experienced amongst you might reach for `flatMap`. It's true we could implement such a method using `flatMap`
 
 ~~~ scala
-scala> val temp = Some(1).map(adder)
 val temp = Some(1).map(adder)
-temp: Option[Int => (Int => Int)] = Some(<function1>)
+// temp: Option[Int => (Int => Int)] = Some(<function1>)
 
-scala> temp.flatMap(f => Some(2).map(f))
 temp.flatMap(f => Some(2).map(f))
-res4: Option[Int => Int] = Some(<function1>)
+// res4: Option[Int => Int] = Some(<function1>)
 ~~~
 
 but `flatMap` is strictly more powerful than we need. `flatMap` allows us choose the `Option` we return. We don't need this flexibility---we already have the `Option`, we just need to apply a function wrapped with an `Option` to it.
@@ -114,24 +107,20 @@ The method is called `ap` and types `F[A]` that implement it are called **applic
 The Scalaz library provides an applicative functor type class, and instances for `Option` and many other types. In Scalaz, `ap` is written as `<*>` for consistency with Haskell. Here's an example:
 
 ~~~ scala
-scala> import scalaz.syntax.applicative._
-scala> import scalaz.std.option._
+import scalaz.syntax.applicative._
+import scalaz.std.option._
 
-scala> val adder = ((x: Int, y: Int, z: Int) => x + y + z).curried
 val adder = ((x: Int, y: Int, z: Int) => x + y + z).curried
-adder: Int => (Int => (Int => Int)) = <function1>
+// adder: Int => (Int => (Int => Int)) = <function1>
 
-scala> some(1) <*> some(adder)
 some(1) <*> some(adder)
-res1: Option[Int => (Int => Int)] = Some(<function1>)
+// res1: Option[Int => (Int => Int)] = Some(<function1>)
 
-scala> some(2) <*> (some(1) <*> some(adder))
 some(2) <*> (some(1) <*> some(adder))
-res3: Option[Int => Int] = Some(<function1>)
+// res3: Option[Int => Int] = Some(<function1>)
 
-scala> some(3) <*> (some(2) <*> (some(1) <*> some(adder)))
 some(3) <*> (some(2) <*> (some(1) <*> some(adder)))
-res5: Option[Int] = Some(6)
+// res5: Option[Int] = Some(6)
 ~~~
 
 A few notes:
@@ -209,13 +198,13 @@ Checkout the `parser-applicative` tag to see the full code and tests.
 Once we have our `Applicative` instance we can take it for a spin:
 
 ~~~ scala
-scala> import scalaz.syntax.applicative._
+import scalaz.syntax.applicative._
 
-scala> val parser = Parser.string("chicken") <*> ((_: String) => "Tastes like chicken").point[Parser]
-parser: underscore.parser.Parser[String] = Parser(<function1>)
+val parser = Parser.string("chicken") <*> ((_: String) => "Tastes like chicken").point[Parser]
+// parser: underscore.parser.Parser[String] = Parser(<function1>)
 
-scala> parser.parse("chicken")
-res0: underscore.parser.Parse[String] = Success(Tastes like chicken,)
+parser.parse("chicken")
+// res0: underscore.parser.Parse[String] = Success(Tastes like chicken,)
 ~~~
 
 Note how we "lift" a function into `Parser` using `point`, and combine two `Parsers` using `<*>`.
@@ -223,11 +212,18 @@ Note how we "lift" a function into `Parser` using `point`, and combine two `Pars
 Things get a bit cumbersome if we want to combine larger expressions:
 
 ~~~ scala
-scala> val parser = Parser.string("man") <*> (Parser.string("bites") <*> (Parser.string("dog") <*> ((_: String, _: String, animal: String) => s"$animal tastes like chicken!").curried.point[Parser]))
-parser: underscore.parser.Parser[String] = Parser(<function1>)
+val parser = Parser.string("man") <*> (
+  Parser.string("bites") <*> (
+    Parser.string("dog") <*> (
+      (_: String, _: String, animal: String) =>
+        s"$animal tastes like chicken!"
+    ).curried.point[Parser]
+  )
+)
+// parser: underscore.parser.Parser[String] = Parser(<function1>)
 
-scala> parser.parse("dogbitesman")
-res6: underscore.parser.Parse[String] = Success(man tastes like chicken!,)
+parser.parse("dogbitesman")
+// res6: underscore.parser.Parse[String] = Success(man tastes like chicken!,)
 ~~~
 
 To parse `"dogbitesman"` we have to specify the `Parser` in reverse order. We also have to curry the function we `point`. Why is the order reversed? Remember the type table above? It showed arguments in their idiomatic order in Scala. In the case of `Applicative` this idiomatic order isn't often the order we actually want to write the parameters. But don't worry, we'll fix this problem!
@@ -245,15 +241,14 @@ Method    We have     We provide   We get
 What this concretely means is they combine two `Parsers`, running them both but only keeping the result that the arrow points towards. With them we can simplify our definition:
 
 ~~~ scala
-scala> val parser = Parser.string("dog") *> Parser.string("bites") *> Parser.string("man")
-parser: underscore.parser.Parser[String] = Parser(<function1>)
+val parser = Parser.string("dog") *> Parser.string("bites") *> Parser.string("man")
+// parser: underscore.parser.Parser[String] = Parser(<function1>)
 
-scala> parser <*> ((flava: String) => s"$flava tastes like chicken!").point[Parser]
-er]
-res9: underscore.parser.Parser[String] = Parser(<function1>)
+parser <*> ((flava: String) => s"$flava tastes like chicken!").point[Parser]
+// res9: underscore.parser.Parser[String] = Parser(<function1>)
 
-scala> res9.parse("dogbitesman")
-res10: underscore.parser.Parse[String] = Success(man tastes like chicken!,)
+res9.parse("dogbitesman")
+// res10: underscore.parser.Parse[String] = Success(man tastes like chicken!,)
 ~~~
 
 This is much clearer.
@@ -263,16 +258,16 @@ Sometime we do need more than one result, so the problem still remains. In these
 Here is it in use
 
 ~~~ scala
-scala> import scalaz.syntax.applicative._
+import scalaz.syntax.applicative._
 
-scala> def taste(taster: String, action: String, flava: String): String = s"$flava tastes like chicken!"
-taste: (taster: String, action: String, flava: String)String
+def taste(taster: String, action: String, flava: String): String = s"$flava tastes like chicken!"
+// taste: (taster: String, action: String, flava: String)String
 
-scala> val parser = ^^(Parser.string("dog"), Parser.string("bites"), Parser.string("man"))(taste)
-parser: underscore.parser.Parser[String] = Parser(<function1>)
+val parser = ^^(Parser.string("dog"), Parser.string("bites"), Parser.string("man"))(taste)
+// parser: underscore.parser.Parser[String] = Parser(<function1>)
 
-scala> parser(taste).parse("dogbitesman")
-res1: underscore.parser.Parse[String] = Success(man tastes like chicken!,)
+parser(taste).parse("dogbitesman")
+// res1: underscore.parser.Parse[String] = Success(man tastes like chicken!,)
 ~~~
 
 We use a number of carets one less than the number of `Applicatives` we have.
