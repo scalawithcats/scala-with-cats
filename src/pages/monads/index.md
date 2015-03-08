@@ -12,7 +12,7 @@ As usual, we will start looking at the formal definition of a monad, and then pr
 
 Formally, a monad for a type `F[A]` has:
 
-- an operation `flatMap` with type `(F[A], A => B) => F[B]`
+- an operation `flatMap` with type `(F[A], A => F[B]) => F[B]`
 - an operation `point` with type `A => F[A]`.
 
 We will sometimes see the name `bind` used in place of `flatMap`. These are the same operation, but the former is the name usually used in the academic literature. We'll use the two names interchangably.
