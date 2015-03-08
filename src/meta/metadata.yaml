@@ -14,6 +14,10 @@ exercisesRepo: null # "git@github.com:underscoreio/advanced-scala-code.git"
 # Used by Grunt to assemble pandoc command line:
 pages:
   - src/pages/index.md
+  - src/pages/intro/foreword.md
+  - src/pages/intro/early-access.md
+  - src/pages/intro/conventions.md
+  - src/pages/intro/acknowledgements.md
 
   - src/pages/intro/index.md
   - src/pages/intro/type-class.md
