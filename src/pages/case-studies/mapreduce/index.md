@@ -2,27 +2,37 @@
 
 In this case study we're going to implement a simple-but-powerful parallel processing framework using `Monoids`, `Functors`, and a host of other goodies.
 
-If you have used Hadoop or otherwise worked in "big data" you will have heard of [MapReduce][link-mapreduce], which is a programming model for doing parallel data processing across tens or hundreds of machines. As the name suggests, model is built around a *map* phase, which is the same `map` function we know from Scala and the `Functor` type class, and a *reduce* phase, which we usually call `fold`[^hadoop-shuffle].
+If you have used Hadoop or otherwise worked in "big data" you will have heard of [MapReduce][link-mapreduce], which is a programming model for doing parallel data processing across tens or hundreds of machines. As the name suggests, the model is built around a *map* phase, which is the same `map` function we know from Scala and the `Functor` type class, and a *reduce* phase, which we usually call `fold`[^hadoop-shuffle] in Scala.
 
 [^hadoop-shuffle]: In Hadoop there is also a shuffle phase that we will ignore here.
 
 ## Parallelizing *map* and *fold*
 
-It should be obvious that we can apply `map` in parallel. We can't parallelize `fold` in general, but we can if we restrict the type of reduction functions we allow.
+Recall the general signature for `map` is to apply a function `A => B` to a `F[A]`, returning a `F[B]`. For a sequence of elements `map` transform each individual element independently. Since there are no dependencies between the transformations applied to different elements (and the type signature of the function `A => B` shows us this, assuming we don't use side-effects not reflected in the types) we can parallelize `map` with ease.
 
-What kind of restrictions should be apply to `fold`? If the iterator function is *associative*, we can perform our fold in any order so long as we preserve the ordering on the sequence of elements we're processing. If we have an *identity* element, we can introduce the identity at any point to in our fold and know we won't affect the result.
+What about `fold`? This is not a method we can implement for all functors, but those where we can the signature takes a `F[A]`, a seed `B`, and an iterator function `(A, B) => B` and produces a `B`. There is a dependency between processing steps in `fold`, indicated by the argument of type `B` that the iterator function accepts. We can't parallelize `fold` in general, but we can if we restrict the type of reduction functions we allow.
 
-If this sounds like a monoid, that's because it *is* a monoid. We are not the first to recognise this. The [monoid design pattern for MapReduce jobs][link-mapreduce-monoid] is at the core of recent big data systems such as Twitter's [Summingbird][link-summingbird].
+What kind of restrictions should we apply to `fold`? If the iterator function is *associative*, meaning
 
-In this project we're going to implement a very simple single-machine MapReduce. We'll start by implementing a method called `foldMap` to model the data-flow we need. We'll then parallelize `foldMap` and then look at some of more interesting monoids that are applicable for processing large data sets.
+~~~ scala
+A op (B op C) == (A op B) op C
+~~~
 
-## Implementing *FoldMap*
+for a function `op`, the we can arbitrarily distribute work amongst threads or machines so long as we preserve the ordering on the sequence of elements we're processing.
+
+`Fold` requires we seed the computation with an element of type `B`. Since our parallel `fold` maybe split into an arbitrary numbers of parallel steps, this seed should not effect the result of the computation. A natural requirement is that the seed is the *identity* element.
+
+In summary, for our parallel fold to yield the correct results we require the iterator function be associative, and the seed must be the identity of this function. If this sounds like a monoid, that's because it *is* a monoid. We are not the first to recognise this. The [monoid design pattern for MapReduce jobs][link-mapreduce-monoid] is at the core of recent big data systems such as Twitter's [Summingbird][link-summingbird].
+
+In this project we're going to implement a very simple single-machine MapReduce. We'll start by implementing a method called `foldMap` to model the data-flow we need. We'll then parallelize `foldMap`, and see how we can introduce error handling using monads, applicative functors, and a new tool called natural transformations. Finally we'll ground this case study by looking at some of more interesting monoids that are applicable for processing large data sets.
+
+## Implementing *foldMap*
 
 Let's implement a method `foldMap` that:
 
- - accepts a sequence parameter of type `Iterable[A]` and a function of type `A => B`;
+ - accepts a sequence parameter of type `Iterable[A]` and a function of type `A => B`, where there is a monoid for `B`;
  - maps the function over the sequence;
- - reduces the results using the monoid for `A`.
+ - reduces the results using the monoid for `B`.
 
 Here's a basic type signature. You will have to add implicit parameters or context bounds to complete the type signature:
 
@@ -71,7 +81,7 @@ def foldMap[A, B : Monoid](values: Iterable[A])(func: A => B = (a: A) => a): B =
 
 ## Parallelising *foldMap*
 
-To run the fold in parallel we need to change our implementation strategy. A simple strategy is to allocate as many threads as we have CPUs and evenly partition our sequence amongst the threads. We can append the results together as we each thread completes.
+To run the fold in parallel we need to change our implementation strategy. A simple strategy is to allocate as many threads as we have CPUs and evenly partition our sequence amongst the threads. We can append the results together as each thread completes.
 
 Scala provides some simple tools to distribute work amongst threads. We could simply use the [parallel collections library][link-parallel-collections] to implement a solution, but let's challenge ourselves by diving a bit deeper. You might have already used `Futures`. A `Future` models a computation that may not yet have a value. That is, it represents a value that will become available "in the future". They are a good tool for this sort of job.
 
@@ -145,7 +155,7 @@ Runtime.getRuntime.availableProcessors
 // res6: Int = 8
 ~~~
 
-### Parallel FoldMap
+### Parallel *foldMap*
 
 Implement a parallel version of `foldMap` called `foldMapP` using the tools described above:
 
@@ -156,7 +166,7 @@ def foldMapP[A, B : Monoid]
     (implicit ec: ExecutionContext): Future[B] = ???
 ~~~
 
-Start by splitting the input into a set of even chunks, one per CPU. Create a future to do the work for each chunk using `foldMap`, and then `foldMap` cross the futures.
+Start by splitting the input into a set of even chunks, one per CPU. Create a future to do the work for each chunk using `Future.apply`, and then `foldMap` cross the futures.
 
 <div class="solution">
 The annotated solution is below:
@@ -197,11 +207,11 @@ Await.result(foldMapP(1 to 1000000)(), Duration.Inf)
 ~~~
 </div>
 
-### Monadic *foldMap*
+## Monadic *foldMap*
 
 It's useful to allow the user of `foldMap` to perform monadic actions within their mapping function. This, for example, allows the mapping to indicate failure by returning an `Option`.
 
-Implement a variant of `foldMap` called `foldMapM` that allows this. Here's the basic type signature---add implicit parameters and context bounds as necessary to make your code compile:
+Implement a variant of `foldMap` (without parallelism) called `foldMapM` that allows this. Here's the basic type signature---add implicit parameters and context bounds as necessary to make your code compile:
 
 ~~~ scala
 def foldMapM[A, M[_], B](iter: Iterable[A])(f: A => M[B]): M[B] =
@@ -309,3 +319,35 @@ foldMapM[String, ParseResult, Int](Seq("1", "x", "3"))(_.parseInt.disjunction)
 // res1: ParseResult[Int] = -\/(java.lang.NumberFormatException: For input string: "x")
 ~~~
 </div>
+
+## Parallel Monadic *foldMap*
+
+We've seen that we can extend `foldMap` to work over a monad to add error handling (and other effects) to the sequential version of `foldMap`. What about a monadic parallel version of `foldMap`?
+
+The straightforward extension of `foldMapP` doesn't really do what we want. Since we're working in parallel we can encounter multiple errors -- one per thread -- and we would ideally report *all* of these errors. Our current implementation will only report the first.
+
+When we looked at [applicatives](#applicatives) we saw they allowed us to accumulate errors, rather than stopping on the first error as inherently sequential monads do. If we converted the monad to an applicative we could use this accumulate all the errors we encounter.
+
+It's easy enough to hard-code a choice of monad and applicative, we can do a lot better than that. If we allow the user to specify the transformation they gain the flexibility to choose the error handling strategy appropriate for their task. They might want fail-fast error handling, accumulating all errors, or even ignoring errors and replacing them with the identity.
+
+This transformation should accept a `F[_]` and return a `G[_]`. This concept is common enough that Scalaz has a trait for it, a [Natural Transformation][scalaz.NaturalTransformation][^kind-polymorphism].
+
+[^kind-polymorphism]: Why can't we use a function with type `F => G` to do this? The reason is the kinds are wrong. `F` is a type with kind `*`, while `F[_]` is a type constructor with kind `* => *`. Scala provides no way to abstract over kinds. Such a feature is known as *kind polymorphism*.
+
+Implement `foldMapPM` with a user specified `NaturalTransformation` to convert our `Monad` to an `Applicative`. As every `Monad` is an `Applicative` define a default value using the identity natural transformation.
+
+
+## *foldMap* in the Real World
+
+We've implemented a sequence processing abstraction, `foldMap`, based on monoidal addition of elements. We've seen that we can extend this to more flexible situations, particularly user-specified error handling, by combining monads, applicative functors, and natural transformations. The result is a powerful and general framework for sequential and parallel processing. Is it useful, however?
+
+It turns out that yes, this concept is very useful. As we mentioned previously the core idea of monoidal addition underlies [Summingbird][link-summingbird], Twitter's framework that powers all their internal data processing jobs.
+
+Monoids are not restricted to simple tasks like addition and string concatenation. Most of the tasks that data scientists perform in their day-to-day data analysis can be cast as monoids. There are monoids for all the followin:
+
+- approximate sets such as the Bloom filter;
+- set cardinality estimators, such as the HyperLogLog algorithm;
+- vectors and hence vector operations like stochastic gradient descent;
+- quantile estimators such as the t-digest
+
+to name but a few.

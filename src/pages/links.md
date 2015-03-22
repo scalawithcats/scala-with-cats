@@ -9,6 +9,7 @@
 [scalaz.Monad]: http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.Monad
 [scalaz.MonadTrans]: http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.MonadTrans
 [scalaz.Monoid]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Monoid
+[scalaz.NaturalTransformation]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.NaturalTransformation
 [scalaz.Show]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Show
 [scalaz.Tag]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Tag$
 [scalaz.Traversable]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Traversable
