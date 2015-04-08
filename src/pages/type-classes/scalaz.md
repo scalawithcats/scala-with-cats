@@ -28,7 +28,7 @@ val intShow = Show.apply[Int]
 // could not find implicit value for parameter e: scalaz.Show[Int]
 ~~~
 
-Oops - that didn't work! The `apply` method uses *implicits* to look up individual instances, so we'll have to bring some instances into scope.
+Oops---that didn't work! The `apply` method uses *implicits* to look up individual instances, so we'll have to bring some instances into scope.
 
 ### Importing Default Instances {#importing-default-instances}
 
