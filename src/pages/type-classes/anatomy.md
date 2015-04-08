@@ -1,6 +1,6 @@
 ## Anatomy of a Type Class
 
-There are three important components to the type class pattern: the *type class* itself, *instances* for particular types, and the *interface* methods that we expose to users:
+There are three important components to the type class pattern: the *type class* itself, *instances* for particular types, and the *interface* methods that we expose to users.
 
 ### The Type Class
 
