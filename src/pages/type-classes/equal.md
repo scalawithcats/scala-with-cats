@@ -169,7 +169,7 @@ In this section we introduced a new type class---[scalaz.Equal]---that lets us p
 
  - we create an instance `Equal[A]` to implement equality-testing functionality for `A`.
 
- - [scalaz.syntax.equal] provides two methods of interest---`===` for testing equality and `=/=` for testing inequality.
+ - [scalaz.syntax.equal] provides two methods of interest: `===` for testing equality and `=/=` for testing inequality.
 
 Because `Equal` is invariant, we have to be precise about the types of the values we use as arguments. We sometimes need add type hints to ensure the compiler that everything is ok.
 
