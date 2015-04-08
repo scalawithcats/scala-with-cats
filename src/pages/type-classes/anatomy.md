@@ -212,7 +212,7 @@ Let's make our printing library easier to use by defining some print syntax:
        a `String` representation of the wrapped value;
 
      - `print` accepts an implicit `Printable[A]` and return `Unit`.
-       It should print a `String representation of the wrapped value
+       It should print a `String` representation of the wrapped value
        to the console.
 
  3. Update the `Main` object from the previous exercise to
