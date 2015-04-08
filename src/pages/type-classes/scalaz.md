@@ -8,7 +8,7 @@ Scalaz is written using a modular code structure that allows us to choose which 
 
 `Show` defines two methods of interest:
 
- - `def shows(value: A): String`---returns a `String` representation of `A`;
+ - `def shows(value: A): String`---returns a `String` representation of `A`; and
 
  - `def show(value: A): Cord`---similar to `shows` but returns a [scalaz.Cord]---a data structure supporting efficient text manipulation.
 
