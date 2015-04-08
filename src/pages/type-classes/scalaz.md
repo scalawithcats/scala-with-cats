@@ -103,7 +103,7 @@ Scalaz provides separate syntax imports for each type class. We will introduce t
 
 There are two methods for defining instances on the companion object of `Show`:
 
- - `def show[A](func: A => Cord): Show[A]` defines a `Show[A]` in terms of its `show` method;
+ - `def show[A](func: A => Cord): Show[A]` defines a `Show[A]` in terms of its `show` method; and
  - `def shows[A](func: A => String): Show[A]` defines a `Show[A]` in terms of its `shows` method.
 
 In each case, Scalaz defines one of the two methods of `Show` in terms of `func` and provides a default definition of the other method:
