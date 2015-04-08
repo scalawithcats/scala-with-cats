@@ -253,7 +253,7 @@ In this section we revisited the concept of a **type class**, which allows us to
 The Scala implementation of a type class has **three parts**:
 
  - the *type class* itself, a generic trait;
- - *instances* for each type we care about, and;
+ - *instances* for each type we care about; and
  - one or more generic *interface* methods.
 
 Interface methods can be defined in *interface objects* or *interface syntax*. Implicit classes are the most common way of implementing syntax.
