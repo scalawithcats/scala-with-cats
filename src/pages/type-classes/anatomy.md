@@ -1,6 +1,6 @@
 ## Anatomy of a Type Class
 
-There are three important components to the type class pattern: the *type class* itself, *instances* for particular types, and the *interface* methods that we expose to users:
+There are three important components to the type class pattern: the *type class* itself, *instances* for particular types, and the *interface* methods that we expose to users.
 
 ### The Type Class
 
@@ -212,7 +212,7 @@ Let's make our printing library easier to use by defining some print syntax:
        a `String` representation of the wrapped value;
 
      - `print` accepts an implicit `Printable[A]` and return `Unit`.
-       It should print a `String representation of the wrapped value
+       It should print a `String` representation of the wrapped value
        to the console.
 
  3. Update the `Main` object from the previous exercise to
@@ -253,7 +253,7 @@ In this section we revisited the concept of a **type class**, which allows us to
 The Scala implementation of a type class has **three parts**:
 
  - the *type class* itself, a generic trait;
- - *instances* for each type we care about, and;
+ - *instances* for each type we care about; and
  - one or more generic *interface* methods.
 
 Interface methods can be defined in *interface objects* or *interface syntax*. Implicit classes are the most common way of implementing syntax.
