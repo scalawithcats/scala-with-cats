@@ -64,7 +64,7 @@ Note that we used `++` for string concatentation instead of the more usual `+` t
 We've seen a number of types that we can "add" and have an identity element. It will be no surprise to learn that this is a monoid. Formally, a monoid for a type `A` is:
 
 - an operation `append` with type `(A, A) => A`; and
-- an element `zero` of type `A.
+- an element `zero` of type `A`.
 
 The following laws must hold:
 

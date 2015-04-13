@@ -83,13 +83,14 @@ We can alternatively write the fold using `Monoids`, although there's not a comp
 ~~~ scala
 import scalaz.Monoid
 import scalaz.syntax.monoid._
+import scalaz.std.anyVal._
 
 def add(items: List[Int]): Int =
   items.foldLeft(mzero[Int]){ _ |+| _ }
 ~~~
 </div>
 
-Well done! SuperAdder's market share continues to grow, and now there is demand for additional functionality. People now want to add `List[Option[Int]]`. Change `add` so this is possible. The SuperAdder code base is of the highest quality, so make sure there is no code duplication:
+Well done! SuperAdder's market share continues to grow, and now there is demand for additional functionality. People now want to add `List[Option[Int]]`. Change `add` so this is possible. The SuperAdder code base is of the highest quality, so make sure there is no code duplication.
 
 <div class="solution">
 Now there is a use case for `Monoids`. We need a single method that adds `Ints` and instances of `Option[Int]`. We can write this as a generic method that accepts an implicit `Monoid` as a parameter:
