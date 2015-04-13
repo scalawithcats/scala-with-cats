@@ -83,6 +83,7 @@ We can alternatively write the fold using `Monoids`, although there's not a comp
 ~~~ scala
 import scalaz.Monoid
 import scalaz.syntax.monoid._
+import scalaz.std.anyVal._
 
 def add(items: List[Int]): Int =
   items.foldLeft(mzero[Int]){ _ |+| _ }
