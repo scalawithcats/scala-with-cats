@@ -1,6 +1,6 @@
 # Functors
 
-In this section we will investigate **functors**. Functors on their own aren't so useful, but special cases of functors such as as **monads** and **applicative functors** are some of the most commonly used abstractions in Scalaz.
+In this chapter we will investigate **functors**. Functors on their own aren't so useful, but special cases of functors such as as **monads** and **applicative functors** are some of the most commonly used abstractions in Scalaz.
 
 Let's start as we did with monoids by looking at a few types and operations and seeing what general principles we can abstract.
 
