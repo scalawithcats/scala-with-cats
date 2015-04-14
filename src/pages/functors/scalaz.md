@@ -106,7 +106,7 @@ Success(100) map (_ * 2)
 //                            ^
 ~~~
 
-Oops! This is the same inavariance problem we saw with `Monoids`. Let's add some smart constructors to compensate:
+Oops! This is the same invariance problem we saw with `Monoids`. Let's add some smart constructors to compensate:
 
 ~~~ scala
 def success[A](value: A): Result[A] = Success(value)
