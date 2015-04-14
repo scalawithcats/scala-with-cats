@@ -86,6 +86,7 @@ It is sensible to assume that we want to apply the `Functor's` mapping function 
 
 ~~~ scala
 import scalaz.Functor
+import scalaz.syntax.functor._
 
 implicit val resultFunctor = new Functor[Result] {
   def map[A, B](result: Result[A])(func: A => B): Result[B] =
