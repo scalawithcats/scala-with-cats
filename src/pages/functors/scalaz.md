@@ -32,6 +32,7 @@ The main method provided by the syntax for `Functor` is `map`:
 
 ~~~ scala
 import scalaz.std.option._
+import scalaz.std.function._
 import scalaz.syntax.functor._
 
 val f = ((a: Int) => a + 1) map ((a: Int) => a * 2)
