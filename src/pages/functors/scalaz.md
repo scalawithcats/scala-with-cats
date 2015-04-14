@@ -16,7 +16,7 @@ Functor[List].map(List(1, 2, 3))(x => x * 2)
 Functor[Option].map(Some(123))(_.toString)
 ~~~
 
-`Functor` also provides the `lift` method, which converts an function of type `A => B` to one that operates over a monad and has type `F[A] => F[B]`:
+`Functor` also provides the `lift` method, which converts a function of type `A => B` to one that operates over a monad and has type `F[A] => F[B]`:
 
 ~~~ scala
 val lifted = Functor[Option].lift((x: Int) => x + 1)
@@ -32,7 +32,9 @@ The main method provided by the syntax for `Functor` is `map`:
 
 ~~~ scala
 import scalaz.std.option._
+import scalaz.std.function._
 import scalaz.syntax.functor._
+import scalaz.Monad
 
 val f = ((a: Int) => a + 1) map ((a: Int) => a * 2)
 
@@ -84,6 +86,7 @@ It is sensible to assume that we want to apply the `Functor's` mapping function 
 
 ~~~ scala
 import scalaz.Functor
+import scalaz.syntax.functor._
 
 implicit val resultFunctor = new Functor[Result] {
   def map[A, B](result: Result[A])(func: A => B): Result[B] =
@@ -104,7 +107,7 @@ Success(100) map (_ * 2)
 //                            ^
 ~~~
 
-Oops! This is the same inavariance problem we saw with `Monoids`. Let's add some smart constructors to compensate:
+Oops! This is the same invariance problem we saw with `Monoids`. Let's add some smart constructors to compensate:
 
 ~~~ scala
 def success[A](value: A): Result[A] = Success(value)
