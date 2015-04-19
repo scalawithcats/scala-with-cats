@@ -80,7 +80,7 @@ This is the basics of using monad transformers. Let's now look in depth.
 
 ## Monad Transformers in Scalaz
 
-Monad transformers are  a little different to the other abstractions we've seen. Although there is a [monad transformer type class][scala.MonadTrans] it is very uncommon to use it. We normally only use monad transformers to build monads, which we then use via the `Monad` type class. Thus the main points of interest when using monad transformers are:
+Monad transformers are  a little different to the other abstractions we've seen. Although there is a [monad transformer type class][scalaz.MonadTrans] it is very uncommon to use it. We normally only use monad transformers to build monads, which we then use via the `Monad` type class. Thus the main points of interest when using monad transformers are:
 
 - the available transformer classes;
 - building stacks of monads using transformers;
