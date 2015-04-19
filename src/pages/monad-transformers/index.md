@@ -89,7 +89,7 @@ Monad transformers are  a little different to the other abstractions we've seen.
 
 ### The Monad Transformer Classes
 
-By convention, in Scalaz a monad `Foo` will have a transformer class called `Foot`. In fact the monad instance is often just the transformer with the `Id` monad wrapped around it. Concretely, some of the available instances are:
+By convention, in Scalaz a monad `Foo` will have a transformer class called `FooT. In fact the monad instance is often just the transformer with the `Id` monad wrapped around it. Concretely, some of the available instances are:
 
 - [OptionT][scalaz.OptionT] and [ListT][scalaz.ListT], for `Option` and `List` respectively;
 - [EitherT][scalaz.EitherT], for Scalaz's disjunction;
