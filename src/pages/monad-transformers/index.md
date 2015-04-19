@@ -19,7 +19,7 @@ val transformed =
 
 This quickly becomes very tedious.
 
-Monad transformers allow us to squash together monads, creating one monad were before we had two or more. With this transformed monad we can avoid nested calls to `flatMap`.
+Monad transformers allow us to squash together monads, creating one monad where before we had two or more. With this transformed monad we can avoid nested calls to `flatMap`.
 
 Given two monads can we make one monad out of them in a generic way? That is, do monads *compose*? We can try to write the code but we'll soon find it impossible to implement `flatMap` (`bind`, as Scalaz calls it).
 
