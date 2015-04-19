@@ -19,7 +19,7 @@ val transformed =
 
 This quickly becomes very tedious.
 
-Monad transformers allow us to squash together monads, creating one monad were before we had two or more. With this transformed monad we can avoid nested calls to `flatMap`.
+Monad transformers allow us to squash together monads, creating one monad where before we had two or more. With this transformed monad we can avoid nested calls to `flatMap`.
 
 Given two monads can we make one monad out of them in a generic way? That is, do monads *compose*? We can try to write the code but we'll soon find it impossible to implement `flatMap` (`bind`, as Scalaz calls it).
 
@@ -80,7 +80,7 @@ This is the basics of using monad transformers. Let's now look in depth.
 
 ## Monad Transformers in Scalaz
 
-Monad transformers are  a little different to the other abstractions we've seen. Although there is a [monad transformer type class][scala.MonadTrans] it is very uncommon to use it. We normally only use monad transformers to build monads, which we then use via the `Monad` type class. Thus the main points of interest when using monad transformers are:
+Monad transformers are  a little different to the other abstractions we've seen. Although there is a [monad transformer type class][scalaz.MonadTrans] it is uncommon to use it. We normally only use monad transformers to build monads, which we then use via the `Monad` type class. Thus the main points of interest when using monad transformers are:
 
 - the available transformer classes;
 - building stacks of monads using transformers;
@@ -89,7 +89,7 @@ Monad transformers are  a little different to the other abstractions we've seen.
 
 ### The Monad Transformer Classes
 
-By convention, in Scalaz a monad `Foo` will have a transformer class called `Foot`. In fact the monad instance is often just the transformer with the `Id` monad wrapped around it. Concretely, some of the available instances are:
+By convention, in Scalaz a monad `Foo` will have a transformer class called `FooT. In fact the monad instance is often just the transformer with the `Id` monad wrapped around it. Concretely, some of the available instances are:
 
 - [OptionT][scalaz.OptionT] and [ListT][scalaz.ListT], for `Option` and `List` respectively;
 - [EitherT][scalaz.EitherT], for Scalaz's disjunction;
