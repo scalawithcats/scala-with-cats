@@ -1,4 +1,4 @@
-# Applicatives
+# Applicatives {#applicatives}
 
 In previous chapters we saw how functors and monads let us transform values within a context. While these are both immensely useful abstractions, there are types of transformation that we can't represent with either `map` or `flatMap`.
 
