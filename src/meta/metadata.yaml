@@ -66,4 +66,30 @@ pages:
 
   - src/pages/solutions.md
   - src/pages/links.md
+previewPages:
+  - src/pages/preview/prologue.md
+
+  - src/pages/intro/foreword.md
+  - src/pages/intro/early-access.md
+  - src/pages/intro/conventions.md
+
+  - src/pages/type-classes/index.md
+  - src/pages/type-classes/anatomy.md
+  - src/pages/type-classes/scalaz.md
+  - src/pages/type-classes/equal.md
+  - src/pages/type-classes/summary.md
+
+  - src/pages/monoids/index.md
+  - src/pages/monoids/scalaz.md
+  - src/pages/monoids/instance-selection.md
+  - src/pages/monoids/summary.md
+
+  - src/pages/functors/index.md
+  - src/pages/functors/scalaz.md
+  # - src/pages/functors/summary.md
+
+  - src/pages/solutions.md
+  - src/pages/links.md
+
+  - src/pages/preview/epilogue.md
 ...
