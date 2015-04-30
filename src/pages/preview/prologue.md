@@ -6,7 +6,7 @@ This is a preview of Advanced Scala by Noel Welsh and Dave Gurnell, covering the
  - Monoids
  - Functors
 
-The remaining chapters, together with their exercises and solutions, are only available in the full version of the book, which you can obtain from [http://underscore.io][http://underscore.io]:
+The remaining chapters, together with their exercises and solutions, are only available in the full version of the book, which you can obtain from [underscore.io](http://underscore.io):
 
  - Monads
  - Monad Transformers
