@@ -61,7 +61,7 @@ As an alternative, we can use *type enrichment* to extend existing types with in
 
 ~~~ scala
 object JsonSyntax {
-  implicit class JsonWriter[A](value: A) {
+  implicit class JsonWriterOps[A](value: A) {
     def toJson(implicit writer: JsonWriter[A]): Json = {
       writer.write(value)
     }
@@ -72,7 +72,7 @@ object JsonSyntax {
 We use interface syntax by importing it along-side the instances for the types we need:
 
 ~~~ scala
-import JsonDefaults._
+import DefaultJsonWriters._
 import JsonSyntax._
 
 val json: Json = Person("Dave", "dave@example.com").toJson
