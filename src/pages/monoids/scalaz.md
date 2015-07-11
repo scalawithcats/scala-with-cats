@@ -45,7 +45,7 @@ val bitwiseXorInstance: Monoid[Int] =
   Monoid.instance[Int](_ ^ _, 0)
 ~~~
 
-### *Monoid* Syntax
+### *Monoid* Syntax {#monoid-syntax}
 
 We access the monoid syntax by importing `scalaz.syntax.monoid._`. This provides:
 

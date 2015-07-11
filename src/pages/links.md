@@ -9,6 +9,7 @@
 [scalaz.Monad]: http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.Monad
 [scalaz.MonadTrans]: http://docs.typelevel.org/api/scalaz/nightly/index.html#scalaz.MonadTrans
 [scalaz.Monoid]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Monoid
+[scalaz.NaturalTransformation]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.NaturalTransformation
 [scalaz.Show]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Show
 [scalaz.Tag]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Tag$
 [scalaz.Traversable]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Traversable
@@ -44,3 +45,4 @@
 [link-topk]: http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.114.9563
 [link-value-classes]: http://docs.scala-lang.org/overviews/core/value-classes.html
 [link-monads-burritos]: http://blog.plover.com/prog/burritos.html
+[link-scalaz-contrib]: https://github.com/typelevel/scalaz-contrib

@@ -66,7 +66,7 @@ Here is an implementation of `Monad` for `Option` as an example. Note that the `
 
 ~~~ scala
 val optionMonad = new Monad[Option] {
-  def bind[A, B](value: A)(func: A => Option[B]): Option[B] =
+  def bind[A, B](value: Option[A])(func: A => Option[B]): Option[B] =
     value flatMap func
 
   def point[A](value: => A): Option[A] =
