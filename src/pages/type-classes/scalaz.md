@@ -8,7 +8,7 @@ Scalaz is written using a modular code structure that allows us to choose which 
 
 `Show` defines two methods of interest:
 
- - `def shows(value: A): String`---returns a `String` representation of `A`;
+ - `def shows(value: A): String`---returns a `String` representation of `A`; and
 
  - `def show(value: A): Cord`---similar to `shows` but returns a [scalaz.Cord]---a data structure supporting efficient text manipulation.
 
@@ -28,7 +28,7 @@ val intShow = Show.apply[Int]
 // could not find implicit value for parameter e: scalaz.Show[Int]
 ~~~
 
-Oops - that didn't work! The `apply` method uses *implicits* to look up individual instances, so we'll have to bring some instances into scope.
+Oops---that didn't work! The `apply` method uses *implicits* to look up individual instances, so we'll have to bring some instances into scope.
 
 ### Importing Default Instances {#importing-default-instances}
 
@@ -103,7 +103,7 @@ Scalaz provides separate syntax imports for each type class. We will introduce t
 
 There are two methods for defining instances on the companion object of `Show`:
 
- - `def show[A](func: A => Cord): Show[A]` defines a `Show[A]` in terms of its `show` method;
+ - `def show[A](func: A => Cord): Show[A]` defines a `Show[A]` in terms of its `show` method; and
  - `def shows[A](func: A => String): Show[A]` defines a `Show[A]` in terms of its `shows` method.
 
 In each case, Scalaz defines one of the two methods of `Show` in terms of `func` and provides a default definition of the other method:
