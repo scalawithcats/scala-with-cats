@@ -10,9 +10,9 @@ Thumbs.db
 .rvmrc
 /bower_components/
 /dist/
-/essential-scalaz/
-/essential-scalaz.zip
 /node_modules/
 
 *.sublime-workspace
 
+target/ 
+project/target
