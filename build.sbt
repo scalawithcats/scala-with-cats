@@ -22,3 +22,12 @@ scalacOptions ++= Seq(
 libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % "7.1.3"
 )
+
+lazy val pdf = taskKey[Unit]("Builds the PDF version of the book")
+
+pdf := {
+  val a = tut.value
+  "grunt pdf" !
+}
+
+
