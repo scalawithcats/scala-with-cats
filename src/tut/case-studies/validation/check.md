@@ -6,29 +6,24 @@ implementation might be a predicate---a function returning a boolean. However
 this won't allow us to include a useful error message. We could represent a check as a function that accepts some input of type `A` and returns either an error message or the value `A`. As soon as you see this description you should think of something like
 
 ```scala
-scala> import scalaz.\/
-import scalaz.$bslash$div
-
-scala> object Check {
-     |   type Check[A] = A => String \/ A
-     | }
-defined object Check
+type Check[A] = A => String \/ A
 ```
 
 Here we've represented the error message as a `String`. This is probably not the best representation. We might want to internationalize our error messages, for example, which requires user specific formatting. We could attempt to build some kind of `ErrorMessage` type that holds all the information we can think of. If you find yourself trying to build this kind of type, stop. It's a sign you've gone down the wrong path. If you can't predict the user's requirements don't try. Instead *let them specify what they want*. The way to do this is with a type parameter. Then the user can plug in whatever type they want.
 
 ```scala
-scala> object Check {
-     |   type Check[E,A] = A => E \/ A
-     | }
-defined object Check
+type Check[E,A] = A => E \/ A
 ```
 
 We could just run with the declaration above, but we will probably want to add custom methods to `Check` so perhaps we'd better declare a trait instead of a type alias.
 
-```scala
-scala> trait Check[E,A] extends Function1[A, E \/ A]
-defined trait Check
-warning: previously defined object Check is not a companion to trait Check.
-Companions must be defined together; you may wish to use :paste mode for this.
+```tut
+trait Check[E,A] extends Function1[A, E \/ A]
 ```
+
+Given a `trait` there are only two options available in the Essential Scala orthodoxy to which we subscribe:
+
+- make it a typeclass; or
+- make it an algebraic data type (and hence seal it).
+
+A typeclass doesn't seem like a sensible direction here. We aren't trying to unify disparate types with a common interface. That leaves us with an algebraic data type. Let's keep that thought in mind as we explore the design a bit further.
