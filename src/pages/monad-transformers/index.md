@@ -2,7 +2,7 @@
 
 Monads are [like burritos][link-monads-burritos], which means that once you acquire a taste, you'll find yourself returning to them again and again. This is not without issues. As burritos can bloat the waist, monads can bloat the code base through nested for-comprehensions.
 
-Imagine we are interacting with a database. We wish to look up a user record. The user may or may not be present, so we return an `Option[User]`. Our communication with the database could fail for any number of reason (network issues, authentication problems, database problems, and so on), so this result is wrapped up in a disjunction (`\/`), giving us a final result of `\/[ErrorOr, Option[User]]`.
+Imagine we are interacting with a database. We wish to look up a user record. The user may or may not be present, so we return an `Option[User]`. Our communication with the database could fail for any number of reason (network issues, authentication problems, database problems, and so on), so this result is wrapped up in a disjunction (`\/`), giving us a final result of `\/[Error, Option[User]]`.
 
 To use this value we must nest `flatMap` calls (or equivalently, for-comprehensions):
 
@@ -19,7 +19,7 @@ val transformed =
 
 This quickly becomes very tedious.
 
-Monad transformers allow us to squash together monads, creating one monad were before we had two or more. With this transformed monad we can avoid nested calls to `flatMap`.
+Monad transformers allow us to squash together monads, creating one monad where we previously had two or more. With this transformed monad we can avoid nested calls to `flatMap`.
 
 Given two monads can we make one monad out of them in a generic way? That is, do monads *compose*? We can try to write the code but we'll soon find it impossible to implement `flatMap` (or `bind`, as Scalaz calls it).
 
@@ -99,7 +99,7 @@ All of these monad transformers follow the same convention: the first type param
 
 Building monad stacks is a little tricky until you know the patterns. The first type parameter to a monad transformer is the *outer* monad in the stack---the transformer itself provides the inner monad. For example, our `ListOption` type above was built using `OptionT[List, A]` but the result was effectively a `List[Option[A]]`. In other words, we build monad stacks from the inside out.
 
-Many monads and all transformers have at least two type parameters, so we often have to define type aliases for intermediate stages. For example, suppose we want to wrap `\/` around `Option`. `Option` is the innermost type so we want to use the `OptionT` monad transformer. We need to `\/` as the first type parameter. However, `\/` has two type parameters and monads only have one. We need a type alias to make everything the correct shape:
+Many monads and all transformers have at least two type parameters, so we often have to define type aliases for intermediate stages. For example, suppose we want to wrap `\/` around `Option`. `Option` is the innermost type so we want to use the `OptionT` monad transformer. We need to use `\/` as the first type parameter. However, `\/` has two type parameters and monads only have one. We need a type alias to make everything the correct shape:
 
 ~~~ scala
 type Error = String
@@ -314,7 +314,7 @@ def getMeanLoad(hostnames: List[String]):
 ~~~
 
 <div class="solution">
-We `map` over the list of hostnames colleting load averages from each server, and use `sequence` to combine the results. The `map` and `flatMap`, the `sequence` method cuts through both layers in our monad stack, allowing us to combine the results without hassle:
+We `map` over the list of hostnames colleting load averages from each server, and use `sequence` to combine the results. The `map` and `flatMap`, the `sequence` methods cut through both layers in our monad stack, allowing us to combine the results without hassle:
 
 ~~~ scala
 import scalaz.std.list._        // for Applicative[List]
