@@ -162,7 +162,7 @@ sealed trait Check[E,A] {
   def and(that: Check[E,A]): Check[E,A] =
     And(this, that)
 
-  override def apply(a: A)(implicit s: Semigroup[E]): E \/ A =
+  override def apply(a: A)(implicit s: Semigroup[E]): Validation[E,A] =
     this match {
       case Pure(f) => f(a)
       case And(l, r) =>
@@ -170,7 +170,7 @@ sealed trait Check[E,A] {
     }
 }
 final case class And[E,A](left: Check[E,A], right: Check[E,A]) extends Check[E,A]
-final case class Pure[E,A](f: A => E \/ A) extends Check[E,A]
+final case class Pure[E,A](f: A => Validation[E,A]) extends Check[E,A]
 ```
 </div>
 
@@ -187,7 +187,7 @@ sealed trait Check[E,A] {
   def or(that: Check[E,A]): Check[E,A] =
     Or(this, that)
 
-  override def apply(a: A)(implicit s: Semigroup[E]): E \/ A =
+  override def apply(a: A)(implicit s: Semigroup[E]): Validation[E,A] =
     this match {
       case Pure(f) => f(a)
       case And(l, r) =>
@@ -205,6 +205,8 @@ sealed trait Check[E,A] {
 }
 final case class And[E,A](left: Check[E,A], right: Check[E,A]) extends Check[E,A]
 final case class Or[E,A](left: Check[E,A], right: Check[E,A]) extends Check[E,A]
-final case class Pure[E,A](f: A => E \/ A) extends Check[E,A]
+final case class Pure[E,A](f: A => Validation[E,A]) extends Check[E,A]
 ```
 </div>
+
+With `and` and `or` we can implement many of checks we'll want in practice, but we still have a few more methods to add. We'll turn to `map` and related methods next.
