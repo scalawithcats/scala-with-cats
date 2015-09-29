@@ -54,7 +54,9 @@ Let's see how we can use monad transformers to squash `List` and `Option` into a
 type ListOption[A] = OptionT[List, A]
 ~~~
 
-Our `Result` type is a monad that combines the properties of `List` and `Option`. We can create instances with `point` as usual:
+Our `Result` type is a monad that combines the properties of `List` and `Option`. Note how we build it from the inside out: we pass to `OptionT` the type of the monad we wrap around it. 
+
+We can create instances with `point` as usual:
 
 ~~~
 val result: ListOption[Int] = 42.point[ListOption]
@@ -142,10 +144,11 @@ type FutureListOption[A] = OptionT[FutureList, A]
 Our mammoth stack composes not two but *three* monads. Our `map` and `flatMap` methods cut through three layers of abstraction:
 
 ~~~ scala
-def result(implicit ec: ExecutionContext): FutureListOption[A] = for {
-  a <- 10.point[FutureListOption]
-  b <- 32.point[FutureListOption]
-} yield a + b
+def result(implicit ec: ExecutionContext): FutureListOption[A] =
+  for {
+    a <- 10.point[FutureListOption]
+    b <- 32.point[FutureListOption]
+  } yield a + b
 ~~~
 
 <div class="callout callout-info">
@@ -314,7 +317,7 @@ def getMeanLoad(hostnames: List[String]):
 ~~~
 
 <div class="solution">
-We `map` over the list of hostnames colleting load averages from each server, and use `sequence` to combine the results. The `map` and `flatMap`, the `sequence` methods cut through both layers in our monad stack, allowing us to combine the results without hassle:
+We `map` over the list of hostnames colleting load averages from each server, and use `sequence` to combine the results. The `map`, `flatMap`, and `sequence` methods cut through both layers in our monad stack, allowing us to combine the results without hassle:
 
 ~~~ scala
 import scalaz.std.list._        // for Applicative[List]
