@@ -1,0 +1,77 @@
+## Combining Futures in Parallel
+
+Scala `Futures` provide a fantastic example of the differences between monadic and applicative combination. If you've ever written code using `Futures`, you've probably made this mistake:
+
+~~~ scala
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits._
+
+// Fetch the number of requests
+// being serviced by `host` per minute:
+def getTraffic(host: String): Future[Int] =
+  ???
+
+// Fetch the total traffic for
+// our three production web servers:
+def totalTraffic: Future[Int] =
+  for {
+    a <- getTraffic("host1")
+    b <- getTraffic("host2")
+    c <- getTraffic("host3")
+  } yield a + b + c
+// totalTraffic: Future[Int] = ...
+~~~
+
+The mistake in this code is that the calls to `getTraffic` are made in sequence rather than in parallel as we expected. We can see this by expanding the for comprehension into its underlying monadic implementation:
+
+~~~ scala
+def totalTraffic: Future[Int] =
+  getTraffic("host1") flatMap { a =>
+    getTraffic("host2") flatMap { b =>
+      getTraffic("host3") map { c =>
+        a + b + c
+      }
+    }
+  }
+// totalTraffic: Future[Int] = ...
+~~~
+
+As you can see in this expanded codebase, the call to `host2` is only made once the call to `host1` is complete. Similarly, the call to `host3` is only made once the call to `host2` is complete. The calls are entirely independent, of course---there's no reason they can't be made in parallel.
+
+The solution you are probably aware of is to start the three futures running indepedently of one another before combining their results using the for comprehension:
+
+~~~ scala
+def totalTraffic: Future[Int] = {
+  val traffic1 = getTraffic("host1")
+  val traffic2 = getTraffic("host2")
+  val traffic3 = getTraffic("host3")
+
+  traffic1 flatMap { a =>
+    traffic2 flatMap { b =>
+      traffic3 map { c =>
+        a + b + c
+      }
+    }
+  }
+}
+~~~
+
+However, this code misses the point. The problem here is we're using monadic comprehension to combine values when we should be using applicative combination. Here is the same code written using Scalaz applicatives:
+
+~~~ scala
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits._
+
+import scalaz.Applicative
+import scalaz.std.scalaFuture._
+
+def totalTraffic: Future[Int] =
+  Applicative[Future].apply3(
+    getTraffic("host1"),
+    getTraffic("host2"),
+    getTraffic("host3")
+  )(_ + _ + _)
+// totalTraffic: Future[Int] = ...
+~~~
+
+In this version of the code, the calls to `getTraffic` are all parameters to `apply3`, meaning they are all started before the call to `apply3`. The semantics are therefore correct: we make the calls to the three hosts in parallel and combine their results when the three `Futures` are complete.

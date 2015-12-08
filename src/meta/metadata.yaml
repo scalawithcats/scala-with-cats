@@ -50,9 +50,9 @@ pages:
   # - src/pages/monad-transformers/summary.md
 
   - src/pages/applicatives/index.md
-  - src/pages/applicatives/combine.md
-  - src/pages/applicatives/scalaz.md
+  - src/pages/applicatives/future.md
   - src/pages/applicatives/validation.md
+  - src/pages/applicatives/scalaz.md
   - src/pages/applicatives/summary.md
 
   - src/pages/case-studies/mapreduce/index.md
