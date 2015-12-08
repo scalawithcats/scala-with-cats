@@ -104,7 +104,7 @@ res7.apply(sum3)
 // res8: Result[Int] = Pass(1368)
 ~~~
 
-As you have probably guessed, the three-argument builder has a `|@|` method to produce a four-argument builder, and so on up to 12 arguments. This system makes it incredibly easy to lift a function of multiple arguments into the context of an `Applicative`. The syntax is:
+As you have probably guessed, the three-argument builder has an `apply` method that behaves like `apply3` and a `|@|` method to produce a four-argument builder... and so on up to 12 arguments. This system makes it incredibly easy to lift a function of multiple arguments into the context of an `Applicative`. The syntax is:
 
 ~~~ scala
 (
