@@ -15,7 +15,7 @@ What we have called `Check` so far we will call `Predicate`. For `Predicate` we 
 
 - *Identity Law*: For a predicate `p` of type `Predicate[E,A]` and elements `a1` and `a2` of type `A`, if `p(a1) == Success(a2)` then `a1 == a2`.
 
-This identity law encodes the notice that predicate always returns its input if it succeeds.
+This identity law encodes the notion that predicate always returns its input if it succeeds.
 
 Making this change gives us the following code:
 

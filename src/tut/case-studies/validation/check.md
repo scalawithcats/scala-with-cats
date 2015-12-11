@@ -1,26 +1,22 @@
 ## The Check Datatype
 
-```tut:invisible
-// Setup some basic imports
-import scalaz.\/
-```
-
 Let's start with the bottom level, checking individual components of the data. From the description it's fairly obvious we need to represent "checks" somehow. What should a check be? The simplest implementation might be a predicate---a function returning a boolean. However this won't allow us to include a useful error message. We could represent a check as a function that accepts some input of type `A` and returns either an error message or the value `A`. As soon as you see this description you should think of something like
 
 ```scala
-type Check[A] = A => String \/ A
+import cats.data.Xor
+
+type Check[A] = A => String Xor A
 ```
 
-Here we've represented the error message as a `String`. This is probably not the best representation. We might want to internationalize our error messages, for example, which requires user specific formatting. We could attempt to build some kind of `ErrorMessage` type that holds all the information we can think of. If you find yourself trying to build this kind of type, stop. It's a sign you've gone down the wrong path. If you can't predict the user's requirements don't try. Instead *let them specify what they want*. The way to do this is with a type parameter. Then the user can plug in whatever type they want.
-
+Here we've represented the error message as a `String`. This is probably not the best representation. We might want to internationalize our error messages, for example, which requires user specific formatting. We could attempt to build some kind of `ErrorMessage` type that holds all the information we can think of. This is a mistake. When we can't predict the user's requirements don't try. Instead *let them specify what they want*. The way to do this is with a type parameter. Then the user can plug in whatever type they desire.
 ```scala
-type Check[E,A] = A => E \/ A
+type Check[E,A] = A => E Xor A
 ```
 
 We could just run with the declaration above, but we will probably want to add custom methods to `Check` so perhaps we'd better declare a trait instead of a type alias.
 
 ```tut
-trait Check[E,A] extends (A => E \/ A)
+trait Check[E,A] extends (A => E Xor A)
 ```
 
 Given a `trait` there are only two options available in the Essential Scala orthodoxy to which we subscribe:
