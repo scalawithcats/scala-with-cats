@@ -47,7 +47,7 @@ intEqual.equal(123, "234") // compile error
 We can also import the interface syntax in [scalaz.syntax.equal] to use the `===` and `=/=` methods:
 
 ~~~ scala
-import scala.syntax.equal._
+import scalaz.syntax.equal._
 
 123 === 123 // true
 123 =/= 234 // true

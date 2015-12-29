@@ -111,7 +111,7 @@ In each case, Scalaz defines one of the two methods of `Show` in terms of `func`
 ~~~ scala
 import java.util.Date
 
-implicit val dateShow = Show.shows { date =>
+implicit val dateShow = Show.shows[Date] { date =>
   s"It's been ${date.getTime} milliseconds since the epoch."
 }
 ~~~
