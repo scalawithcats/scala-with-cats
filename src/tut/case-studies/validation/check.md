@@ -2,20 +2,21 @@
 
 Let's start with the bottom level, checking individual components of the data. From the description it's fairly obvious we need to represent "checks" somehow. What should a check be? The simplest implementation might be a predicate---a function returning a boolean. However this won't allow us to include a useful error message. We could represent a check as a function that accepts some input of type `A` and returns either an error message or the value `A`. As soon as you see this description you should think of something like
 
-```scala
+```tut:book
 import cats.data.Xor
 
 type Check[A] = A => String Xor A
 ```
 
 Here we've represented the error message as a `String`. This is probably not the best representation. We might want to internationalize our error messages, for example, which requires user specific formatting. We could attempt to build some kind of `ErrorMessage` type that holds all the information we can think of. This is a mistake. When we can't predict the user's requirements don't try. Instead *let them specify what they want*. The way to do this is with a type parameter. Then the user can plug in whatever type they desire.
-```scala
+
+```tut:book
 type Check[E,A] = A => E Xor A
 ```
 
 We could just run with the declaration above, but we will probably want to add custom methods to `Check` so perhaps we'd better declare a trait instead of a type alias.
 
-```tut
+```tut:book
 trait Check[E,A] extends (A => E Xor A)
 ```
 
@@ -53,35 +54,37 @@ I can think of two implementation strategies: one where we represent checks as f
 
 First, the implementation where we push the logic inside the function. I've called this one `CheckF`.
 
-```tut
-import scalaz.{\/,-\/,\/-}
-import scalaz.Semigroup
-import scalaz.syntax.either._ // For .left and .right
-import scalaz.syntax.semigroup._ // For |+|
+```tut:book
+import cats.Semigroup
+import cats.data.Xor
+import cats.syntax.xor._ // For .left and .right
+import cats.syntax.semigroup._ // For |+|
 
-final case class CheckF[E,A](f: A => E \/ A) {
+final case class CheckF[E,A](f: A => E Xor A) {
+  import cats.data.Xor._ // For Left and Right
+
   def and(that: CheckF[E,A])(implicit s: Semigroup[E]): CheckF[E,A] = {
     val self = this
     CheckF(a =>
       (self(a), that(a)) match {
-        case (-\/(e1), -\/(e2)) => (e1 |+| e2).left
-        case (-\/(e),  \/-(a))  => e.left
-        case (\/-(a),  -\/(e))  => e.left
-        case (\/-(a1), \/-(a2)) => a.right
+        case (Left(e1),  Left(e2))  => (e1 |+| e2).left
+        case (Left(e),   Right(a))  => e.left
+        case (Right(a),  Left(e))   => e.left
+        case (Right(a1), Right(a2)) => a.right
       }
     )
   }
 
-  override def apply(a: A): E \/ A =
+  def apply(a: A): E Xor A =
     f(a)
 }
 ```
 
 Let's test the behavior we get. First we'll setup some checks.
 
-```tut
-import scalaz.std.list._ // For semigroup instance on List
-import scalaz.std.string._ // For semigroup instance on String
+```tut:book
+import cats.std.list._ // For semigroup instance on List
+import cats.std.string._ // For semigroup instance on String
 
 val check1 = CheckF[List[String], Int]{ v =>
   if(v > 2)
@@ -102,71 +105,75 @@ val check = check1 and check2
 
 Now run the check with some data.
 
-```tut
+```tut:book
 val result = check(0)
 val expected = List("Value must be greater than 2", "Value must be less than -2")
 ```
 
 Finally check we got the expected output.
 
-```tut
+```tut:book
 assert(result == expected.left)
 ```
 
 Now let's see the other implementation strategy.
 
-```tut
+```tut:book
+object Check {
 sealed trait Check[E,A] {
+  import cats.data.Xor._ // For Left and Right
+
   def and(that: Check[E,A]): Check[E,A] =
     And(this, that)
 
-  override def apply(a: A)(implicit s: Semigroup[E]): E \/ A =
+  def apply(a: A)(implicit s: Semigroup[E]): E Xor A =
     this match {
       case Pure(f) => f(a)
       case And(l, r) =>
         (l(a), r(a)) match {
-          case (-\/(e1), -\/(e2)) => (e1 |+| e2).left
-          case (-\/(e),  \/-(a))  => e.left
-          case (\/-(a),  -\/(e))  => e.left
-          case (\/-(a1), \/-(a2)) => a.right
+          case (Left(e1),  Left(e2))  => (e1 |+| e2).left
+          case (Left(e),   Right(a))  => e.left
+          case (Right(a),  Left(e))   => e.left
+          case (Right(a1), Right(a2)) => a.right
         }
     }
 }
 final case class And[E,A](left: Check[E,A], right: Check[E,A]) extends Check[E,A]
-final case class Pure[E,A](f: A => E \/ A) extends Check[E,A]
+final case class Pure[E,A](f: A => E Xor A) extends Check[E,A]
+}
 ```
 
 Note that in this implementation, the requirement for the `Semigroup` shifts from `and` method to the `apply` method. In general I prefer this implementation, as it cleanly separates the structure of the computation (which we represent with an algebraic data type) with the process that gives meaning to that computation (the `apply` method). We will use this implementation for the rest of this case study.
 </div>
 
-Using `E \/ A` for the output of our check is the wrong abstraction. Why is this the case, and what kind of abstraction should we be using? Change your implementation accordingly.
+Using `E Xor A` for the output of our check is the wrong abstraction. Why is this the case, and what kind of abstraction should we be using? Change your implementation accordingly.
 
 <div class="solution">
-The implementation of `apply` for `And` is using the pattern for applicative functors. Disjunction has an `Applicative` instance, but it doesn't have the semantics we want. Namely, it does not accumulate errors but fails on the first error encountered. If we want to accumulate errors, `Validation` is the right abstraction to use. As a bonus, we get more code reuse as we can reuse the applicative instance on `Validation` in the implementation of `apply`.
+The implementation of `apply` for `And` is using the pattern for applicative functors. `Xor` has an `Applicative` instance, but it doesn't have the semantics we want. Namely, it does not accumulate errors but fails on the first error encountered. If we want to accumulate errors, `Validated` is the right abstraction to use. As a bonus, we get more code reuse as we can reuse the applicative instance on `Validated` in the implementation of `apply`.
 
 Here's the complete implementation.
 
-```tut
-package validation
+```tut:book
+import cats.Semigroup
+import cats.data.Validated
+import cats.syntax.semigroup._ // For |+|
+import cats.syntax.apply._ // For |@|
 
-import scalaz.{Validation,Semigroup}
-import scalaz.syntax.validation._ // For .success and .failure
-import scalaz.syntax.semigroup._ // For |+|
-import scalaz.syntax.applicative._ // For |@|
-
-sealed trait Check[E,A] {
-  def and(that: Check[E,A]): Check[E,A] =
-    And(this, that)
-
-  override def apply(a: A)(implicit s: Semigroup[E]): Validation[E,A] =
-    this match {
-      case Pure(f) => f(a)
-      case And(l, r) =>
-        (l(a) |@| r(a)){ (_, _) => a }
-    }
+object Check {
+  sealed trait Check[E,A] {
+    def and(that: Check[E,A]): Check[E,A] =
+      And(this, that)
+  
+    def apply(a: A)(implicit s: Semigroup[E]): Validated[E,A] =
+      this match {
+        case Pure(f) => f(a)
+        case And(l, r) =>
+          (l(a) |@| r(a)) map { (_, _) => a }
+      }
+  }
+  final case class And[E,A](left: Check[E,A], right: Check[E,A]) extends Check[E,A]
+  final case class Pure[E,A](f: A => Validated[E,A]) extends Check[E,A]
 }
-final case class And[E,A](left: Check[E,A], right: Check[E,A]) extends Check[E,A]
-final case class Pure[E,A](f: A => Validation[E,A]) extends Check[E,A]
 ```
 </div>
 
@@ -175,33 +182,36 @@ Now implement `or`.
 <div class="solution">
 This reuses the same technique for `and`. In the `apply` method we have to do a bit more work, and it is ok to short-circuit.
 
-```tut
-sealed trait Check[E,A] {
-  def and(that: Check[E,A]): Check[E,A] =
-    And(this, that)
-
-  def or(that: Check[E,A]): Check[E,A] =
-    Or(this, that)
-
-  override def apply(a: A)(implicit s: Semigroup[E]): Validation[E,A] =
-    this match {
-      case Pure(f) => f(a)
-      case And(l, r) =>
-        (l(a) |@| r(a)){ (_, _) => a }
-      case Or(l, r) =>
-        l(a) match {
-          case Success(a)  => Success(a)
-          case Failure(e1) =>
-            r(a) match {
-              case Success(a)  => Success(a)
-              case Failure(e2) => Failure(e1 |+| e2)
-            }
-        }
-    }
+```tut:book
+object Check {
+  sealed trait Check[E,A] {
+    import cats.data.Validated._ // For Valid and Invalid
+    def and(that: Check[E,A]): Check[E,A] =
+      And(this, that)
+  
+    def or(that: Check[E,A]): Check[E,A] =
+      Or(this, that)
+  
+    def apply(a: A)(implicit s: Semigroup[E]): Validated[E,A] =
+      this match {
+        case Pure(f) => f(a)
+        case And(l, r) =>
+          (l(a) |@| r(a)) map { (_, _) => a }
+        case Or(l, r) =>
+          l(a) match {
+            case Valid(a) => Valid(a)
+            case Invalid(e1) =>
+              r(a) match {
+                case Valid(a) => Valid(a)
+                case Invalid(e2) => Invalid(e1 |+| e2)
+              }
+          }
+      }
+  }
+  final case class And[E,A](left: Check[E,A], right: Check[E,A]) extends Check[E,A]
+  final case class Or[E,A](left: Check[E,A], right: Check[E,A]) extends Check[E,A]
+  final case class Pure[E,A](f: A => Validated[E,A]) extends Check[E,A]
 }
-final case class And[E,A](left: Check[E,A], right: Check[E,A]) extends Check[E,A]
-final case class Or[E,A](left: Check[E,A], right: Check[E,A]) extends Check[E,A]
-final case class Pure[E,A](f: A => Validation[E,A]) extends Check[E,A]
 ```
 </div>
 

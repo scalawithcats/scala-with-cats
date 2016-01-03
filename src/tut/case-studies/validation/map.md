@@ -19,38 +19,42 @@ This identity law encodes the notion that predicate always returns its input if 
 
 Making this change gives us the following code:
 
-```tut
-import scalaz.{Validation,Semigroup,Success,Failure}
-import scalaz.syntax.validation._ // For .success and .failure
-import scalaz.syntax.semigroup._ // For |+|
-import scalaz.syntax.applicative._ // For |@|
+```tut:book
+import cats.Semigroup
+import cats.data.Validated
+import cats.syntax.semigroup._ // For |+|
+import cats.syntax.apply._ // For |@|
 
-sealed trait Predicate[E,A] {
-  def and(that: Predicate[E,A]): Predicate[E,A] =
-    And(this, that)
-
-  def or(that: Predicate[E,A]): Predicate[E,A] =
-    Or(this, that)
-
-  override def apply(a: A)(implicit s: Semigroup[E]): Validation[E] =
-    this match {
-      case Pure(f) => f(a)
-      case And(l, r) =>
-        (l(a) |@| r(a)){ (_, _) => a }
-      case Or(l, r) =>
-        l(a) match {
-          case Success(a1) => Success(a)
-          case Failure(e1) =>
-            r(a) match {
-              case Success(a2) => Success(a)
-              case Failure(e2) => Failure(e1 |+| e2)
-            }
-        }
-    }
+object Predicate {
+  sealed trait Predicate[E,A] {
+    import cats.data.Validated._ // For Valid and Invalid
+  
+    def and(that: Predicate[E,A]): Predicate[E,A] =
+      And(this, that)
+  
+    def or(that: Predicate[E,A]): Predicate[E,A] =
+      Or(this, that)
+  
+    def apply(a: A)(implicit s: Semigroup[E]): Validated[E,A] =
+      this match {
+        case Pure(f) => f(a)
+        case And(l, r) =>
+          (l(a) |@| r(a)) map { (_, _) => a }
+        case Or(l, r) =>
+          l(a) match {
+            case Valid(a1)   => Valid(a)
+            case Invalid(e1) =>
+              r(a) match {
+                case Valid(a2)   => Valid(a)
+                case Invalid(e2) => Invalid(e1 |+| e2)
+              }
+          }
+      }
+  }
+  final case class And[E,A](left: Predicate[E,A], right: Predicate[E,A]) extends Predicate[E,A]
+  final case class Or[E,A](left: Predicate[E,A], right: Predicate[E,A]) extends Predicate[E,A]
+  final case class Pure[E,A](f: A => Validated[E,A]) extends Predicate[E,A]
 }
-final case class And[E,A](left: Predicate[E,A], right: Predicate[E,A]) extends Predicate[E,A]
-final case class Or[E,A](left: Predicate[E,A], right: Predicate[E,A]) extends Predicate[E,A]
-final case class Pure[E,A](f: A => Validation[E]) extends Predicate[E,A]
 ```
 
 ### Checks
@@ -64,7 +68,7 @@ sealed trait Check[E,A,B] {
   def map[C](f: B => C): Check[E,A,C] =
     ???
 
-  def apply(in: A): Validation[E,B] =
+  def apply(in: A): Validated[E,B] =
     ???
 }
 ```
@@ -72,21 +76,28 @@ sealed trait Check[E,A,B] {
 <div class="solution">
 If you follow the same strategy as `Predicate` you should be able to create code similar to the below.
 
-```tut
-import scalaz.{Validation}
+```tut:book
+import cats.Semigroup
+import cats.data.Validated
 
-sealed trait Check[E,A,B] {
-  def map[C](f: B => C): Check[E,A,C] =
-    Map[E,A,C](this, f)
+object Check {
+  import Predicate._
 
-  def apply(in: A): Validation[E,B] =
-    this match {
-      case Map(c, f) => c(in) map f
-      case Pure(p)   => p(in)
-    }
+  sealed trait Check[E,A,B] {
+    def map[C](f: B => C): Check[E,A,C] =
+      Map[E,A,B,C](this, f)
+  
+    def apply(in: A)(implicit s: Semigroup[E]): Validated[E,B]
+  }
+  final case class Map[E,A,B,C](check: Check[E,A,B], f: B => C) extends Check[E,A,C] {
+    def apply(in: A)(implicit s: Semigroup[E]): Validated[E,C] =
+      check(in) map f
+  }
+  final case class Pure[E,A](predicate: Predicate[E,A]) extends Check[E,A,A] {
+    def apply(in: A)(implicit s: Semigroup[E]): Validated[E,A] =
+      predicate(in)
+  }
 }
-final case class Map[E,A,B,C](check: Check[E,A,B], f: B => C) extends Check[E,A,C]
-final case class Pure[E,A](predicate: Predicate[E,A]) extends Check[E,A,A]
 ```
 </div>
 
@@ -106,24 +117,35 @@ Implement `flatMap` for `Check`.
 <div class="solution">
 It's the same implementation strategy as before. Just follow the types to implement `apply`.
 
-```tut
-import scalaz.{Validation}
+```tut:book
+import cats.data.Validated
 
-sealed trait Check[E,A,B] {
-  def map[C](f: B => C): Check[E,A,C] =
-    Map[E,A,C](this, f)
+object Check {
+  import Predicate._
 
-  def apply(in: A): Validation[E,B] =
-    this match {
-      case FlatMap(c,f) => c(in) flatMap (a => f(a)(a))
-      case Map(c, f)    => c(in) map f
-      case Pure(p)      => p(in)
-    }
+  sealed trait Check[E,A,B] {
+    def map[C](f: B => C): Check[E,A,C] =
+      Map[E,A,B,C](this, f)
+
+  def flatMap[C](f: B => Check[E,A,C]) =
+    FlatMap[E,A,B,C](this, f)
+
+    def apply(in: A)(implicit s: Semigroup[E]): Validated[E,B]
+  }
+  final case class Map[E,A,B,C](check: Check[E,A,B], f: B => C) extends Check[E,A,C] {
+    def apply(in: A)(implicit s: Semigroup[E]): Validated[E,C] =
+      check(in) map f
+  }
+  final case class Pure[E,A](predicate: Predicate[E,A]) extends Check[E,A,A] {
+    def apply(in: A)(implicit s: Semigroup[E]): Validated[E,A] =
+      predicate(in)
+  }
+  final case class FlatMap[E,A,B,C](check: Check[E,A,B], f: B => Check[E,A,C]) extends Check[E,A,C] {
+    def apply(in: A)(implicit s: Semigroup[E]): Validated[E,C] =
+      check(in).withXor { _.flatMap (a => f(a)(in).toXor) }
+  }
 }
-final case class FlatMap[E,A,B,C](check: Check[E,A,B], f: B => Check[E,A,C]): Check[E,A,C]
-final case class Map[E,A,B,C](check: Check[E,A,B], f: B => C) extends Check[E,A,C]
-final case class Pure[E,A](predicate: Predicate[E,A]) extends Check[E,A,A]
 ```
 </div>
 
-We now have an implementation of `Check` and `Predicate` that combined do most of what we originally set out to do. However we are not finished yet. You have probably recognised structure in `Predicate` and `Check` that we can abstract over: `Predicate` has a monoid, and `Check` has a monad. Furthermore, in implementing `Check` you might have felt the implementation doesn't really do much---all we do in `apply` is call through to the underlying methods on `Predicate` and `Validation`. Perhaps there is an abstraction we're missing here? We'll address this issue with `Check` first, and then turn to abstracting out the remaining structure in `Predicate` and what is left of `Check`.
+We now have an implementation of `Check` and `Predicate` that combined do most of what we originally set out to do. However we are not finished yet. You have probably recognised structure in `Predicate` and `Check` that we can abstract over: `Predicate` has a monoid, and `Check` has a monad. Furthermore, in implementing `Check` you might have felt the implementation doesn't really do much---all we do in `apply` is call through to the underlying methods on `Predicate` and `Validated`. Perhaps there is an abstraction we're missing here? We'll address this issue with `Check` first, and then turn to abstracting out the remaining structure in `Predicate` and what is left of `Check`.
