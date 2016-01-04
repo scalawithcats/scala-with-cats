@@ -119,27 +119,31 @@ assert(result == expected.left)
 Now let's see the other implementation strategy.
 
 ```tut:book
-object Check {
-sealed trait Check[E,A] {
-  import cats.data.Xor._ // For Left and Right
+object check {
+  import cats.Semigroup
+  import cats.data.Xor
+  import cats.syntax.semigroup._ // For |+|
 
-  def and(that: Check[E,A]): Check[E,A] =
-    And(this, that)
-
-  def apply(a: A)(implicit s: Semigroup[E]): E Xor A =
-    this match {
-      case Pure(f) => f(a)
-      case And(l, r) =>
-        (l(a), r(a)) match {
-          case (Left(e1),  Left(e2))  => (e1 |+| e2).left
-          case (Left(e),   Right(a))  => e.left
-          case (Right(a),  Left(e))   => e.left
-          case (Right(a1), Right(a2)) => a.right
-        }
-    }
-}
-final case class And[E,A](left: Check[E,A], right: Check[E,A]) extends Check[E,A]
-final case class Pure[E,A](f: A => E Xor A) extends Check[E,A]
+  sealed trait Check[E,A] {
+    import cats.data.Xor._ // For Left and Right
+  
+    def and(that: Check[E,A]): Check[E,A] =
+      And(this, that)
+  
+    def apply(a: A)(implicit s: Semigroup[E]): E Xor A =
+      this match {
+        case Pure(f) => f(a)
+        case And(l, r) =>
+          (l(a), r(a)) match {
+            case (Left(e1),  Left(e2))  => (e1 |+| e2).left
+            case (Left(e),   Right(a))  => e.left
+            case (Right(a),  Left(e))   => e.left
+            case (Right(a1), Right(a2)) => a.right
+          }
+      }
+  }
+  final case class And[E,A](left: Check[E,A], right: Check[E,A]) extends Check[E,A]
+  final case class Pure[E,A](f: A => E Xor A) extends Check[E,A]
 }
 ```
 
@@ -154,12 +158,12 @@ The implementation of `apply` for `And` is using the pattern for applicative fun
 Here's the complete implementation.
 
 ```tut:book
-import cats.Semigroup
-import cats.data.Validated
-import cats.syntax.semigroup._ // For |+|
-import cats.syntax.apply._ // For |@|
+object check {
+  import cats.Semigroup
+  import cats.data.Validated
+  import cats.syntax.semigroup._ // For |+|
+  import cats.syntax.apply._ // For |@|
 
-object Check {
   sealed trait Check[E,A] {
     def and(that: Check[E,A]): Check[E,A] =
       And(this, that)
@@ -183,7 +187,12 @@ Now implement `or`.
 This reuses the same technique for `and`. In the `apply` method we have to do a bit more work, and it is ok to short-circuit.
 
 ```tut:book
-object Check {
+object check {
+  import cats.Semigroup
+  import cats.data.Validated
+  import cats.syntax.semigroup._ // For |+|
+  import cats.syntax.apply._ // For |@|
+
   sealed trait Check[E,A] {
     import cats.data.Validated._ // For Valid and Invalid
     def and(that: Check[E,A]): Check[E,A] =

@@ -20,12 +20,12 @@ This identity law encodes the notion that predicate always returns its input if 
 Making this change gives us the following code:
 
 ```tut:book
-import cats.Semigroup
-import cats.data.Validated
-import cats.syntax.semigroup._ // For |+|
-import cats.syntax.apply._ // For |@|
+object predicate {
+  import cats.Semigroup
+  import cats.data.Validated
+  import cats.syntax.semigroup._ // For |+|
+  import cats.syntax.apply._ // For |@|
 
-object Predicate {
   sealed trait Predicate[E,A] {
     import cats.data.Validated._ // For Valid and Invalid
   
@@ -77,11 +77,11 @@ sealed trait Check[E,A,B] {
 If you follow the same strategy as `Predicate` you should be able to create code similar to the below.
 
 ```tut:book
-import cats.Semigroup
-import cats.data.Validated
+object check {
+  import cats.Semigroup
+  import cats.data.Validated
 
-object Check {
-  import Predicate._
+  import predicate._
 
   sealed trait Check[E,A,B] {
     def map[C](f: B => C): Check[E,A,C] =
@@ -110,18 +110,24 @@ def flatMap[C](f: B => Check[E,A,B]): Check[E,A,C] =
 
 along with an appropriate definition of `FlatMap`. However it isn't so obvious what this means or how we should implement `apply` for this case. Have a think about this before reading on.
 
-`FlatMap` allows us to choose a `Check` to apply based on the input we receive. For example, if we're checking an integer we could decide to check if it is a prime number if it is positive, while checking for an even number if it is negative. This is a very silly example, but I have difficulty coming up with a good one. It seems that anything we can do with `flatMap` we can achieve with a combination of a `Predicate` and `map`. However it is reasonably easy to implement `flatMap` so we may as well add it and perhaps someone more far-sighted than I will find a use for it.
+`FlatMap` allows us to choose a `Check` to apply based on the input we receive. For example, if we're checking an integer we could use `flatMap` to implement the following logic:
+
+- if the integer is even, check if it is a prime number; else
+- check if it is positive. 
+
+This is a very silly example, but I have difficulty coming up with a good one. It seems that anything we can do with `flatMap` we can achieve with a combination of a `Predicate` and `map`. However it is reasonably easy to implement `flatMap` so we may as well add it and perhaps someone more far-sighted than I will find a use for it.
 
 Implement `flatMap` for `Check`.
 
 <div class="solution">
-It's the same implementation strategy as before. Just follow the types to implement `apply`.
+It's the same implementation strategy as before, with one wrinkle: `Validated` doesn't have a `flatMap` method. To implement `flatMap` we must momentarily switch to `Xor` and then switch back to `Validated`. The `withXor` method on `Validated` does exactly this. From here we can just follow the types to implement `apply`.
 
 ```tut:book
-import cats.data.Validated
+object check {
+  import cats.Semigroup
+  import cats.data.Validated
 
-object Check {
-  import Predicate._
+  import predicate._
 
   sealed trait Check[E,A,B] {
     def map[C](f: B => C): Check[E,A,C] =
