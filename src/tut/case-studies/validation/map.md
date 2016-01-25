@@ -154,4 +154,99 @@ object check {
 ```
 </div>
 
+To complete our implementation we should add some constructors---in other words, `apply` methods on the companion objects---for `Predicate` and `Check`. Here's the complete implementation I ended up with.
+
+```tut:book
+object predicate {
+  import cats.Semigroup
+  import cats.data.Validated
+  import cats.syntax.semigroup._ // For |+|
+  import cats.syntax.apply._ // For |@|
+
+  sealed trait Predicate[E,A] {
+    import cats.data.Validated._ // For Valid and Invalid
+
+    def and(that: Predicate[E,A]): Predicate[E,A] =
+      And(this, that)
+
+    def or(that: Predicate[E,A]): Predicate[E,A] =
+      Or(this, that)
+
+    def apply(a: A)(implicit s: Semigroup[E]): Validated[E,A] =
+      this match {
+        case Pure(f) => f(a)
+        case And(l, r) =>
+          (l(a) |@| r(a)) map { (_, _) => a }
+        case Or(l, r) =>
+          l(a) match {
+            case Valid(a1)   => Valid(a)
+            case Invalid(e1) =>
+              r(a) match {
+                case Valid(a2)   => Valid(a)
+                case Invalid(e2) => Invalid(e1 |+| e2)
+              }
+          }
+      }
+  }
+  object Predicate {
+    def apply[E,A](f: A => Validated[E,A]): Predicate[E,A] =
+      Pure(f)
+
+    def lift[E,A](msg: E)(pred: A => Boolean): Predicate[E,A] =
+      Pure { (a: A) =>
+        if(pred(a))
+          Validated.valid(a)
+        else
+          Validated.invalid(msg)
+      }
+  }
+
+  final case class And[E,A](left: Predicate[E,A], right: Predicate[E,A]) extends Predicate[E,A]
+  final case class Or[E,A](left: Predicate[E,A], right: Predicate[E,A]) extends Predicate[E,A]
+  final case class Pure[E,A](f: A => Validated[E,A]) extends Predicate[E,A]
+}
+
+object check {
+  import cats.Semigroup
+  import cats.data.Validated
+
+  import predicate._
+
+  sealed trait Check[E,A,B] {
+    def map[C](f: B => C): Check[E,A,C] =
+      Map[E,A,B,C](this, f)
+
+    def flatMap[C](f: B => Check[E,A,C]) =
+      FlatMap[E,A,B,C](this, f)
+
+    def apply(in: A)(implicit s: Semigroup[E]): Validated[E,B]
+  }
+  object Check {
+    def apply[E,A](pred: Predicate[E,A]): Check[E,A,A] =
+      Pure(pred)
+  }
+
+  final case class Map[E,A,B,C](check: Check[E,A,B], f: B => C) extends Check[E,A,C] {
+    def apply(in: A)(implicit s: Semigroup[E]): Validated[E,C] =
+      check(in) map f
+  }
+  final case class Pure[E,A](predicate: Predicate[E,A]) extends Check[E,A,A] {
+    def apply(in: A)(implicit s: Semigroup[E]): Validated[E,A] =
+      predicate(in)
+  }
+  final case class FlatMap[E,A,B,C](check: Check[E,A,B], f: B => Check[E,A,C]) extends Check[E,A,C] {
+    def apply(in: A)(implicit s: Semigroup[E]): Validated[E,C] =
+      check(in).withXor { _.flatMap (a => f(a)(in).toXor) }
+  }
+}
+```
+
+With this implementation we can write some checks. Here are checks for some of the examples given in the introduction:
+
+- A username must contain at least four characters and consist entirely of alphanumeric characters
+
+- An email address must contain an `@` sign. Split the string at the `@`. The string to the left must not be empty. The string to the right must be at least three characters long and contain a dot.
+
+
+
 We now have an implementation of `Check` and `Predicate` that combined do most of what we originally set out to do. However we are not finished yet. You have probably recognised structure in `Predicate` and `Check` that we can abstract over: `Predicate` has a monoid, and `Check` has a monad. Furthermore, in implementing `Check` you might have felt the implementation doesn't really do much---all we do in `apply` is call through to the underlying methods on `Predicate` and `Validated`. Perhaps there is an abstraction we're missing here? We'll address this issue with `Check` first, and then turn to abstracting out the remaining structure in `Predicate` and what is left of `Check`.
