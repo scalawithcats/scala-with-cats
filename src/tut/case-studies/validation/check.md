@@ -1,6 +1,6 @@
 ## The Check Datatype
 
-Let's start with the bottom level, checking individual components of the data. From the description it's fairly obvious we need to represent "checks" somehow. What should a check be? The simplest implementation might be a predicate---a function returning a boolean. However this won't allow us to include a useful error message. We could represent a check as a function that accepts some input of type `A` and returns either an error message or the value `A`. As soon as you see this description you should think of something like
+Our design revolves around a `Check`, which we said was a function from a value to a value in a context. As soon as you see this description you should think of something like
 
 ```tut:book
 import cats.data.Xor
@@ -17,10 +17,10 @@ type Check[E,A] = A => E Xor A
 We could just run with the declaration above, but we will probably want to add custom methods to `Check` so perhaps we'd better declare a trait instead of a type alias.
 
 ```tut:book
-trait Check[E,A] extends (A => E Xor A)
+trait Check[E,A]
 ```
 
-Given a `trait` there are only two options available in the Essential Scala orthodoxy to which we subscribe:
+We have two patterns we can use with a trait. We can either
 
 - make the trait a typeclass; or
 - make it an algebraic data type (and hence seal it).
@@ -147,7 +147,7 @@ object check {
 }
 ```
 
-Note that in this implementation, the requirement for the `Semigroup` shifts from `and` method to the `apply` method. In general I prefer this implementation, as it cleanly separates the structure of the computation (which we represent with an algebraic data type) with the process that gives meaning to that computation (the `apply` method). We will use this implementation for the rest of this case study.
+Note that in this implementation the requirement for the `Semigroup` shifts from the `and` method to the `apply` method. In general I prefer this implementation, as it cleanly separates the structure of the computation (which we represent with an algebraic data type) with the process that gives meaning to that computation (the `apply` method). We will use this implementation for the rest of this case study.
 </div>
 
 Using `E Xor A` for the output of our check is the wrong abstraction. Why is this the case, and what kind of abstraction should we be using? Change your implementation accordingly.
