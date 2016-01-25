@@ -18,7 +18,7 @@ With these examples in mind, we can state some goals:
 
 - We should be able associate meaningful messages with each validation failure, so the user knows why their data is not valid.
 - We should be able to combine small checks into larger ones. Taking the username example above, we should be able to express this by combining a check of length and a check for alphanumeric values.
-- We should be able to transform data while we are checking it. There is an example above requires we parse data, changing its type from `String` to `UUID`. 
+- We should be able to transform data while we are checking it. There is an example above requiring we parse data, changing its type from `String` to `UUID`. 
 - Finally, we should be able to accumulate all the failures in one go, so the user can correct all the issues before resubmitting.
 
-The above all assume we're checking a single piece of data. We will also need to combine checks across multiple pieces of data. For a login form, for example, we'll need to combine the check results for the username and the password. This will turn out to be quite a small component of the library, so the majority of our time will focus on the single data case.
+The above all assume we're checking a single piece of data. We will also need to combine checks across multiple pieces of data. For a login form, for example, we'll need to combine the check results for the username and the password. This will turn out to be quite a small component of the library, so the majority of our time will focus on checking a single data item.
