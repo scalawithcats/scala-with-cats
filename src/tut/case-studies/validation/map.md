@@ -24,7 +24,7 @@ object predicate {
   import cats.Semigroup
   import cats.data.Validated
   import cats.syntax.semigroup._ // For |+|
-  import cats.syntax.apply._ // For |@|
+  import cats.syntax.monoidal._ // For |@|
 
   sealed trait Predicate[E,A] {
     import cats.data.Validated._ // For Valid and Invalid
@@ -124,11 +124,12 @@ Now `Check` has *three* type variables, while `Monad` only has one. So to make `
 * . => [%] flatMap % => (. => [^]) == . => [^] *
 
 In words, the semantics of applying a `FlatMap` are:
-- given an input of type `A`, convert to a `B` in a context
-- use the output value of type `B` to choose a `Check[E,A,C]`
-- now apply the *original* input of type `A` to the chosen check and return the output of type `C` in a context
 
-This is quite an odd method. We can implement it, but it is hard to find use for it. Go ahead and implement `flatMap` for `Check`, and then we'll see a more useful method.
+- given an input of type `A`, convert to a `B` in a context;
+- use the output value of type `B` to choose a `Check[E,A,C]`;
+- now apply the *original* input of type `A` to the chosen check and return the output of type `C` in a context.
+
+This is quite an odd method. We can implement it, but it is hard to find a use for it. Go ahead and implement `flatMap` for `Check`, and then we'll see a more generally useful method.
 
 <div class="solution">
 It's the same implementation strategy as before, with one wrinkle: `Validated` doesn't have a `flatMap` method. To implement `flatMap` we must momentarily switch to `Xor` and then switch back to `Validated`. The `withXor` method on `Validated` does exactly this. From here we can just follow the types to implement `apply`.

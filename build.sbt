@@ -12,16 +12,16 @@ scalacOptions ++= Seq(
   "-encoding", "UTF-8",
   "-unchecked",
   "-feature",
-  "-language:implicitConversions",
-  "-language:postfixOps",
   "-Ywarn-dead-code",
   "-Xlint",
   "-Xfatal-warnings"
 )
 
+resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"))
+
 libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % "7.1.3",
-  "org.spire-math" %% "cats" % "0.3.0"
+  "org.spire-math" %% "cats" % "0.4.0-SNAPSHOT"
 )
 
 lazy val pdf = taskKey[Unit]("Builds the PDF version of the book")
