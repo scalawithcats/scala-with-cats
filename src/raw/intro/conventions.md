@@ -14,24 +14,35 @@ References to external resources are written as [hyperlinks][link-underscore]. R
 
 Source code blocks are written as follows. Syntax is highlighted appropriately where applicable:
 
-~~~ scala
+```tut:book
 object MyApp extends App {
   println("Hello world!") // Print a fine message to the user!
 }
-~~~
+```
 
 Some lines of program code are too wide to fit on the page. In these cases we use a *continuation character* (curly arrow) to indicate that longer code should all be written on one line. For example, the following code:
 
-~~~ scala
+```scala
 println("This code should all be written ↩
   on one line.")
-~~~
+```
 
 should actually be written as follows:
 
-~~~ scala
+```scala
 println("This code should all be written on one line.")
-~~~
+```
+
+Most code passes through [tut] to ensure it compiles. To make sure tut works correctly sometimes we wrap code within an object like so:
+
+```tut:book
+object example {
+  sealed trait Foo[A]
+  final case class Bar[A](a: A) extends Foo[A]
+  
+  println(Bar("wrapping this code in an object makes sure tut interprets it correctly"))
+}
+```
 
 ### Callout Boxes {-}
 

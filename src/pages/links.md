@@ -1,5 +1,8 @@
 [scala.Option]: http://www.scala-lang.org/api/current/#scala.Option
 
+[cats]: http://non.github.io/cats/
+[tut]: https://github.com/tpolecat/tut
+
 [scalaz.\/]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.$bslash$div
 [scalaz.Applicative]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Applicative
 [scalaz.Cord]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Cord

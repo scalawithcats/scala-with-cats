@@ -1,16 +1,14 @@
 # Foreword {-}
 
-The title of this book is "Advanced Scala with Scalaz", and it does cover the what and how of using Scalaz. However this book is not really about Scalaz per se, but Scalaz as a vehicle for exploring patterns for functional program design.
+The aims of this book are two-fold: to introduce monads, functors, and other functional programming patterns as a way to structure program design, and to explain how these concepts are implemented in [Cats][cats].
 
-Let me quote [Don Stewart][link-don-stewart], Haskell hacker extraordinaire at Standard Chartered Bank, [on the design of large systems in functional programming][link-don-stewart-so]:
+Monads, and related concepts, are the functional programmer's equivalent of object-oriented design patterns: building block of code architecture that turn up in many places. They differ from object-oriented patterns in two main ways:
 
-> In my experience, almost all designs fall into the 'compiler' or
-> 'interpreter' pattern, using a model of the data and functions on
-> that data. That is, problem domains are represented as algebraic
-> structures (objects as ADTs with functions over them), and software
-> architectures are about mapping from one algebra to another. This is
-> the "category theory" design pattern(!)
+- they are formally, and thus precisely, defined; and
+- they are extremely (extremely) general.
 
-In this book, and the supplement, we are going to explore the many variations on this pattern.
+This generality means they can be difficult to understand; everyone find abstraction difficult. However it's this abstractness that allows concepts like monads to be applied in such a wide variety of situations. 
+
+In this book we aim to show the concepts in a number of different ways, to help you build a mental model of how they work and where they are appropriate. We have extended case studies, but also a simple graphical notation, many smaller examples, and of course the mathematical definitions. Between them we hope you'll find something that works for you.
 
 Ok, let's get started!
