@@ -1,7 +1,7 @@
 lazy val root = project.in(file("."))
   .settings(tutSettings)
 
-tutSourceDirectory := sourceDirectory.value / "tut"
+tutSourceDirectory := sourceDirectory.value / "raw"
 
 tutTargetDirectory := sourceDirectory.value / "pages"
 
