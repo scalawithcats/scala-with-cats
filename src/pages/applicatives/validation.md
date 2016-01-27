@@ -1,6 +1,10 @@
 ## Validations
 
-Scalaz provides two types for modelling error handling: `\/` and a new type called `Validation`. We've met `\/` already---it is a monad that provides fail-fast error handling semantics. In the following example, we never call `fail2` because `fail1` returns and error:
+Let's look now at another example---using applicatives for error handling.
+
+Scalaz provides two types for error handling: `\/` and a new type called `Validation`.
+We've met `\/` already---it is a monad that provides fail-fast error handling semantics.
+In the following example, we never call `fail2` because `fail1` returns and error:
 
 ~~~ scala
 type ErrorOr[A] = List[String] \/ A
@@ -15,14 +19,21 @@ def fail2: ErrorOr[Int] = {
   List("Fail2").left
 }
 
+for {
+  a <- fail1
+  b <- fail2
+} yield a + b
+~~~
+
+The `\/` type is an applicative as well as a monad. However, the definition of `ap` is written in terms of `flatMap` so we get the same fail-fast semantics:
+
+~~~ scala
 Applicative[ErrorOr].apply2(fail1, fail2)(_ + _)
 // Calling fail1
 // res0: ErrorOr[Int] = -\/(Fail1)
 ~~~
 
-Fail-fast is not always the correct type of error handling. Imagine validating a web form: we want to check all validation rules and return all errors we find, similar to the `ap_keepAll` method we defined in the last section.
-
-Scalaz models this cumulative style of error handling with a different type called `Validation`. `Validation` is an `Applicative` (not a `Monad`) that accumulates errors on failure:
+Fail-fast is not always the correct type of error handling. Imagine validating a web form: we want to check all validation rules and return all errors we find. Scalaz models this cumulative style of error handling with a different type called `Validation`. `Validation` is an `Applicative` but not a `Monad`. It accumulates errors on failure:
 
 ~~~ scala
 type ErrorOr[A] = Validation[List[String], A]
@@ -43,7 +54,7 @@ Applicative[ErrorOr].apply2(fail1, fail2)(_ + _)
 // res1: ErrorOr[String] = Failure(List(Fail1, Fail2))
 ~~~
 
-`Validation` uses a `Semigroup` to accumulate errors. Remember that a `Semigroup` is the `append` operation of a `Monoid` without the `zero` component:
+`Validation` uses a `Semigroup` to accumulate errors. Remember that a `Semigroup` is the `append` operation of a `Monoid` without the `zero` component. Here are a few concrete examples:
 
 ~~~ scala
 // Types of Validation:
@@ -51,13 +62,22 @@ type StringOr[A] = Validation[String, A]
 type ListOr[A]   = Validation[List[String], A]
 type VectorOr[A] = Validation[Vector[Int], A]
 
-Applicative[StringOr].apply2("Hello".failure[Int], "world".failure[Int])(_ * _)
+Applicative[StringOr].apply2(
+  "Hello".failure[Int],
+  "world".failure[Int]
+)(_ * _)
 // res2: StringOr[Int] = Failure(Helloworld)
 
-Applicative[ListOr].apply2(List("Hello").failure[Int], List("world").failure[Int])(_ * _)
+Applicative[ListOr].apply2(
+  List("Hello").failure[Int],
+  List("world").failure[Int]
+)(_ * _)
 // res3: ListOr[Int] = Failure(List(Hello, world))
 
-Applicative[VectorOr].apply2(Vector(404).failure[Int], Vector(500).failure[Int])(_ * _)
+Applicative[VectorOr].apply2(
+  Vector(404).failure[Int],
+  Vector(500).failure[Int]
+)(_ * _)
 // res4: VectorOr[Int] = Failure(Vector(404, 500))
 ~~~
 
@@ -78,6 +98,8 @@ val f: Validation[String, Int] = Failure("message")
 We can import enriched `success` and `failure` methods from `scalaz.syntax.validation` to simplify construction:
 
 ~~~ scala
+import scalaz.syntax.validation._
+
 123.success[String]
 // res5: scalaz.Validation[String,Int] = Success(123)
 
@@ -92,7 +114,7 @@ The enriched `parseInt` method we saw in exercises for `\/` is available from `s
 // res7: scalaz.Validation[NumberFormatException,Int] = Success(123)
 ~~~
 
-We can convert back and forth between `Validation` and `\/` using the `disjuction` and `validation` methods:
+We can convert back and forth between `Validation` and `\/` using the `disjuction` and `validation` methods. This allows us to switch between fail-fast and error-accumulating semantics on the fly:
 
 ~~~ scala
 "123".parseInt.disjunction
