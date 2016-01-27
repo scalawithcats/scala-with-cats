@@ -58,6 +58,11 @@ pages:
   - src/pages/case-studies/mapreduce/index.md
 
   - src/pages/case-studies/validation/index.md
+  - src/pages/case-studies/validation/sketch.md
+  - src/pages/case-studies/validation/check.md
+  - src/pages/case-studies/validation/map.md
+  - src/pages/case-studies/validation/kleisli.md
+  - src/pages/case-studies/validation/conclusions.md
 
   - src/pages/case-studies/parser/index.md
   # - src/pages/case-studies/parser/intro.md
