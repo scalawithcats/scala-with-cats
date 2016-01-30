@@ -4,13 +4,20 @@ There are three important components to the type class pattern: the *type class*
 
 ### The Type Class
 
-The *type class* itself is a generic type that represents the functionality we want to implement. For example, we can represent generic "serialize to JSON" behaviour as a generic trait:
+The *type class* itself is a generic type that represents the functionality we want to implement. For example, we can represent generic "serialize to JSON" behaviour as a generic trait.
 
-~~~ scala
+```tut:book
+// Define a very simple JSON AST
+sealed trait Json
+final case class JsObject(get: Map[String,Json]) extends Json
+final case class JsString(get: String) extends Json
+final case class JsNumber(get: Double) extends Json
+
+// The "serialize to JSON" behavior is encoded in this trait
 trait JsonWriter[A] {
   def write(value: A): Json
 }
-~~~
+```
 
 ### Type Class Instances
 
@@ -18,14 +25,21 @@ The *instances* of a type class provide implementations for the types we care ab
 
 We define instances by creating concrete implementations of the type class and tagging them with the `implicit` keyword:
 
-~~~ scala
+```tut:book
+final case class Person(name: String, email: String)
+
 object DefaultJsonWriters {
-  implicit val stringJsonWriter = new JsonWriter[String] { ... }
-  implicit val dateJsonWriter   = new JsonWriter[Date]   { ... }
-  implicit val personJsonWriter = new JsonWriter[Person] { ... }
+  implicit val stringJsonWriter = new JsonWriter[String] { 
+    def write(value: String): Json = 
+      JsString(value)
+  }
+  implicit val personJsonWriter = new JsonWriter[Person] {
+    def write(value: Person): Json =
+      JsObject(Map("name" -> JsString(value.name), "email" -> JsString(value.email)))
+  }
   // etc...
 }
-~~~
+```
 
 ### Interfaces
 
@@ -35,31 +49,31 @@ There are two common ways of specifying an interface: *Interface Objects* and *I
 
 **Interface Objects**
 
-The simplest way of creating an interface is to place the interface methods in a singleton object:
+The simplest way of creating an interface is to place the interface methods in a singleton object.
 
-~~~ scala
+```tut:book
 object Json {
   def toJson[A](value: A)(implicit writer: JsonWriter[A]): Json = {
     writer.write(value)
   }
 }
-~~~
+```
 
-To use this object, we import any type class instances we care about and call the relevant method:
+To use this object, we import any type class instances we care about and call the relevant method.
 
-~~~ scala
+```tut:book
 import DefaultJsonWriters._
 
 val json: Json = Json.toJson(Person("Dave", "dave@example.com"))
-~~~
+```
 
 **Interface Syntax**
 
-As an alternative, we can use *type enrichment* to extend existing types with interface methods[^pimping]. Scalaz refers to this as *"syntax"* for the type class:
+As an alternative, we can use *type enrichment* to extend existing types with interface methods[^pimping]. Cats refers to this as *"syntax"* for the type class:
 
 [^pimping]: You may occasionally see enrichment referred to as "pimping". This is an older term that we don't use anymore.
 
-~~~ scala
+```tut:book
 object JsonSyntax {
   implicit class JsonWriterOps[A](value: A) {
     def toJson(implicit writer: JsonWriter[A]): Json = {
@@ -67,16 +81,16 @@ object JsonSyntax {
     }
   }
 }
-~~~
+```
 
 We use interface syntax by importing it along-side the instances for the types we need:
 
-~~~ scala
+```tut:book
 import DefaultJsonWriters._
 import JsonSyntax._
 
 val json: Json = Person("Dave", "dave@example.com").toJson
-~~~
+```
 
 ### Exercise: *Printable* Library
 
@@ -100,15 +114,15 @@ Let's define a `Printable` type class to work around these problems:
 <div class="solution">
 These steps define the three main components of our type class. First we define `Printable`---the *type class* itself:
 
-~~~ scala
+```tut:book
 trait Printable[A] {
   def format(value: A): String
 }
-~~~
+```
 
 Then we define some default *instances* of `Printable` and package then in `PrintDefaults`:
 
-~~~ scala
+```tut:book
 object PrintDefaults {
   implicit val stringPrintable = new Printable[String] {
     def format(input: String) = input
@@ -118,11 +132,11 @@ object PrintDefaults {
     def format(input: Int) = input.toString
   }
 }
-~~~
+```
 
 Finally we define an *interface* object, `Print`:
 
-~~~ scala
+```tut:book
 object Print {
   def format[A](input: A)(implicit printer: Printable[A]): String = {
     printer.format(input)
@@ -132,7 +146,7 @@ object Print {
     println(format(input))
   }
 }
-~~~
+```
 </div>
 
 **Using the Library**
@@ -141,37 +155,37 @@ The code above forms a general purpose printing library that we can use in multi
 
  1. Define a data type `Cat`:
 
-    ~~~ scala
-    case class Cat(name: String, age: Int, color: String)
-    ~~~
+    ```tut:book
+    final case class Cat(name: String, age: Int, color: String)
+    ```
 
  2. Create an implementation of `Printable` for `Cat` that returns content in the
     following format:
 
-    ~~~
+    ```
     NAME is a AGE year-old COLOR cat.
-    ~~~
+    ```
 
  3. Create an object `Main` to act as a front-end for your application. `Main` should create a `Cat` and print it to the console:
 
-    ~~~ scala
+    ``` scala
     object Main extends App {
       val cat = Cat(/* ... */)
 
       // etc...
     }
-    ~~~
+    ```
 
 <div class="solution">
 This is a standard use of the type class pattern. First we define a set of custom data types for our application:
 
-~~~ scala
-case class Cat(name: String, age: Int, color: String)
-~~~
+```tut:book
+final case class Cat(name: String, age: Int, color: String)
+```
 
 Then we define type class instances for the types we care about. These either go into companion objects, or separate objects that act as namespaces:
 
-~~~ scala
+```tut:book
 object Cat {
   import PrintDefaults._
 
@@ -185,17 +199,17 @@ object Cat {
     }
   }
 }
-~~~
+```
 
 Finally, we use the type class by bringing the relevant instances into scope and using interface object/syntax. If we defined the instances in companion objects Scala brings them into scope for us automatically. Otherwise we use an `import` to access them:
 
-~~~ scala
+```tut:book
 object Main extends App {
   val cat = Cat("Garfield", 35, "ginger and black")
 
   Print.print(cat)
 }
-~~~
+```
 </div>
 
 **Print Syntax**
@@ -221,7 +235,7 @@ Let's make our printing library easier to use by defining some print syntax:
 <div class="solution">
 First we define an `implicit class` to "enrich" our target classes with extra methods. This is generally referred to as "type enrichment" in Scala. Similar features exist in other languages, for example "extension methods" in C# and "categories" in Objective C:
 
-~~~ scala
+```tut:book
 object PrintSyntax {
   implicit class PrintOps[A](value: A) {
     def format(printable: Printable[A]): String = {
@@ -233,17 +247,17 @@ object PrintSyntax {
     }
   }
 }
-~~~
+```
 
 With `PrintOps` in scope, we can call the imaginary `print` and `format` methods on any value for which Scala can locate an implicit instance of `Printable`:
 
-~~~ scala
+```tut:book
 object Main extends App {
   import PrintSyntax._
 
   Cat("Garfield", 35 "ginger and black").print
 }
-~~~
+```
 </div>
 
 ### Take Home Points
@@ -258,4 +272,4 @@ The Scala implementation of a type class has **three parts**:
 
 Interface methods can be defined in *interface objects* or *interface syntax*. Implicit classes are the most common way of implementing syntax.
 
-In the next section we will take a first look at Scalaz. We will examine the standard code layout Scalaz uses to organize its type classes, and see how to choose type classes, instances, and syntax for use in our code.
+In the next section we will take a first look at Cats. We will examine the standard code layout Cats uses to organize its type classes, and see how to choose type classes, instances, and syntax for use in our code.
