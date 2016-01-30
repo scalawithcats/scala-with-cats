@@ -21,7 +21,7 @@ pages:
 
   - src/pages/type-classes/index.md
   - src/pages/type-classes/anatomy.md
-  - src/pages/type-classes/scalaz.md
+  - src/pages/type-classes/cats.md
   - src/pages/type-classes/equal.md
   - src/pages/type-classes/summary.md
 
