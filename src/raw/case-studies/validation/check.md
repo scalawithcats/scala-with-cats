@@ -162,7 +162,7 @@ object check {
   import cats.Semigroup
   import cats.data.Validated
   import cats.syntax.semigroup._ // For |+|
-  import cats.syntax.monoidal._ // For |@|
+  import cats.syntax.cartesian._ // For |@|
 
   sealed trait Check[E,A] {
     def and(that: Check[E,A]): Check[E,A] =
@@ -191,7 +191,7 @@ object check {
   import cats.Semigroup
   import cats.data.Validated
   import cats.syntax.semigroup._ // For |+|
-  import cats.syntax.monoidal._ // For |@|
+  import cats.syntax.cartesian._ // For |@|
 
   sealed trait Check[E,A] {
     import cats.data.Validated._ // For Valid and Invalid

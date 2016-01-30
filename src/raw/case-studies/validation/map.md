@@ -24,7 +24,7 @@ object predicate {
   import cats.Semigroup
   import cats.data.Validated
   import cats.syntax.semigroup._ // For |+|
-  import cats.syntax.monoidal._ // For |@|
+  import cats.syntax.cartesian._ // For |@|
 
   sealed trait Predicate[E,A] {
     import cats.data.Validated._ // For Valid and Invalid
@@ -187,7 +187,7 @@ object predicate {
   import cats.Semigroup
   import cats.data.Validated
   import cats.syntax.semigroup._ // For |+|
-  import cats.syntax.monoidal._ // For |@|
+  import cats.syntax.cartesian._ // For |@|
 
   sealed trait Predicate[E,A] {
     import Predicate._
@@ -298,7 +298,7 @@ You might find the following predicates useful.
 object example {
   import cats.data.{NonEmptyList,OneAnd,Validated}
   import cats.std.list._
-  import cats.syntax.monoidal._
+  import cats.syntax.cartesian._
   import cats.syntax.validated._
   import check._
   import predicate._
@@ -335,7 +335,7 @@ Here's my solution. Implementing this required more thought than I expected---sw
 object example {
   import cats.data.{NonEmptyList,OneAnd,Validated}
   import cats.std.list._
-  import cats.syntax.monoidal._
+  import cats.syntax.cartesian._
   import cats.syntax.validated._
   import check._
   import predicate._
