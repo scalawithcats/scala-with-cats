@@ -1,10 +1,10 @@
 ## Summary
 
-In this chapter we took a first look at type classes. We implemented our own `Printable` type class using plain Scala before looking at two examples from Scalaz---`Show` and `Equal`.
+In this chapter we took a first look at type classes. We implemented our own `Printable` type class using plain Scala before looking at two examples from Cats---`Show` and `Eq`.
 
-We have now seen the general patterns in Scalaz type classes:
+We have now seen the general patterns in Cats type classes:
 
- - The type classes themselves are generic traits in the [scalaz] package.
+ - The type classes themselves are generic traits in the [cats] package.
 
  - Each type class has a companion object with:
 
@@ -12,11 +12,11 @@ We have now seen the general patterns in Scalaz type classes:
 
     - typically, one or more additional methods for creating instances.
       These methods are typically named after the type class or one of its methods,
-      for example `Equal.equal` and `Show.shows`.
+      for example `Eq.eqv` and `Show.show`.
 
- - Default instances are provided via the [scalaz.std] package, and are organized by
+ - Default instances are provided via the [cats.std] package, and are organized by
    *parameter type* rather than *type class type*.
 
- - Many type classes have *syntax* provided via the [scalaz.syntax] package.
+ - Many type classes have *syntax* provided via the [cats.syntax] package.
 
-In the remaining chapters of this course we will look at four broad and powerful type classes---`Monoids`, `Functors`, `Monads`, and `Applicatives`. In each case we will learn what functionality the type class provides, the formal rules it follows, and how it is implemented in Scalaz.
+In the remaining chapters of this course we will look at four broad and powerful type classes---`Monoids`, `Functors`, `Monads`, and `Applicatives`. In each case we will learn what functionality the type class provides, the formal rules it follows, and how it is implemented in Cats.
