@@ -155,7 +155,7 @@ The code above forms a general purpose printing library that we can use in multi
 
  1. Define a data type `Cat`:
 
-    ```tut:book
+    ```scala
     final case class Cat(name: String, age: Int, color: String)
     ```
 
@@ -177,28 +177,50 @@ The code above forms a general purpose printing library that we can use in multi
     ```
 
 <div class="solution">
-This is a standard use of the type class pattern. First we define a set of custom data types for our application:
+This is a standard use of the type class pattern. First we define a set of custom data types for our application.
 
-```tut:book
+```scala
 final case class Cat(name: String, age: Int, color: String)
 ```
 
-Then we define type class instances for the types we care about. These either go into companion objects, or separate objects that act as namespaces:
+Then we define type class instances for the types we care about. These either go into companion objects, or separate objects that act as namespaces.
 
-```tut:book
+```scala
 object Cat {
   import PrintDefaults._
 
   implicit val catPrintable = new Printable[Cat] {
     def format(cat: Cat) = {
-      val name  = Print(cat.name)
-      val age   = Print(cat.age)
-      val color = Print(cat.color)
+      val name  = Print.format(cat.name)
+      val age   = Print.format(cat.age)
+      val color = Print.format(cat.color)
 
       s"$name is a $age year-old $color cat."
     }
   }
 }
+```
+
+```tut:silent
+// Declare Cat and it's companion object together in a way the REPL understands,
+// so that our later code works
+object cat {
+  final case class Cat(name: String, age: Int, color: String)
+  object Cat {
+    import PrintDefaults._
+  
+    implicit val catPrintable = new Printable[Cat] {
+      def format(cat: Cat) = {
+        val name  = Print.format(cat.name)
+        val age   = Print.format(cat.age)
+        val color = Print.format(cat.color)
+  
+        s"$name is a $age year-old $color cat."
+      }
+    }
+  }
+}
+import cat._
 ```
 
 Finally, we use the type class by bringing the relevant instances into scope and using interface object/syntax. If we defined the instances in companion objects Scala brings them into scope for us automatically. Otherwise we use an `import` to access them:
@@ -238,11 +260,11 @@ First we define an `implicit class` to "enrich" our target classes with extra me
 ```tut:book
 object PrintSyntax {
   implicit class PrintOps[A](value: A) {
-    def format(printable: Printable[A]): String = {
+    def format(implicit printable: Printable[A]): String = {
       printable.format(value)
     }
 
-    def print(printable: Printable[A]): Unit = {
+    def print(implicit printable: Printable[A]): Unit = {
       println(printable.format(value))
     }
   }
@@ -255,7 +277,7 @@ With `PrintOps` in scope, we can call the imaginary `print` and `format` methods
 object Main extends App {
   import PrintSyntax._
 
-  Cat("Garfield", 35 "ginger and black").print
+  Cat("Garfield", 35, "ginger and black").print
 }
 ```
 </div>
