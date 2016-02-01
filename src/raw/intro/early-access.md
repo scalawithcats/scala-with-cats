@@ -15,6 +15,18 @@ please let us know!
 and Noel Welsh ( [noel@underscore.io](mailto:noel@underscore.io) ).
 </div>
 
+### Changelog {-}
+
+Starting from the February 2016 release, here are the major changes to the book:
+
+- Started to shift all code from Scalaz to Cats (currently version `0.4.0-SNAPSHOT`). Three chapters have been converted.
+
+- Added a new case study which builds a validation library. This case study introduces Kleislis.
+
+- Revamped the introduction to Applicatives to emphasise their use for combining values in a context, which is more idiomatic in Scala than the typical presentation.
+
+### Omissions {-}
+
 Here are the major things missing from the book:
 
 1. We haven't made the graphics for the graphical notation we've used to great effect to teach these concepts in our training courses.
