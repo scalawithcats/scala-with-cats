@@ -87,7 +87,7 @@ where `append` is the binary operation and `zero` is the identity.
 We've seen a few monoid examples, but there are plenty more available. Consider `Boolean`. How many monoids can you define for this type? For each monoid, define  the `append` and `zero` operations, and convince yourself that the monoid laws hold.
 
 <div class="solution">
-There are three monoids for `Boolean`.
+There are four monoids for `Boolean`.
 
 First, we have *and* with operator `&&` and identity `true`:
 
@@ -116,6 +116,14 @@ implicit val booleanXorMonoid: Monoid[Boolean] = new Monoid[Boolean] {
 }
 ~~~
 
+Finally, we have *exclusive nor* (the negation of exclusive or) with identity `true`:
+
+~~~ scala
+implicit val booleanXnorMonoid: Monoid[Boolean] = new Monoid[Boolean] {
+  def append(a: Boolean, b: => Boolean) = (!a || b) && (a || !b)
+  def zero = true
+}
+~~~
 Showing that the identity law holds in each case is straightforward. Similarly associativity of the `append` operation can be shown by enumerating the cases.
 </div>
 
