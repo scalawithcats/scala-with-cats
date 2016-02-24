@@ -58,3 +58,5 @@
 [link-value-classes]: http://docs.scala-lang.org/overviews/core/value-classes.html
 [link-monads-burritos]: http://blog.plover.com/prog/burritos.html
 [link-scalaz-contrib]: https://github.com/typelevel/scalaz-contrib
+[link-json]: http://json.org/
+[link-bnf]: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_Form
