@@ -1,6 +1,6 @@
 # Functors
 
-In this section we will investigate **functors**. Functors on their own aren't so useful, but special cases of functors such as as **monads** and **applicative functors** are some of the most commonly used abstractions in Cats.
+In this chapter we will investigate **functors**. Functors on their own aren't so useful, but special cases of functors such as as **monads** and **applicative functors** are some of the most commonly used abstractions in Cats.
 
 Informally, a functor is anything with a `map` method. You probably know lots of types that have this: `Option`, `Seq`, `Either`, and `Future`, to name a few.
 
@@ -76,7 +76,7 @@ If you haven't seen syntax like `F[_]` before, it's time to take a brief detour 
 
 ## Aside: Higher Kinds and Type Constructors
 
-Kinds are like types for types. The describe the number of "holes" in a type. We distinguish between regular types that have no holes, and "type constructors" that have holes that we can fill to produce types.
+Kinds are like types for types. They describe the number of "holes" in a type. We distinguish between regular types that have no holes, and "type constructors" that have holes that we can fill to produce types.
 
 For example, `List` is a type constructor with one hole. We fill that hole by specifying a parameter to produce a regular type like `List[Int]` or `List[A]`. The trick is not to confuse type constructors with generic types. `List` is a type constructor, `List[A]` is a type:
 

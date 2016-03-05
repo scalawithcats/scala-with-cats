@@ -20,7 +20,7 @@ val option1 = Some(123)
 val option2 = Functor[Option].map(option1)(_.toString)
 ```
 
-`Functor` also provides the `lift` method, which converts an function of type `A => B` to one that operates over a monad and has type `F[A] => F[B]`:
+`Functor` also provides the `lift` method, which converts a function of type `A => B` to one that operates over a monad and has type `F[A] => F[B]`:
 
 ```tut:book
 val func = (x: Int) => x + 1
@@ -97,7 +97,7 @@ Let's use our `Functor` in a sample application:
 Success(100) map (_ * 2)
 ```
 
-Oops! This is the same inavariance problem we saw with `Monoids`. Let's add some smart constructors to compensate:
+Oops! This is the same invariance problem we saw with `Monoids`. Let's add some smart constructors to compensate:
 
 ```tut:book
 def success[A](value: A): Result[A] =
