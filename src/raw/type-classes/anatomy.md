@@ -29,8 +29,8 @@ We define instances by creating concrete implementations of the type class and t
 final case class Person(name: String, email: String)
 
 object DefaultJsonWriters {
-  implicit val stringJsonWriter = new JsonWriter[String] { 
-    def write(value: String): Json = 
+  implicit val stringJsonWriter = new JsonWriter[String] {
+    def write(value: String): Json =
       JsString(value)
   }
   implicit val personJsonWriter = new JsonWriter[Person] {
@@ -53,9 +53,8 @@ The simplest way of creating an interface is to place the interface methods in a
 
 ```tut:book
 object Json {
-  def toJson[A](value: A)(implicit writer: JsonWriter[A]): Json = {
+  def toJson[A](value: A)(implicit writer: JsonWriter[A]): Json =
     writer.write(value)
-  }
 }
 ```
 
@@ -208,13 +207,13 @@ object cat {
   final case class Cat(name: String, age: Int, color: String)
   object Cat {
     import PrintDefaults._
-  
+
     implicit val catPrintable = new Printable[Cat] {
       def format(cat: Cat) = {
         val name  = Print.format(cat.name)
         val age   = Print.format(cat.age)
         val color = Print.format(cat.color)
-  
+
         s"$name is a $age year-old $color cat."
       }
     }

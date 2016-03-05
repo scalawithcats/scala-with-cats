@@ -26,7 +26,7 @@ pages:
   - src/pages/type-classes/summary.md
 
   - src/pages/monoids/index.md
-  - src/pages/monoids/scalaz.md
+  - src/pages/monoids/cats.md
   - src/pages/monoids/instance-selection.md
   - src/pages/monoids/summary.md
 

@@ -1,16 +1,23 @@
 [scala.Option]: http://www.scala-lang.org/api/current/#scala.Option
 
-[cats]: http://non.github.io/cats/
 [tut]: https://github.com/tpolecat/tut
 
-[cats.std]: http://non.github.io/cats/api/#cats.std.package
-[cats.std.int]: http://non.github.io/cats/api/#cats.std.package$$int$
-[cats.std.string]: http://non.github.io/cats/api/#cats.std.package$$string$
-[cats.std.list]: http://non.github.io/cats/api/#cats.std.package$$list$
-[cats.std.option]: http://non.github.io/cats/api/#cats.std.package$$option$
-[cats.std.map]: http://non.github.io/cats/api/#cats.std.package$$map$
-[cats.std.all]: http://non.github.io/cats/api/#cats.std.package$$all$
-[cats.std.show]: http://non.github.io/cats/api/#cats.syntax.package$$show$
+[cats]: http://typelevel.org/cats/api/#cats.package
+[cats.Eq]: http://typelevel.org/cats/api/#cats.Eq
+[cats.Monoid]: http://typelevel.org/cats/api/#cats.Monoid
+[cats.Show]: http://typelevel.org/cats/api/#cats.Show
+[cats.implicits]: http://typelevel.org/cats/api/#cats.implicits
+[cats.std]: http://typelevel.org/cats/api/#cats.std.package
+[cats.std.int]: http://typelevel.org/cats/api/#cats.std.package$$int$
+[cats.std.string]: http://typelevel.org/cats/api/#cats.std.package$$string$
+[cats.std.list]: http://typelevel.org/cats/api/#cats.std.package$$list$
+[cats.std.option]: http://typelevel.org/cats/api/#cats.std.package$$option$
+[cats.std.map]: http://typelevel.org/cats/api/#cats.std.package$$map$
+[cats.std.all]: http://typelevel.org/cats/api/#cats.std.package$$all$
+[cats.syntax]: http://typelevel.org/cats/api/#cats.syntax.package
+[cats.syntax.eq]: http://typelevel.org/cats/api/#cats.syntax.package$$eq$
+[cats.syntax.semigroup]: http://typelevel.org/cats/api/#cats.syntax.package$$semigroup$
+[cats.syntax.show]: http://typelevel.org/cats/api/#cats.syntax.package$$show$
 
 [scalaz.\/]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.$bslash$div
 [scalaz.Applicative]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Applicative
