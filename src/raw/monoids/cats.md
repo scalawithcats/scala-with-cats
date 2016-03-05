@@ -102,6 +102,8 @@ def add[A: Monoid](items: List[A]): A =
 We can use this code to add values of type `Int` and `Option[Int]` as requested:
 
 ```tut:book
+import cats.std.int._
+
 add(List(1, 2, 3))
 
 import cats.std.option._

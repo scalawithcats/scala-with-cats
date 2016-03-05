@@ -53,7 +53,7 @@ Note that we used `++` instead of the more usual `+` to suggest a parallel with 
 We've seen a number of types that we can "add" and have an identity element. It will be no surprise to learn that this is a monoid. Formally, a monoid for a type `A` is:
 
 - an operation `combine` with type `(A, A) => A`; and
-- an element `empty` of type `A.
+- an element `empty` of type `A`.
 
 The following laws must hold:
 
