@@ -24,18 +24,12 @@ To get out the log, call `written` on the monad.
 
 Example
 
-```scala
+```tut:book
 val writer = for {
   v <- 42.set(Vector("The answer"))
   _ <- Vector("Just log something").tell
   w <- (v + 1).set(Vector("One more than the answer"))
 } yield w
-// <console>:12: error: value set is not a member of Int
-//          v <- 42.set(Vector("The answer"))
-//                  ^
-// <console>:13: error: value tell is not a member of scala.collection.immutable.Vector[String]
-//          _ <- Vector("Just log something").tell
-//                                            ^
 
 writer.written.map(println)
 ```

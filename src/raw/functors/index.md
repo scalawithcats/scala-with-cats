@@ -10,18 +10,16 @@ Let's start as we did with monoids by looking at a few types and operations and 
 
 The `map` method is perhaps the most commonly used method on `Seq`. If we have a `Seq[A]` and a function `A => B`, `map` will create a `Seq[B]`.
 
-```scala
+```tut:book
 Seq(1, 2, 3) map (_ * 2)
-// res0: Seq[Int] = List(2, 4, 6)
 ```
 
 **Options**
 
 We can do the same thing with an `Option`. If we have a `Option[A]` and a function `A => B`, `map` will create a `Option[B]`:
 
-```scala
+```tut:book
 Some(1) map (_.toString)
-// res1: Option[String] = Some(1)
 ```
 
 **Functions (?!)**
@@ -42,24 +40,15 @@ A function with a single argument has two types: the parameter type and the resu
 
 In other words, "mapping" over a `Function1` is just function composition:
 
-```scala
+```tut:book
 import cats.std.function._
-// import cats.std.function._
-
 import cats.syntax.functor._
-// import cats.syntax.functor._
 
 val func1 = (x: Int) => x.toDouble
-// func1: Int => Double = <function1>
-
 val func2 = (y: Double) => y * 2
-// func2: Double => Double = <function1>
-
 val func3 = func1 map func2
-// func3: Int => Double = <function1>
 
 func3(1)
-// res2: Double = 2.0
 ```
 
 ## Definition of a Functor
@@ -75,14 +64,12 @@ If we consider the laws in the context of the functors we've discussed above, we
 
 A simplified version of the definition from Cats is:
 
-```scala
+```tut:book
 import scala.language.higherKinds
-// import scala.language.higherKinds
 
 trait Functor[F[_]] {
   def map[A, B](fa: F[A])(f: A => B): F[B]
 }
-// defined trait Functor
 ```
 
 If you haven't seen syntax like `F[_]` before, it's time to take a brief detour to discuss *type constructors* and *higher kinded types*. We'll explain that `scala.language` import as well.
