@@ -26,15 +26,10 @@ When the compiler searches for an implicit it looks for one matching the type *o
 
 There are two issues that tend to arise. Let's imagine we have an algebraic data type like:
 
-```scala
+```tut:book
 sealed trait A
-// defined trait A
-
 final case object B extends A
-// defined object B
-
 final case object C extends A
-// defined object C
 ```
 
 The issues are:
@@ -55,24 +50,17 @@ More specific type preferred?   Yes         Yes         No
 
 It's clear there is no perfect system. Cats generally prefers to use invariant type classes. This allows us to specify more specific instances for subtypes if we want. It does mean that if we have, for example, a value of type `Some[Int]`, our monoid instance for `Option` will not be used. We can solve this problem with a type annotation like `Some(1) : Option[Int]` or by using "smart constructors" that construct values with the type of the base trait in an algebraic data type. For example, Cats provides `some` and `none` constructors for `Option`:
 
-```scala
+```tut:book
 import cats.std.option._
-// import cats.std.option._
-
 import cats.syntax.option._
-// import cats.syntax.option._
 
 Some(1)   // direct construction yields `Some[Int]`
-// res0: Some[Int] = Some(1)
 
 1.some    // smart constructor yields `Option[Int]`
-// res1: Option[Int] = Some(1)
 
 None      // direct construction yields `None.type`
-// res2: None.type = None
 
 none[Int] // smart constructor yields `Option[Int]`
-// res3: Option[Int] = None
 ```
 
 ### Identically Typed Instances
@@ -85,59 +73,45 @@ instead of the monoid for integer addition?
 Cats handles this by only providing at most one implicit monoid for each type.
 The default monoid for `Int` is addition:
 
-```scala
+```tut:book
 import cats.Monoid
-// import cats.Monoid
-
 import cats.std.int._
-// import cats.std.int._
 
 Monoid[Int].combine(2, 3)
-// res4: Int = 5
 ```
 
 but we can summon the multiplication monoid explicitly:
 
-```scala
+```tut:book
 val multMonoid: Monoid[Int] =
   cats.std.int.intAlgebra.multiplicative
-// multMonoid: cats.Monoid[Int] = algebra.ring.MultiplicativeCommutativeMonoid$mcI$sp$$anon$7@1dba01f8
 
 multMonoid.combine(2, 3)
-// res5: Int = 6
 ```
 
 Cats doesn't provide a default monoid for `Boolean`,
 although we can summon monoids for conjuction and disjunction explicitly:
 
-```scala
+```tut:book
 val conjMonoid: Monoid[Boolean] =
   cats.std.boolean.booleanAlgebra.multiplicative
-// conjMonoid: cats.Monoid[Boolean] = algebra.ring.MultiplicativeCommutativeMonoid$$anon$14@b5382b3
 
 val disjMonoid: Monoid[Boolean] =
   cats.std.boolean.booleanAlgebra.additive
-// disjMonoid: cats.Monoid[Boolean] = algebra.ring.AdditiveCommutativeMonoid$$anon$14@3f8419b8
 
 conjMonoid.combine(true, false)
-// res6: Boolean = false
-
 disjMonoid.combine(true, false)
-// res7: Boolean = true
 ```
 
 If we want to select a specific monoid for use with the `|+|` syntax,
 we need only assign it to an `implicit val` of the correct type.
 This will override the monoids imported from `cats.std`:
 
-```scala
+```tut:book
 import cats.syntax.semigroup._
-// import cats.syntax.semigroup._
 
 implicit val multMonoid: Monoid[Int] =
   cats.std.int.intAlgebra.multiplicative
-// multMonoid: cats.Monoid[Int] = algebra.ring.MultiplicativeCommutativeMonoid$mcI$sp$$anon$7@1da37180
 
 2 |+| 3
-// res8: Int = 5
 ```

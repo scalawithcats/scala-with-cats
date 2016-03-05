@@ -1,4 +1,4 @@
-## Example: *Equal*
+## Example: *Eq*
 
 We will finish off this chapter by looking at another useful type class: `cats.Eq`.
 
@@ -43,10 +43,10 @@ eqInt.eqv(123, 123)   // true
 eqInt.eqv(123, 234)   // false
 ```
 
-and note that, unlike Scala`s, if we try to compare objects of different types our code will not compile.
+and note that, unlike Scala's `==` method, if we try to compare objects of different types using `eqv` our code will not compile:
 
 ```tut:fail:book
-eqInt.eqv(123, "234") // compile error
+eqInt.eqv(123, "234")
 ```
 
 We can also import the interface syntax in [cats.syntax.eq] to use the `===` and `=!=` methods:
@@ -84,7 +84,7 @@ We can do this in a friendlier fashion using special `Option` syntax from `cas.s
 ```tut:book
 import cats.syntax.option._
 
-1.some === None 
+1.some === None
 1.some =!= None
 ```
 
@@ -155,7 +155,7 @@ object cat {
     implicit val catEqual = Eq.instance[Cat] { (cat1, cat2) =>
       import cats.std.int._
       import cats.std.string._
-      
+
       (cat1.name  === cat2.name ) &&
       (cat1.age   === cat2.age  ) &&
       (cat1.color === cat2.color)
@@ -190,12 +190,10 @@ object Main extends App {
 
 ### Take Home Points
 
-In this section we introduced a new type class---[cats.Eq]---that lets us perform type-safe equality checks:
+In this section we introduced a new type class---[`cats.Eq`][cats.Eq]---that lets us perform type-safe equality checks:
 
  - we create an instance `Eq[A]` to implement equality-testing functionality for `A`.
 
- - [cats.syntax.equal] provides two methods of interest: `===` for testing equality and `=!=` for testing inequality.
+ - [`cats.syntax.eq`][cats.syntax.eq] provides two methods of interest: `===` for testing equality and `=!=` for testing inequality.
 
 Because `Eq` is invariant, we have to be precise about the types of the values we use as arguments. We sometimes need to add type ascription to values in order to help in these cases.
-
-Cats provides the `some` syntax to help us out with `Options`. We can import this from `cats.syntax.option`.
