@@ -168,8 +168,11 @@ result2.fold(handleError, println)
 Occasionally we want to run a sequence of steps until one succeeds. We can model this using `Xor` by flipping the left and right cases. The `swap` method provides this:
 
 ```scala
-123.right[String].swap
-// res15: cats.data.Xor[Int,String] = Left(123)
+val a = 123.right[String]
+// a: cats.data.Xor[String,Int] = Right(123)
+
+val b = a.swap
+// b: cats.data.Xor[Int,String] = Left(123)
 ```
 
 ### Exercise: What is Best?

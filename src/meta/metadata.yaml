@@ -81,17 +81,17 @@ previewPages:
 
   - src/pages/type-classes/index.md
   - src/pages/type-classes/anatomy.md
-  - src/pages/type-classes/scalaz.md
+  - src/pages/type-classes/cats.md
   - src/pages/type-classes/equal.md
   - src/pages/type-classes/summary.md
 
   - src/pages/monoids/index.md
-  - src/pages/monoids/scalaz.md
+  - src/pages/monoids/cats.md
   - src/pages/monoids/instance-selection.md
   - src/pages/monoids/summary.md
 
   - src/pages/functors/index.md
-  - src/pages/functors/scalaz.md
+  - src/pages/functors/cats.md
   # - src/pages/functors/summary.md
 
   - src/pages/solutions.md

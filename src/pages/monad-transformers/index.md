@@ -54,7 +54,7 @@ Let's see how we can use monad transformers to squash `List` and `Option` into a
 type ListOption[A] = OptionT[List, A]
 ~~~
 
-Our `Result` type is a monad that combines the properties of `List` and `Option`. Note how we build it from the inside out: we pass to `OptionT` the type of the monad we wrap around it. 
+Our `Result` type is a monad that combines the properties of `List` and `Option`. Note how we build it from the inside out: we pass to `OptionT` the type of the monad we wrap around it.
 
 We can create instances with `point` as usual:
 
@@ -78,7 +78,7 @@ This is the basics of using monad transformers. The combined `map` and `flatMap`
 
 ## Monad Transformers in Scalaz
 
-Monad transformers are a little different to the other abstractions we've seen. Although there is a [monad transformer type class][scala.MonadTrans] it is very uncommon to use it. We normally only use monad transformers to build monads, which we use via the `Monad` type class. Thus the main points of interest when using monad transformers are:
+Monad transformers are a little different to the other abstractions we've seen. Although there is a [monad transformer type class][scalaz.MonadTrans] it is very uncommon to use it. We normally only use monad transformers to build monads, which we use via the `Monad` type class. Thus the main points of interest when using monad transformers are:
 
 - the available transformer classes;
 - building stacks of monads using transformers;
