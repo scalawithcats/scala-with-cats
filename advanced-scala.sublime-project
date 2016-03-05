@@ -3,6 +3,12 @@
     {
       "path": ".",
       "folder_exclude_patterns": [
+        "src/pages/intro",
+        "src/pages/type-classes",
+        "src/pages/monoids",
+        "src/pages/functors",
+        "src/pages/monads",
+        "src/pages/case-studies/validation",
         "dist",
         "core-scala",
         "bower_components",

@@ -6,21 +6,15 @@ Show this.
 
 Want to implement something that depends on some configuration. Can write
 
-```scala
-def findUser(userRepository: Repository, userId: Id): User = ...
-// <console>:2: error: illegal start of simple expression
-// def findUser(userRepository: Repository, userId: Id): User = ...
-//                                                              ^
+```tut:book
+def findUser(userRepository: Repository, userId: Id): User = ???
 ```
 
 Passing around `userRepository` gets boring. OO approach is to move it into a constructor. Reader monad is an alternative approach.
 
-```scala
+```tut:book
 def findUser(userId: Id) =
   (userRepository: Repository) => ...
-// <console>:3: error: illegal start of simple expression
-//   (userRepository: Repository) => ...
-//                                   ^
 ```
 
 Can call `findUser` without having a `Repository` and move the dependency up.
