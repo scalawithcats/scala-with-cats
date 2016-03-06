@@ -42,7 +42,7 @@ import cats.std.string._
 // import cats.std.string._
 
 val instance = Monoid[String]
-// instance: algebra.Monoid[String] = algebra.std.StringMonoid@7055d6aa
+// instance: algebra.Monoid[String] = algebra.std.StringMonoid@458c8fef
 
 instance.combine("Monoids FTW!", instance.empty)
 // res2: String = Monoids FTW!
@@ -129,6 +129,9 @@ def add[A: Monoid](items: List[A]): A =
 We can use this code to add values of type `Int` and `Option[Int]` as requested:
 
 ```scala
+import cats.std.int._
+// import cats.std.int._
+
 add(List(1, 2, 3))
 // res3: Int = 6
 
@@ -144,7 +147,7 @@ we get a compile error:
 
 ```scala
 scala> add(List(Some(1), Some(2), Some(3)))
-<console>:41: error: could not find implicit value for evidence parameter of type cats.Monoid[Some[Int]]
+<console>:44: error: could not find implicit value for evidence parameter of type cats.Monoid[Some[Int]]
        add(List(Some(1), Some(2), Some(3)))
           ^
 ```

@@ -29,7 +29,7 @@ val option2 = Functor[Option].map(option1)(_.toString)
 // option2: Option[String] = Some(123)
 ```
 
-`Functor` also provides the `lift` method, which converts an function of type `A => B` to one that operates over a monad and has type `F[A] => F[B]`:
+`Functor` also provides the `lift` method, which converts a function of type `A => B` to one that operates over a monad and has type `F[A] => F[B]`:
 
 ```scala
 val func = (x: Int) => x + 1
@@ -77,7 +77,7 @@ val optionFunctor = new Functor[Option] {
   def map[A, B](value: Option[A])(func: A => B): Option[B] =
     value map func
 }
-// optionFunctor: cats.Functor[Option] = $anon$1@15755c25
+// optionFunctor: cats.Functor[Option] = $anon$1@6600c59b
 ```
 
 The implementation is trivial---simply call `Option's` `map` method.
@@ -119,7 +119,7 @@ implicit val resultFunctor = new Functor[Result] {
       case Failure(message)        => Failure(message)
     }
 }
-// resultFunctor: cats.Functor[Result] = $anon$1@3d3a8d9e
+// resultFunctor: cats.Functor[Result] = $anon$1@50d6e8c4
 ```
 
 Let's use our `Functor` in a sample application:
@@ -131,7 +131,7 @@ Success(100) map (_ * 2)
 //                     ^
 ```
 
-Oops! This is the same inavariance problem we saw with `Monoids`. Let's add some smart constructors to compensate:
+Oops! This is the same invariance problem we saw with `Monoids`. Let's add some smart constructors to compensate:
 
 ```scala
 def success[A](value: A): Result[A] =

@@ -94,15 +94,16 @@ val optionMonad = new Monad[Option] {
   def pure[A](value: A): Option[A] =
     Some(value)
 }
-// optionMonad: cats.Monad[Option] = $anon$1@219003d3
+// optionMonad: cats.Monad[Option] = $anon$1@c49f0a5
 ```
 
 ### *Monad* Syntax
 
-The syntax for monads comes from two places:
+The syntax for monads comes from three places:
 
  - [`cats.syntax.flatMap`][cats.syntax.flatMap] provides syntax for `flatMap`;
- - [`cats.syntax.functor`][cats.syntax.functor] provides syntax for `map`.
+ - [`cats.syntax.functor`][cats.syntax.functor] provides syntax for `map`;
+ - [`cats.syntax.applicative`][cats.syntax.applicative] provides syntax for `pure`.
 
 In practice it's often easier to import everything in one go from [`cats.implicits`][cats.implicits]. However, we'll use the individual imports here for clarity.
 
@@ -121,12 +122,15 @@ import cats.syntax.functor._
 import cats.syntax.flatMap._
 // import cats.syntax.flatMap._
 
-def sumSquare[A[_]](a: Int, b: Int)(implicit monad: Monad[A]): A[Int] = {
-  val x = monad.pure(a)
-  val y = monad.pure(b)
+import cats.syntax.applicative._
+// import cats.syntax.applicative._
+
+def sumSquare[A[_] : Monad](a: Int, b: Int): A[Int] = {
+  val x = a.pure[A]
+  val y = a.pure[A]
   x flatMap (x => y map (y => x*x + y*y))
 }
-// sumSquare: [A[_]](a: Int, b: Int)(implicit monad: cats.Monad[A])A[Int]
+// sumSquare: [A[_]](a: Int, b: Int)(implicit evidence$1: cats.Monad[A])A[Int]
 
 import cats.std.option._
 // import cats.std.option._
@@ -135,22 +139,22 @@ import cats.std.list._
 // import cats.std.list._
 
 sumSquare[Option](3, 4)
-// res3: Option[Int] = Some(25)
+// res3: Option[Int] = Some(18)
 
 sumSquare[List](3, 4)
-// res4: List[Int] = List(25)
+// res4: List[Int] = List(18)
 ```
 
 We can rewrite this code using for comprehensions. The Scala compiler will "do the right thing" by rewriting our comprehension in terms of `flatMap` and `map` and inserting the correct implicit conversions to use our `Monad`:
 
 ```scala
-def sumSquare[A[_]](a: Int, b: Int)(implicit monad: Monad[A]): A[Int] = {
+def sumSquare[A[_] : Monad](a: Int, b: Int): A[Int] = {
   for {
-    x <- monad.pure(a)
-    y <- monad.pure(b)
+    x <- a.pure[A]
+    y <- b.pure[A]
   } yield x*x + y*y
 }
-// sumSquare: [A[_]](a: Int, b: Int)(implicit monad: cats.Monad[A])A[Int]
+// sumSquare: [A[_]](a: Int, b: Int)(implicit evidence$1: cats.Monad[A])A[Int]
 
 sumSquare[Option](3, 4)
 // res5: Option[Int] = Some(25)
@@ -217,7 +221,7 @@ implicit val resultMonad = new Monad[Result] {
         Failure(message)
     }
 }
-// resultMonad: cats.Monad[Result] = $anon$1@14f5858a
+// resultMonad: cats.Monad[Result] = $anon$1@36e2b130
 ```
 
 We'll pre-empt any compile errors concerning variance by defining our usual smart constructors:

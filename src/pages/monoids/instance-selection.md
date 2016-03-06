@@ -101,7 +101,7 @@ but we can summon the multiplication monoid explicitly:
 ```scala
 val multMonoid: Monoid[Int] =
   cats.std.int.intAlgebra.multiplicative
-// multMonoid: cats.Monoid[Int] = algebra.ring.MultiplicativeCommutativeMonoid$mcI$sp$$anon$7@3723c0b4
+// multMonoid: cats.Monoid[Int] = algebra.ring.MultiplicativeCommutativeMonoid$mcI$sp$$anon$7@12097e16
 
 multMonoid.combine(2, 3)
 // res5: Int = 6
@@ -113,11 +113,11 @@ although we can summon monoids for conjuction and disjunction explicitly:
 ```scala
 val conjMonoid: Monoid[Boolean] =
   cats.std.boolean.booleanAlgebra.multiplicative
-// conjMonoid: cats.Monoid[Boolean] = algebra.ring.MultiplicativeCommutativeMonoid$$anon$14@638ea95b
+// conjMonoid: cats.Monoid[Boolean] = algebra.ring.MultiplicativeCommutativeMonoid$$anon$14@61bb9278
 
 val disjMonoid: Monoid[Boolean] =
   cats.std.boolean.booleanAlgebra.additive
-// disjMonoid: cats.Monoid[Boolean] = algebra.ring.AdditiveCommutativeMonoid$$anon$14@212a4df8
+// disjMonoid: cats.Monoid[Boolean] = algebra.ring.AdditiveCommutativeMonoid$$anon$14@5706a95c
 
 conjMonoid.combine(true, false)
 // res6: Boolean = false
@@ -136,7 +136,7 @@ import cats.syntax.semigroup._
 
 implicit val multMonoid: Monoid[Int] =
   cats.std.int.intAlgebra.multiplicative
-// multMonoid: cats.Monoid[Int] = algebra.ring.MultiplicativeCommutativeMonoid$mcI$sp$$anon$7@48c40c7b
+// multMonoid: cats.Monoid[Int] = algebra.ring.MultiplicativeCommutativeMonoid$mcI$sp$$anon$7@37630b82
 
 2 |+| 3
 // res8: Int = 5
