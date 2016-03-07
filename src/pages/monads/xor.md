@@ -2,6 +2,12 @@
 
 The Scala standard library has a type `Either`. Cats provides an alternative called [`cats.data.Xor`][cats.data.Xor]. Why have this? Aside from providing a few useful methods, the main reason is that `Xor` is *right biased*.
 
+<div class="callout callout-info">
+*Cats data types*
+
+`Xor` is the first concrete data type we've seen in Cats. Cats provides numerous data types, all of which exist in the [`cats.data`][cats.data] package. Other examples include the monad transformers that we will see in the next chapter, and the [`Validated`][cats.data.Validated] type that we will see in the chapter on [applicatives](#applicatives).
+</div>
+
 ### Left and Right Bias
 
 `Either` is unbiased. It has no `map` or `flatMap` method:

@@ -12,33 +12,24 @@ TODO: Convert the `Lists` in the examples below to `Vectors`.
 
 A `Writer[W, A]` carries two values: a *log* of type `W` and a *result* of type `A`. We can create a `Writer` from a log and a result as follows:
 
-```scala
+```tut:book
 import cats.data.Writer
-// import cats.data.Writer
 
 Writer(List("It all starts here."), 123)
-// res0: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(It all starts here.),123))
 ```
 
 Notice that the type of the writer is actually `WriterT[Id, List[String], Int]` instead of `Writer[List[String], Int]` as we might expect. To remove redundancy, Cats implements the `Writer` monad in terms of another type, `WriterT`. `WriterT` is an example of a new concept called a "monad tranformer". We will introduce monad transformers in the next chapter. For now, try to ignore this detail by reading `WriterT[Id, W, A]` as `Writer[W, A]`.
 
 As with other monads, we can also create a `Writer` using the `pure` syntax. In order to use `pure` the log has to be a type with a `Monoid`. This tells Cats what to use as the initial empty log:
 
-```scala
+```tut:book
 import cats.data.WriterT
-// import cats.data.WriterT
-
 import cats.std.list._
-// import cats.std.list._
-
 import cats.syntax.applicative._
-// import cats.syntax.applicative._
 
 type Logged[A] = Writer[List[String], A]
-// defined type alias Logged
 
 321.pure[Logged]
-// res1: Logged[Int] = WriterT((List(),321))
 ```
 
 <div class="callout callout-danger">
@@ -50,65 +41,54 @@ They're currently implemented on the `WriterT` companion object, but not on `Wri
 
 When we `flatMap` over a `Writer` instance, the logs are appended together. For this reason it's good practice to use a log type that has an efficient append operation, such as a `Vector`. Logs are also preserved through `map` and other transformations:
 
-```scala
+```tut:book
 val answer = for {
   a <- Writer(List("a", "b", "c"), 10)
   b <- Writer(List("x", "y", "z"), 32)
 } yield a + b
-// answer: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(a, b, c, x, y, z),42))
 ```
 
 In addition to transforming the result with `map` and `flatMap`, we can transform the log with the `mapWritten` method:
 
-```scala
+```tut:book
 answer.mapWritten(_.map(_.toUpperCase))
-// res2: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(A, B, C, X, Y, Z),42))
 ```
 
 We can tranform the log and result simultaneously using `bimap` or `mapBoth`. `bimap` takes two function parameters, one for the log and one for the result. `mapBoth` takes a single function of two parameters:
 
-```scala
+```tut:book
 answer.bimap(
   log    => log.map(_.toUpperCase),
   result => result * 100
 )
-// res3: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(A, B, C, X, Y, Z),4200))
 
 answer.mapBoth { (log, result) =>
   val log2    = log.map(_ + "!")
   val result2 = result * 1000
   (log2, result2)
 }
-// res4: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(a!, b!, c!, x!, y!, z!),42000))
 ```
 
 Finally, we can clear the log with the `reset` method and swap log and result with the `swap` method:
 
-```scala
+```tut:book
 answer.reset
-// res5: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(),42))
-
 answer.swap
-// res6: cats.data.WriterT[cats.Id,Int,List[String]] = WriterT((42,List(a, b, c, x, y, z)))
 ```
 
 ### Unpacking Writers
 
 When we are done chaining computations we can extract the result and log from a `Writer` using the `value` and `written` methods respectively:
 
-```scala
+```tut:book
 answer.value
-// res7: cats.Id[Int] = 42
-
 answer.written
-// res8: cats.Id[List[String]] = List(a, b, c, x, y, z)
 ```
 
 or both at once using the `run` method:
 
-```scala
+```tut:book
 answer.run
-// res9: cats.Id[(List[String], Int)] = (List(a, b, c, x, y, z),42)
 ```
 
 ### Exercise: Post-Mortem

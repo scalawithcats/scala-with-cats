@@ -8,6 +8,7 @@
         "src/pages/monoids",
         "src/pages/functors",
         "src/pages/monads",
+        "src/pages/monad-transformers",
         "src/pages/case-studies/validation",
         "dist",
         "core-scala",

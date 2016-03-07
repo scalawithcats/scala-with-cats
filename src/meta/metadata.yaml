@@ -38,9 +38,6 @@ pages:
   - src/pages/monads/cats.md
   - src/pages/monads/id.md
   - src/pages/monads/xor.md
-  # Sections on MonadPlus, Reader, and Writer removed from v1 of the book.
-  # Although the tools are useful, they're not as fundamental as \/ and
-  # they don't teach new concepts.
   # - src/pages/monads/error-recovery.md
   # - src/pages/monads/writer.md
   # - src/pages/monads/reader.md

@@ -54,6 +54,7 @@ and so on...                             See the [`cats.std`][cats.std]
 <div class="callout callout-info">
 Most people use `import cats.implicits._` to bring all instances into scope at the same time.
 In this book we will use specific imports to show you exactly what instances we need for the code to compile.
+Don't feel you need to do this in your code.
 </div>
 
 Let's import the instances of `Show` for `Int` and `String`:
