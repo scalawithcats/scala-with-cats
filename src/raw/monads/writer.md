@@ -1,8 +1,8 @@
-## Writer
+## The *Writer* Monad {#writer-monad}
 
-[`cats.data.Writer`][cats.data.Writer] is a monadic data type that lets us carry a log along with a computation.
+[`cats.data.Writer`][cats.data.Writer] is a monad that lets us carry a log along with a computation. We can use it to record messages, errors, or additional data about a computation, and extract the log with the final result.
 
-One common use for `Writers` is logging during multi-threaded computations, where traditional logging can result in interleaved messages from different threads. With a `Writer`, the log for the computation is carried around with the result as a single, coherent sequence, and can be inspected in isolation once the computation is complete.
+One common use for `Writers` is logging during multi-threaded computations, where traditional logging can result in interleaved messages from different contexts. With a `Writer` the log for the computation is tied to the result, so we can run concurrent computations without mixing log messages.
 
 <div class="callout callout-danger">
 TODO: Convert the `Lists` in the examples below to `Vectors`.
@@ -55,9 +55,9 @@ When we transform or `map` over a `Writer`, its log is preserved. When we `flatM
 
 ```tut:book
 val answer = for {
-  a <- 10.pure[Logger]
+  a <- 10.pure[Logged]
   _ <- List("a", "b", "c").tell
-  c <- 32.writer(List("x", "y", "z"))
+  b <- 32.writer(List("x", "y", "z"))
 } yield a + b
 ```
 
@@ -67,7 +67,7 @@ In addition to transforming the result with `map` and `flatMap`, we can transfor
 answer.mapWritten(_.map(_.toUpperCase))
 ```
 
-We can tranform the log and result simultaneously using `bimap` or `mapBoth`. `bimap` takes two function parameters, one for the log and one for the result. `mapBoth` takes a single function of two parameters:
+We can also tranform both log and result simultaneously using `bimap` or `mapBoth`. `bimap` takes two function parameters, one for the log and one for the result. `mapBoth` takes a single function of two parameters:
 
 ```tut:book
 answer.bimap(

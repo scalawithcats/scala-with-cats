@@ -39,7 +39,7 @@ pages:
   - src/pages/monads/id.md
   - src/pages/monads/xor.md
   # - src/pages/monads/error-recovery.md
-  # - src/pages/monads/writer.md
+  - src/pages/monads/writer.md
   # - src/pages/monads/reader.md
   # - src/pages/monads/summary.md
 

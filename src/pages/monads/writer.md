@@ -1,4 +1,4 @@
-## Writer
+## The *Writer* Monad
 
 [`cats.data.Writer`][cats.data.Writer] is a monadic data type that lets us carry a log along with a computation.
 
@@ -42,29 +42,23 @@ We can create a `Writer` from a log using the `tell` syntax. The `Writer` is ini
 
 ```scala
 import cats.syntax.writer._
-// <console>:18: error: object writer is not a member of package cats.syntax
-//        import cats.syntax.writer._
-//                           ^
+// import cats.syntax.writer._
+
 List("msg1", "msg2", "msg3").tell
-// <console>:19: error: value tell is not a member of List[String]
-//        List("msg1", "msg2", "msg3").tell
-//                                     ^
+// res2: cats.data.Writer[List[String],Unit] = WriterT((List(msg1, msg2, msg3),()))
 ```
 
 If we have both a result and a log, we can create a `Writer` in two ways: using the `Writer.apply` method or the `writer` syntax:
 
 ```scala
 import cats.syntax.writer._
-// <console>:18: error: object writer is not a member of package cats.syntax
-//        import cats.syntax.writer._
-//                           ^
+// import cats.syntax.writer._
+
 Writer(123, List("msg1", "msg2", "msg3"))
 // res3: cats.data.WriterT[cats.Id,Int,List[String]] = WriterT((123,List(msg1, msg2, msg3)))
 
 123.writer(List("msg1", "msg2", "msg3"))
-// <console>:19: error: value writer is not a member of Int
-//        123.writer(List("msg1", "msg2", "msg3"))
-//            ^
+// res4: cats.data.Writer[List[String],Int] = WriterT((List(msg1, msg2, msg3),123))
 ```
 
 ### Composing and Transforming Writers
@@ -73,89 +67,45 @@ When we transform or `map` over a `Writer`, its log is preserved. When we `flatM
 
 ```scala
 val answer = for {
-  a <- 10.pure[Logger]
+  a <- 10.pure[Logged]
   _ <- List("a", "b", "c").tell
-  c <- 32.writer(List("x", "y", "z"))
+  b <- 32.writer(List("x", "y", "z"))
 } yield a + b
-// <console>:19: error: not found: type Logger
-//          a <- 10.pure[Logger]
-//                       ^
-// <console>:20: error: value tell is not a member of List[String]
-//          _ <- List("a", "b", "c").tell
-//                                   ^
-// <console>:21: error: value writer is not a member of Int
-//          c <- 32.writer(List("x", "y", "z"))
-//                  ^
+// answer: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(a, b, c, x, y, z),42))
 ```
 
 In addition to transforming the result with `map` and `flatMap`, we can transform the log with the `mapWritten` method:
 
 ```scala
 answer.mapWritten(_.map(_.toUpperCase))
-// <console>:6: error: ')' expected but '.' found.
-// answer.mapWritten(_.map(_.toUpperCase))
-//                    ^
-// <console>:6: error: '<-' expected but ')' found.
-// answer.mapWritten(_.map(_.toUpperCase))
-//                                       ^
+// res5: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(A, B, C, X, Y, Z),42))
 ```
 
-We can tranform the log and result simultaneously using `bimap` or `mapBoth`. `bimap` takes two function parameters, one for the log and one for the result. `mapBoth` takes a single function of two parameters:
+We can also tranform both log and result simultaneously using `bimap` or `mapBoth`. `bimap` takes two function parameters, one for the log and one for the result. `mapBoth` takes a single function of two parameters:
 
 ```scala
 answer.bimap(
   log    => log.map(_.toUpperCase),
-// <console>:7: error: ')' expected but '=>' found.
-//   log    => log.map(_.toUpperCase),
-//          ^
   result => result * 100
-// <console>:7: error: ')' expected but '=>' found.
-//   result => result * 100
-//          ^
 )
+// res6: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(A, B, C, X, Y, Z),4200))
 
 answer.mapBoth { (log, result) =>
-// <console>:9: error: '<-' expected but ';' found.
-// answer.mapBoth { (log, result) =>
-// ^
-// <console>:9: error: '<-' expected but '{' found.
-// answer.mapBoth { (log, result) =>
-//                ^
   val log2    = log.map(_ + "!")
-// <console>:9: error: '<-' expected but ';' found.
-//   val log2    = log.map(_ + "!")
-// ^
-// <console>:9: warning: val keyword in for comprehension is deprecated
-//   val log2    = log.map(_ + "!")
-//               ^
   val result2 = result * 1000
-// <console>:9: error: '<-' expected but ';' found.
-//   val result2 = result * 1000
-// ^
-// <console>:9: warning: val keyword in for comprehension is deprecated
-//   val result2 = result * 1000
-//               ^
   (log2, result2)
-// <console>:9: error: '<-' expected but ';' found.
-//   (log2, result2)
-// ^
 }
-// <console>:9: error: '<-' expected but '}' found.
-// }
-// ^
+// res7: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(a!, b!, c!, x!, y!, z!),42000))
 ```
 
 Finally, we can clear the log with the `reset` method and swap log and result with the `swap` method:
 
 ```scala
 answer.reset
-// <console>:9: error: '<-' expected but ';' found.
-// answer.reset
-// ^
+// res8: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(),42))
+
 answer.swap
-// <console>:9: error: '<-' expected but ';' found.
-// answer.swap
-// ^
+// res9: cats.data.WriterT[cats.Id,Int,List[String]] = WriterT((42,List(a, b, c, x, y, z)))
 ```
 
 ### Unpacking Writers
@@ -164,22 +114,17 @@ When we are done chaining computations we can extract the result and log from a 
 
 ```scala
 answer.value
-// <console>:9: error: '<-' expected but ';' found.
-// answer.value
-// ^
+// res10: cats.Id[Int] = 42
+
 answer.written
-// <console>:9: error: '<-' expected but ';' found.
-// answer.written
-// ^
+// res11: cats.Id[List[String]] = List(a, b, c, x, y, z)
 ```
 
 or both at once using the `run` method:
 
 ```scala
 answer.run
-// <console>:9: error: '<-' expected but ';' found.
-// answer.run
-// ^
+// res12: cats.Id[(List[String], Int)] = (List(a, b, c, x, y, z),42)
 ```
 
 ### Exercise: Post-Mortem

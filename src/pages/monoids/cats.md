@@ -42,7 +42,7 @@ import cats.std.string._
 // import cats.std.string._
 
 val instance = Monoid[String]
-// instance: algebra.Monoid[String] = algebra.std.StringMonoid@7021f9b9
+// instance: algebra.Monoid[String] = algebra.std.StringMonoid@7390394b
 
 instance.combine("Monoids FTW!", instance.empty)
 // res2: String = Monoids FTW!
