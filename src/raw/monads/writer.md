@@ -23,28 +23,41 @@ Notice that the type of the writer is actually `WriterT[Id, List[String], Int]` 
 As with other monads, we can also create a `Writer` using the `pure` syntax. In order to use `pure` the log has to be a type with a `Monoid`. This tells Cats what to use as the initial empty log:
 
 ```tut:book
-import cats.data.WriterT
 import cats.std.list._
 import cats.syntax.applicative._
 
 type Logged[A] = Writer[List[String], A]
 
-321.pure[Logged]
+123.pure[Logged]
 ```
 
-<div class="callout callout-danger">
-TODO: Describe `set` and `tell` constructors/syntax.
-They're currently implemented on the `WriterT` companion object, but not on `Writer` and not as syntax.
-</div>
+We can create a `Writer` from a log using the `tell` syntax. The `Writer` is initialised with the value `()`:
+
+```tut:book
+import cats.syntax.writer._
+
+List("msg1", "msg2", "msg3").tell
+```
+
+If we have both a result and a log, we can create a `Writer` in two ways: using the `Writer.apply` method or the `writer` syntax:
+
+```tut:book
+import cats.syntax.writer._
+
+Writer(123, List("msg1", "msg2", "msg3"))
+
+123.writer(List("msg1", "msg2", "msg3"))
+```
 
 ### Composing and Transforming Writers
 
-When we `flatMap` over a `Writer` instance, the logs are appended together. For this reason it's good practice to use a log type that has an efficient append operation, such as a `Vector`. Logs are also preserved through `map` and other transformations:
+When we transform or `map` over a `Writer`, its log is preserved. When we `flatMap`, the logs of the two `Writers` are appended. For this reason it's good practice to use a log type that has an efficient append operation, such as a `Vector`:
 
 ```tut:book
 val answer = for {
-  a <- Writer(List("a", "b", "c"), 10)
-  b <- Writer(List("x", "y", "z"), 32)
+  a <- 10.pure[Logger]
+  _ <- List("a", "b", "c").tell
+  c <- 32.writer(List("x", "y", "z"))
 } yield a + b
 ```
 
