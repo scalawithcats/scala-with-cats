@@ -7,6 +7,8 @@ Imagine we are interacting with a database. We want to look up a user record. Th
 To use this value we must nest `flatMap` calls (or equivalently, for-comprehensions):
 
 ```tut:invisible
+import cats.data.Xor
+
 type Error = String
 
 case class User(id: Long, name: String)
@@ -146,7 +148,7 @@ type ErrorOptionOr[A] = OptionT[ErrorOr, A]
 ```tut:book
 val result1 = 41.pure[ErrorOptionOr]
 
-result2 = result1.flatMap(x => (x + 1).pure)
+val result2 = result1.flatMap(x => (x + 1).pure)
 ```
 
 Now let's add another monad into our stack. Let's create a `Future` of an `Xor` of `Option`. Once again we build this from the inside out with an `OptionT` of a `XorT` of `Future`. However, we can't define this in one line because `XorT` has three type parameters:
@@ -202,7 +204,7 @@ val monad1: ErrorOrOption[Int] =
 
 // Create using apply:
 val monad2: ErrorOrOption[Int] =
-  OptionT(Xor.Right(Some(123)))
+  OptionT(Xor.right(Some(123)))
 ```
 
 Once we've used a monad transformer, we can unpack it using its `value` method. This returns the untransformed stack. We can then manipulate the individual monads in the usual way:
