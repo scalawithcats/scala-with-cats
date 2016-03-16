@@ -6,23 +6,16 @@ Imagine we are interacting with a database. We want to look up a user record. Th
 
 To use this value we must nest `flatMap` calls (or equivalently, for-comprehensions):
 
-```tut:book
-import cats.data.Xor
-
-// Define some data types representing users and errors:
-
+```tut:invisible
 type Error = String
 
 case class User(id: Long, name: String)
 
-// Define a lookupUser function
-// as the source of our nested monad:
+def lookupUser(id: Long): Xor[Error, Option[User]] = ???
+```
 
-def lookupUser(id: Long): Xor[Error, Option[User]] =
-  ???
-
-// If we want to look up a user's name,
-// we need two nested for comprehensions:
+```tut:book
+import cats.data.Xor
 
 def lookupUserName(id: Long): Xor[Error, Option[String]] =
   for {
@@ -32,7 +25,6 @@ def lookupUserName(id: Long): Xor[Error, Option[String]] =
       user <- optUser
     } yield user.name
   }
-
 ```
 
 This quickly becomes very tedious.
@@ -41,12 +33,13 @@ A question arises. Given two monads, can we make one monad out of them in a gene
 
 ```scala
 // This code won't actually compile.
-// It's just illustrating a point.
+// It's just illustrating a point:
 def compose[M1[_] : Monad, M2[_] : Monad] = {
   type Composed[A] = M1[M2[A]]
 
   new Monad[Composed] {
-    def pure[A](a: A): Composed[A] = a.pure[M2].pure[M1]
+    def pure[A](a: A): Composed[A] =
+      a.pure[M2].pure[M1]
 
     def flatMap[A, B](fa: Composed[A])(f: A => Composed[B]): Composed[B] =
       // This is impossible to implement in general
@@ -58,11 +51,11 @@ def compose[M1[_] : Monad, M2[_] : Monad] = {
 
 We can't compose monads in general. This is not greatly surprising because we use monads to model effects and effects don't in general compose. However, some monads can be made to compose with monad-specific glue code. For these special cases we can use *monad transformers* to compose them.
 
-Monad transformers allow us to squash together monads, creating one monad where we previously had two or more. With this transformed monad we can avoid nested calls to `flatMap`. Cats provides a library of such transformers: `XorT` for composing `Xor` with other monads, `OptionT` for composing `Option`, and so on.
+Monad transformers allow us to squash together monads, creating one monad where we previously had two or more. With this transformed monad we can avoid nested calls to `flatMap`.
 
 ## A Transformative Example
 
-Let's see how we can use monad transformers to squash `List` and `Option` into a single monad:
+Cats provides a library of such transformers: `XorT` for composing `Xor` with other monads, `OptionT` for composing `Option`, and so on. Here's an example that uses `OptionT` to squash `List` and `Option` into a single monad:
 
 ```tut:book
 import cats.data.OptionT
@@ -100,20 +93,20 @@ This is the basics of using monad transformers. The combined `map` and `flatMap`
 <div class="callout callout-warning">
 *The complexity of imports*
 
-Notice the imports in the code samples above, which hint at how everything is bolting together.
+Note the imports in the code samples above---they hint at how everything bolts together.
 
-In the code sample where we define `results`, we import [`cats.syntax.applicative`][cats.syntax.applicative] to get the `pure` syntax. `pure` requires an implicit parameter of type `Applicative[ListOption]`. We haven't met `Applicatives` yet, but all `Monads` are also `Applicatives` so we can ignore that difference for now.
+We import [`cats.syntax.applicative`][cats.syntax.applicative] to get the `pure` syntax. `pure` requires an implicit parameter of type `Applicative[ListOption]`. We haven't met `Applicatives` yet, but all `Monads` are also `Applicatives` so we can ignore that difference for now.
 
 We need an `Applicative[ListOption]` to call `pure`. We have [`cats.data.OptionT`][cats.data.OptionT] in scope, which provides the implicits for for `OptionT`. However, in order to generate our `Applicative[ListOption]`, the implicits for `OptionT` also require an `Applicative` for `List`. Hence the additional import from [`cats.std.list`][cats.std.list].
 
-In the second code sample notice we're not importing [`cats.syntax.functor`][cats.syntax.functor] or [`cats.syntax.flatMap`][cats.syntax.flatMap]. This is because `OptionT` is a concrete data type with its own explicit `map` and `flatMap` methods. It wouldn't have hurt to import the syntax---the compiler would have simply ignored it in favour of the explicit methods.
+Notice we're not importing [`cats.syntax.functor`][cats.syntax.functor] or [`cats.syntax.flatMap`][cats.syntax.flatMap]. This is because `OptionT` is a concrete data type with its own explicit `map` and `flatMap` methods. It wouldn't hurt to import the syntax---the compiler will simply ignore it in favour of the explicit methods.
 
-Once again, remember that we're subjecting ourselves to this shenanigans because we're stubbornly refusing to import our implicits from [`cats.implicits`][cats.implicits]. If we did that, everything would just work.
+Remember that we're subjecting ourselves to this shenanigans because we're stubbornly refusing to import our implicits from [`cats.implicits`][cats.implicits]. If we did that, everything would just work.
 </div>
 
 ## Monad Transformers in Cats
 
-Monad transformers are a little different to the other abstractions we've seen---they don't have their own type class in Cats. We normally only use monad transformers to build monads, which we use via the `Monad` type class. Thus the main points of interest when using monad transformers are:
+Monad transformers are a little different to the other abstractions we've seen---they don't have their own type class. We use monad transformers to build monads, which we then use via the `Monad` type class. Thus the main points of interest when using monad transformers are:
 
 - the available transformer classes;
 - building stacks of monads using transformers;
@@ -148,19 +141,21 @@ type ErrorOr[A] = Error Xor A
 type ErrorOptionOr[A] = OptionT[ErrorOr, A]
 ```
 
-We can use `pure` as usual to create an instance of our monad:
+`ErrorOptionOr` is a monad. We can use `pure` and `flatMap` as usual to create and transform instances:
 
 ```tut:book
-val result = 42.pure[ErrorOptionOr]
+val result1 = 41.pure[ErrorOptionOr]
+
+result2 = result1.flatMap(x => (x + 1).pure)
 ```
 
-Now let's add another monad into our stack. Let's create a `Future` of an `Xor` of `Option`. Once again we build this from the inside out. We need an `OptionT` of a `XorT` of `Future`, but we can't define this in one line because `XorT` has three type parameters:
+Now let's add another monad into our stack. Let's create a `Future` of an `Xor` of `Option`. Once again we build this from the inside out with an `OptionT` of a `XorT` of `Future`. However, we can't define this in one line because `XorT` has three type parameters:
 
 ```tut:book:fail
 type FutureXorOption[A] = OptionT[XorT[Future, E, _], A]
 ```
 
-As before, we can fix this by creating a type alias with a single parameter. This time we create an alias for `XorT` that fixes `Future` and `Error` allows `A` to vary:
+As before, we solve the problem by creating a type alias with a single parameter. This time we create an alias for `XorT` that fixes `Future` and `Error` and allows `A` to vary:
 
 ```tut:book
 import scala.concurrent.Future
@@ -174,13 +169,9 @@ type FutureXorOption[A] = OptionT[FutureXor, A]
 Our mammoth stack composes not two but *three* monads. Our `map` and `flatMap` methods cut through three layers of abstraction:
 
 ```tut:book
-// Because we have Futures in our stack,
-// we need an ExecutionContext to map and flatMap:
-import scala.concurrent.ExecutionContext
+// We need an ExecutionContext to summon monad instances involving futures:
 import scala.concurrent.ExecutionContext.Implicits.global
 
-// We need the type class instances for Future to make this all work
-// (see the callout on "The Complexity of Implicits" above):
 import cats.std.future._
 
 val answer: FutureXorOption[Int] =
@@ -199,24 +190,22 @@ The general pattern for constructing a monad stack is as follows:
 
 ### Constructing and Unpacking Instances
 
-As we saw above, we can construct instances of our transformed monad stacks by directly injecting values using `pure`. We can also create instances from untransformed stacks using the monad transformer's `apply` method:
+As we saw above, we can use `pure` to directly inject raw values into transformed monad stacks. We can also create instances from untransformed stacks using the monad transformer's `apply` method:
 
 ```tut:book
-// Create using pure:
-
 type ErrorOr[A] = Xor[String, A]
 type ErrorOrOption[A] = OptionT[ErrorOr, A]
 
-val monad1 = 123.pure[ErrorOrOption]
+// Create using pure:
+val monad1: ErrorOrOption[Int] =
+  123.pure[ErrorOrOption]
 
 // Create using apply:
-
-val stack2: ErrorOr[Option[Int]] = Xor.Right(Some(123))
-
-val monad2: ErrorOrOption[Int] = OptionT(stack2)
+val monad2: ErrorOrOption[Int] =
+  OptionT(Xor.Right(Some(123)))
 ```
 
-We need a way to unpack monad transformers once we've used them. Fortunately this is quite straightforward. All monad transformers have a `value` method that extracts the stack within. We can then manipulate the individual monads in the usual way:
+Once we've used a monad transformer, we can unpack it using its `value` method. This returns the untransformed stack. We can then manipulate the individual monads in the usual way:
 
 ```tut:book
 monad1.value
@@ -234,39 +223,44 @@ type LoggedFallable[A] = XorT[Logged, String, A]
 type LoggedFallableOption[A] = OptionT[LoggedFallable, A]
 
 val packed = 123.pure[LoggedFallableOption]
-
-val partiallyUnpacked = packed.value
-
-val unpacked = partiallyUnpacked.value
+val partiallyPacked = packed.value
+val completelyUnpacked = partiallyPacked.value
 ```
 
-The combination of `apply` and `value` allows us to conveniently use monad transformers as local "glue code" when processing APIs that return nested monads:
+### Usage Patterns
+
+Widespread use of monad tranformers can sometimes causes inconvenience because they fuse monads together in predefined ways. Without careful thought, we can end up having to unpack and repack monads in different configurations to operate on them in different contexts.
+
+One way of avoiding this is to use monad transformers as local "glue code". Expose untransformed stacks at module boundaries, transform them to operate on them locally, and untransform them before passing them on. This allows each module of code to make its own decisions about which transformers to use. Here's an example:
 
 ```tut:book
 type Logged[A] = Writer[List[String], A]
 
-// A method that returns nested monads:
-
+// Example method that returns nested monads:
 def parseNumber(str: String): Logged[Option[Int]] =
   util.Try(str.toInt).toOption match {
     case Some(num) => Writer(List(s"Read $str"), Some(num))
     case None      => Writer(List(s"Failed on $str"), None)
   }
 
-// We use OptionT to simplify summing the results from parseNumber:
-
+// Example combining multiple calls to parseNumber:
 def addNumbers(a: String, b: String, c: String): Logged[Option[Int]] = {
+  import cats.data.OptionT
+
+  // Transform the incoming stacks to work on them:
   val result = for {
     a <- OptionT(parseNumber(a))
     b <- OptionT(parseNumber(b))
     c <- OptionT(parseNumber(c))
   } yield a + b + c
 
+  // Return the untransformed monad stack:
   result.value
 }
 
-addNumbers("1", "2", "3")
-addNumbers("1", "a", "3")
+// OptionT isn't forced on user code:
+val result1 = addNumbers("1", "2", "3")
+val result2 = addNumbers("1", "a", "3")
 ```
 
 ### Default Instances
