@@ -8,7 +8,7 @@ One common use for `Writers` is logging during multi-threaded computations, wher
 TODO: Convert the `Lists` in the examples below to `Vectors`.
 </div>
 
-### Creating Writers
+### Creating and Unpacking Writers
 
 A `Writer[W, A]` carries two values: a *log* of type `W` and a *result* of type `A`. We can create a `Writer` from a log and a result as follows:
 
@@ -54,11 +54,28 @@ If we have both a result and a log, we can create a `Writer` in two ways: using 
 import cats.syntax.writer._
 // import cats.syntax.writer._
 
-Writer(123, List("msg1", "msg2", "msg3"))
-// res3: cats.data.WriterT[cats.Id,Int,List[String]] = WriterT((123,List(msg1, msg2, msg3)))
+val a = Writer(123, List("msg1", "msg2", "msg3"))
+// a: cats.data.WriterT[cats.Id,Int,List[String]] = WriterT((123,List(msg1, msg2, msg3)))
 
-123.writer(List("msg1", "msg2", "msg3"))
-// res4: cats.data.Writer[List[String],Int] = WriterT((List(msg1, msg2, msg3),123))
+val b = 123.writer(List("msg1", "msg2", "msg3"))
+// b: cats.data.Writer[List[String],Int] = WriterT((List(msg1, msg2, msg3),123))
+```
+
+We can extract the result and log from a `Writer` using the `value` and `written` methods respectively:
+
+```scala
+a.value
+// res3: cats.Id[List[String]] = List(msg1, msg2, msg3)
+
+a.written
+// res4: cats.Id[Int] = 123
+```
+
+or both at once using the `run` method:
+
+```scala
+b.run
+// res5: cats.Id[(List[String], Int)] = (List(msg1, msg2, msg3),123)
 ```
 
 ### Composing and Transforming Writers
@@ -66,65 +83,64 @@ Writer(123, List("msg1", "msg2", "msg3"))
 When we transform or `map` over a `Writer`, its log is preserved. When we `flatMap`, the logs of the two `Writers` are appended. For this reason it's good practice to use a log type that has an efficient append operation, such as a `Vector`:
 
 ```scala
-val answer = for {
+val writer1 = for {
   a <- 10.pure[Logged]
   _ <- List("a", "b", "c").tell
   b <- 32.writer(List("x", "y", "z"))
 } yield a + b
-// answer: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(a, b, c, x, y, z),42))
+// writer1: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(a, b, c, x, y, z),42))
+
+writer1.run
+// res6: cats.Id[(List[String], Int)] = (List(a, b, c, x, y, z),42)
 ```
 
 In addition to transforming the result with `map` and `flatMap`, we can transform the log with the `mapWritten` method:
 
 ```scala
-answer.mapWritten(_.map(_.toUpperCase))
-// res5: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(A, B, C, X, Y, Z),42))
+val writer2 = writer1.mapWritten(_.map(_.toUpperCase))
+// writer2: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(A, B, C, X, Y, Z),42))
+
+writer2.run
+// res7: cats.Id[(List[String], Int)] = (List(A, B, C, X, Y, Z),42)
 ```
 
 We can also tranform both log and result simultaneously using `bimap` or `mapBoth`. `bimap` takes two function parameters, one for the log and one for the result. `mapBoth` takes a single function of two parameters:
 
 ```scala
-answer.bimap(
+val writer3 = writer1.bimap(
   log    => log.map(_.toUpperCase),
   result => result * 100
 )
-// res6: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(A, B, C, X, Y, Z),4200))
+// writer3: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(A, B, C, X, Y, Z),4200))
 
-answer.mapBoth { (log, result) =>
+writer3.run
+// res8: cats.Id[(List[String], Int)] = (List(A, B, C, X, Y, Z),4200)
+
+val writer4 = writer1.mapBoth { (log, result) =>
   val log2    = log.map(_ + "!")
   val result2 = result * 1000
   (log2, result2)
 }
-// res7: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(a!, b!, c!, x!, y!, z!),42000))
+// writer4: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(a!, b!, c!, x!, y!, z!),42000))
+
+writer4.run
+// res9: cats.Id[(List[String], Int)] = (List(a!, b!, c!, x!, y!, z!),42000)
 ```
 
 Finally, we can clear the log with the `reset` method and swap log and result with the `swap` method:
 
 ```scala
-answer.reset
-// res8: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(),42))
+val writer5 = writer1.reset
+// writer5: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(),42))
 
-answer.swap
-// res9: cats.data.WriterT[cats.Id,Int,List[String]] = WriterT((42,List(a, b, c, x, y, z)))
-```
+writer5.run
+// res10: cats.Id[(List[String], Int)] = (List(),42)
 
-### Unpacking Writers
+val writer6 = writer1.swap
+// writer6: cats.data.WriterT[cats.Id,Int,List[String]] = WriterT((42,List(a, b, c, x, y, z)))
 
-When we are done chaining computations we can extract the result and log from a `Writer` using the `value` and `written` methods respectively:
-
-```scala
-answer.value
-// res10: cats.Id[Int] = 42
-
-answer.written
-// res11: cats.Id[List[String]] = List(a, b, c, x, y, z)
-```
-
-or both at once using the `run` method:
-
-```scala
-answer.run
-// res12: cats.Id[(List[String], Int)] = (List(a, b, c, x, y, z),42)
+writer6.run
+// res11: cats.Id[(Int, List[String])] = (42,List(a, b, c, x, y, z))
 ```
 
 ### Exercise: Post-Mortem

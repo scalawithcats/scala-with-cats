@@ -1,8 +1,14 @@
 ## The *Reader* Monad
 
-[`cats.data.Reader`][cats.data.Reader] is a monad that allows us to compose operations that depend on some input. Instances of `Reader` wrap up functions of one argument, providing us with useful methods for composing them.
+[`cats.data.Reader`][cats.data.Reader] is a monad that allows us to compose operations
+that depend on some input. Instances of `Reader` wrap up functions of one argument,
+providing us with useful methods for composing them.
 
-One common use for `Readers` is injecting configuration. If we have a number of operations that all depend on some external configuration, we can chain them together using a `Reader`. The `Reader` produces one large operation that accepts the configuration as a parameter and runs everything as specified.
+One common use for `Readers` is injecting configuration.
+If we have a number of operations that all depend on some external configuration,
+we can chain them together using a `Reader`.
+The `Reader` produces one large operation that
+accepts the configuration as a parameter and runs everything as specified.
 
 ### Creating and Unpacking Readers
 
@@ -45,7 +51,10 @@ So far so simple, but what advantage do `Readers` give us over plain functions?
 
 ### Composing Readers
 
-The power of `Readers` comes from their `map` and `flatMap` methods, both of which represent kinds of function composition. The `map` method simply extends the computation in the `Reader` by passing its result through a function:
+The power of `Readers` comes from their `map` and `flatMap` methods,
+both of which represent kinds of function composition.
+The `map` method simply extends the computation in the `Reader`
+by passing its result through a function:
 
 ```scala
 val mapExampleReader: Reader[Int, String] =
@@ -60,7 +69,8 @@ mapExample(10)
 // res1: String = 20!
 ```
 
-The `flatMap` method is more interesting. It allows us to combine two readers that depend on the same input type:
+The `flatMap` method is more interesting.
+It allows us to combine two readers that depend on the same input type:
 
 ```scala
 val add1Reader: Reader[Int, Int] =
@@ -82,9 +92,13 @@ flatMapExample(10)
 // res2: (Int, Int) = (20,11)
 ```
 
-Notice that the same input value is passed to both `doubleReader` and `add1Reader`. This is the value of the `Reader` monad, which ensures that the same "configuration" (in this case an input number) is passed to each part of the system.
+Notice that the same input value is passed to both `doubleReader` and `add1Reader`.
+This is the value of the `Reader` monad, which ensures that the same "configuration"
+(in this case an input number) is passed to each part of the system.
 
-Of course, `flatMap` has the same sequencing properties that all monads do---we can use the output of the prior step to determine which step to run next. For example:
+Of course, `flatMap` has the same sequencing properties that all monads do.
+We can use the output of the prior step to determine which step to run next.
+For example:
 
 ```scala
 val sub5Reader: Reader[Int, Int] =
@@ -155,7 +169,9 @@ val program: Database => Boolean =
 // program: Database => Boolean = <function1>
 ```
 
-In this example, `program` represents a complete computation to check whether user `1` has access to our software. We simply need to provide a `Database` to get a result:
+In this example, `program` represents a complete computation to
+check whether user `1` has access to our software.
+We simply need to provide a `Database` to get a result:
 
 ```scala
 program(Database(List("noel", "dave"), Map("noel" -> "shhh", "dave" -> "secret")))
@@ -165,4 +181,14 @@ program(Database(List("dave", "noel"), Map("noel" -> "shhh", "dave" -> "secret")
 // res6: Boolean = false
 ```
 
-In practice, Scala has many other tools that we can use for dependency injection, including trait-based inheritance and implicit parameter lists. The `Reader` monad provides a simple functional technique that achieves similar results without the need for additional language features. However, its usefulness in a language like Scala is debatable.
+In practice, Scala has many other tools that we can use for dependency injection,
+including trait-based inheritance and implicit parameter lists.
+The `Reader` monad provides a simple functional technique that
+achieves similar results without the need for additional language features.
+However, its usefulness in a language like Scala is debatable.
+
+### Exercise
+
+<div class="callout callout-danger">
+  TODO: Reader exercise
+</div>

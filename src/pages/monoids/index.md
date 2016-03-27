@@ -100,7 +100,7 @@ implicit val booleanAndMonoid: Monoid[Boolean] = new Monoid[Boolean] {
   def combine(a: Boolean, b: Boolean) = a && b
   def empty = true
 }
-// booleanAndMonoid: cats.Monoid[Boolean] = $anon$1@77a1713c
+// booleanAndMonoid: cats.Monoid[Boolean] = $anon$1@77cac8a9
 ```
 
 Second, we have *or* with operator `||` and identity `false`:
@@ -110,7 +110,7 @@ implicit val booleanOrMonoid: Monoid[Boolean] = new Monoid[Boolean] {
   def combine(a: Boolean, b: Boolean) = a || b
   def empty = false
 }
-// booleanOrMonoid: cats.Monoid[Boolean] = $anon$1@7eab42d1
+// booleanOrMonoid: cats.Monoid[Boolean] = $anon$1@21db6258
 ```
 
 Third, we have *exclusive or* with identity `false`:
@@ -120,7 +120,7 @@ implicit val booleanXorMonoid: Monoid[Boolean] = new Monoid[Boolean] {
   def combine(a: Boolean, b: Boolean) = (a && !b) || (!a && b)
   def empty = false
 }
-// booleanXorMonoid: cats.Monoid[Boolean] = $anon$1@67a37217
+// booleanXorMonoid: cats.Monoid[Boolean] = $anon$1@1fcf9332
 ```
 
 Finally, we have *exclusive nor* (the negation of exclusive or) with identity `true`:
@@ -130,7 +130,7 @@ implicit val booleanXnorMonoid: Monoid[Boolean] = new Monoid[Boolean] {
   def combine(a: Boolean, b: Boolean) = (!a || b) && (a || !b)
   def empty = true
 }
-// booleanXnorMonoid: cats.Monoid[Boolean] = $anon$1@584753e
+// booleanXnorMonoid: cats.Monoid[Boolean] = $anon$1@5f077672
 ```
 
 Showing that the identity law holds in each case is straightforward. Similarly associativity of the `combine` operation can be shown by enumerating the cases.
@@ -155,7 +155,7 @@ We need to define `setUnionMonoid` as a method rather than a value so we can acc
 
 ```scala
 val intSetMonoid = Monoid[Set[Int]] // this will work
-// intSetMonoid: algebra.Monoid[Set[Int]] = $anon$1@7b3aa53e
+// intSetMonoid: algebra.Monoid[Set[Int]] = $anon$1@1377f1cf
 ```
 
 Set intersection does not form a monoid as there is no identity element. We call this weaker structure a *semigroup*---an combine operation without a empty. Scala provides the `Semigroup` type class for this, of which `Monoid` is a subtype:

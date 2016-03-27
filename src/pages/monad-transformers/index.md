@@ -206,7 +206,7 @@ val answer: FutureXorOption[Int] =
     a <- 10.pure[FutureXorOption]
     b <- 32.pure[FutureXorOption]
   } yield a + b
-// answer: FutureXorOption[Int] = OptionT(XorT(scala.concurrent.impl.Promise$DefaultPromise@665c02ca))
+// answer: FutureXorOption[Int] = OptionT(XorT(scala.concurrent.impl.Promise$DefaultPromise@33bcfd90))
 ```
 
 <div class="callout callout-info">
@@ -467,16 +467,7 @@ report(getMeanLoad(List("a.example.com", "b.example.com")))
 // [DONE] 0.3
 
 report(getMeanLoad(List("a.example.com", "c.example.com")))
-// java.lang.InterruptedException
-//   at java.util.concurrent.locks.AbstractQueuedSynchronizer.tryAcquireSharedNanos(AbstractQueuedSynchronizer.java:1326)
-//   at scala.concurrent.impl.Promise$DefaultPromise.tryAwait(Promise.scala:208)
-//   at scala.concurrent.impl.Promise$DefaultPromise.ready(Promise.scala:218)
-//   at scala.concurrent.impl.Promise$DefaultPromise.result(Promise.scala:223)
-//   at scala.concurrent.Await$$anonfun$result$1.apply(package.scala:190)
-//   at scala.concurrent.BlockContext$DefaultBlockContext$.blockOn(BlockContext.scala:53)
-//   at scala.concurrent.Await$.result(package.scala:190)
-//   at .report(<console>:49)
-//   ... 1016 elided
+// [DONE] 0.15000000000000002
 
 report(getMeanLoad(List("a.example.com", "d.example.com")))
 // [FAIL] Host unreachable: d.example.com

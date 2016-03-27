@@ -8,7 +8,7 @@ One common use for `Writers` is logging during multi-threaded computations, wher
 TODO: Convert the `Lists` in the examples below to `Vectors`.
 </div>
 
-### Creating Writers
+### Creating and Unpacking Writers
 
 A `Writer[W, A]` carries two values: a *log* of type `W` and a *result* of type `A`. We can create a `Writer` from a log and a result as follows:
 
@@ -44,9 +44,22 @@ If we have both a result and a log, we can create a `Writer` in two ways: using 
 ```tut:book
 import cats.syntax.writer._
 
-Writer(123, List("msg1", "msg2", "msg3"))
+val a = Writer(123, List("msg1", "msg2", "msg3"))
 
-123.writer(List("msg1", "msg2", "msg3"))
+val b = 123.writer(List("msg1", "msg2", "msg3"))
+```
+
+We can extract the result and log from a `Writer` using the `value` and `written` methods respectively:
+
+```tut:book
+a.value
+a.written
+```
+
+or both at once using the `run` method:
+
+```tut:book
+b.run
 ```
 
 ### Composing and Transforming Writers
@@ -54,54 +67,52 @@ Writer(123, List("msg1", "msg2", "msg3"))
 When we transform or `map` over a `Writer`, its log is preserved. When we `flatMap`, the logs of the two `Writers` are appended. For this reason it's good practice to use a log type that has an efficient append operation, such as a `Vector`:
 
 ```tut:book
-val answer = for {
+val writer1 = for {
   a <- 10.pure[Logged]
   _ <- List("a", "b", "c").tell
   b <- 32.writer(List("x", "y", "z"))
 } yield a + b
+
+writer1.run
 ```
 
 In addition to transforming the result with `map` and `flatMap`, we can transform the log with the `mapWritten` method:
 
 ```tut:book
-answer.mapWritten(_.map(_.toUpperCase))
+val writer2 = writer1.mapWritten(_.map(_.toUpperCase))
+
+writer2.run
 ```
 
 We can also tranform both log and result simultaneously using `bimap` or `mapBoth`. `bimap` takes two function parameters, one for the log and one for the result. `mapBoth` takes a single function of two parameters:
 
 ```tut:book
-answer.bimap(
+val writer3 = writer1.bimap(
   log    => log.map(_.toUpperCase),
   result => result * 100
 )
 
-answer.mapBoth { (log, result) =>
+writer3.run
+
+val writer4 = writer1.mapBoth { (log, result) =>
   val log2    = log.map(_ + "!")
   val result2 = result * 1000
   (log2, result2)
 }
+
+writer4.run
 ```
 
 Finally, we can clear the log with the `reset` method and swap log and result with the `swap` method:
 
 ```tut:book
-answer.reset
-answer.swap
-```
+val writer5 = writer1.reset
 
-### Unpacking Writers
+writer5.run
 
-When we are done chaining computations we can extract the result and log from a `Writer` using the `value` and `written` methods respectively:
+val writer6 = writer1.swap
 
-```tut:book
-answer.value
-answer.written
-```
-
-or both at once using the `run` method:
-
-```tut:book
-answer.run
+writer6.run
 ```
 
 ### Exercise: Post-Mortem

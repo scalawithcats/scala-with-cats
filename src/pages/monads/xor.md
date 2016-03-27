@@ -157,3 +157,40 @@ def handleError(error: LoginError): Unit = error match {
 // handleError: (error: LoginError)Unit
 
 val result1: LoginResult = User("dave", "passw0rd").right
+// result1: LoginResult = Right(User(dave,passw0rd))
+
+val result2: LoginResult = UserNotFound("dave").left
+// result2: LoginResult = Left(UserNotFound(dave))
+
+result1.fold(handleError, println)
+// User(dave,passw0rd)
+
+result2.fold(handleError, println)
+// User not found: dave
+```
+
+### Swapping Control Flow
+
+Occasionally we want to run a sequence of steps until one succeeds. We can model this using `Xor` by flipping the left and right cases. The `swap` method provides this:
+
+```scala
+val a = 123.right[String]
+// a: cats.data.Xor[String,Int] = Right(123)
+
+val b = a.swap
+// b: cats.data.Xor[Int,String] = Left(123)
+```
+
+### Exercise: What is Best?
+
+Is the error handling strategy in the previous exercises well suited for all purposes? What other features might we want from error handling?
+
+<div class="solution">
+This is an open question. It's also kind of a trick question---the answer depends on the semantics we're looking for. Some points to ponder:
+
+- Error recovery is important when processing large jobs. We don't want to run a job for a day and then find it failed on the last element.
+
+- Error reporting is equally important. We need to know what went wrong, not just that something went wrong.
+
+- In a number of cases we want to collect all the errors, not just the first one we encountered. A typical example is validating a web form. It's a far better experience to report all errors to the user when they submit a form than to report them one at a time.
+</div>
