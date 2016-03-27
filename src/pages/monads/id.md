@@ -1,4 +1,4 @@
-## The Identity Monad {#id-monad}
+## The *Identity* Monad {#id-monad}
 
 We can unify monadic and normal code by using the `Id` monad. The `Id` monad provides a monad instance (and many other instances) for plain values. Note that such values are not wrapped in any class. They continue to be the plain values we started with:
 

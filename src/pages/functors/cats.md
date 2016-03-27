@@ -77,7 +77,7 @@ val optionFunctor = new Functor[Option] {
   def map[A, B](value: Option[A])(func: A => B): Option[B] =
     value map func
 }
-// optionFunctor: cats.Functor[Option] = $anon$1@b9323d6
+// optionFunctor: cats.Functor[Option] = $anon$1@5e959a59
 ```
 
 The implementation is trivial---simply call `Option's` `map` method.
@@ -119,7 +119,7 @@ implicit val resultFunctor = new Functor[Result] {
       case Failure(message)        => Failure(message)
     }
 }
-// resultFunctor: cats.Functor[Result] = $anon$1@14e2c73f
+// resultFunctor: cats.Functor[Result] = $anon$1@4abeb79b
 ```
 
 Let's use our `Functor` in a sample application:
