@@ -1,43 +1,83 @@
 ## Monoids in Cats
 
-Now we've seen what a monoid is, let's look at their implementation in Cats. Once again we'll look at the three main aspects of the implementation: the *type class*, the *instances*, and the *interface*.
+Now we've seen what a monoid is, let's look at their implementation in Cats.
+Once again we'll look at the three main aspects of the implementation:
+the *type class*, the *instances*, and the *interface*.
 
 ### The *Monoid* Type Class
 
-The monoid type class is [`cats.Monoid`][cats.Monoid]. If we look at the implementation we see that `Monoid` extends `Semigroup`. A semigroup is a monoid without the identity element, leaving only `combine`.
+The monoid type class is [`cats.Monoid`][cats.Monoid].
+If we look at the implementation we see that `Monoid` extends `Semigroup`.
+A semigroup is a monoid without the identity element, leaving only `combine`.
 
-There are a few utility methods defined on `Monoid`, mostly to do with checking if an element is `empty` (assuming we have an implemenation for equality on the monoid, denoted by the `Equal` type class). These are not commonly used in practice.
+There are a few utility methods defined on `Monoid`,
+mostly to do with checking if an element is `empty`
+(assuming we have an implemenation for equality on the monoid, denoted by the `Equal` type class).
+These are not commonly used in practice.
 
 ### Obtaining Instances
 
-`Monoid` follows the standard Cats pattern for the user interface: the companion object has an `apply` method that returns the type class instance. So if we wanted the monoid instance for `String`, and we have the correct implicits in scope, we can write the following:
+`Monoid` follows the standard Cats pattern for the user interface:
+the companion object has an `apply` method that returns the type class instance.
+So if we wanted the monoid instance for `String`,
+and we have the correct implicits in scope, we can write the following:
 
 ```tut:book
 import cats.Monoid
 import cats.std.string._
 
 Monoid[String].combine("Hi ", "there")
+
+Monoid[String].empty
 ```
 
 which is equivalent to
 
 ```tut:book
 Monoid.apply[String].combine("Hi ", "there")
+
+Monoid.apply[String].empty
+```
+
+As we hinted in the previous section, `Monoid` extends `Semigroup`.
+If we don't need `empty` we can equivalently write:
+
+```tut:book
+import cats.Semigroup
+
+Semigroup[String].combine("Hi ", "there")
 ```
 
 ### Default Instances
 
-The type class instances for `Monoid` are organised under `cats.std` in the standard way described in [Chapter 1](#importing-default-instances). For example, if we want to pull in instances for `String` we import from [`cats.std.string`][cats.std.string]:
+The type class instances for `Monoid` are organised under `cats.std`
+in the standard way described in [Chapter 1](#importing-default-instances).
+For example, if we want to pull in instances for `Int`
+we import from [`cats.std.int`][cats.std.int]:
 
 ```tut:book
 import cats.Monoid
-import cats.std.string._
+import cats.std.int._
 
-val instance = Monoid[String]
-instance.combine("Monoids FTW!", instance.empty)
+Monoid[Int].combine(32, 10)
 ```
 
-Refer back to [Chapter 1](#importing-default-instances) for a more comprehensive list of imports.
+Similarly, we can assemble a `Monoid[Option[Int]]`
+using instances from [`cats.std.int`][cats.std.int] and [`cats.std.option`][cats.std.option]:
+
+```tut:book
+import cats.Monoid
+import cats.std.int._
+import cats.std.option._
+
+val a: Option[Int] = Some(22)
+val b: Option[Int] = Some(20)
+
+Monoid[Option[Int]].combine(a, b)
+```
+
+Refer back to [Chapter 1](#importing-default-instances)
+for a more comprehensive list of imports.
 
 ### *Monoid* Syntax {#monoid-syntax}
 
@@ -58,7 +98,9 @@ val intResult = 1 |+| 2 |+| Monoid[Int].empty
 
 ### Exercise: Adding All The Things
 
-The cutting edge *SuperAdder v3.5a-32* is the world's first choice for adding together numbers. The main function in the program has signature `def add(items: List[Int]): Int`. In a tragic accident this code is deleted! Rewrite the method and save the day!
+The cutting edge *SuperAdder v3.5a-32* is the world's first choice for adding together numbers.
+The main function in the program has signature `def add(items: List[Int]): Int`.
+In a tragic accident this code is deleted! Rewrite the method and save the day!
 
 <div class="solution">
 We can write the addition as a simple `foldLeft` using `0` and the `+` operator:
@@ -68,7 +110,8 @@ def add(items: List[Int]): Int =
   items.foldLeft(0)(_ + _)
 ```
 
-We can alternatively write the fold using `Monoids`, although there's not a compelling use case for this yet:
+We can alternatively write the fold using `Monoids`,
+although there's not a compelling use case for this yet:
 
 ```tut:book
 import cats.Monoid
@@ -79,10 +122,17 @@ def add(items: List[Int]): Int =
 ```
 </div>
 
-Well done! SuperAdder's market share continues to grow, and now there is demand for additional functionality. People now want to add `List[Option[Int]]`. Change `add` so this is possible. The SuperAdder code base is of the highest quality, so make sure there is no code duplication!
+Well done! SuperAdder's market share continues to grow,
+and now there is demand for additional functionality.
+People now want to add `List[Option[Int]]`.
+Change `add` so this is possible.
+The SuperAdder code base is of the highest quality,
+so make sure there is no code duplication!
 
 <div class="solution">
-Now there is a use case for `Monoids`. We need a single method that adds `Ints` and instances of `Option[Int]`. We can write this as a generic method that accepts an implicit `Monoid` as a parameter:
+Now there is a use case for `Monoids`.
+We need a single method that adds `Ints` and instances of `Option[Int]`.
+We can write this as a generic method that accepts an implicit `Monoid` as a parameter:
 
 ```tut:book
 import cats.Monoid

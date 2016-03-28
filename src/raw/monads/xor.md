@@ -1,4 +1,4 @@
-## Either and *Xor*
+## *Either* and *Xor*
 
 The Scala standard library has a type `Either`. Cats provides an alternative called [`cats.data.Xor`][cats.data.Xor]. Why have this? Aside from providing a few useful methods, the main reason is that `Xor` is *right biased*.
 

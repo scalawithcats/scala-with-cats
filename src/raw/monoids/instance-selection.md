@@ -4,11 +4,15 @@ When working with type classes we must consider two issues that control instance
 
  -  What is the relationship between an instance defined on a type and its subtypes?
 
-    For example, if we define a `Monoid[Option]` will the expression `Some(1) |+| Some(2)` select this instance? (Remember that `Some` is a subtype of `Option`).
+    For example, if we define a `Monoid[Option[Int]]`,
+    will the expression `Some(1) |+| Some(2)` select this instance?
+    (Remember that `Some` is a subtype of `Option`).
 
  -  How do we choose between type class instances when there are many available?
 
-    We've seen there are two monoids for `Int`: addition and zero, and multiplication and one. Similarly there are three monoids for `Boolean`. When we write `true |+| false`, which instance is selected?
+    We've seen there are two monoids for `Int`: addition and zero, and multiplication and one.
+    Similarly there are three monoids for `Boolean`.
+    When we write `true |+| false`, which instance is selected?
 
 In this section we explore how Cats answers these questions.
 

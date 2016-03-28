@@ -120,9 +120,11 @@ Monad transformers are a little different to the other abstractions we've seen--
 By convention, in Cats a monad `Foo` will have a transformer class called `FooT`. In fact, many monads in Cats are defined by combining a monad transformer with the `Id` monad. Concretely, some of the available instances are:
 
 - [cats.cata.OptionT][cats.data.OptionT] for `Option`;
-- [cats.cata.XorT][cats.data.XorT], for `Xor`;
-- [cats.cata.ReaderT][cats.data.ReaderT], [cats.cata.WriterT][cats.data.WriterT], and [cats.cata.StateT][cats.data.StateT];
-- [cats.cata.IdT][cats.data.IdT], for the `Id` monad.
+- [cats.cata.XorT][cats.data.XorT] for [`Xor`][cats.data.Xor];
+- [cats.cata.ReaderT][cats.data.ReaderT],
+  [cats.cata.WriterT][cats.data.WriterT], and
+  [cats.cata.StateT][cats.data.StateT];
+- [cats.cata.IdT][cats.data.IdT] for the [`Id`][cats.Id] monad.
 
 All of these monad transformers follow the same convention: the first type parameter specifies the monad that is wrapped around the monad implied by the transformer. The remaining type parameters are the types we're used to from the corresponding monads.
 
@@ -394,4 +396,11 @@ report(getMeanLoad(List("a.example.com", "b.example.com")))
 report(getMeanLoad(List("a.example.com", "c.example.com")))
 report(getMeanLoad(List("a.example.com", "d.example.com")))
 ```
+</div>
+
+## Exercise: *ReaderWriterState*
+
+<div class="callout callout-danger">
+  TODO: Scalaz provides a ReaderWriterState monad. Cats doesn't.
+  Implement it using `ReaderT`, `WriterT`, and `StateT`.
 </div>

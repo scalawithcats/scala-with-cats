@@ -134,7 +134,7 @@ import cats.data.Reader
 import cats.syntax.applicative._
 // import cats.syntax.applicative._
 
-case class Database(usernames: List[String], passwords: Map[String, String])
+case class Database(users: Map[Int, String], passwords: Map[String, String])
 // defined class Database
 
 type DatabaseReader[A] = Reader[Database, A]
@@ -142,24 +142,20 @@ type DatabaseReader[A] = Reader[Database, A]
 
 def findUsername(userId: Int): DatabaseReader[Option[String]] =
   Reader { (database: Database) =>
-    database.usernames.lift.apply(userId)
+    database.users.get(userId)
   }
 // findUsername: (userId: Int)DatabaseReader[Option[String]]
 
 def checkPassword(username: String, password: String): DatabaseReader[Boolean] =
   Reader { (database: Database) =>
-    database.passwords
-      .get(username)
-      .filter(_ == password)
-      .isDefined
+    database.passwords.get(username).filter(_ == password).isDefined
   }
 // checkPassword: (username: String, password: String)DatabaseReader[Boolean]
 
 def checkLogin(userId: Int, password: String): DatabaseReader[Boolean] =
   for {
     username   <- findUsername(userId)
-    passwordOk <- username
-                    .map(checkPassword(_, password))
+    passwordOk <- username.map(checkPassword(_, password))
                     .getOrElse(false.pure[DatabaseReader])
   } yield passwordOk
 // checkLogin: (userId: Int, password: String)DatabaseReader[Boolean]
@@ -174,11 +170,11 @@ check whether user `1` has access to our software.
 We simply need to provide a `Database` to get a result:
 
 ```scala
-program(Database(List("noel", "dave"), Map("noel" -> "shhh", "dave" -> "secret")))
+program(Database(Map(123 -> "noel", 321 -> "dave"), Map("noel" -> "shhh", "dave" -> "secret")))
 // res5: Boolean = false
 
-program(Database(List("dave", "noel"), Map("noel" -> "shhh", "dave" -> "secret")))
-// res6: Boolean = false
+program(Database(Map(123 -> "dave", 321 -> "noel"), Map("noel" -> "shhh", "dave" -> "secret")))
+// res6: Boolean = true
 ```
 
 In practice, Scala has many other tools that we can use for dependency injection,
@@ -186,6 +182,10 @@ including trait-based inheritance and implicit parameter lists.
 The `Reader` monad provides a simple functional technique that
 achieves similar results without the need for additional language features.
 However, its usefulness in a language like Scala is debatable.
+
+<div class="callout callout-danger">
+  TODO: Discuss the relative merits of implicit arguments and readers:
+</div>
 
 ### Exercise
 

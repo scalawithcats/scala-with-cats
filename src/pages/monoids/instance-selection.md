@@ -4,11 +4,15 @@ When working with type classes we must consider two issues that control instance
 
  -  What is the relationship between an instance defined on a type and its subtypes?
 
-    For example, if we define a `Monoid[Option]` will the expression `Some(1) |+| Some(2)` select this instance? (Remember that `Some` is a subtype of `Option`).
+    For example, if we define a `Monoid[Option[Int]]`,
+    will the expression `Some(1) |+| Some(2)` select this instance?
+    (Remember that `Some` is a subtype of `Option`).
 
  -  How do we choose between type class instances when there are many available?
 
-    We've seen there are two monoids for `Int`: addition and zero, and multiplication and one. Similarly there are three monoids for `Boolean`. When we write `true |+| false`, which instance is selected?
+    We've seen there are two monoids for `Int`: addition and zero, and multiplication and one.
+    Similarly there are three monoids for `Boolean`.
+    When we write `true |+| false`, which instance is selected?
 
 In this section we explore how Cats answers these questions.
 
@@ -101,7 +105,7 @@ but we can summon the multiplication monoid explicitly:
 ```scala
 val multMonoid: Monoid[Int] =
   cats.std.int.intAlgebra.multiplicative
-// multMonoid: cats.Monoid[Int] = algebra.ring.MultiplicativeCommutativeMonoid$mcI$sp$$anon$7@267d7dd5
+// multMonoid: cats.Monoid[Int] = algebra.ring.MultiplicativeCommutativeMonoid$mcI$sp$$anon$7@7ee09918
 
 multMonoid.combine(2, 3)
 // res5: Int = 6
@@ -113,11 +117,11 @@ although we can summon monoids for conjuction and disjunction explicitly:
 ```scala
 val conjMonoid: Monoid[Boolean] =
   cats.std.boolean.booleanAlgebra.multiplicative
-// conjMonoid: cats.Monoid[Boolean] = algebra.ring.MultiplicativeCommutativeMonoid$$anon$14@71b98f8c
+// conjMonoid: cats.Monoid[Boolean] = algebra.ring.MultiplicativeCommutativeMonoid$$anon$14@53bdd925
 
 val disjMonoid: Monoid[Boolean] =
   cats.std.boolean.booleanAlgebra.additive
-// disjMonoid: cats.Monoid[Boolean] = algebra.ring.AdditiveCommutativeMonoid$$anon$14@30981699
+// disjMonoid: cats.Monoid[Boolean] = algebra.ring.AdditiveCommutativeMonoid$$anon$14@5c1df875
 
 conjMonoid.combine(true, false)
 // res6: Boolean = false
@@ -136,7 +140,7 @@ import cats.syntax.semigroup._
 
 implicit val multMonoid: Monoid[Int] =
   cats.std.int.intAlgebra.multiplicative
-// multMonoid: cats.Monoid[Int] = algebra.ring.MultiplicativeCommutativeMonoid$mcI$sp$$anon$7@4ef12775
+// multMonoid: cats.Monoid[Int] = algebra.ring.MultiplicativeCommutativeMonoid$mcI$sp$$anon$7@583379c3
 
 2 |+| 3
 // res8: Int = 5
