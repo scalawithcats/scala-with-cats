@@ -18,12 +18,17 @@ Building
 Use the following commands to build a single format:
 
 ~~~
-grunt pdf
+sbt pdf
 grunt html
 grunt epub
 ~~~
 
+
+BELOW IS POSSIBLY BROKEN
+
+
 The default grunt behaviour is to build all formats:
+
 
 ~~~
 grunt
