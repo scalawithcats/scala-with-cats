@@ -30,6 +30,11 @@ pages:
   - src/pages/monoids/instance-selection.md
   # - src/pages/monoids/summary.md
 
+  - src/pages/foldable/index.md
+  - src/pages/foldable/cats.md
+  - src/pages/foldable/eval.md
+  - src/pages/foldable/summary.md
+
   - src/pages/functors/index.md
   - src/pages/functors/cats.md
   - src/pages/functors/summary.md

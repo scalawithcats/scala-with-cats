@@ -208,7 +208,7 @@ val answer: FutureXorOption[Int] =
     a <- 10.pure[FutureXorOption]
     b <- 32.pure[FutureXorOption]
   } yield a + b
-// answer: FutureXorOption[Int] = OptionT(XorT(scala.concurrent.impl.Promise$DefaultPromise@28c485c4))
+// answer: FutureXorOption[Int] = OptionT(XorT(scala.concurrent.impl.Promise$DefaultPromise@334f38e2))
 ```
 
 <div class="callout callout-info">
