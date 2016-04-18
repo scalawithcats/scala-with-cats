@@ -1,0 +1,61 @@
+digraph G {
+
+  Show;
+  Eq;
+
+  // --------------------
+
+  Monoid;
+
+  Semigroup -> Monoid;
+
+  // --------------------
+
+  Eval;
+
+  // --------------------
+
+  Foldable;
+
+  Eval        -> Foldable;
+  Monoid      -> Foldable;
+  Applicative -> Foldable;
+
+  // --------------------
+
+  Monad;
+
+  Functor -> Monad;
+  FlatMap -> Monad;
+
+  Monad -> Id;
+  Monad -> Xor;
+  Monad -> Reader;
+  Monad -> Writer;
+  Monad -> State;
+
+  Eval -> Writer;
+
+  // --------------------
+
+  MonadTransformer;
+
+  MonadTransformer -> ReaderT;
+  MonadTransformer -> WriterT;
+  MonadTransformer -> StateT;
+
+  Reader -> ReaderT;
+  Writer -> WriterT;
+  State  -> StateT;
+
+  // --------------------
+
+  Applicative;
+  Cartesian;
+  Traverse;
+
+  Cartesian -> Applicative;
+  Cartesian -> CartesianBuilder;
+  Applicative -> Traverse;
+
+}
