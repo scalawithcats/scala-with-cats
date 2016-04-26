@@ -31,6 +31,7 @@ pages:
   # - src/pages/monoids/summary.md
 
   - src/pages/foldable/index.md
+  - src/pages/foldable/higher-kinds.md
   - src/pages/foldable/cats.md
   - src/pages/foldable/eval.md
   - src/pages/foldable/summary.md

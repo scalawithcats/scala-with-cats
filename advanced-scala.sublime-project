@@ -6,6 +6,7 @@
         "src/pages/intro",
         "src/pages/type-classes",
         "src/pages/monoids",
+        "src/pages/foldable",
         "src/pages/functors",
         "src/pages/monads",
         "src/pages/monad-transformers",

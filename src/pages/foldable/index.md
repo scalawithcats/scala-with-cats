@@ -4,115 +4,102 @@ The `Foldable` type class captures the concept of data structures that we can it
 
 ## Folds and Folding
 
-Let's start with a quick recap on the concept of *folding* in functional programming.
-
-In general, a `fold` is a function that allows users to transform one algebraic data type to another. Given an ADT, we can always define a fold operation that supports arbitrary transformations.
-
-For example, suppose we have a simple ADT such as `Option`:
+Let's start with a quick recap on the concept of *folding* in functional programming. In general, a `fold` function allows users to transform one algebraic data type to another. It is a standard representation of structural recursion, typically implemented in Scala using pattern matching. For example, here is an implementation of `fold` for `Option`:
 
 ```scala
-sealed trait Option[+A]
-final case class Some[A](value: Double) extends Option[A]
-final case object None extends Option[Nothing]
-```
-
-Given this structural knowledge, we can define a `fold` function that allows users to perform arbitrary transformations on `Options` without knowing about implementation details such as `Some` and `None`. The user provides parameters specifying the transformations for the full and empty cases and `fold` handles the rest:
-
-```scala
-def foldOption[A, B](opt: Option[A])(handleNone: () => B, handleSome: A => B): B =
+def foldOption[A, B](opt: Option[A], whenNone: => B)(whenSome: A => B): B =
   opt match {
-    case Some(value) => handleSome(value)
-    case None        => handleNone()
+    case Some(value) => whenSome(value)
+    case None        => whenNone
   }
-// foldOption: [A, B](opt: Option[A])(handleNone: () => B, handleSome: A => B)B
+// foldOption: [A, B](opt: Option[A], whenNone: => B)(whenSome: A => B)B
 
-val opt = Option(42)
-// opt: Option[Int] = Some(42)
+foldOption(Option(40), -1)(num => num + 2)
+// res0: Int = 42
 
-foldOption(opt)(
-  () => "Empty",
-  num => if(num == 42) "We have the answer!" else "Another number"
-)
-// res0: String = We have the answer!
+// Note: foldOption above has the same semantics
+// as option.fold in the standard library:
+Option(40).fold(-1)(num => num + 2)
+// res3: Int = 42
 ```
 
-`fold` is a fundamental building block on which we can define all other transformational methods:
+When defining `fold` for sequences, it is natural to express the transformation recursively. We focus on each item in the sequence in turn, transforming it with the user's code and feeding the result into the transformation for the next item. The order in which we visit the items is important, so we normally define two variants of `fold`:
+
+- `foldLeft` traverses the sequence from "left" to "right" (start to finish);
+-  `foldRight` traverses the sequence from "right" to "left" (finish to start).
+
+We can demonstrate the difference in traversal direction using the built-in `foldLeft` and `foldRight` methods on `List`:
 
 ```scala
-def flatMapOption[A, B](opt: Option[A])(func: A => Option[B]): Option[B] =
-  foldOption(opt)(() => None, func)
-// flatMapOption: [A, B](opt: Option[A])(func: A => Option[B])Option[B]
-
-def mapOption[A, B](opt: Option[A])(func: A => B): Option[B] =
-  foldOption(opt)(() => None, value => Some(func(value)))
-// mapOption: [A, B](opt: Option[A])(func: A => B)Option[B]
-
-def filterOption[A](opt: Option[A])(func: A => Boolean): Boolean =
-  foldOption(opt)(() => false, func)
-// filterOption: [A](opt: Option[A])(func: A => Boolean)Boolean
-```
-
-When defining `fold` for recursive data structures such as `Lists`, we need a way to feed the result at one level of recursion into the computation at the next level of recursion. We do this by adding a parameter to the transformation function for the recursive case:
-
-```scala
-def foldList[A, B](list: List[A])(handleNil: () => B, handlePair: (A, B) => B): B =
-  ???
-// foldList: [A, B](list: List[A])(handleNil: () => B, handlePair: (A, B) => B)B
-```
-
-We often also find that there are multiple ways we can write `fold` that traverse the data structure in different directions. With sequences we call these `foldLeft`, which applies the handlers from left to right, and `foldRight`, which applies them from right to left:
-
-```scala
-def foldListLeft[A, B](list: List[A])(handleNil: () => B, handlePair: (A, B) => B): B =
-  list match {
-    case head :: tail => foldListLeft(tail)(() => handlePair(head, handleNil()), handlePair)
-    case Nil          => handleNil()
-  }
-// foldListLeft: [A, B](list: List[A])(handleNil: () => B, handlePair: (A, B) => B)B
-
-def foldListRight[A, B](list: List[A])(handleNil: () => B, handlePair: (A, B) => B): B =
-  list match {
-    case head :: tail => handlePair(head, foldListRight(tail)(handleNil, handlePair))
-    case Nil          => handleNil()
-  }
-// foldListRight: [A, B](list: List[A])(handleNil: () => B, handlePair: (A, B) => B)B
-
 val strings = List("a", "b", "c")
 // strings: List[String] = List(a, b, c)
 
-foldListLeft(strings)(
-  () => "nil",
-  (x: String, y: String) => x + "," + y)
-// res1: String = c,b,a,nil
+strings.foldLeft("nil")(_ + "," + _)
+// res4: String = nil,a,b,c
 
-foldListRight(strings)(
-  () => "nil",
-  (x, y) => x + "," + y)
-// <console>:16: error: missing parameter type
-//          (x, y) => x + "," + y)
-//              ^
+strings.foldRight("nil")(_ + "," + _)
+// res5: String = a,b,c,nil
 ```
 
- the transformation functions themselves have to become `fold` typically becomes recursive. The result of one level of recursion is fed as an input to the handler for the recursive case. Hence
+We can treat folds as low-level functions on top of which we can implement any other algebraic transformation, including examples such as `map`, `flatMap`, `filter`, `reduceLeft`, and so on.
 
-the  sequences such as `List`, there are multiple ways of writing `fold`:
+## The Foldable Type Class
+
+`foldLeft` and `foldRight` form an essential part of almost every non-trivial functional program. It seems useful to extract these operations into their own type class, which allows us to:
+
+- extend the built-in functionality of Scala collections with new methods based on folds;
+- provide fold implementations for other sequence types, other than those provided in the core library.
+
+Cats calls the type class `Foldable` type class for just this purpose. Before we look at Cats' definition, however, we should define `Foldable` ourselves.
+
+Here is an example type class instance for `List`. We simply delegate to its built-in methods:
 
 ```scala
-def foldListLeft[A, B](list: List[A], handleNil: B)(handleHead: A => B): B =
-// <console>:4: error: illegal start of simple expression
-// def foldListLeft[A, B](list: List[A], handleNil: B)(handleHead: A => B): B =
-// ^
-  list match {
-    case head :: tail => handleHead()
-  }
+object ListFoldable {
+  def foldLeft[A, B](lis: List[A], accum: => B)(func: (B, A) => B): B =
+    lis.foldLeft(accum)(func)
+
+  def foldRight[A, B](lis: List[A], accum: => B)(func: (A, B) => B): B =
+    lis.foldRight(accum)(func)
+}
+// defined object ListFoldable
 ```
 
-## The Concept of a Foldable
+Similarly for `Vector`:
+
+```scala
+object VectorFoldable {
+  def foldLeft[A, B](vec: Vector[A], accum: => B)(func: (B, A) => B): B =
+    vec.foldLeft(accum)(func)
+
+  def foldRight[A, B](vec: Vector[A], accum: => B)(func: (A, B) => B): B =
+    vec.foldRight(accum)(func)
+}
+// defined object VectorFoldable
+```
+
+To write a generic definition of `Foldable` that abstracts over different sequence types, we have to generalise over the `List` and `Vector` type constructors:
+
+```scala
+import scala.language.higherKinds
+// import scala.language.higherKinds
+
+trait Foldable[F[_]] {
+  def foldLeft[A, B](vec: Vector[A], accum: => B)(func: (A, B) => B): B
+  def foldRight[A, B](vec: Vector[A], accum: => B)(func: (B, A) => B): B
+
+  // ...other methods go here...
+}
+// defined trait Foldable
+```
+
+If you haven’t seen syntax like `F[_]` before, it’s time to take a brief detour to discuss *type constructors* and *higher kinded types*. We’ll explain that `scala.language` import as well.
 
 <div class="callout callout-danger">
-TODO:
+TODO: Exercise: define a few methods in terms of foldLeft and foldRight:
 
-- Foldable captures the concept of a data structure that can be iterated over
-- Talk about sequences (Lists, Streams, etc)
-- Talk about non-obvious instances
+- filter
+- map
+- flatMap
+- combineAll
 </div>
