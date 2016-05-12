@@ -79,7 +79,7 @@ We have received a compile error here because the `Eq` type class is invariant. 
 (Some(1) : Option[Int]) === (None : Option[Int])
 ```
 
-We can do this in a friendlier fashion using special `Option` syntax from `cas.syntax.option`:
+We can do this in a friendlier fashion using special `Option` syntax from `cats.syntax.option`:
 
 ```tut:book
 import cats.syntax.option._
