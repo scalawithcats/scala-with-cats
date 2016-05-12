@@ -30,12 +30,6 @@ pages:
   - src/pages/monoids/instance-selection.md
   # - src/pages/monoids/summary.md
 
-  - src/pages/foldable/index.md
-  - src/pages/foldable/higher-kinds.md
-  - src/pages/foldable/cats.md
-  - src/pages/foldable/eval.md
-  - src/pages/foldable/summary.md
-
   - src/pages/functors/index.md
   - src/pages/functors/cats.md
   - src/pages/functors/summary.md
@@ -43,6 +37,7 @@ pages:
   - src/pages/monads/index.md
   - src/pages/monads/cats.md
   - src/pages/monads/id.md
+  - src/pages/monads/eval.md
   - src/pages/monads/xor.md
   # - src/pages/monads/error-recovery.md
   - src/pages/monads/writer.md
@@ -58,6 +53,10 @@ pages:
   - src/pages/applicatives/validation.md
   - src/pages/applicatives/scalaz.md
   - src/pages/applicatives/summary.md
+
+  - src/pages/foldable/index.md
+  - src/pages/foldable/cats.md
+  - src/pages/foldable/summary.md
 
   - src/pages/case-studies/mapreduce/index.md
 

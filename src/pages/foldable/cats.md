@@ -41,7 +41,7 @@ Foldable[StringMap].foldLeft(stringMap, "nil")(_ + "," + _)
 // res2: String = nil,b,d
 ```
 
-Note that we haven't looked at `foldRight` in these examples. This is because Cats defines `foldRight` slightly differently to what we've seen so far, in terms of another tool called `Eval`. We'll look at `Eval` and `foldRight` in more detail in a bit.
+Note that we haven't looked at `foldRight`. Cats defines this method slightly differently than what we have seen---we'll need to introduce some new infrastructure to discuss it. We'll take a detour now to discuss some useful methods based on `foldLeft` and circle back to `foldRight` in a moment.
 
 ### Methods of Foldable
 
@@ -136,11 +136,57 @@ TODO:
 - Exercises
 </div>
 
-### Methods returning Eval
+### Folding Right
+
+So far we have talked about a lot of methods based on `foldLeft`, but we haven't talked about `foldRight`. If we try to call Cats' version of `foldRight` we will see that it is defined differently to what we're used to:
+
+```scala
+Foldable[List].foldRight(List(1, 2, 3), 0)(_ + _)
+// <console>:35: error: type mismatch;
+//  found   : Int(0)
+//  required: cats.Eval[?]
+//        Foldable[List].foldRight(List(1, 2, 3), 0)(_ + _)
+//                                                ^
+```
+
+Cats' `foldRight` method expects us to define our accumulator in terms of a new type called `Eval`. The actual method definition looks like this:
+
+```scala
+trait Foldable[F[_]] {
+  def foldLeft[A, B](fa: F[A], b: B)(f: (B, A) => B): B
+  def foldRight[A, B](fa: F[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B]
+  // etc...
+}
+```
+
+The difference in definition is an efficiency consideration that allows us to iterate over very large data structures without stack overflows.
+
+If we define `foldLeft` for a left-associative data structure such as a `List` or `Stream`, we find that we can use tail recursion (via Scala's `tailrec` annotation) to write an efficient implementation that does not consume stack as it iterates over the sequence. This makes intuitive sense as our algorithm can peel off the head of the sequence at each iteration and forget about it for the next iteration:
+
+```scala
+val ints = (1 to 100000000).toStream
+// ints: Stream[Int] = ...
+
+ints.foldLeft(0)(_ + _)
+// completes after a very long time
+```
 
 <div class="callout callout-danger">
-TODO:
+TODO: Exercise: define this yourself
+</div>
 
-- Talk about foldRight
-- Mention Eval
+The same is not true of `foldRight`. In a left-associative sequence, we have to recurse all the way to the end so we can traverse the elements on the way back up. When working with large enough sequences this can lead to stack overflows:
+
+```scala
+ints.foldRight(0)(_ + _)
+// java.lang.StackOverflowError
+//   etc...
+```
+
+<div class="callout callout-danger">
+TODO: Exercise: define this yourself
+</div>
+
+<div class="callout callout-danger">
+Talk briefly about `Eval` and segue into the next section.
 </div>
