@@ -36,7 +36,7 @@ Xor.right(1).flatMap(x => Xor.right(x + 2))
 
 ### Creating Xors
 
-The `Xor` object provides factory the `Xor.left` and `Xor.right` methods as we saw above. However, these are slightly unwieldy due to the finger gymnastics required to write `Xor`. We typically import syntax from [`cats.syntax.xor`][cats.syntax.xor] to get nicer constructors---`left` and `right` as enriched methods:
+The `Xor` object provides factory methods `Xor.left` and `Xor.right` methods as we saw above. However, these are slightly unwieldy due to the finger gymnastics required to write `Xor`. We typically import syntax from [`cats.syntax.xor`][cats.syntax.xor] to get nicer constructors---`left` and `right` as enriched methods:
 
 ```tut:book
 import cats.syntax.xor._
