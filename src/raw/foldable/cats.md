@@ -1,22 +1,29 @@
 ## Foldable in Cats
 
 Cats' `Foldable` abstracts the two operations `foldLeft` and `foldRight` into a type class.
-Instances are required to define those two methods,
-and inherit a host of derived methods for free.
+Instances of `Foldable` have to define those two methods,
+but inherit a host of derived methods for free.
 
 Cats provides out-of-the-box instances of `Foldable` for a handful of Scala data types:
 `List`, `Vector`, `Stream`, `Option`, and `Map`.
 We can summon instances as usual using `Foldable.apply`
-and call their implementations of `foldLeft` directly:
+and call their implementations of `foldLeft` directly on the instances.
+
+Here is an example using `List`:
 
 ```tut:book
+import cats.Foldable
+
 val ints = List(1, 2, 3)
 
-import cats.Foldable
 import cats.std.list._
 
 Foldable[List].foldLeft(ints, 0)(_ + _)
+```
 
+And here is an example using `Option`:
+
+```tut:book
 val maybeInt = Option(1)
 
 import cats.std.option._
@@ -26,7 +33,8 @@ Foldable[Option].foldLeft(maybeInt, "")(_ + _)
 
 The `Foldable` instance for `Map` allows us to fold over its values.
 Because `Map` has two type parameters,
-we have to fix one of them to create the expected single-parameter type constructor:
+we have to fix one of them to create the single-parameter type constructor
+we need to summon the `Foldable`:
 
 ```tut:book
 type StringMap[A] = Map[String, A]
@@ -38,7 +46,10 @@ import cats.std.map._
 Foldable[StringMap].foldLeft(stringMap, "nil")(_ + "," + _)
 ```
 
-`Foldable` defines `foldRight` differently to `foldLeft`, in terms of the `Eval` monad:
+### Folding right
+
+`Foldable` defines `foldRight` differently to `foldLeft`,
+in terms of the `Eval` monad:
 
 ```scala
 def foldRight[A, B](fa: F[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B]
@@ -47,7 +58,13 @@ def foldRight[A, B](fa: F[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B]
 Using `Eval` means folding with `Foldable` is always *stack safe*,
 even when the collection's default definition of `foldRight` is not.
 
+For example, the default implementation for `Stream` is not stack safe.
+We can see the stack depth creeping up as we iterate across the stream:
+
 ```tut:book
+import cats.Eval
+import cats.Foldable
+
 def stackDepth: Int =
   new Exception().getStackTrace.length
 
@@ -56,13 +73,25 @@ def stackDepth: Int =
   println(stackDepth)
   a + b
 }
+```
+
+As we saw in the [monads chapter](#eval), however, `Eval's` `map` and `flatMap` are trampolined, so `Foldable's` `foldRight` method maintains the same stack depth throughout:
+
+```tut:book
+import cats.std.stream._
+
+val foldable = Foldable[Stream]
 
 // The Foldable implementation is stack safe because we're using Eval:
-(1 to 5).toStream.foldRight(0) { (a: Int, b: Eval[Int]) =>
-  println(stackDepth)
-  b.map(_ + a)
+foldable.foldRight((1 to 5).toStream, Eval.now(0)) {
+  (a: Int, b: Eval[Int]) =>
+    println(stackDepth)
+    b.map(_ + a)
 }.value
 ```
+
+Note that we supply a seed value of type `Eval`,
+and we use the `value` method to unpack the result afterwards.
 
 <div class="callout callout-info">
 *What is stack safety?*

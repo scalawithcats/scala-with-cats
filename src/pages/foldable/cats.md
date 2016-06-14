@@ -1,20 +1,33 @@
 ## Foldable in Cats
 
-Cats provides out-of-the-box instances of `Foldable` for a handful of Scala data types: `List`, `Vector`, `Stream`, `Option`, and `Map`. We can summon instances as usual using `Foldable.apply` and call their implementations of `foldLeft` directly:
+Cats' `Foldable` abstracts the two operations `foldLeft` and `foldRight` into a type class.
+Instances of `Foldable` have to define those two methods,
+but inherit a host of derived methods for free.
+
+Cats provides out-of-the-box instances of `Foldable` for a handful of Scala data types:
+`List`, `Vector`, `Stream`, `Option`, and `Map`.
+We can summon instances as usual using `Foldable.apply`
+and call their implementations of `foldLeft` directly on the instances.
+
+Here is an example using `List`:
 
 ```scala
-val ints = List(1, 2, 3)
-// ints: List[Int] = List(1, 2, 3)
-
 import cats.Foldable
 // import cats.Foldable
+
+val ints = List(1, 2, 3)
+// ints: List[Int] = List(1, 2, 3)
 
 import cats.std.list._
 // import cats.std.list._
 
 Foldable[List].foldLeft(ints, 0)(_ + _)
 // res0: Int = 6
+```
 
+And here is an example using `Option`:
+
+```scala
 val maybeInt = Option(1)
 // maybeInt: Option[Int] = Some(1)
 
@@ -25,7 +38,10 @@ Foldable[Option].foldLeft(maybeInt, "")(_ + _)
 // res1: String = 1
 ```
 
-The `Foldable` instance for `Map` allows us to fold over its values. Because `Map` has two type parameters, we have to fix one of them to create the expected single-parameter type constructor:
+The `Foldable` instance for `Map` allows us to fold over its values.
+Because `Map` has two type parameters,
+we have to fix one of them to create the single-parameter type constructor
+we need to summon the `Foldable`:
 
 ```scala
 type StringMap[A] = Map[String, A]
@@ -41,18 +57,100 @@ Foldable[StringMap].foldLeft(stringMap, "nil")(_ + "," + _)
 // res2: String = nil,b,d
 ```
 
-Note that we haven't looked at `foldRight`. Cats defines this method slightly differently than what we have seen---we'll need to introduce some new infrastructure to discuss it. We'll take a detour now to discuss some useful methods based on `foldLeft` and circle back to `foldRight` in a moment.
+### Folding right
+
+`Foldable` defines `foldRight` differently to `foldLeft`,
+in terms of the `Eval` monad:
+
+```scala
+def foldRight[A, B](fa: F[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B]
+```
+
+Using `Eval` means folding with `Foldable` is always *stack safe*,
+even when the collection's default definition of `foldRight` is not.
+
+For example, the default implementation for `Stream` is not stack safe.
+We can see the stack depth creeping up as we iterate across the stream:
+
+```scala
+import cats.Eval
+// import cats.Eval
+
+import cats.Foldable
+// import cats.Foldable
+
+def stackDepth: Int =
+  new Exception().getStackTrace.length
+// stackDepth: Int
+
+// The default implementation of foldRight for Stream is not stack safe:
+(1 to 5).toStream.foldRight(0) { (a: Int, b: Int) =>
+  println(stackDepth)
+  a + b
+}
+// 452
+// 450
+// 448
+// 446
+// 444
+// res4: Int = 15
+```
+
+As we saw in the [monads chapter](#eval), however, `Eval's` `map` and `flatMap` are trampolined, so `Foldable's` `foldRight` method maintains the same stack depth throughout:
+
+```scala
+import cats.std.stream._
+// import cats.std.stream._
+
+val foldable = Foldable[Stream]
+// foldable: cats.Foldable[Stream] = cats.std.StreamInstances$$anon$1@17bdc237
+
+// The Foldable implementation is stack safe because we're using Eval:
+foldable.foldRight((1 to 5).toStream, Eval.now(0)) {
+  (a: Int, b: Eval[Int]) =>
+    println(stackDepth)
+    b.map(_ + a)
+}.value
+// 505
+// 505
+// 505
+// 505
+// 505
+// res6: Int = 15
+```
+
+Note that we supply a seed value of type `Eval`,
+and we use the `value` method to unpack the result afterwards.
+
+<div class="callout callout-info">
+*What is stack safety?*
+
+A *stack safe* algorithm always consumes the same number of stack frames,
+regardless of the size of the data structure on which it is operating.
+They are "safe" because they can never cause `StackOverflowExceptions`.
+
+Many sequences such as `Lists` and `Streams` are right-associative.
+We can write stack safe implementations of `foldLeft` for these types using tail recursion.
+However, implementations of `foldRight` have to work against the direction of associativity.
+We can either resort to regular recursion, using the stack to combine values on the way back up,
+or use a technique called "trampolining" to rewrite the computation as a (heap allocated) list of functions.
+
+Trampolining is beyond the scope of this book,
+suffice to say that `Eval` uses this technique to ensure that all our `foldRights` are stack safe by default.
+</div>
 
 ### Methods of Foldable
 
-Cats' `Foldable`  provides us with a host of useful methods defined on top of `foldLeft`. Many of these are facimiles of familiar methods from the standard library, including `find`, `exists`, `forall`, `toList`, `isEmpty`, and `nonEmpty`:
+Cats' `Foldable` provides us with a host of useful methods defined on top of `foldLeft`.
+Many of these are facimiles of familiar methods from the standard library,
+including `find`, `exists`, `forall`, `toList`, `isEmpty`, and `nonEmpty`:
 
 ```scala
 Foldable[Option].nonEmpty(Option(42))
-// res3: Boolean = true
+// res7: Boolean = true
 
 Foldable[List].find(List(1, 2, 3))(_ % 2 == 0)
-// res4: Option[Int] = Some(2)
+// res8: Option[Int] = Some(2)
 ```
 
 In addition to these familiar methods, Cats provides two methods that make use of `Monoids`:
@@ -67,13 +165,13 @@ import cats.std.int._ // import Monoid[Int]
 // import cats.std.int._
 
 Foldable[List].combineAll(List(1, 2, 3))
-// res5: Int = 6
+// res9: Int = 6
 
 import cats.std.string._ // import Monoid[String]
 // import cats.std.string._
 
 Foldable[List].foldMap(List(1, 2, 3))(_.toString)
-// res6: String = 123
+// res10: String = 123
 ```
 
 Finally, we can compose `Foldables` to support deep traversal of nested sequences:
@@ -86,32 +184,35 @@ val ints = List(Vector(1, 2, 3), Vector(4, 5, 6))
 // ints: List[scala.collection.immutable.Vector[Int]] = List(Vector(1, 2, 3), Vector(4, 5, 6))
 
 Foldable[List].compose(Foldable[Vector]).combineAll(ints)
-// res7: Int = 21
+// res11: Int = 21
 ```
 
 ### Syntax for Foldable
 
-Every method in `Foldable` is available in syntax form via the `cats.syntax.foldable` import. In each case, the first argument to the method on `Foldable` becomes the method receiver:
+Every method in `Foldable` is available in syntax form via the `cats.syntax.foldable` import.
+In each case, the first argument to the method on `Foldable` becomes the method receiver:
 
 ```scala
 import cats.syntax.foldable._
 // import cats.syntax.foldable._
 
 List(1, 2, 3).combineAll
-// res8: Int = 6
+// res12: Int = 6
 
 List(1, 2, 3).foldMap(_.toString)
-// res9: String = 123
+// res13: String = 123
 ```
 
 <div class="callout callout-info">
 *Explicits over Implicits*
 
-Remember that Scala will only use an instance of `Foldable` if the method isn't explicitly available on the receiver. For example, the following code will use the version of `foldLeft` defined on `List`:
+Remember that Scala will only use an instance of `Foldable`
+if the method isn't explicitly available on the receiver.
+For example, the following code will use the version of `foldLeft` defined on `List`:
 
 ```scala
 List(1, 2, 3).foldLeft(0)(_ + _)
-// res10: Int = 6
+// res14: Int = 6
 ```
 
 whereas the following generic code will use `Foldable`:
@@ -125,7 +226,9 @@ def sum[F[_]: Foldable](values: F[Int]): Int =
 // sum: [F[_]](values: F[Int])(implicit evidence$1: cats.Foldable[F])Int
 ```
 
-In practice, we don't need to worry about this distinction. It's a feature! We call the method we want, and the compiler uses a `Foldable` if necessary to ensure our code works as expected.
+In practice, we don't need to worry about this distinction. It's a feature!
+We call the method we want and the compiler uses a `Foldable` when needed
+to ensure our code works as expected.
 </div>
 
 ### Exercises
@@ -134,59 +237,4 @@ In practice, we don't need to worry about this distinction. It's a feature! We c
 TODO:
 
 - Exercises
-</div>
-
-### Folding Right
-
-So far we have talked about a lot of methods based on `foldLeft`, but we haven't talked about `foldRight`. If we try to call Cats' version of `foldRight` we will see that it is defined differently to what we're used to:
-
-```scala
-Foldable[List].foldRight(List(1, 2, 3), 0)(_ + _)
-// <console>:35: error: type mismatch;
-//  found   : Int(0)
-//  required: cats.Eval[?]
-//        Foldable[List].foldRight(List(1, 2, 3), 0)(_ + _)
-//                                                ^
-```
-
-Cats' `foldRight` method expects us to define our accumulator in terms of a new type called `Eval`. The actual method definition looks like this:
-
-```scala
-trait Foldable[F[_]] {
-  def foldLeft[A, B](fa: F[A], b: B)(f: (B, A) => B): B
-  def foldRight[A, B](fa: F[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B]
-  // etc...
-}
-```
-
-The difference in definition is an efficiency consideration that allows us to iterate over very large data structures without stack overflows.
-
-If we define `foldLeft` for a left-associative data structure such as a `List` or `Stream`, we find that we can use tail recursion (via Scala's `tailrec` annotation) to write an efficient implementation that does not consume stack as it iterates over the sequence. This makes intuitive sense as our algorithm can peel off the head of the sequence at each iteration and forget about it for the next iteration:
-
-```scala
-val ints = (1 to 100000000).toStream
-// ints: Stream[Int] = ...
-
-ints.foldLeft(0)(_ + _)
-// completes after a very long time
-```
-
-<div class="callout callout-danger">
-TODO: Exercise: define this yourself
-</div>
-
-The same is not true of `foldRight`. In a left-associative sequence, we have to recurse all the way to the end so we can traverse the elements on the way back up. When working with large enough sequences this can lead to stack overflows:
-
-```scala
-ints.foldRight(0)(_ + _)
-// java.lang.StackOverflowError
-//   etc...
-```
-
-<div class="callout callout-danger">
-TODO: Exercise: define this yourself
-</div>
-
-<div class="callout callout-danger">
-Talk briefly about `Eval` and segue into the next section.
 </div>

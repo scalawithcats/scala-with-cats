@@ -1,105 +1,181 @@
-# Foldable and Eval
+# *Foldable*
 
-The `Foldable` type class captures the concept of data structures that we can iterate over. `Lists` are foldable, as are `Vectors` and `Streams`. Using the `Foldable` type class, we can both write code that works with any iterable data type, and invent new iterable types and plug them into other peoples' code. `Foldable` also gives us a great use case for the `Monoids` we saw in the last chapter.
+The `Foldable` type class captures the concept of data structures that we can iterate over.
+`Lists` are foldable, as are `Vectors` and `Streams`.
+Using `Foldable`, we can generalise code across any sequence type.
+We can also invent new sequence types and plug them into our code.
+`Foldable` gives us great use cases for `Monoids` and the `Eval` monad.
 
 ## Folds and Folding
 
-Let's start with a quick recap on the concept of *folding* in functional programming. In general, a `fold` function allows users to transform one algebraic data type to another. It is a standard representation of structural recursion, typically implemented in Scala using pattern matching. For example, here is an implementation of `fold` for `Option`:
+Let's start with a quick recap on the concept of folding.
+In general, a `fold` function allows users to transform one algebraic data type to another.
+For example, the `fold` method on `Option` can return any data type we want by providing handlers for the `Some` and `None` cases:
 
 ```scala
-def foldOption[A, B](opt: Option[A], whenNone: => B)(whenSome: A => B): B =
-  opt match {
-    case Some(value) => whenSome(value)
-    case None        => whenNone
-  }
-// foldOption: [A, B](opt: Option[A], whenNone: => B)(whenSome: A => B)B
+def show[A](option: Option[A]): String =
+  option.fold("it's none")(v => s"it's some with value $v")
+// show: [A](option: Option[A])String
 
-foldOption(Option(40), -1)(num => num + 2)
-// res0: Int = 42
+show(None)
+// res0: String = it's none
 
-// Note: foldOption above has the same semantics
-// as option.fold in the standard library:
-Option(40).fold(-1)(num => num + 2)
-// res3: Int = 42
+show(Some(10))
+// res1: String = it's some with value 10
 ```
 
-When defining `fold` for sequences, it is natural to express the transformation recursively. We focus on each item in the sequence in turn, transforming it with the user's code and feeding the result into the transformation for the next item. The order in which we visit the items is important, so we normally define two variants of `fold`:
+`Foldable` is a type class for folding over sequences.
+The typical use case is to accumulate a value as we traverse.
+We supply a *seed* value and a *binary function*
+to combine it with an item in the sequence.
+The function produces another seed,
+allowing us to recurse down the sequence.
+When we reach the end, the final seed is our result.
+
+The order in which we visit the items may be important
+so we normally define two variants:
 
 - `foldLeft` traverses the sequence from "left" to "right" (start to finish);
--  `foldRight` traverses the sequence from "right" to "left" (finish to start).
+- `foldRight` traverses the sequence from "right" to "left" (finish to start).
 
-We can demonstrate the difference in traversal direction using the built-in `foldLeft` and `foldRight` methods on `List`:
+For example, we can sum a `List[Int]` by folding in either direction,
+using `0` as our seed and `+` as our binary operation:
 
 ```scala
-val strings = List("a", "b", "c")
-// strings: List[String] = List(a, b, c)
+List(1, 2, 3).foldLeft(0)(_ + _)
+// res2: Int = 6
 
-strings.foldLeft("nil")(_ + "," + _)
-// res4: String = nil,a,b,c
-
-strings.foldRight("nil")(_ + "," + _)
-// res5: String = a,b,c,nil
+List(1, 2, 3).foldRight(0)(_ + _)
+// res3: Int = 6
 ```
 
-We can treat folds as low-level functions on top of which we can implement any other algebraic transformation, including examples such as `map`, `flatMap`, `filter`, `reduceLeft`, and so on.
+The process is illustrated in the figure below. The result is the same regardless of which direction we fold because `+` is associative. If we had provided a non-associative operator, the order of evaluation makes a difference.
 
-## The Foldable Type Class
+![Illustration of foldLeft and foldRight](src/pages/foldable/fold.png)
 
-`foldLeft` and `foldRight` form an essential part of almost every non-trivial functional program. It seems useful to extract these operations into their own type class, which allows us to:
+### Exercise: Reflecting on folds
 
-- extend the built-in functionality of Scala collections with new methods based on folds;
-- provide fold implementations for other sequence types, other than those provided in the core library.
+Try using `foldLeft` and `foldRight` with an empty list as the seed and `::` as the binary operator. What results do you get in each case?
 
-Cats calls the type class `Foldable` type class for just this purpose. Before we look at Cats' definition, however, we should define `Foldable` ourselves.
-
-Here is an example type class instance for `List`. We simply delegate to its built-in methods:
+<div class="solution">
+Folding from left to right reverses the list:
 
 ```scala
-object ListFoldable {
-  def foldLeft[A, B](lis: List[A], accum: => B)(func: (B, A) => B): B =
-    lis.foldLeft(accum)(func)
-
-  def foldRight[A, B](lis: List[A], accum: => B)(func: (A, B) => B): B =
-    lis.foldRight(accum)(func)
+List(1, 2, 3).foldLeft(List.empty[Int]) { (seed, item) =>
+  item :: seed
 }
-// defined object ListFoldable
+// res4: List[Int] = List(3, 2, 1)
 ```
 
-Similarly for `Vector`:
+Folding right to left copies the list, leaving the order intact:
 
 ```scala
-object VectorFoldable {
-  def foldLeft[A, B](vec: Vector[A], accum: => B)(func: (B, A) => B): B =
-    vec.foldLeft(accum)(func)
-
-  def foldRight[A, B](vec: Vector[A], accum: => B)(func: (A, B) => B): B =
-    vec.foldRight(accum)(func)
+List(1, 2, 3).foldRight(List.empty[Int]) { (item, seed) =>
+  item :: seed
 }
-// defined object VectorFoldable
+// res5: List[Int] = List(1, 2, 3)
 ```
 
-To write a generic definition of `Foldable` that abstracts over different sequence types, we have to generalise over the `List` and `Vector` type constructors:
+Note that, in order to avoid a type error,
+we have to use `List.empty[Int]` as the seed instead of `Nil`.
+The compiler type checks parameter lists on method calls from left to right.
+If we don't specify that the seed is a `List` of some type,
+it incorrectly infers its type as `Nil`, which is a subtype of `List`.
+This type is propagated through the rest of the method call
+and we get a compilation error because the result of `::` is not a `Nil`:
 
 ```scala
-import scala.language.higherKinds
-// import scala.language.higherKinds
-
-trait Foldable[F[_]] {
-  def foldLeft[A, B](vec: Vector[A], accum: => B)(func: (A, B) => B): B
-  def foldRight[A, B](vec: Vector[A], accum: => B)(func: (B, A) => B): B
-
-  // ...other methods go here...
-}
-// defined trait Foldable
+List(1, 2, 3).foldRight(Nil)(_ :: _)
+// <console>:12: error: type mismatch;
+//  found   : List[Int]
+//  required: scala.collection.immutable.Nil.type
+//        List(1, 2, 3).foldRight(Nil)(_ :: _)
+//                                       ^
 ```
 
-If you haven’t seen syntax like `F[_]` before, it’s time to take a brief detour to discuss *type constructors* and *higher kinded types*. We’ll explain that `scala.language` import as well.
+Also note that we can't use placeholder syntax
+for the binary function on `foldLeft`,
+because the parameters end up the wrong way around:
 
-<div class="callout callout-danger">
-TODO: Exercise: define a few methods in terms of foldLeft and foldRight:
+```scala
+List(1, 2, 3).foldLeft(List.empty[Int])(_ :: _)
+// <console>:12: error: value :: is not a member of Int
+//        List(1, 2, 3).foldLeft(List.empty[Int])(_ :: _)
+//                                                  ^
+```
+</div>
 
-- filter
-- map
-- flatMap
-- combineAll
+### Exercise: Scaf-fold-ing other methods
+
+`foldLeft` and `foldRight` are very general transformations---they let us transform sequences into any other algebraic data type. We can use folds to implement all of the other high-level sequence operations we know. Prove this to yourself my implementing substitutes for `List's` `map`, `flatMap`, `filter`, and `sum` methods in terms of `foldRight`.
+
+<div class="solution">
+Here are the solutions:
+
+```scala
+def map[A, B](list: List[A])(func: A => B): List[B] =
+  list.foldRight(List.empty[B]) { (item, seed) =>
+    func(item) :: seed
+  }
+// map: [A, B](list: List[A])(func: A => B)List[B]
+
+map(List(1, 2, 3))(_ * 2)
+// res8: List[Int] = List(2, 4, 6)
+```
+
+```scala
+def flatMap[A, B](list: List[A])(func: A => List[B]): List[B] =
+  list.foldRight(List.empty[B]) { (item, seed) =>
+    func(item) ::: seed
+  }
+// flatMap: [A, B](list: List[A])(func: A => List[B])List[B]
+
+flatMap(List(1, 2, 3))(a => List(a, a * 10, a * 100))
+// res9: List[Int] = List(1, 10, 100, 2, 20, 200, 3, 30, 300)
+```
+
+```scala
+def filter[A](list: List[A])(func: A => Boolean): List[A] =
+  list.foldRight(List.empty[A]) { (item, seed) =>
+    if(func(item)) item :: seed else seed
+  }
+// filter: [A](list: List[A])(func: A => Boolean)List[A]
+
+filter(List(1, 2, 3))(_ % 2 == 1)
+// res10: List[Int] = List(1, 3)
+```
+
+We've provided two definitions of `sum`,
+one using `scala.math.Numeric`
+(which recreates the built-in functionality accurately)...
+
+```scala
+import scala.math.Numeric
+// import scala.math.Numeric
+
+def sumWithNumeric[A](list: List[A])(implicit numeric: Numeric[A]): A =
+  list.foldRight(numeric.zero)(numeric.plus)
+// sumWithNumeric: [A](list: List[A])(implicit numeric: scala.math.Numeric[A])A
+
+sumWithNumeric(List(1, 2, 3))
+// res11: Int = 6
+```
+
+and one using `cats.Monoid`
+(which is more appropriate to the content of this book):
+
+```scala
+import cats.Monoid
+// import cats.Monoid
+
+def sumWithMonoid[A](list: List[A])(implicit monoid: Monoid[A]): A =
+  list.foldRight(monoid.empty)(monoid.combine)
+// sumWithMonoid: [A](list: List[A])(implicit monoid: cats.Monoid[A])A
+
+import cats.std.int._
+// import cats.std.int._
+
+sumWithMonoid(List(1, 2, 3))
+// res12: Int = 6
+```
 </div>
