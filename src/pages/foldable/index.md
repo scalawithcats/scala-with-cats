@@ -26,11 +26,11 @@ show(Some(10))
 
 `Foldable` is a type class for folding over sequences.
 The typical use case is to accumulate a value as we traverse.
-We supply a *seed* value and a *binary function*
+We supply an *accumulator* value and a *binary function*
 to combine it with an item in the sequence.
-The function produces another seed,
+The function produces another accumulator,
 allowing us to recurse down the sequence.
-When we reach the end, the final seed is our result.
+When we reach the end, the final accumulator is our result.
 
 The order in which we visit the items may be important
 so we normally define two variants:
@@ -39,7 +39,7 @@ so we normally define two variants:
 - `foldRight` traverses the sequence from "right" to "left" (finish to start).
 
 For example, we can sum a `List[Int]` by folding in either direction,
-using `0` as our seed and `+` as our binary operation:
+using `0` as our accumulator and `+` as our binary operation:
 
 ```scala
 List(1, 2, 3).foldLeft(0)(_ + _)
@@ -55,14 +55,14 @@ The process is illustrated in the figure below. The result is the same regardles
 
 ### Exercise: Reflecting on folds
 
-Try using `foldLeft` and `foldRight` with an empty list as the seed and `::` as the binary operator. What results do you get in each case?
+Try using `foldLeft` and `foldRight` with an empty list as the accumulator and `::` as the binary operator. What results do you get in each case?
 
 <div class="solution">
 Folding from left to right reverses the list:
 
 ```scala
-List(1, 2, 3).foldLeft(List.empty[Int]) { (seed, item) =>
-  item :: seed
+List(1, 2, 3).foldLeft(List.empty[Int]) { (accum, item) =>
+  item :: accum
 }
 // res4: List[Int] = List(3, 2, 1)
 ```
@@ -70,16 +70,16 @@ List(1, 2, 3).foldLeft(List.empty[Int]) { (seed, item) =>
 Folding right to left copies the list, leaving the order intact:
 
 ```scala
-List(1, 2, 3).foldRight(List.empty[Int]) { (item, seed) =>
-  item :: seed
+List(1, 2, 3).foldRight(List.empty[Int]) { (item, accum) =>
+  item :: accum
 }
 // res5: List[Int] = List(1, 2, 3)
 ```
 
 Note that, in order to avoid a type error,
-we have to use `List.empty[Int]` as the seed instead of `Nil`.
+we have to use `List.empty[Int]` as the accumulator instead of `Nil`.
 The compiler type checks parameter lists on method calls from left to right.
-If we don't specify that the seed is a `List` of some type,
+If we don't specify that the accumulator is a `List` of some type,
 it incorrectly infers its type as `Nil`, which is a subtype of `List`.
 This type is propagated through the rest of the method call
 and we get a compilation error because the result of `::` is not a `Nil`:
@@ -114,8 +114,8 @@ Here are the solutions:
 
 ```scala
 def map[A, B](list: List[A])(func: A => B): List[B] =
-  list.foldRight(List.empty[B]) { (item, seed) =>
-    func(item) :: seed
+  list.foldRight(List.empty[B]) { (item, accum) =>
+    func(item) :: accum
   }
 // map: [A, B](list: List[A])(func: A => B)List[B]
 
@@ -125,8 +125,8 @@ map(List(1, 2, 3))(_ * 2)
 
 ```scala
 def flatMap[A, B](list: List[A])(func: A => List[B]): List[B] =
-  list.foldRight(List.empty[B]) { (item, seed) =>
-    func(item) ::: seed
+  list.foldRight(List.empty[B]) { (item, accum) =>
+    func(item) ::: accum
   }
 // flatMap: [A, B](list: List[A])(func: A => List[B])List[B]
 
@@ -136,8 +136,8 @@ flatMap(List(1, 2, 3))(a => List(a, a * 10, a * 100))
 
 ```scala
 def filter[A](list: List[A])(func: A => Boolean): List[A] =
-  list.foldRight(List.empty[A]) { (item, seed) =>
-    if(func(item)) item :: seed else seed
+  list.foldRight(List.empty[A]) { (item, accum) =>
+    if(func(item)) item :: accum else accum
   }
 // filter: [A](list: List[A])(func: A => Boolean)List[A]
 

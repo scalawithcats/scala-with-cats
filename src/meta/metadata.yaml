@@ -37,8 +37,8 @@ pages:
   - src/pages/monads/index.md
   - src/pages/monads/cats.md
   - src/pages/monads/id.md
-  - src/pages/monads/eval.md
   - src/pages/monads/xor.md
+  - src/pages/monads/eval.md
   # - src/pages/monads/error-recovery.md
   - src/pages/monads/writer.md
   - src/pages/monads/reader.md
