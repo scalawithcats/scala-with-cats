@@ -81,18 +81,43 @@ z // second access
 
 ### Eval's models of evaluation
 
-`Eval` has three constructors,
-each of which creates an instance
-that captures a computation using a different evaluation model.
-In each case we retrieve the result of the computation using the `value` method.
-
-`Eval.now` captures a value *right now*.
-Its semantics are similar to a `val`---eager and memoized:
+`Eval` has three subtypes: `Eval.Now`, `Eval.Later`, and `Eval.Always`.
+We construct these with three constructor methods,
+which create instances of the three classes and return them as instance of `Eval`:
 
 ```scala
 import cats.Eval
 // import cats.Eval
 
+val now    = Eval.now(1 + 2)
+// now: cats.Eval[Int] = Now(3)
+
+val later  = Eval.later(3 + 4)
+// later: cats.Eval[Int] = cats.Later@686d434b
+
+val always = Eval.always(5 + 6)
+// always: cats.Eval[Int] = cats.Always@5b975a32
+```
+
+We can extract the result of an `Eval` using its `value` method:
+
+```scala
+now.value
+// res6: Int = 3
+
+later.value
+// res7: Int = 7
+
+always.value
+// res8: Int = 11
+```
+
+Each type of `Eval` calculates its result
+using one of the evaluation models defined above.
+`Eval.now` captures a value *right now*.
+Its semantics are similar to a `val`---eager and memoized:
+
+```scala
 val x = Eval.now {
   println("Computing X")
   1 + 1
@@ -101,10 +126,10 @@ val x = Eval.now {
 // x: cats.Eval[Int] = Now(2)
 
 x.value // first access
-// res6: Int = 2
+// res9: Int = 2
 
 x.value // second access
-// res7: Int = 2
+// res10: Int = 2
 ```
 
 `Eval.always` captures a lazy computation,
@@ -115,15 +140,15 @@ val y = Eval.always {
   println("Computing Y")
   1 + 1
 }
-// y: cats.Eval[Int] = cats.Always@125fda3a
+// y: cats.Eval[Int] = cats.Always@602275ed
 
 y.value // first access
 // Computing Y
-// res8: Int = 2
+// res11: Int = 2
 
 y.value // second access
 // Computing Y
-// res9: Int = 2
+// res12: Int = 2
 ```
 
 Finally, `Eval.later` captures a lazy computation and memoizes the result,
@@ -134,14 +159,14 @@ val z = Eval.later {
   println("Computing Z")
   1 + 1
 }
-// z: cats.Eval[Int] = cats.Later@7be37030
+// z: cats.Eval[Int] = cats.Later@4bca91fa
 
 z.value // first access
 // Computing Z
-// res10: Int = 2
+// res13: Int = 2
 
 z.value // second access
-// res11: Int = 2
+// res14: Int = 2
 ```
 
 The three behaviours are summarized below:
@@ -168,12 +193,12 @@ val greeting = Eval.always {
   println("Step 2")
   str + " world"
 }
-// greeting: cats.Eval[String] = cats.Eval$$anon$8@5dba2d2e
+// greeting: cats.Eval[String] = cats.Eval$$anon$8@2a912b22
 
 greeting.value
 // Step 1
 // Step 2
-// res12: String = Hello world
+// res15: String = Hello world
 ```
 
 Note that, while the semantics of the originating `Eval` instances are maintained,
@@ -188,17 +213,17 @@ val ans = for {
   a + b
 }
 // Calculating A
-// ans: cats.Eval[Int] = cats.Eval$$anon$8@1af12a4c
+// ans: cats.Eval[Int] = cats.Eval$$anon$8@44c7d73f
 
 ans.value // first access
 // Calculating B
 // Adding A and B
-// res13: Int = 42
+// res16: Int = 42
 
 ans.value // second access
 // Calculating B
 // Adding A and B
-// res14: Int = 42
+// res17: Int = 42
 ```
 
 We can use `Eval's` `memoize` method to memoize a chain of computations.
@@ -210,38 +235,109 @@ val saying = Eval.always { println("Step 1") ; "The cat" }.
   map { str => println("Step 2") ; str + " sat on" }.
   memoize.
   map { str => println("Step 3") ; str + " the mat" }
-// saying: cats.Eval[String] = cats.Eval$$anon$8@43b2fec8
+// saying: cats.Eval[String] = cats.Eval$$anon$8@14b8642e
 
 saying.value // first access
 // Step 1
 // Step 2
 // Step 3
-// res15: String = The cat sat on the mat
+// res18: String = The cat sat on the mat
 
 saying.value // second access
 // Step 3
-// res16: String = The cat sat on the mat
+// res19: String = The cat sat on the mat
 ```
 
 ### Trampolining
 
-<div class="callout callout-danger">
-TODO:
+One useful property of `Eval` is
+that its `map` and `flatMap` methods are *trampolined*.
+This means we can nest calls to `map` and `flatMap` arbitrarily
+without consuming stack frames.
+We call this property *"stack safety"*.
 
-- Discuss trampolining
-- Can we do it without discussing foldRight on Foldable?
-- Maybe show a stack explosion
-</div>
+We'll illustrate this by comparing it to `Option`.
+The `add1` method below prints the stack depth and creates an `Option`:
 
-<!--
-### Exercises
+```scala
+def stackDepth: Int =
+  new Exception().getStackTrace.length
+// stackDepth: Int
 
-<div class="callout callout-danger">
-TODO:
+def add1(n: Int): Option[Int] = {
+  println(s"Stack depth when calculting $n + 1: $stackDepth")
+  Some(n + 1)
+}
+// add1: (n: Int)Option[Int]
+```
 
-- Exercises
-</div>
--->
+If we write code like the following,
+we can see that the stack depth increases as we next `flatMaps`:
+
+```scala
+for {
+  a <- add1(0)
+  b <- add1(a)
+  c <- add1(b)
+  d <- add1(c)
+} yield a + b + c + d
+// Stack depth when calculting 0 + 1: 1024
+// Stack depth when calculting 1 + 1: 1024
+// Stack depth when calculting 2 + 1: 1024
+// Stack depth when calculting 3 + 1: 1024
+// res20: Option[Int] = Some(10)
+```
+
+If we nest calls to `flatMap` deep enough,
+we will eventually get a `StackOverflowError`.
+This can happen when, for example,
+we are folding over an incredibly long sequence.
+
+Now let's consider the same code rewritten using `Eval`:
+
+```scala
+def stackDepth: Int =
+  new Exception().getStackTrace.length
+// stackDepth: Int
+
+def add1(n: Int): Eval[Int] = {
+  println(s"Stack depth when calculting $n + 1: $stackDepth")
+  Eval.later(n + 1)
+}
+// add1: (n: Int)cats.Eval[Int]
+```
+
+We're using `Eval.Later` here,
+but the behaviour is the same with all evaluation strategies:
+
+```scala
+val eval = for {
+  a <- add1(0)
+  b <- add1(a)
+  c <- add1(b)
+  d <- add1(c)
+} yield a + b + c + d
+// Stack depth when calculting 0 + 1: 1024
+// eval: cats.Eval[Int] = cats.Eval$$anon$8@13e61cd3
+
+eval.value
+// Stack depth when calculting 1 + 1: 1024
+// Stack depth when calculting 2 + 1: 1024
+// Stack depth when calculting 3 + 1: 1024
+// res21: Int = 10
+```
+
+We don't see all of the messages
+until we call `value` to kick off the calculation.
+However, when we do, we see that the stack depth is consistent throughout.
+
+We can use `Eval` as a mechanism to prevent to prevent stack overflows
+when working on very large data structures.
+However, we should bear in mind that trampolining is not free.
+It effectively avoids consuming stack by
+creating a linked list of function calls on the heap.
+There are still limits on how deeply we can nest computations,
+but they are bounded by the size of the heap rather than the stack.
 
 <!--
 TODO: Process these and check we're covering everything important:

@@ -65,17 +65,32 @@ z // second access
 
 ### Eval's models of evaluation
 
-`Eval` has three constructors,
-each of which creates an instance
-that captures a computation using a different evaluation model.
-In each case we retrieve the result of the computation using the `value` method.
-
-`Eval.now` captures a value *right now*.
-Its semantics are similar to a `val`---eager and memoized:
+`Eval` has three subtypes: `Eval.Now`, `Eval.Later`, and `Eval.Always`.
+We construct these with three constructor methods,
+which create instances of the three classes and return them typed as `Eval`:
 
 ```tut:book
 import cats.Eval
 
+val now    = Eval.now(1 + 2)
+val later  = Eval.later(3 + 4)
+val always = Eval.always(5 + 6)
+```
+
+We can extract the result of an `Eval` using its `value` method:
+
+```tut:book
+now.value
+later.value
+always.value
+```
+
+Each type of `Eval` calculates its result
+using one of the evaluation models defined above.
+`Eval.now` captures a value *right now*.
+Its semantics are similar to a `val`---eager and memoized:
+
+```tut:book
 val x = Eval.now {
   println("Computing X")
   1 + 1
@@ -171,23 +186,79 @@ saying.value // second access
 
 ### Trampolining
 
-<div class="callout callout-danger">
-TODO:
+One useful property of `Eval` is
+that its `map` and `flatMap` methods are *trampolined*.
+This means we can nest calls to `map` and `flatMap` arbitrarily
+without consuming stack frames.
+We call this property *"stack safety"*.
 
-- Discuss trampolining
-- Can we do it without discussing foldRight on Foldable?
-- Maybe show a stack explosion
-</div>
+We'll illustrate this by comparing it to `Option`.
+The `add1` method below prints the stack depth and creates an `Option`:
 
-<!--
-### Exercises
+```tut:book
+def stackDepth: Int =
+  new Exception().getStackTrace.length
 
-<div class="callout callout-danger">
-TODO:
+def add1(n: Int): Option[Int] = {
+  println(s"Stack depth when calculting $n + 1: $stackDepth")
+  Some(n + 1)
+}
+```
 
-- Exercises
-</div>
--->
+If we write code like the following,
+we can see that the stack depth increases as we next `flatMaps`:
+
+```tut:book
+for {
+  a <- add1(0)
+  b <- add1(a)
+  c <- add1(b)
+  d <- add1(c)
+} yield a + b + c + d
+```
+
+If we nest calls to `flatMap` deep enough,
+we will eventually get a `StackOverflowError`.
+This can happen when, for example,
+we are folding over an incredibly long sequence.
+
+Now let's consider the same code rewritten using `Eval`:
+
+```tut:book
+def stackDepth: Int =
+  new Exception().getStackTrace.length
+
+def add1(n: Int): Eval[Int] = {
+  println(s"Stack depth when calculting $n + 1: $stackDepth")
+  Eval.later(n + 1)
+}
+```
+
+We're using `Eval.Later` here,
+but the behaviour is the same with all evaluation strategies:
+
+```tut:book
+val eval = for {
+  a <- add1(0)
+  b <- add1(a)
+  c <- add1(b)
+  d <- add1(c)
+} yield a + b + c + d
+
+eval.value
+```
+
+We don't see all of the messages
+until we call `value` to kick off the calculation.
+However, when we do, we see that the stack depth is consistent throughout.
+
+We can use `Eval` as a mechanism to prevent to prevent stack overflows
+when working on very large data structures.
+However, we should bear in mind that trampolining is not free.
+It effectively avoids consuming stack by
+creating a linked list of function calls on the heap.
+There are still limits on how deeply we can nest computations,
+but they are bounded by the size of the heap rather than the stack.
 
 <!--
 TODO: Process these and check we're covering everything important:

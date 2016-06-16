@@ -104,7 +104,7 @@ import cats.std.stream._
 // import cats.std.stream._
 
 val foldable = Foldable[Stream]
-// foldable: cats.Foldable[Stream] = cats.std.StreamInstances$$anon$1@2965ccc8
+// foldable: cats.Foldable[Stream] = cats.std.StreamInstances$$anon$1@6ead488d
 
 val accum: Eval[Int] = // the accumulator is an Eval
   Eval.now(0)
@@ -116,7 +116,7 @@ val result: Eval[Int] = // and the result is an Eval
       println(stackDepth)
       accum.map(_ + item)
   }
-// result: cats.Eval[Int] = cats.Eval$$anon$8@2032eb4a
+// result: cats.Eval[Int] = cats.Eval$$anon$8@33ca6363
 
 result.value
 // 529
