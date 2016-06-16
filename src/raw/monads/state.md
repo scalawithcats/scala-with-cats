@@ -38,17 +38,6 @@ val state = a.runS(10).value
 val result = a.runA(10).value
 ```
 
-<div class="callout callout-danger">
-  TODO: Talk about `Eval`. But where? Before the monads chapter? Or here as a sidebar?
-
-  `Eval` is a type that Cats uses to abstract over evaluation strategies (lazy, eager, etc).
-  See more information here:
-
-  - https://github.com/typelevel/cats/blob/master/core/src/main/scala/cats/Eval.scala
-  - http://eed3si9n.com/herding-cats/Eval.html
-  - Erik's talk from Typelevel Philly (once the video is up)
-</div>
-
 ### Composing and Transforming State
 
 As we've seen with `Reader` and `Writer`,

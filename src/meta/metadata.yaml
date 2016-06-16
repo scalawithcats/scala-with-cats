@@ -38,6 +38,7 @@ pages:
   - src/pages/monads/cats.md
   - src/pages/monads/id.md
   - src/pages/monads/xor.md
+  - src/pages/monads/eval.md
   # - src/pages/monads/error-recovery.md
   - src/pages/monads/writer.md
   - src/pages/monads/reader.md
@@ -52,6 +53,10 @@ pages:
   - src/pages/applicatives/validation.md
   - src/pages/applicatives/scalaz.md
   - src/pages/applicatives/summary.md
+
+  - src/pages/foldable/index.md
+  - src/pages/foldable/cats.md
+  - src/pages/foldable/summary.md
 
   - src/pages/case-studies/mapreduce/index.md
 

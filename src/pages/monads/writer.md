@@ -10,7 +10,12 @@ With a `Writer` the log for the computation is tied to the result,
 so we can run concurrent computations without mixing log messages.
 
 <div class="callout callout-danger">
-TODO: Convert the `Lists` in the examples below to `Vectors`.
+  TODO: Convert the `Lists` in the examples below to `Vectors`.
+
+  `Vector` is a much more sensible type for use as a log for `Writer`
+  because it supports efficient append operations.
+  However, Algebra doesn't currently have `Monoid` instances for `Vector`.
+  Implement these (or wait for them to be implemented) and rewrite this bit.
 </div>
 
 ### Creating and Unpacking Writers
@@ -177,8 +182,13 @@ even on the very small examples we have to use to fit in these pages.
 
 <div class="callout callout-danger">
   TODO: `goSlowly` is a fairly weak thing to include here.
+
   Is there another example we can use to demo `Writers` in a cleaner way?
   Maybe logging the steps in Towers of Hanoi?
+  Or fibonacci numbers?
+
+  If we do fibonacci numbers, maybe we could parallelise it
+  with `WriterT` in the monad transformers chapter?
 </div>
 
 ```scala

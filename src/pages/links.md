@@ -4,6 +4,7 @@
 
 [cats]: http://typelevel.org/cats/api/#cats.package
 [cats.Eq]: http://typelevel.org/cats/api/#cats.Eq
+[cats.Eval]: http://typelevel.org/cats/api/#cats.Eval
 [cats.Functor]: http://typelevel.org/cats/api/#cats.Functor
 [cats.Id]: http://typelevel.org/cats/api/#cats.Id
 [cats.Monad]: http://typelevel.org/cats/api/#cats.Monad
