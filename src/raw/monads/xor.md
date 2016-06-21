@@ -36,7 +36,7 @@ Xor.right(1).flatMap(x => Xor.right(x + 2))
 
 ### Creating Xors
 
-The `Xor` object provides factory methods `Xor.left` and `Xor.right` methods as we saw above. However, these are slightly unwieldy due to the finger gymnastics required to write `Xor`. We typically import syntax from [`cats.syntax.xor`][cats.syntax.xor] to get nicer constructors---`left` and `right` as enriched methods:
+The `Xor` object provides the `Xor.left` and `Xor.right` factory methods as we saw above. However, these are slightly unwieldy due to the finger gymnastics required to write `Xor`. We typically import syntax from [`cats.syntax.xor`][cats.syntax.xor] to get nicer constructors---`left` and `right` as enriched methods:
 
 ```tut:book
 import cats.syntax.xor._
@@ -52,7 +52,9 @@ for {
 
 ### Transforming Xors
 
-`Xor` supports familiar methods like `fold`, `getOrElse`, and `orElse`. We use `fold` to convert a `Xor` to some other type, by supplying transform functions for the left and right sides:
+`Xor` supports familiar methods like `fold`, `getOrElse`, and `orElse`.
+We use `fold` to convert a `Xor` to some other type,
+by supplying transform functions for the left and right sides:
 
 ```tut:book
 1.right[String].fold(
@@ -75,6 +77,14 @@ We can use `orElse` if we want to default to another `Xor`:
 1.right[String] orElse 2.right[String]
 
 "Error".left[Int] orElse 2.right[String]
+```
+
+`Xor` also has a useful method called `ensure`
+that checks whether the wrapped value satisfies a predicate
+and fails with a specified error if it does not:
+
+```tut:book
+-1.right[String].ensure("Must be non-negative!")(_ > 0)
 ```
 
 ### Fail-Fast Error Handling

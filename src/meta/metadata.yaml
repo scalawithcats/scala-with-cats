@@ -49,10 +49,12 @@ pages:
   # - src/pages/monad-transformers/summary.md
 
   - src/pages/applicatives/index.md
-  - src/pages/applicatives/future.md
-  - src/pages/applicatives/validation.md
-  - src/pages/applicatives/scalaz.md
-  - src/pages/applicatives/summary.md
+  - src/pages/applicatives/cartesian.md
+  - src/pages/applicatives/builder.md
+  - src/pages/applicatives/applicative.md
+  - src/pages/applicatives/validated.md
+  # - src/pages/applicatives/cats.md
+  # - src/pages/applicatives/summary.md
 
   - src/pages/foldable/index.md
   - src/pages/foldable/cats.md
