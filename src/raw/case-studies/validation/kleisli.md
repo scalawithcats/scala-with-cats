@@ -1,6 +1,6 @@
 ## Kleislis
 
-Let's start cleaning up the library by looking at `Check`. A justifiable criticism is that we've written a lot of code to do very little. A `Predicate` is essentially a function `A => Validated[E,A]`, and a `Check` is basically a wrapper that lets us compose these functions. 
+Let's start cleaning up the library by looking at `Check`. A justifiable criticism is that we've written a lot of code to do very little. A `Predicate` is essentially a function `A => Validated[E,A]`, and a `Check` is basically a wrapper that lets us compose these functions.
 
 We can abstract `A => Validated[E,A]` to `A => F[B]`, which you'll recognise as the type of function you pass to the `flatMap` method on a monad. Imagine we have the following sequence of operations:
 
@@ -38,23 +38,23 @@ object kleisli {
   type ToListT[A,B] = Kleisli[List,A,B]
 
   // Define a few functions that transform an integer to a list of integers
-  val incrementAndDecrement: ToListT[Int,Int] = 
+  val incrementAndDecrement: ToListT[Int,Int] =
     Kleisli(x => List(x + 1, x - 1))
-  val doubleAndHalve: ToListT[Int,Int] = 
+  val doubleAndHalve: ToListT[Int,Int] =
     Kleisli(x => List(x * 2, x / 2))
   val valueAndNegation: ToListT[Int,Int] =
     Kleisli(x => List(x, -x))
-    
+
   // Compose into a transformation pipeline
   val pipeline = incrementAndDecrement andThen valueAndNegation andThen doubleAndHalve
-  
+
   // Apply the pipeline to data
   val result = pipeline.run(20)
 }
 kleisli.result
 ```
 
-Now let's use `Kleisli` in our examples where we had previously used `Check`. To do so we need to make a few changes to `Predicate`. We must be able to convert a `Predicate` to a function, as `Klesii` only works with functions. Somewhat more subtly, when we convert a `Predicate` to a function, it should have type `A => Xor[E,A]` rather than `A => Validated[E,A]`. Why is this? Remember that in the implementation of `andThen` we converted the `Validation` to an `Xor` so we could call its `flatMap` method. It's exactly the same in the `Kleisli`---it must be able to `flatMap` on the function's return type so it can implement sequencing.
+Now let's use `Kleisli` in our examples where we had previously used `Check`. To do so we need to make a few changes to `Predicate`. We must be able to convert a `Predicate` to a function, as `Klesii` only works with functions. Somewhat more subtly, when we convert a `Predicate` to a function, it should have type `A => Xor[E,A]` rather than `A => Validated[E,A]`. Why is this? Remember that in the implementation of `andThen` we converted the `Validated` to an `Xor` so we could call its `flatMap` method. It's exactly the same in the `Kleisli`---it must be able to `flatMap` on the function's return type so it can implement sequencing.
 
 In this design `Predicate` uses `Validated` internally---where it is joining together predicates using `and` and `or`---but exposes `Xor` externally so results can be sequenced.
 
@@ -196,7 +196,7 @@ object example {
 
 We have now written our code entirely in terms of `Kleisli` and `Predicate`, completely removing `Check`. This is a good first step to simplifying our library. It still feels a bit too difficult to work with `Predicate`, so let's see if we can simplify that a bit. There are a few issues:
 
-Creating an `Predicate` from a function (the `apply` method on the companion object) is overly restrictive. We don't really care what type the function returns on success because in `apply` we ensure the input is always returned. 
+Creating an `Predicate` from a function (the `apply` method on the companion object) is overly restrictive. We don't really care what type the function returns on success because in `apply` we ensure the input is always returned.
 
 It would be useful to be able to join together two predicates, so if we have `Predicate[E,A]` and `Predicate[E,B]` we can create `Predicate[E,(A,B)]`. This feels like an applicative (or a monoidal). However we aren't allowing `map` for predicates, as this makes the output type different to the input type, so we can't implement applicative (or usefully implement monoidal). I chose to implement a method called `zip` that achieves this. Adding the case class for `Zip` created a complicated enough GADT that type inference failed in `apply`. This forced me to switch to polymorphism.
 
