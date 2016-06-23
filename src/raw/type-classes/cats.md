@@ -30,24 +30,24 @@ Oops---that didn't work! The `apply` method uses *implicits* to look up individu
 
 ### Importing Default Instances {#importing-default-instances}
 
-The [cats.std] package provides default instances for a wide variety of types. We can import these from the [cats.std] package as shown in the table below. Each import provides instances for a wide variety of type classes and one or several parameter types:
+The [cats.instances] package provides default instances for a wide variety of types. We can import these from the [cats.instances] package as shown in the table below. Each import provides instances for a wide variety of type classes and one or several parameter types:
 
 ------------------------------------------------------------------------------
 Import                                   Parameter types
 ---------------------------------------- -------------------------------------
-[`cats.std.int`][cats.std.int]           `Int`
+[`cats.instances.int`][cats.instances.int]           `Int`
 
-[`cats.std.string`][cats.std.string]     `String`
+[`cats.instances.string`][cats.instances.string]     `String`
 
-[`cats.std.list`][cats.std.list]         `List`
+[`cats.instances.list`][cats.instances.list]         `List`
 
-[`cats.std.option`][cats.std.option]     `Option`
+[`cats.instances.option`][cats.instances.option]     `Option`
 
-[`cats.std.map`][cats.std.map]           `Map` and subtypes
+[`cats.instances.map`][cats.instances.map]           `Map` and subtypes
 
-[`cats.std.all`][cats.std.all]           All instances for the standard library
+[`cats.instances.all`][cats.instances.all]           All instances for the standard library
 
-and so on...                             See the [`cats.std`][cats.std]
+and so on...                             See the [`cats.instances`][cats.instances]
                                          package for more
 ------------------------------------------------------------------------------
 
@@ -60,8 +60,8 @@ Don't feel you need to do this in your code.
 Let's import the instances of `Show` for `Int` and `String`:
 
 ```tut:book
-import cats.std.int._
-import cats.std.string._
+import cats.instances.int._
+import cats.instances.string._
 
 val showInt:    Show[Int]    = Show.apply[Int]
 val showString: Show[String] = Show.apply[String]
@@ -132,8 +132,8 @@ the instances for `Int` and `String`, and the interface syntax:
 
 ```tut:book
 import cats.Show
-import cats.std.int._
-import cats.std.string._
+import cats.instances.int._
+import cats.instances.string._
 import cats.syntax.show._
 ```
 
@@ -187,7 +187,7 @@ object Main extends App {
 Cats type classes are defined in the [`cats`][cats] package.
 For example, the `Show` type class is defined as [`cats.Show`][cats.Show].
 
-Default instances are defined in the [`cats.std`][cats.std] package.
+Default instances are defined in the [`cats.instances`][cats.instances] package.
 Imports are organized by parameter type (as opposed to by type class).
 
 Interface syntax is defined in the [`cats.syntax`][cats.syntax] package.

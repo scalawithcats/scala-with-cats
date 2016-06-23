@@ -41,7 +41,7 @@ A function with a single argument has two types: the parameter type and the resu
 In other words, "mapping" over a `Function1` is just function composition:
 
 ```tut:book
-import cats.std.function._
+import cats.instances.function._
 import cats.syntax.functor._
 
 val func1 = (x: Int) => x.toDouble

@@ -4,12 +4,12 @@ Let's look at the implementation of functors in Cats. We'll follow the usual pat
 
 ### The *Functor* Type Class
 
-The functor type class is [`cats.Functor`][cats.Functor]. We obtain instances using the standard `Functor.apply`. As usual, default instances are arranged by type in the [`cats.std`][cats.std] package:
+The functor type class is [`cats.Functor`][cats.Functor]. We obtain instances using the standard `Functor.apply`. As usual, default instances are arranged by type in the [`cats.instances`][cats.instances] package:
 
 ```tut:book
 import cats.Functor
-import cats.std.list._
-import cats.std.option._
+import cats.instances.list._
+import cats.instances.option._
 
 val list1 = List(1, 2, 3)
 
@@ -35,7 +35,7 @@ lifted(Some(1))
 The main method provided by the syntax for `Functor` is `map`. It's difficult to demonstrate this with `Options` and `Lists` as they have their own built-in `map` operations. Instead we will use *functions*:
 
 ```tut:book
-import cats.std.function._
+import cats.instances.function._
 import cats.syntax.functor._
 
 val func1 = (a: Int) => a + 1
@@ -49,7 +49,7 @@ Other methods are available but we won't discuss them here. `Functors` are more 
 
 ### Instances for Custom Types
 
-We can define a functor simply by defining its map method. Here's an example of a `Functor` for `Option`, even though such a thing already exists in [`cats.std`][cats.std]:
+We can define a functor simply by defining its map method. Here's an example of a `Functor` for `Option`, even though such a thing already exists in [`cats.instances`][cats.instances]:
 
 ```tut:book
 val optionFunctor = new Functor[Option] {

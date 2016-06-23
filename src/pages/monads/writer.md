@@ -42,8 +42,8 @@ In order to use `pure` the log has to be a type with a `Monoid`.
 This tells Cats what to use as the initial empty log:
 
 ```scala
-import cats.std.list._
-// import cats.std.list._
+import cats.instances.list._
+// import cats.instances.list._
 
 import cats.syntax.applicative._
 // import cats.syntax.applicative._
@@ -289,8 +289,8 @@ Finally, we'll import the `Semigroup` instance for `List`.
 We need this to `map` and `flatMap` over `Logged`:
 
 ```scala
-import cats.std.list._
-// import cats.std.list._
+import cats.instances.list._
+// import cats.instances.list._
 
 41.pure[Logged].map(_ + 1)
 // res28: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(),42))

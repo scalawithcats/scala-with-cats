@@ -297,7 +297,7 @@ You might find the following predicates useful.
 ```tut:book
 object example {
   import cats.data.{NonEmptyList,OneAnd,Validated}
-  import cats.std.list._
+  import cats.instances.list._
   import cats.syntax.cartesian._
   import cats.syntax.validated._
   import check._
@@ -334,7 +334,7 @@ Here's my solution. Implementing this required more thought than I expected---sw
 ```tut:book
 object example {
   import cats.data.{NonEmptyList,OneAnd,Validated}
-  import cats.std.list._
+  import cats.instances.list._
   import cats.syntax.cartesian._
   import cats.syntax.validated._
   import check._

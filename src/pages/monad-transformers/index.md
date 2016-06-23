@@ -70,8 +70,8 @@ We can create instances with `pure` as usual:
 import cats.Monad
 // import cats.Monad
 
-import cats.std.list._
-// import cats.std.list._
+import cats.instances.list._
+// import cats.instances.list._
 
 import cats.syntax.applicative._
 // import cats.syntax.applicative._
@@ -106,7 +106,7 @@ Note the imports in the code samples above---they hint at how everything bolts t
 
 We import [`cats.syntax.applicative`][cats.syntax.applicative] to get the `pure` syntax. `pure` requires an implicit parameter of type `Applicative[ListOption]`. We haven't met `Applicatives` yet, but all `Monads` are also `Applicatives` so we can ignore that difference for now.
 
-We need an `Applicative[ListOption]` to call `pure`. We have [`cats.data.OptionT`][cats.data.OptionT] in scope, which provides the implicits for for `OptionT`. However, in order to generate our `Applicative[ListOption]`, the implicits for `OptionT` also require an `Applicative` for `List`. Hence the additional import from [`cats.std.list`][cats.std.list].
+We need an `Applicative[ListOption]` to call `pure`. We have [`cats.data.OptionT`][cats.data.OptionT] in scope, which provides the implicits for for `OptionT`. However, in order to generate our `Applicative[ListOption]`, the implicits for `OptionT` also require an `Applicative` for `List`. Hence the additional import from [`cats.instances.list`][cats.instances.list].
 
 Notice we're not importing [`cats.syntax.functor`][cats.syntax.functor] or [`cats.syntax.flatMap`][cats.syntax.flatMap]. This is because `OptionT` is a concrete data type with its own explicit `map` and `flatMap` methods. It wouldn't hurt to import the syntax---the compiler will simply ignore it in favour of the explicit methods.
 
@@ -200,15 +200,15 @@ Our mammoth stack composes not two but *three* monads. Our `map` and `flatMap` m
 import scala.concurrent.ExecutionContext.Implicits.global
 // import scala.concurrent.ExecutionContext.Implicits.global
 
-import cats.std.future._
-// import cats.std.future._
+import cats.instances.future._
+// import cats.instances.future._
 
 val answer: FutureXorOption[Int] =
   for {
     a <- 10.pure[FutureXorOption]
     b <- 32.pure[FutureXorOption]
   } yield a + b
-// answer: FutureXorOption[Int] = OptionT(XorT(scala.concurrent.impl.Promise$DefaultPromise@28a2f501))
+// answer: FutureXorOption[Int] = OptionT(XorT(scala.concurrent.impl.Promise$DefaultPromise@4e0f39ac))
 ```
 
 <div class="callout callout-info">
@@ -378,8 +378,8 @@ Include `hostname` in the message for good effect.
 
 <div class="solution">
 ```scala
-import cats.std.future._
-// import cats.std.future._
+import cats.instances.future._
+// import cats.instances.future._
 
 import cats.syntax.flatMap._
 // import cats.syntax.flatMap._
@@ -418,8 +418,8 @@ The `map`, `flatMap`, and `sequence` methods cut through both layers in our mona
 allowing us to combine the results without hassle:
 
 ```scala
-import cats.std.list._        // for Applicative[List]
-// import cats.std.list._
+import cats.instances.list._        // for Applicative[List]
+// import cats.instances.list._
 
 import cats.syntax.traverse._ // for _.sequence
 // import cats.syntax.traverse._

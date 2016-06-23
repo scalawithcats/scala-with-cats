@@ -83,8 +83,8 @@ final case class CheckF[E,A](f: A => E Xor A) {
 Let's test the behavior we get. First we'll setup some checks.
 
 ```tut:book
-import cats.std.list._ // For semigroup instance on List
-import cats.std.string._ // For semigroup instance on String
+import cats.instances.list._ // For semigroup instance on List
+import cats.instances.string._ // For semigroup instance on String
 
 val check1 = CheckF[List[String], Int]{ v =>
   if(v > 2)

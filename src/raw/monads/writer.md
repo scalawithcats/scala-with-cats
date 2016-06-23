@@ -40,7 +40,7 @@ In order to use `pure` the log has to be a type with a `Monoid`.
 This tells Cats what to use as the initial empty log:
 
 ```tut:book
-import cats.std.list._
+import cats.instances.list._
 import cats.syntax.applicative._
 
 type Logged[A] = Writer[List[String], A]
@@ -238,7 +238,7 @@ Finally, we'll import the `Semigroup` instance for `List`.
 We need this to `map` and `flatMap` over `Logged`:
 
 ```tut:book
-import cats.std.list._
+import cats.instances.list._
 
 41.pure[Logged].map(_ + 1)
 ```

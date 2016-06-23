@@ -10,11 +10,11 @@ The functor type class is [`cats.Functor`][cats.Functor]. We obtain instances us
 import cats.Functor
 // import cats.Functor
 
-import cats.std.list._
-// import cats.std.list._
+import cats.instances.list._
+// import cats.instances.list._
 
-import cats.std.option._
-// import cats.std.option._
+import cats.instances.option._
+// import cats.instances.option._
 
 val list1 = List(1, 2, 3)
 // list1: List[Int] = List(1, 2, 3)
@@ -47,8 +47,8 @@ lifted(Some(1))
 The main method provided by the syntax for `Functor` is `map`. It's difficult to demonstrate this with `Options` and `Lists` as they have their own built-in `map` operations. Instead we will use *functions*:
 
 ```scala
-import cats.std.function._
-// import cats.std.function._
+import cats.instances.function._
+// import cats.instances.function._
 
 import cats.syntax.functor._
 // import cats.syntax.functor._
@@ -77,7 +77,7 @@ val optionFunctor = new Functor[Option] {
   def map[A, B](value: Option[A])(func: A => B): Option[B] =
     value map func
 }
-// optionFunctor: cats.Functor[Option] = $anon$1@57ea2e8
+// optionFunctor: cats.Functor[Option] = $anon$1@6671030f
 ```
 
 The implementation is trivial---simply call `Option's` `map` method.
@@ -119,7 +119,7 @@ implicit val resultFunctor = new Functor[Result] {
       case Failure(message)        => Failure(message)
     }
 }
-// resultFunctor: cats.Functor[Result] = $anon$1@728e8dd
+// resultFunctor: cats.Functor[Result] = $anon$1@8396897
 ```
 
 Let's use our `Functor` in a sample application:

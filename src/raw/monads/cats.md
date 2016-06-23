@@ -10,8 +10,8 @@ The main methods on `Monad` are `pure` and `flatMap`:
 
 ```tut:book
 import cats.Monad
-import cats.std.option._
-import cats.std.list._
+import cats.instances.option._
+import cats.instances.list._
 
 val opt1 = Monad[Option].pure(3)
 
@@ -44,18 +44,18 @@ val sequence: Option[List[Int]] =
 
 ### Default Instances
 
-Cats provides instances for all the monads in the standard library (`Option`, `List`, `Vector` and so on) via [`cats.std`][cats.std]:
+Cats provides instances for all the monads in the standard library (`Option`, `List`, `Vector` and so on) via [`cats.instances`][cats.instances]:
 
 ```tut:book
-import cats.std.option._
+import cats.instances.option._
 
 Monad[Option].flatMap(Option(1))(x => Option(x*2))
 
-import cats.std.list._
+import cats.instances.list._
 
 Monad[List].flatMap(List(1, 2, 3))(x => List(x, x*10))
 
-import cats.std.vector._
+import cats.instances.vector._
 
 Monad[Vector].flatMap(Vector(1, 2, 3))(x => Vector(x, x*10))
 ```
@@ -104,8 +104,8 @@ def sumSquare[A[_] : Monad](a: Int, b: Int): A[Int] = {
   x flatMap (x => y map (y => x*x + y*y))
 }
 
-import cats.std.option._
-import cats.std.list._
+import cats.instances.option._
+import cats.instances.list._
 
 sumSquare[Option](3, 4)
 sumSquare[List](3, 4)

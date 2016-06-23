@@ -83,7 +83,7 @@ z // second access
 
 `Eval` has three subtypes: `Eval.Now`, `Eval.Later`, and `Eval.Always`.
 We construct these with three constructor methods,
-which create instances of the three classes and return them as instance of `Eval`:
+which create instances of the three classes and return them typed as `Eval`:
 
 ```scala
 import cats.Eval
@@ -93,10 +93,10 @@ val now    = Eval.now(1 + 2)
 // now: cats.Eval[Int] = Now(3)
 
 val later  = Eval.later(3 + 4)
-// later: cats.Eval[Int] = cats.Later@686d434b
+// later: cats.Eval[Int] = cats.Later@341b0fa4
 
 val always = Eval.always(5 + 6)
-// always: cats.Eval[Int] = cats.Always@5b975a32
+// always: cats.Eval[Int] = cats.Always@5d38cee6
 ```
 
 We can extract the result of an `Eval` using its `value` method:
@@ -140,7 +140,7 @@ val y = Eval.always {
   println("Computing Y")
   1 + 1
 }
-// y: cats.Eval[Int] = cats.Always@602275ed
+// y: cats.Eval[Int] = cats.Always@67cee0a2
 
 y.value // first access
 // Computing Y
@@ -159,7 +159,7 @@ val z = Eval.later {
   println("Computing Z")
   1 + 1
 }
-// z: cats.Eval[Int] = cats.Later@4bca91fa
+// z: cats.Eval[Int] = cats.Later@4dfdf7e0
 
 z.value // first access
 // Computing Z
@@ -193,7 +193,7 @@ val greeting = Eval.always {
   println("Step 2")
   str + " world"
 }
-// greeting: cats.Eval[String] = cats.Eval$$anon$8@2a912b22
+// greeting: cats.Eval[String] = cats.Eval$$anon$8@7e74327
 
 greeting.value
 // Step 1
@@ -213,7 +213,7 @@ val ans = for {
   a + b
 }
 // Calculating A
-// ans: cats.Eval[Int] = cats.Eval$$anon$8@44c7d73f
+// ans: cats.Eval[Int] = cats.Eval$$anon$8@557f77d4
 
 ans.value // first access
 // Calculating B
@@ -235,7 +235,7 @@ val saying = Eval.always { println("Step 1") ; "The cat" }.
   map { str => println("Step 2") ; str + " sat on" }.
   memoize.
   map { str => println("Step 3") ; str + " the mat" }
-// saying: cats.Eval[String] = cats.Eval$$anon$8@14b8642e
+// saying: cats.Eval[String] = cats.Eval$$anon$8@3b7acc55
 
 saying.value // first access
 // Step 1
@@ -318,7 +318,7 @@ val eval = for {
   d <- add1(c)
 } yield a + b + c + d
 // Stack depth when calculting 0 + 1: 1024
-// eval: cats.Eval[Int] = cats.Eval$$anon$8@13e61cd3
+// eval: cats.Eval[Int] = cats.Eval$$anon$8@13b94e54
 
 eval.value
 // Stack depth when calculting 1 + 1: 1024

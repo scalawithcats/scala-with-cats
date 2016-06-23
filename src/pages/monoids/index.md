@@ -174,7 +174,7 @@ implicit val booleanAndMonoid: Monoid[Boolean] = new Monoid[Boolean] {
   def combine(a: Boolean, b: Boolean) = a && b
   def empty = true
 }
-// booleanAndMonoid: Monoid[Boolean] = $anon$1@1692ac2d
+// booleanAndMonoid: Monoid[Boolean] = $anon$1@2176c398
 ```
 
 Second, we have *or* with operator `||` and identity `false`:
@@ -184,7 +184,7 @@ implicit val booleanOrMonoid: Monoid[Boolean] = new Monoid[Boolean] {
   def combine(a: Boolean, b: Boolean) = a || b
   def empty = false
 }
-// booleanOrMonoid: Monoid[Boolean] = $anon$1@72e4429f
+// booleanOrMonoid: Monoid[Boolean] = $anon$1@14f161fe
 ```
 
 Third, we have *exclusive or* with identity `false`:
@@ -194,7 +194,7 @@ implicit val booleanXorMonoid: Monoid[Boolean] = new Monoid[Boolean] {
   def combine(a: Boolean, b: Boolean) = (a && !b) || (!a && b)
   def empty = false
 }
-// booleanXorMonoid: Monoid[Boolean] = $anon$1@8d6974b
+// booleanXorMonoid: Monoid[Boolean] = $anon$1@167ed583
 ```
 
 Finally, we have *exclusive nor* (the negation of exclusive or) with identity `true`:
@@ -204,7 +204,7 @@ implicit val booleanXnorMonoid: Monoid[Boolean] = new Monoid[Boolean] {
   def combine(a: Boolean, b: Boolean) = (!a || b) && (a || !b)
   def empty = true
 }
-// booleanXnorMonoid: Monoid[Boolean] = $anon$1@51fc12f0
+// booleanXnorMonoid: Monoid[Boolean] = $anon$1@25c686b7
 ```
 
 Showing that the identity law holds in each case is straightforward.
@@ -235,10 +235,10 @@ implicit val intMonoid: Monoid[Int] = new Monoid[Int] {
   def combine(a: Int, b: Int) = a + b
   def empty = 0
 }
-// intMonoid: Monoid[Int] = $anon$1@d8e1000
+// intMonoid: Monoid[Int] = $anon$1@1c14489a
 
 val intSetMonoid = Monoid[Set[Int]] // this will work
-// intSetMonoid: Monoid[Set[Int]] = $anon$1@2c83fe47
+// intSetMonoid: Monoid[Set[Int]] = $anon$1@6a0953ff
 ```
 
 Set intersection does not form a monoid as there is no identity element.

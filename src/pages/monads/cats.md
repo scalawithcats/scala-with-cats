@@ -12,11 +12,11 @@ The main methods on `Monad` are `pure` and `flatMap`:
 import cats.Monad
 // import cats.Monad
 
-import cats.std.option._
-// import cats.std.option._
+import cats.instances.option._
+// import cats.instances.option._
 
-import cats.std.list._
-// import cats.std.list._
+import cats.instances.list._
+// import cats.instances.list._
 
 val opt1 = Monad[Option].pure(3)
 // opt1: Option[Int] = Some(3)
@@ -59,20 +59,20 @@ val sequence: Option[List[Int]] =
 Cats provides instances for all the monads in the standard library (`Option`, `List`, `Vector` and so on) via [`cats.std`][cats.std]:
 
 ```scala
-import cats.std.option._
-// import cats.std.option._
+import cats.instances.option._
+// import cats.instances.option._
 
 Monad[Option].flatMap(Option(1))(x => Option(x*2))
 // res0: Option[Int] = Some(2)
 
-import cats.std.list._
-// import cats.std.list._
+import cats.instances.list._
+// import cats.instances.list._
 
 Monad[List].flatMap(List(1, 2, 3))(x => List(x, x*10))
 // res1: List[Int] = List(1, 10, 2, 20, 3, 30)
 
-import cats.std.vector._
-// import cats.std.vector._
+import cats.instances.vector._
+// import cats.instances.vector._
 
 Monad[Vector].flatMap(Vector(1, 2, 3))(x => Vector(x, x*10))
 // res2: Vector[Int] = Vector(1, 10, 2, 20, 3, 30)
@@ -94,7 +94,7 @@ val optionMonad = new Monad[Option] {
   def pure[A](value: A): Option[A] =
     Some(value)
 }
-// optionMonad: cats.Monad[Option] = $anon$1@3d8893c3
+// optionMonad: cats.Monad[Option] = $anon$1@364303d9
 ```
 
 ### *Monad* Syntax
@@ -132,11 +132,11 @@ def sumSquare[A[_] : Monad](a: Int, b: Int): A[Int] = {
 }
 // sumSquare: [A[_]](a: Int, b: Int)(implicit evidence$1: cats.Monad[A])A[Int]
 
-import cats.std.option._
-// import cats.std.option._
+import cats.instances.option._
+// import cats.instances.option._
 
-import cats.std.list._
-// import cats.std.list._
+import cats.instances.list._
+// import cats.instances.list._
 
 sumSquare[Option](3, 4)
 // res3: Option[Int] = Some(18)
@@ -221,7 +221,7 @@ implicit val resultMonad = new Monad[Result] {
         Failure(message)
     }
 }
-// resultMonad: cats.Monad[Result] = $anon$1@5ea7c003
+// resultMonad: cats.Monad[Result] = $anon$1@1db02b89
 ```
 
 We'll pre-empt any compile errors concerning variance by defining our usual smart constructors:

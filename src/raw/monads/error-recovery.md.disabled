@@ -50,8 +50,8 @@ The identity element is the obvious choice, as it won't affect the solution.
 If calling `f`, the mapping function, fails use the `plus` operation to continue the computation with the value we identified above. Your code should produce a result like so:
 
 ```tut:book
-import cats.std.anyVal._
-import cats.std.option._
+import cats.instances.anyVal._
+import cats.instances.option._
 
 Seq(1, 2, 3).foldMapM(a => if(a % 2 == 0) some(a) else none[Int])
 // res2: Option[Int] = Some(2)
@@ -82,8 +82,8 @@ By doing so, we ensure we also have error handling. However, our error handling 
 It's not always appropriate for `foldMapM` to assert an error handling strategy. It's easy enough to implement custom error recovery in each function `f` we pass to `foldMap` but it would be better to build a generic toolkit. Implement a method `recover` so that you can write code like
 
 ```tut:book
-import cats.std.anyVal._
-import cats.std.option._
+import cats.instances.anyVal._
+import cats.instances.option._
 import cats.syntax.std.string._
 
 Seq("1", "b", "3").foldMapM(recover(_.parseInt.toOption))

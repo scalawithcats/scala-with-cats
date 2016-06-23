@@ -14,7 +14,7 @@ We have now seen the general patterns in Cats type classes:
       These methods are typically named after the type class or one of its methods,
       for example `Eq.eqv` and `Show.show`.
 
- - Default instances are provided via the [`cats.std`][cats.std] package, and are organized by
+ - Default instances are provided via the [`cats.instances`][cats.instances] package, and are organized by
    *parameter type* rather than *type class type*.
 
  - Many type classes have *syntax* provided via the [`cats.syntax`][cats.syntax] package.

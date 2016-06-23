@@ -16,7 +16,7 @@ import cats.Foldable
 
 val ints = List(1, 2, 3)
 
-import cats.std.list._
+import cats.instances.list._
 
 Foldable[List].foldLeft(ints, 0)(_ + _)
 ```
@@ -26,7 +26,7 @@ And here is an example using `Option`:
 ```tut:book
 val maybeInt = Option(1)
 
-import cats.std.option._
+import cats.instances.option._
 
 Foldable[Option].foldLeft(maybeInt, "")(_ + _)
 ```
@@ -41,7 +41,7 @@ type StringMap[A] = Map[String, A]
 
 val stringMap = Map("a" -> "b", "c" -> "d")
 
-import cats.std.map._
+import cats.instances.map._
 
 Foldable[StringMap].foldLeft(stringMap, "nil")(_ + "," + _)
 ```
@@ -79,7 +79,7 @@ As we saw in the [monads chapter](#eval), however,
 so `Foldable's` `foldRight` method maintains the same stack depth throughout:
 
 ```tut:book
-import cats.std.stream._
+import cats.instances.stream._
 
 val foldable = Foldable[Stream]
 
@@ -139,7 +139,7 @@ Cats provides two methods that make use of `Monoids`:
 For example, we can use `combineAll` to sum over a `List[Int]`:
 
 ```tut:book
-import cats.std.int._ // import Monoid[Int]
+import cats.instances.int._ // import Monoid[Int]
 
 Foldable[List].combineAll(List(1, 2, 3))
 ```
@@ -147,7 +147,7 @@ Foldable[List].combineAll(List(1, 2, 3))
 Alternatively, we can use `foldMap` to convert each `Int` to a `String` and concatenate them:
 
 ```tut:book
-import cats.std.string._ // import Monoid[String]
+import cats.instances.string._ // import Monoid[String]
 
 Foldable[List].foldMap(List(1, 2, 3))(_.toString)
 ```
@@ -155,7 +155,7 @@ Foldable[List].foldMap(List(1, 2, 3))(_.toString)
 Finally, we can compose `Foldables` to support deep traversal of nested sequences:
 
 ```tut:book
-import cats.std.vector._
+import cats.instances.vector._
 
 val ints = List(Vector(1, 2, 3), Vector(4, 5, 6))
 

@@ -172,8 +172,8 @@ def sumWithMonoid[A](list: List[A])(implicit monoid: Monoid[A]): A =
   list.foldRight(monoid.empty)(monoid.combine)
 // sumWithMonoid: [A](list: List[A])(implicit monoid: cats.Monoid[A])A
 
-import cats.std.int._
-// import cats.std.int._
+import cats.instances.int._
+// import cats.instances.int._
 
 sumWithMonoid(List(1, 2, 3))
 // res12: Int = 6

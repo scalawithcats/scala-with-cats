@@ -31,7 +31,7 @@ import cats.Eq
 Now let's grab an instance for `Int`:
 
 ```tut:book
-import cats.std.int._
+import cats.instances.int._
 
 val eqInt = Eq[Int]
 ```
@@ -63,8 +63,8 @@ import cats.syntax.eq._
 Now for a more interesting example---`Option[Int]`. To compare values of type `Option[Int]` we need to import instances of `Eq` for `Option` as well as `Int`.
 
 ```tut:book
-import cats.std.int._
-import cats.std.option._
+import cats.instances.int._
+import cats.instances.option._
 ```
 
 Now we can try some comparisons.
@@ -94,7 +94,7 @@ We can define our own instances of `Eq` using the `Eq.instance` method, which ac
 
 ```tut:book
 import java.util.Date
-import cats.std.long._
+import cats.instances.long._
 
 implicit val dateEqual = Eq.instance[Date] { (date1, date2) =>
   date1.getTime === date2.getTime
@@ -138,8 +138,8 @@ We define our instance of `Eq[Cat]` in the companion object for `Cat` so it is a
 ``` scala
 object Cat {
   implicit val catEqual = Eq.instance[Cat] { (cat1, cat2) =>
-    import cats.std.int._
-    import cats.std.string._
+    import cats.instances.int._
+    import cats.instances.string._
 
     (cat1.name  === cat2.name ) &&
     (cat1.age   === cat2.age  ) &&
@@ -153,8 +153,8 @@ object cat {
   final case class Cat(name: String, age: Int, color: String)
   object Cat {
     implicit val catEqual = Eq.instance[Cat] { (cat1, cat2) =>
-      import cats.std.int._
-      import cats.std.string._
+      import cats.instances.int._
+      import cats.instances.string._
 
       (cat1.name  === cat2.name ) &&
       (cat1.age   === cat2.age  ) &&
@@ -180,7 +180,7 @@ object Main extends App {
 
   // Bring Eq[Option] into scope for some further tests:
 
-  import cats.std.option._
+  import cats.instances.option._
 
   println("optionCat1 === optionCat2 : " + (optionCat1 === optionCat2))
   println("optionCat1 =!= optionCat2 : " + (optionCat1 =!= optionCat2))

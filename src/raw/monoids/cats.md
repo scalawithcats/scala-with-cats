@@ -24,7 +24,7 @@ and we have the correct implicits in scope, we can write the following:
 
 ```tut:book
 import cats.Monoid
-import cats.std.string._
+import cats.instances.string._
 
 Monoid[String].combine("Hi ", "there")
 
@@ -50,25 +50,25 @@ Semigroup[String].combine("Hi ", "there")
 
 ### Default Instances
 
-The type class instances for `Monoid` are organised under `cats.std`
+The type class instances for `Monoid` are organised under `cats.instances`
 in the standard way described in [Chapter 1](#importing-default-instances).
 For example, if we want to pull in instances for `Int`
-we import from [`cats.std.int`][cats.std.int]:
+we import from [`cats.instances.int`][cats.instances.int]:
 
 ```tut:book
 import cats.Monoid
-import cats.std.int._
+import cats.instances.int._
 
 Monoid[Int].combine(32, 10)
 ```
 
 Similarly, we can assemble a `Monoid[Option[Int]]`
-using instances from [`cats.std.int`][cats.std.int] and [`cats.std.option`][cats.std.option]:
+using instances from [`cats.instances.int`][cats.instances.int] and [`cats.instances.option`][cats.instances.option]:
 
 ```tut:book
 import cats.Monoid
-import cats.std.int._
-import cats.std.option._
+import cats.instances.int._
+import cats.instances.option._
 
 val a: Option[Int] = Some(22)
 val b: Option[Int] = Some(20)
@@ -87,11 +87,11 @@ we access the syntax by importing from [`cats.syntax.semigroup`][cats.syntax.sem
 
 ```tut:book
 import cats.syntax.semigroup._
-import cats.std.string._
+import cats.instances.string._
 
 val stringResult = "Hi " |+| "there" |+| Monoid[String].empty
 
-import cats.std.int._
+import cats.instances.int._
 
 val intResult = 1 |+| 2 |+| Monoid[Int].empty
 ```
@@ -152,11 +152,11 @@ def add[A: Monoid](items: List[A]): A =
 We can use this code to add values of type `Int` and `Option[Int]` as requested:
 
 ```tut:book
-import cats.std.int._
+import cats.instances.int._
 
 add(List(1, 2, 3))
 
-import cats.std.option._
+import cats.instances.option._
 
 add(List(Some(1), None, Some(2), None, Some(3)))
 ```

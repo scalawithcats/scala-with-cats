@@ -18,8 +18,8 @@ import cats.Foldable
 val ints = List(1, 2, 3)
 // ints: List[Int] = List(1, 2, 3)
 
-import cats.std.list._
-// import cats.std.list._
+import cats.instances.list._
+// import cats.instances.list._
 
 Foldable[List].foldLeft(ints, 0)(_ + _)
 // res0: Int = 6
@@ -31,8 +31,8 @@ And here is an example using `Option`:
 val maybeInt = Option(1)
 // maybeInt: Option[Int] = Some(1)
 
-import cats.std.option._
-// import cats.std.option._
+import cats.instances.option._
+// import cats.instances.option._
 
 Foldable[Option].foldLeft(maybeInt, "")(_ + _)
 // res1: String = 1
@@ -50,8 +50,8 @@ type StringMap[A] = Map[String, A]
 val stringMap = Map("a" -> "b", "c" -> "d")
 // stringMap: scala.collection.immutable.Map[String,String] = Map(a -> b, c -> d)
 
-import cats.std.map._
-// import cats.std.map._
+import cats.instances.map._
+// import cats.instances.map._
 
 Foldable[StringMap].foldLeft(stringMap, "nil")(_ + "," + _)
 // res2: String = nil,b,d
@@ -87,11 +87,11 @@ def stackDepth: Int =
   println(stackDepth)
   item + accum
 }
-// 448
-// 446
-// 444
-// 442
 // 440
+// 438
+// 436
+// 434
+// 432
 // res3: Int = 15
 ```
 
@@ -100,11 +100,11 @@ As we saw in the [monads chapter](#eval), however,
 so `Foldable's` `foldRight` method maintains the same stack depth throughout:
 
 ```scala
-import cats.std.stream._
-// import cats.std.stream._
+import cats.instances.stream._
+// import cats.instances.stream._
 
 val foldable = Foldable[Stream]
-// foldable: cats.Foldable[Stream] = cats.std.StreamInstances$$anon$1@6ead488d
+// foldable: cats.Foldable[Stream] = cats.instances.StreamInstances$$anon$1@7689b4e1
 
 val accum: Eval[Int] = // the accumulator is an Eval
   Eval.now(0)
@@ -116,14 +116,14 @@ val result: Eval[Int] = // and the result is an Eval
       println(stackDepth)
       accum.map(_ + item)
   }
-// result: cats.Eval[Int] = cats.Eval$$anon$8@33ca6363
+// result: cats.Eval[Int] = cats.Eval$$anon$8@5bdf1ac1
 
 result.value
-// 529
-// 529
-// 529
-// 529
-// 529
+// 521
+// 521
+// 521
+// 521
+// 521
 // res4: Int = 15
 ```
 
@@ -172,8 +172,8 @@ Cats provides two methods that make use of `Monoids`:
 For example, we can use `combineAll` to sum over a `List[Int]`:
 
 ```scala
-import cats.std.int._ // import Monoid[Int]
-// import cats.std.int._
+import cats.instances.int._ // import Monoid[Int]
+// import cats.instances.int._
 
 Foldable[List].combineAll(List(1, 2, 3))
 // res7: Int = 6
@@ -182,8 +182,8 @@ Foldable[List].combineAll(List(1, 2, 3))
 Alternatively, we can use `foldMap` to convert each `Int` to a `String` and concatenate them:
 
 ```scala
-import cats.std.string._ // import Monoid[String]
-// import cats.std.string._
+import cats.instances.string._ // import Monoid[String]
+// import cats.instances.string._
 
 Foldable[List].foldMap(List(1, 2, 3))(_.toString)
 // res8: String = 123
@@ -192,8 +192,8 @@ Foldable[List].foldMap(List(1, 2, 3))(_.toString)
 Finally, we can compose `Foldables` to support deep traversal of nested sequences:
 
 ```scala
-import cats.std.vector._
-// import cats.std.vector._
+import cats.instances.vector._
+// import cats.instances.vector._
 
 val ints = List(Vector(1, 2, 3), Vector(4, 5, 6))
 // ints: List[scala.collection.immutable.Vector[Int]] = List(Vector(1, 2, 3), Vector(4, 5, 6))

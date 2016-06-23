@@ -31,7 +31,7 @@ The abstract concept of composing functions of type `A => F[B]` has a name: a *K
 ```tut:book
 object kleisli {
   import cats.data.Kleisli
-  import cats.std.list._
+  import cats.instances.list._
 
   // To make the code more concise
   // A Kleisli that transforms an Int to a List[Int]
@@ -128,8 +128,8 @@ This is more complex than it should be. We'll discuss this soon enough. For now,
 ```tut:book
 object example {
   import cats.data.{Kleisli,NonEmptyList,OneAnd,Validated,Xor}
-  import cats.std.list._
-  import cats.std.function._
+  import cats.instances.list._
+  import cats.instances.function._
   import cats.syntax.monoidal._
   import cats.syntax.validated._
   import predicate._
@@ -275,8 +275,8 @@ With this we implement the example quite clearly.
 ```tut:book
 object example {
   import cats.data.{Kleisli,NonEmptyList,OneAnd,Validated,Xor}
-  import cats.std.list._
-  import cats.std.function._
+  import cats.instances.list._
+  import cats.instances.function._
   import cats.syntax.monoidal._
   import cats.syntax.validated._
   import predicate._

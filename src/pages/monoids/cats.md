@@ -26,8 +26,8 @@ and we have the correct implicits in scope, we can write the following:
 import cats.Monoid
 // import cats.Monoid
 
-import cats.std.string._
-// import cats.std.string._
+import cats.instances.string._
+// import cats.instances.string._
 
 Monoid[String].combine("Hi ", "there")
 // res0: String = Hi there
@@ -59,34 +59,34 @@ Semigroup[String].combine("Hi ", "there")
 
 ### Default Instances
 
-The type class instances for `Monoid` are organised under `cats.std`
+The type class instances for `Monoid` are organised under `cats.instances`
 in the standard way described in [Chapter 1](#importing-default-instances).
 For example, if we want to pull in instances for `Int`
-we import from [`cats.std.int`][cats.std.int]:
+we import from [`cats.instances.int`][cats.instances.int]:
 
 ```scala
 import cats.Monoid
 // import cats.Monoid
 
-import cats.std.int._
-// import cats.std.int._
+import cats.instances.int._
+// import cats.instances.int._
 
 Monoid[Int].combine(32, 10)
 // res5: Int = 42
 ```
 
 Similarly, we can assemble a `Monoid[Option[Int]]`
-using instances from [`cats.std.int`][cats.std.int] and [`cats.std.option`][cats.std.option]:
+using instances from [`cats.instances.int`][cats.instances.int] and [`cats.instances.option`][cats.instances.option]:
 
 ```scala
 import cats.Monoid
 // import cats.Monoid
 
-import cats.std.int._
-// import cats.std.int._
+import cats.instances.int._
+// import cats.instances.int._
 
-import cats.std.option._
-// import cats.std.option._
+import cats.instances.option._
+// import cats.instances.option._
 
 val a: Option[Int] = Some(22)
 // a: Option[Int] = Some(22)
@@ -111,14 +111,14 @@ we access the syntax by importing from [`cats.syntax.semigroup`][cats.syntax.sem
 import cats.syntax.semigroup._
 // import cats.syntax.semigroup._
 
-import cats.std.string._
-// import cats.std.string._
+import cats.instances.string._
+// import cats.instances.string._
 
 val stringResult = "Hi " |+| "there" |+| Monoid[String].empty
 // stringResult: String = Hi there
 
-import cats.std.int._
-// import cats.std.int._
+import cats.instances.int._
+// import cats.instances.int._
 
 val intResult = 1 |+| 2 |+| Monoid[Int].empty
 // intResult: Int = 3
@@ -190,14 +190,14 @@ def add[A: Monoid](items: List[A]): A =
 We can use this code to add values of type `Int` and `Option[Int]` as requested:
 
 ```scala
-import cats.std.int._
-// import cats.std.int._
+import cats.instances.int._
+// import cats.instances.int._
 
 add(List(1, 2, 3))
 // res7: Int = 6
 
-import cats.std.option._
-// import cats.std.option._
+import cats.instances.option._
+// import cats.instances.option._
 
 add(List(Some(1), None, Some(2), None, Some(3)))
 // res8: Option[Int] = Some(6)

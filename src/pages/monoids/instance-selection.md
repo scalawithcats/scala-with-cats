@@ -10,8 +10,8 @@ When working with type classes we must consider two issues that control instance
 
  -  How do we choose between type class instances when there are many available?
 
-    We've seen there are two monoids for `Int`: addition and zero, and multiplication and one.
-    Similarly there are three monoids for `Boolean`.
+    We've seen two monoids for `Int`: addition and zero, and multiplication and one.
+    Similarly there are at least four monoids for `Boolean` (and, or, equal, and not equal).
     When we write `true |+| false`, which instance is selected?
 
 In this section we explore how Cats answers these questions.
@@ -60,8 +60,8 @@ More specific type preferred?   Yes         Yes         No
 It's clear there is no perfect system. Cats generally prefers to use invariant type classes. This allows us to specify more specific instances for subtypes if we want. It does mean that if we have, for example, a value of type `Some[Int]`, our monoid instance for `Option` will not be used. We can solve this problem with a type annotation like `Some(1) : Option[Int]` or by using "smart constructors" that construct values with the type of the base trait in an algebraic data type. For example, Cats provides `some` and `none` constructors for `Option`:
 
 ```scala
-import cats.std.option._
-// import cats.std.option._
+import cats.instances.option._
+// import cats.instances.option._
 
 import cats.syntax.option._
 // import cats.syntax.option._
@@ -86,62 +86,26 @@ when several are available for a specific type.
 For example, how do we select the monoid for integer multiplication
 instead of the monoid for integer addition?
 
-Cats handles this by only providing at most one implicit monoid for each type.
-The default monoid for `Int` is addition:
+At this point in time Cats has no mechanism for selecting alternative instances, 
+though this is likely to change in the future.
+
+We can always define or import a type class instance into the local scope.
+This will take precedence over other type class instances in the implicit scope.
 
 ```scala
 import cats.Monoid
 // import cats.Monoid
 
-import cats.std.int._
-// import cats.std.int._
-
-Monoid[Int].combine(2, 3)
-// res4: Int = 5
-```
-
-but we can summon the multiplication monoid explicitly:
-
-```scala
-val multMonoid: Monoid[Int] =
-  cats.std.int.intAlgebra.multiplicative
-// multMonoid: cats.Monoid[Int] = algebra.ring.MultiplicativeCommutativeMonoid$mcI$sp$$anon$7@2a50b85d
-
-multMonoid.combine(2, 3)
-// res5: Int = 6
-```
-
-Cats doesn't provide a default monoid for `Boolean`,
-although we can summon monoids for conjuction and disjunction explicitly:
-
-```scala
-val conjMonoid: Monoid[Boolean] =
-  cats.std.boolean.booleanAlgebra.multiplicative
-// conjMonoid: cats.Monoid[Boolean] = algebra.ring.MultiplicativeCommutativeMonoid$$anon$14@4810fd6d
-
-val disjMonoid: Monoid[Boolean] =
-  cats.std.boolean.booleanAlgebra.additive
-// disjMonoid: cats.Monoid[Boolean] = algebra.ring.AdditiveCommutativeMonoid$$anon$14@44db3edf
-
-conjMonoid.combine(true, false)
-// res6: Boolean = false
-
-disjMonoid.combine(true, false)
-// res7: Boolean = true
-```
-
-If we want to select a specific monoid for use with the `|+|` syntax,
-we need only assign it to an `implicit val` of the correct type.
-This will override the monoids imported from `cats.std`:
-
-```scala
 import cats.syntax.semigroup._
 // import cats.syntax.semigroup._
 
-implicit val multMonoid: Monoid[Int] =
-  cats.std.int.intAlgebra.multiplicative
-// multMonoid: cats.Monoid[Int] = algebra.ring.MultiplicativeCommutativeMonoid$mcI$sp$$anon$7@742924e3
+implicit val multiplicationMonoid = 
+  new Monoid[Int] {
+    def empty: Int = 1
+    override def combine(x: Int, y: Int): Int = x * y
+  }
+// multiplicationMonoid: cats.Monoid[Int] = $anon$1@1d813724
 
-2 |+| 3
-// res8: Int = 5
+3 |+| 2
+// res4: Int = 6
 ```
