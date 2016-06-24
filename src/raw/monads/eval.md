@@ -133,7 +133,7 @@ The three behaviours are summarized below:
 +==================+=========================+==========================+
 | Memoized         | `val`, `Eval.now`       | `lazy val`, `Eval.later` |
 +------------------+-------------------------+--------------------------+
-| Not memoized     | `def`, `Eval.always`    | <span>-</span>           |
+| Not memoized     | <span>-</span>          | `def`, `Eval.always`     |
 +------------------+-------------------------+--------------------------+
 
 ### Eval as a Monad
@@ -193,64 +193,38 @@ without consuming stack frames.
 We call this property *"stack safety"*.
 
 We'll illustrate this by comparing it to `Option`.
-The `add1` method below prints the stack depth and creates an `Option`:
+The `loopM` method below creates a loop through a monad's `flatMap`.
 
 ```tut:book
-def stackDepth: Int =
-  new Exception().getStackTrace.length
+import cats.Monad
+import cats.syntax.flatMap._
+import scala.language.higherKinds
 
-def add1(n: Int): Option[Int] = {
-  println(s"Stack depth when calculting $n + 1: $stackDepth")
-  Some(n + 1)
-}
+def loopM[M[_] : Monad](m: M[Int], count: Int): M[Int] =
+  count match {
+    case 0 => m
+    case n => m.flatMap { _ => loopM(m, n - 1) }
+  }
 ```
 
-If we write code like the following,
-we can see that the stack depth increases as we next `flatMaps`:
+When we run `loopM` with an `Option` we can easily blow the stack.
 
 ```tut:book
-for {
-  a <- add1(0)
-  b <- add1(a)
-  c <- add1(b)
-  d <- add1(c)
-} yield a + b + c + d
+import cats.instances._
+import cats.syntax.option._
 ```
 
-If we nest calls to `flatMap` deep enough,
-we will eventually get a `StackOverflowError`.
-This can happen when, for example,
-we are folding over an incredibly long sequence.
+```tut:fail
+loopM(1.some, 1000)
+```
 
 Now let's consider the same code rewritten using `Eval`:
 
 ```tut:book
-def stackDepth: Int =
-  new Exception().getStackTrace.length
-
-def add1(n: Int): Eval[Int] = {
-  println(s"Stack depth when calculting $n + 1: $stackDepth")
-  Eval.later(n + 1)
-}
+loopM(Eval.now(1), 1000).value
 ```
 
-We're using `Eval.Later` here,
-but the behaviour is the same with all evaluation strategies:
-
-```tut:book
-val eval = for {
-  a <- add1(0)
-  b <- add1(a)
-  c <- add1(b)
-  d <- add1(c)
-} yield a + b + c + d
-
-eval.value
-```
-
-We don't see all of the messages
-until we call `value` to kick off the calculation.
-However, when we do, we see that the stack depth is consistent throughout.
+We see that this runs without issue.
 
 We can use `Eval` as a mechanism to prevent to prevent stack overflows
 when working on very large data structures.

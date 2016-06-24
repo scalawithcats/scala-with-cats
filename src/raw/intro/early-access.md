@@ -19,7 +19,7 @@ and Noel Welsh ( [noel@underscore.io](mailto:noel@underscore.io) ).
 
 Starting from the February 2016 release, here are the major changes to the book:
 
-- Started to shift all code from Scalaz to Cats (currently version `0.4.0-SNAPSHOT`). Three chapters have been converted.
+- Started to shift all code from Scalaz to Cats (currently version `0.7.0-SNAPSHOT`). Three chapters have been converted.
 
 - Added a new case study which builds a validation library. This case study introduces Kleislis.
 

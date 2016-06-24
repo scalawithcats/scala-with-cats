@@ -9,14 +9,6 @@ where traditional logging can result in interleaved messages from different cont
 With a `Writer` the log for the computation is tied to the result,
 so we can run concurrent computations without mixing log messages.
 
-<div class="callout callout-danger">
-  TODO: Convert the `Lists` in the examples below to `Vectors`.
-
-  `Vector` is a much more sensible type for use as a log for `Writer`
-  because it supports efficient append operations.
-  However, Algebra doesn't currently have `Monoid` instances for `Vector`.
-  Implement these (or wait for them to be implemented) and rewrite this bit.
-</div>
 
 ### Creating and Unpacking Writers
 
@@ -24,12 +16,15 @@ A `Writer[W, A]` carries two values: a *log* of type `W` and a *result* of type 
 
 ```tut:book
 import cats.data.Writer
+import cats.instances.vector._
 
-Writer(List("It all starts here."), 123)
+Writer(Vector("It all starts here."), 123)
 ```
 
-Notice that the type of the writer is actually `WriterT[Id, List[String], Int]`
-instead of `Writer[List[String], Int]` as we might expect.
+We've used a `Vector` to hold our log as it has a more efficient append operation than `List`.
+
+Notice that the type of the writer is actually `WriterT[Id, Vector[String], Int]`
+instead of `Writer[Vector[String], Int]` as we might expect.
 In the spirit of code reuse, Cats implements the `Writer` monad in terms of another type, `WriterT`.
 `WriterT` is an example of a new concept called a "monad tranformer".
 We will introduce monad transformers in the next chapter.
@@ -40,10 +35,9 @@ In order to use `pure` the log has to be a type with a `Monoid`.
 This tells Cats what to use as the initial empty log:
 
 ```tut:book
-import cats.instances.list._
 import cats.syntax.applicative._
 
-type Logged[A] = Writer[List[String], A]
+type Logged[A] = Writer[Vector[String], A]
 
 123.pure[Logged]
 ```
@@ -54,7 +48,7 @@ The `Writer` is initialised with the value `()`:
 ```tut:book
 import cats.syntax.writer._
 
-List("msg1", "msg2", "msg3").tell
+Vector("msg1", "msg2", "msg3").tell
 ```
 
 If we have both a result and a log, we can create a `Writer` in two ways:
@@ -63,9 +57,9 @@ using the `Writer.apply` method or the `writer` syntax:
 ```tut:book
 import cats.syntax.writer._
 
-val a = Writer(123, List("msg1", "msg2", "msg3"))
+val a = Writer(123, Vector("msg1", "msg2", "msg3"))
 
-val b = 123.writer(List("msg1", "msg2", "msg3"))
+val b = 123.writer(Vector("msg1", "msg2", "msg3"))
 ```
 
 We can extract the result and log from a `Writer`
@@ -79,7 +73,7 @@ a.written
 or both at once using the `run` method:
 
 ```tut:book
-b.run
+val (log, result) = b.run
 ```
 
 ### Composing and Transforming Writers
@@ -87,13 +81,13 @@ b.run
 When we transform or `map` over a `Writer`, its log is preserved.
 When we `flatMap`, the logs of the two `Writers` are appended.
 For this reason it's good practice to use a log type that has an efficient append operation,
-such as a `Vector`:
+such as a `Vector`.
 
 ```tut:book
 val writer1 = for {
   a <- 10.pure[Logged]
-  _ <- List("a", "b", "c").tell
-  b <- 32.writer(List("x", "y", "z"))
+  _ <- Vector("a", "b", "c").tell
+  b <- 32.writer(Vector("x", "y", "z"))
 } yield a + b
 
 writer1.run
@@ -191,7 +185,7 @@ import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
-Await.result(Future.sequence(List(
+Await.result(Future.sequence(Vector(
   Future(factorial(5)),
   Future(factorial(5))
 )), Duration.Inf)
@@ -221,7 +215,7 @@ We'll start by defining a type alias for `Writer` so we can use it with `pure` s
 import cats.data.Writer
 import cats.syntax.applicative._
 
-type Logged[A] = Writer[List[String], A]
+type Logged[A] = Writer[Vector[String], A]
 
 42.pure[Logged]
 ```
@@ -231,14 +225,14 @@ We'll import the `tell` syntax as well:
 ```tut:book
 import cats.syntax.writer._
 
-List("Message").tell
+Vector("Message").tell
 ```
 
-Finally, we'll import the `Semigroup` instance for `List`.
+Finally, we'll import the `Semigroup` instance for `Vector`.
 We need this to `map` and `flatMap` over `Logged`:
 
 ```tut:book
-import cats.instances.list._
+import cats.instances.vector._
 
 41.pure[Logged].map(_ + 1)
 ```
@@ -252,7 +246,7 @@ def factorial(n: Int): Logged[Int] = {
   } else {
     for {
       a <- slowly(factorial(n - 1))
-      _ <- List(s"fact $n ${a*n}").tell
+      _ <- Vector(s"fact $n ${a*n}").tell
     } yield a * n
   }
 }
@@ -269,8 +263,8 @@ We can run several `factorials` in parallel as follows,
 capturing their logs independently without fear of interleaving:
 
 ```tut:book
-val List((logA, ansA), (logB, ansB)) =
-  Await.result(Future.sequence(List(
+val Vector((logA, ansA), (logB, ansB)) =
+  Await.result(Future.sequence(Vector(
     Future(factorial(5).run),
     Future(factorial(5).run)
   )), Duration.Inf)

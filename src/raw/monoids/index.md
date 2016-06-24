@@ -83,7 +83,7 @@ if we find ourselves writing `Monoid` instances for custom data types.
 Most of the time we can rely on the instances provided by Cats
 and simply assume the library authors know what they're doing.
 
-Here is a simplified version of the definition of the [`Monoid`] from Cats:
+Here is a simplified version of the definition of the [`Monoid`][cats.Monoid] from Cats:
 
 ```tut:book
 trait Monoid[A] {
@@ -104,7 +104,7 @@ Similarly, `Ints` are monoids under addition.
 However, if we restrict ourselves to non-empty sequences and positive integers,
 we lose access to an `empty` element that obeys the identity law above.
 
-A more accurate (though still simplidied) version of the [`Monoid`] from Cats is:
+A more accurate (though still simplified) version of the [`Monoid`] from Cats is:
 
 ```tut:book
 trait Semigroup[A] {
