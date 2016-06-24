@@ -20,14 +20,15 @@ scalacOptions ++= Seq(
 resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"))
 
 libraryDependencies ++= Seq(
-  "org.typelevel" %% "cats" % "0.5.0-SNAPSHOT" changing()
+  "org.typelevel" %% "cats" % "0.7.0-SNAPSHOT" changing()
 )
 
-lazy val pdf = taskKey[Unit]("Builds the PDF version of the book")
+lazy val pdf  = taskKey[Unit]("Build the PDF version of the book")
+lazy val html = taskKey[Unit]("Build the HTML version of the book")
+lazy val epub = taskKey[Unit]("Build the ePub version of the book")
+lazy val all  = taskKey[Unit]("Build all versions of the book")
 
-pdf := {
-  val a = tut.value
-  "grunt pdf" !
-}
-
-
+pdf  := { tut.value ; "grunt pdf"  ! }
+html := { tut.value ; "grunt html" ! }
+epub := { tut.value ; "grunt epub" ! }
+all  := { pdf ; html ; epub }
