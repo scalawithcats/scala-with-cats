@@ -144,18 +144,8 @@ Let's confirm this by computing (and logging) some factorials.
 The `factorial` function below computes a factorial,
 printing out the intermediate steps in the calculation as it runs.
 The `slowly` helper function ensures this takes a while to run,
-even on the very small examples we have to use to fit in these pages.
-
-<div class="callout callout-danger">
-  TODO: `goSlowly` is a fairly weak thing to include here.
-
-  Is there another example we can use to demo `Writers` in a cleaner way?
-  Maybe logging the steps in Towers of Hanoi?
-  Or fibonacci numbers?
-
-  If we do fibonacci numbers, maybe we could parallelise it
-  with `WriterT` in the monad transformers chapter?
-</div>
+even on the very small examples we have to use to fit in these pages,
+so we can see the interleaving when we run multiple factorials in parallel.
 
 ```tut:book
 def slowly[A](body: => A) =

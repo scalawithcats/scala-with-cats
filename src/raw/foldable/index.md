@@ -10,7 +10,8 @@ We can also invent new sequence types and plug them into our code.
 
 Let's start with a quick recap on the concept of folding.
 In general, a `fold` function allows users to transform one algebraic data type to another.
-For example, the `fold` method on `Option` can return any data type we want by providing handlers for the `Some` and `None` cases:
+For example, the `fold` method on `Option` can return any algebraic data type
+by providing handlers for the `Some` and `None` cases:
 
 ```tut:book
 def show[A](option: Option[A]): String =

@@ -210,11 +210,11 @@ def loopM[M[_] : Monad](m: M[Int], count: Int): M[Int] =
 When we run `loopM` with an `Option` we can easily blow the stack.
 
 ```tut:book
-import cats.instances._
+import cats.instances.option.__
 import cats.syntax.option._
 ```
 
-```tut:fail
+```tut:book:fail
 loopM(1.some, 1000)
 ```
 
