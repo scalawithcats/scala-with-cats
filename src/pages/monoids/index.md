@@ -94,7 +94,7 @@ if we find ourselves writing `Monoid` instances for custom data types.
 Most of the time we can rely on the instances provided by Cats
 and simply assume the library authors know what they're doing.
 
-Here is a simplified version of the definition of the [`Monoid`] from Cats:
+Here is a simplified version of the definition of the [`Monoid`][cats.Monoid] from Cats:
 
 ```scala
 trait Monoid[A] {
@@ -116,7 +116,7 @@ Similarly, `Ints` are monoids under addition.
 However, if we restrict ourselves to non-empty sequences and positive integers,
 we lose access to an `empty` element that obeys the identity law above.
 
-A more accurate (though still simplidied) version of the [`Monoid`] from Cats is:
+A more accurate (though still simplified) version of the [`Monoid`] from Cats is:
 
 ```scala
 trait Semigroup[A] {
@@ -174,7 +174,7 @@ implicit val booleanAndMonoid: Monoid[Boolean] = new Monoid[Boolean] {
   def combine(a: Boolean, b: Boolean) = a && b
   def empty = true
 }
-// booleanAndMonoid: Monoid[Boolean] = $anon$1@2176c398
+// booleanAndMonoid: Monoid[Boolean] = $anon$1@733fd796
 ```
 
 Second, we have *or* with operator `||` and identity `false`:
@@ -184,7 +184,7 @@ implicit val booleanOrMonoid: Monoid[Boolean] = new Monoid[Boolean] {
   def combine(a: Boolean, b: Boolean) = a || b
   def empty = false
 }
-// booleanOrMonoid: Monoid[Boolean] = $anon$1@14f161fe
+// booleanOrMonoid: Monoid[Boolean] = $anon$1@574650a3
 ```
 
 Third, we have *exclusive or* with identity `false`:
@@ -194,7 +194,7 @@ implicit val booleanXorMonoid: Monoid[Boolean] = new Monoid[Boolean] {
   def combine(a: Boolean, b: Boolean) = (a && !b) || (!a && b)
   def empty = false
 }
-// booleanXorMonoid: Monoid[Boolean] = $anon$1@167ed583
+// booleanXorMonoid: Monoid[Boolean] = $anon$1@44d39a64
 ```
 
 Finally, we have *exclusive nor* (the negation of exclusive or) with identity `true`:
@@ -204,7 +204,7 @@ implicit val booleanXnorMonoid: Monoid[Boolean] = new Monoid[Boolean] {
   def combine(a: Boolean, b: Boolean) = (!a || b) && (a || !b)
   def empty = true
 }
-// booleanXnorMonoid: Monoid[Boolean] = $anon$1@25c686b7
+// booleanXnorMonoid: Monoid[Boolean] = $anon$1@79af9420
 ```
 
 Showing that the identity law holds in each case is straightforward.
@@ -235,10 +235,10 @@ implicit val intMonoid: Monoid[Int] = new Monoid[Int] {
   def combine(a: Int, b: Int) = a + b
   def empty = 0
 }
-// intMonoid: Monoid[Int] = $anon$1@1c14489a
+// intMonoid: Monoid[Int] = $anon$1@3528bbef
 
 val intSetMonoid = Monoid[Set[Int]] // this will work
-// intSetMonoid: Monoid[Set[Int]] = $anon$1@6a0953ff
+// intSetMonoid: Monoid[Set[Int]] = $anon$1@6a9dd78c
 ```
 
 Set intersection does not form a monoid as there is no identity element.

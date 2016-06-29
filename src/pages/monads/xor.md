@@ -44,7 +44,7 @@ Xor.right(1).flatMap(x => Xor.right(x + 2))
 
 ### Creating Xors
 
-The `Xor` object provides factory methods `Xor.left` and `Xor.right` methods as we saw above. However, these are slightly unwieldy due to the finger gymnastics required to write `Xor`. We typically import syntax from [`cats.syntax.xor`][cats.syntax.xor] to get nicer constructors---`left` and `right` as enriched methods:
+The `Xor` object provides the `Xor.left` and `Xor.right` factory methods as we saw above. However, these are slightly unwieldy due to the finger gymnastics required to write `Xor`. We typically import syntax from [`cats.syntax.xor`][cats.syntax.xor] to get nicer constructors---`left` and `right` as enriched methods:
 
 ```scala
 import cats.syntax.xor._
@@ -65,7 +65,9 @@ for {
 
 ### Transforming Xors
 
-`Xor` supports familiar methods like `fold`, `getOrElse`, and `orElse`. We use `fold` to convert a `Xor` to some other type, by supplying transform functions for the left and right sides:
+`Xor` supports familiar methods like `fold`, `getOrElse`, and `orElse`.
+We use `fold` to convert a `Xor` to some other type,
+by supplying transform functions for the left and right sides:
 
 ```scala
 1.right[String].fold(
@@ -95,6 +97,15 @@ We can use `orElse` if we want to default to another `Xor`:
 // res9: cats.data.Xor[String,Int] = Right(2)
 ```
 
+`Xor` also has a useful method called `ensure`
+that checks whether the wrapped value satisfies a predicate
+and fails with a specified error if it does not:
+
+```scala
+-1.right[String].ensure("Must be non-negative!")(_ > 0)
+// res10: cats.data.Xor[String,Int] = Left(Must be non-negative!)
+```
+
 ### Fail-Fast Error Handling
 
 `Xor` is typically used to implement fail-fast error handling. We sequence a number of computations using `flatMap`, and if one computation fails the remaining computations are not run:
@@ -105,7 +116,7 @@ for {
   b <- 0.right[String]
   c <- if(b == 0) "DIV0".left[Int] else (a / b).right[String]
 } yield c * 100
-// res10: cats.data.Xor[String,Int] = Left(DIV0)
+// res11: cats.data.Xor[String,Int] = Left(DIV0)
 ```
 
 ### Representing Errors {#representing-errors}

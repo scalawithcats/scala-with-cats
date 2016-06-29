@@ -6,11 +6,6 @@ Mention this at the beginning of the `Applicative` section:
 
 -----
 
-Combining invariant and contravariant values
-(maybe a separate chapter on contravariant and invaraint functors?)
-
------
-
 ## Intuitive Definition of an Applicative
 
 Applicative functors are similar to functors---they allow us to apply functions to values within a context. However, applicative functors have more than one contextual input---they are used to *combine* values together. This is useful for modelling parallel operations that run independently but produce combinable results. Formally, we can describe an applicative for a type `F[_]` as follows:
@@ -28,16 +23,29 @@ Unlike monads, applicatives are *context free*---the `func` argument to `apply2`
 
 Let's see an example. Many monads are also applicatives---we can see how things work by looking at `Option`:
 
-```tut:book
+```scala
 import cats.Applicative
+// import cats.Applicative
+
 import cats.instances.option._
+// import cats.instances.option._
 
 val optApp = Applicative[Option]
+// optApp: cats.Applicative[Option] = cats.instances.OptionInstances$$anon$1@650c649e
 
 optApp.apply2(
   some("hello"),
   some("applicatives")
 ) { (a, b) => (a, b) }
+// <console>:17: error: value apply2 is not a member of cats.Applicative[Option]
+//        optApp.apply2(
+//               ^
+// <console>:18: error: not found: value some
+//          some("hello"),
+//          ^
+// <console>:19: error: not found: value some
+//          some("applicatives")
+//          ^
 ```
 
 ## Combining Three or More Values
@@ -48,14 +56,32 @@ The conceptual answer is that we can use an applicative to combine any number of
 
 The Cats-specific answer is that there are implementations of `applyN` for up to 12 arguments (ignoring `func`). Scala is bad at abstracting over arity as we know from the 22-limit on functions and tuples. The Cats developers didn't see the point in going all the way to 22---they decided to stop 10 short of the usual limit:
 
-```tut:book
+```scala
 optApp.apply3(
+// <console>:5: error: ')' expected but '.' found.
+// optApp.apply3(
+//       ^
   some("applicatives"),
   some("totally"),
   some("rock")
 ) { (a, b, c) =>
   s"$a $b $c"
 }
+// <console>:17: error: value apply2 is not a member of cats.Applicative[Option]
+//        optApp.apply2(
+//               ^
+// <console>:18: error: not found: value some
+//          some("hello"),
+//          ^
+// <console>:19: error: not found: value some
+//          some("applicatives")
+//          ^
+// <console>:21: error: not found: value some
+//          some("totally"),
+//          ^
+// <console>:22: error: not found: value some
+//          some("rock")
+//          ^
 ```
 
 ## Actual Definition of an Applicative
@@ -86,7 +112,7 @@ def apply2[A, B, C, D](a: F[A], b: F[B], c: F[C])
 
 To understand this code we first need to understand *currying*,  the process of turning a multi-argument function into a series of nested unary functions. Here's an example:
 
-```tut:book
+```scala
 val addNumbers =
   (a: Int, b: Int, c: Int) => a + b + c
 
@@ -102,7 +128,7 @@ In this code, `addNumbers` is a function that accepts three parameters and sums 
 
 Curried and uncurried functions are essentially different ways of writing equivalent code. In Haskell, for example, all functions have one argument and all multi-argument functions are represented via currying. In Scala, every `Function` object of two or more arguments has a `curried` method that converts it to curried form. The `addCurried` example above can be re-written as follows:
 
-```tut:book
+```scala
 val addCurried = addNumbers.curried
 
 addCurried(1)(2)(3)
