@@ -56,7 +56,7 @@ val sequence: Option[List[Int]] =
 
 ### Default Instances
 
-Cats provides instances for all the monads in the standard library (`Option`, `List`, `Vector` and so on) via [`cats.std`][cats.std]:
+Cats provides instances for all the monads in the standard library (`Option`, `List`, `Vector` and so on) via [`cats.instances`][cats.instances]:
 
 ```scala
 import cats.instances.option._
@@ -94,7 +94,7 @@ val optionMonad = new Monad[Option] {
   def pure[A](value: A): Option[A] =
     Some(value)
 }
-// optionMonad: cats.Monad[Option] = $anon$1@364303d9
+// optionMonad: cats.Monad[Option] = $anon$1@29cbbe33
 ```
 
 ### *Monad* Syntax
@@ -221,7 +221,7 @@ implicit val resultMonad = new Monad[Result] {
         Failure(message)
     }
 }
-// resultMonad: cats.Monad[Result] = $anon$1@1db02b89
+// resultMonad: cats.Monad[Result] = $anon$1@598141d1
 ```
 
 We'll pre-empt any compile errors concerning variance by defining our usual smart constructors:

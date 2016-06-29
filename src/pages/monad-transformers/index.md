@@ -126,12 +126,12 @@ Monad transformers are a little different to the other abstractions we've seen--
 
 By convention, in Cats a monad `Foo` will have a transformer class called `FooT`. In fact, many monads in Cats are defined by combining a monad transformer with the `Id` monad. Concretely, some of the available instances are:
 
-- [cats.cata.OptionT][cats.data.OptionT] for `Option`;
-- [cats.cata.XorT][cats.data.XorT] for [`Xor`][cats.data.Xor];
-- [cats.cata.ReaderT][cats.data.ReaderT],
-  [cats.cata.WriterT][cats.data.WriterT], and
-  [cats.cata.StateT][cats.data.StateT];
-- [cats.cata.IdT][cats.data.IdT] for the [`Id`][cats.Id] monad.
+- [`cats.data.OptionT`][cats.data.OptionT] for `Option`;
+- [`cats.data.XorT`][cats.data.XorT] for [`Xor`][cats.data.Xor];
+- [`cats.data.ReaderT`][cats.data.ReaderT],
+  [`cats.data.WriterT`][cats.data.WriterT], and
+  [`cats.data.StateT`][cats.data.StateT];
+- [`cats.data.IdT`][cats.data.IdT] for the [`Id`][cats.Id] monad.
 
 All of these monad transformers follow the same convention: the first type parameter specifies the monad that is wrapped around the monad implied by the transformer. The remaining type parameters are the types we're used to from the corresponding monads.
 
@@ -208,7 +208,7 @@ val answer: FutureXorOption[Int] =
     a <- 10.pure[FutureXorOption]
     b <- 32.pure[FutureXorOption]
   } yield a + b
-// answer: FutureXorOption[Int] = OptionT(XorT(scala.concurrent.impl.Promise$DefaultPromise@4e0f39ac))
+// answer: FutureXorOption[Int] = OptionT(XorT(scala.concurrent.impl.Promise$DefaultPromise@123efae7))
 ```
 
 <div class="callout callout-info">

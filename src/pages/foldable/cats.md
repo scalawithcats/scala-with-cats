@@ -38,7 +38,7 @@ Foldable[Option].foldLeft(maybeInt, "")(_ + _)
 // res1: String = 1
 ```
 
-The `Foldable` instance for `Map` allows us to fold over its values.
+The `Foldable` instance for `Map` allows us to fold over its values (as opposed to its keys).
 Because `Map` has two type parameters,
 we have to fix one of them to create the single-parameter type constructor
 we need to summon the `Foldable`:
@@ -70,7 +70,9 @@ Using `Eval` means folding with `Foldable` is always *stack safe*,
 even when the collection's default definition of `foldRight` is not.
 
 For example, the default implementation for `Stream` is not stack safe.
-We can see the stack depth creeping up as we iterate across the stream:
+We can see the stack depth changing as we iterate across the stream.
+The longer the stream, the larger the stack requirements for the fold.
+A sufficiently large stream will trigger a `StackOverflowException`:
 
 ```scala
 import cats.Eval
@@ -80,31 +82,31 @@ import cats.Foldable
 // import cats.Foldable
 
 def stackDepth: Int =
-  new Exception().getStackTrace.length
+  Thread.currentThread.getStackTrace.length
 // stackDepth: Int
 
 (1 to 5).toStream.foldRight(0) { (item, accum) =>
   println(stackDepth)
   item + accum
 }
-// 440
-// 438
-// 436
-// 434
-// 432
+// 461
+// 459
+// 457
+// 455
+// 453
 // res3: Int = 15
 ```
 
 As we saw in the [monads chapter](#eval), however,
-`Eval's` `map` and `flatMap` are trampolined,
-so `Foldable's` `foldRight` method maintains the same stack depth throughout:
+`Eval's` `map` and `flatMap` are trampolined:
+`Foldable's` `foldRight` maintains the same stack depth throughout:
 
 ```scala
 import cats.instances.stream._
 // import cats.instances.stream._
 
 val foldable = Foldable[Stream]
-// foldable: cats.Foldable[Stream] = cats.instances.StreamInstances$$anon$1@7689b4e1
+// foldable: cats.Foldable[Stream] = cats.instances.StreamInstances$$anon$1@5ccdf18b
 
 val accum: Eval[Int] = // the accumulator is an Eval
   Eval.now(0)
@@ -116,14 +118,14 @@ val result: Eval[Int] = // and the result is an Eval
       println(stackDepth)
       accum.map(_ + item)
   }
-// result: cats.Eval[Int] = cats.Eval$$anon$8@5bdf1ac1
+// result: cats.Eval[Int] = cats.Eval$$anon$8@10c9a188
 
 result.value
-// 521
-// 521
-// 521
-// 521
-// 521
+// 542
+// 542
+// 542
+// 542
+// 542
 // res4: Int = 15
 ```
 

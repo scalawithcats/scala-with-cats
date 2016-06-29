@@ -68,7 +68,7 @@ import cats.Eval
 import cats.Foldable
 
 def stackDepth: Int =
-  new Exception().getStackTrace.length
+  Thread.currentThread.getStackTrace.length
 
 (1 to 5).toStream.foldRight(0) { (item, accum) =>
   println(stackDepth)

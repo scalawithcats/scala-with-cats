@@ -93,10 +93,10 @@ val now    = Eval.now(1 + 2)
 // now: cats.Eval[Int] = Now(3)
 
 val later  = Eval.later(3 + 4)
-// later: cats.Eval[Int] = cats.Later@341b0fa4
+// later: cats.Eval[Int] = cats.Later@6ddacaf8
 
 val always = Eval.always(5 + 6)
-// always: cats.Eval[Int] = cats.Always@5d38cee6
+// always: cats.Eval[Int] = cats.Always@3743f35c
 ```
 
 We can extract the result of an `Eval` using its `value` method:
@@ -140,7 +140,7 @@ val y = Eval.always {
   println("Computing Y")
   1 + 1
 }
-// y: cats.Eval[Int] = cats.Always@67cee0a2
+// y: cats.Eval[Int] = cats.Always@253caa7d
 
 y.value // first access
 // Computing Y
@@ -159,7 +159,7 @@ val z = Eval.later {
   println("Computing Z")
   1 + 1
 }
-// z: cats.Eval[Int] = cats.Later@4dfdf7e0
+// z: cats.Eval[Int] = cats.Later@7f9960e2
 
 z.value // first access
 // Computing Z
@@ -176,7 +176,7 @@ The three behaviours are summarized below:
 +==================+=========================+==========================+
 | Memoized         | `val`, `Eval.now`       | `lazy val`, `Eval.later` |
 +------------------+-------------------------+--------------------------+
-| Not memoized     | `def`, `Eval.always`    | <span>-</span>           |
+| Not memoized     | <span>-</span>          | `def`, `Eval.always`     |
 +------------------+-------------------------+--------------------------+
 
 ### Eval as a Monad
@@ -193,7 +193,7 @@ val greeting = Eval.always {
   println("Step 2")
   str + " world"
 }
-// greeting: cats.Eval[String] = cats.Eval$$anon$8@7e74327
+// greeting: cats.Eval[String] = cats.Eval$$anon$8@17cc1e4
 
 greeting.value
 // Step 1
@@ -213,7 +213,7 @@ val ans = for {
   a + b
 }
 // Calculating A
-// ans: cats.Eval[Int] = cats.Eval$$anon$8@557f77d4
+// ans: cats.Eval[Int] = cats.Eval$$anon$8@3badf266
 
 ans.value // first access
 // Calculating B
@@ -235,7 +235,7 @@ val saying = Eval.always { println("Step 1") ; "The cat" }.
   map { str => println("Step 2") ; str + " sat on" }.
   memoize.
   map { str => println("Step 3") ; str + " the mat" }
-// saying: cats.Eval[String] = cats.Eval$$anon$8@3b7acc55
+// saying: cats.Eval[String] = cats.Eval$$anon$8@2c867bb9
 
 saying.value // first access
 // Step 1
@@ -257,85 +257,75 @@ without consuming stack frames.
 We call this property *"stack safety"*.
 
 We'll illustrate this by comparing it to `Option`.
-The `add1` method below prints the stack depth and creates an `Option`:
+The `loopM` method below creates a loop through a monad's `flatMap`.
 
 ```scala
+import cats.Monad
+// import cats.Monad
+
+import cats.syntax.flatMap._
+// import cats.syntax.flatMap._
+
+import scala.language.higherKinds
+// import scala.language.higherKinds
+
 def stackDepth: Int =
-  new Exception().getStackTrace.length
+  Thread.currentThread.getStackTrace.length
 // stackDepth: Int
 
-def add1(n: Int): Option[Int] = {
-  println(s"Stack depth when calculting $n + 1: $stackDepth")
-  Some(n + 1)
+def loopM[M[_] : Monad](m: M[Int], count: Int): M[Int] = {
+  println(s"Stack depth $stackDepth")
+  count match {
+    case 0 => m
+    case n => m.flatMap { _ => loopM(m, n - 1) }
+  }
 }
-// add1: (n: Int)Option[Int]
+// loopM: [M[_]](m: M[Int], count: Int)(implicit evidence$1: cats.Monad[M])M[Int]
 ```
 
-If we write code like the following,
-we can see that the stack depth increases as we next `flatMaps`:
+When we run `loopM` with an `Option` we can see the stack depth slowly increasing.
+With a sufficiently high value of `count`, we would blow the stack:
 
 ```scala
-for {
-  a <- add1(0)
-  b <- add1(a)
-  c <- add1(b)
-  d <- add1(c)
-} yield a + b + c + d
-// Stack depth when calculting 0 + 1: 1024
-// Stack depth when calculting 1 + 1: 1024
-// Stack depth when calculting 2 + 1: 1024
-// Stack depth when calculting 3 + 1: 1024
-// res20: Option[Int] = Some(10)
+import cats.instances.option._
+// import cats.instances.option._
+
+import cats.syntax.option._
+// import cats.syntax.option._
 ```
-
-If we nest calls to `flatMap` deep enough,
-we will eventually get a `StackOverflowError`.
-This can happen when, for example,
-we are folding over an incredibly long sequence.
-
-Now let's consider the same code rewritten using `Eval`:
 
 ```scala
-def stackDepth: Int =
-  new Exception().getStackTrace.length
-// stackDepth: Int
-
-def add1(n: Int): Eval[Int] = {
-  println(s"Stack depth when calculting $n + 1: $stackDepth")
-  Eval.later(n + 1)
-}
-// add1: (n: Int)cats.Eval[Int]
+loopM(1.some, 5)
+// Stack depth 1024
+// Stack depth 1024
+// Stack depth 1024
+// Stack depth 1024
+// Stack depth 1024
+// Stack depth 1024
+// res20: Option[Int] = Some(1)
 ```
 
-We're using `Eval.Later` here,
-but the behaviour is the same with all evaluation strategies:
+Now let's see the same code rewritten using `Eval`.
+The trampoline keeps the stack depth constant:
 
 ```scala
-val eval = for {
-  a <- add1(0)
-  b <- add1(a)
-  c <- add1(b)
-  d <- add1(c)
-} yield a + b + c + d
-// Stack depth when calculting 0 + 1: 1024
-// eval: cats.Eval[Int] = cats.Eval$$anon$8@13b94e54
-
-eval.value
-// Stack depth when calculting 1 + 1: 1024
-// Stack depth when calculting 2 + 1: 1024
-// Stack depth when calculting 3 + 1: 1024
-// res21: Int = 10
+loopM(Eval.now(1), 5).value
+// Stack depth 1024
+// Stack depth 1024
+// Stack depth 1024
+// Stack depth 1024
+// Stack depth 1024
+// Stack depth 1024
+// res21: Int = 1
 ```
 
-We don't see all of the messages
-until we call `value` to kick off the calculation.
-However, when we do, we see that the stack depth is consistent throughout.
+We see that this runs without issue.
 
 We can use `Eval` as a mechanism to prevent to prevent stack overflows
 when working on very large data structures.
 However, we should bear in mind that trampolining is not free.
 It effectively avoids consuming stack by
-creating a linked list of function calls on the heap.
+creating a chain of function calls on the heap.
 There are still limits on how deeply we can nest computations,
 but they are bounded by the size of the heap rather than the stack.
 

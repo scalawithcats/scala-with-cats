@@ -4,7 +4,7 @@ Let's look at the implementation of functors in Cats. We'll follow the usual pat
 
 ### The *Functor* Type Class
 
-The functor type class is [`cats.Functor`][cats.Functor]. We obtain instances using the standard `Functor.apply`. As usual, default instances are arranged by type in the [`cats.std`][cats.std] package:
+The functor type class is [`cats.Functor`][cats.Functor]. We obtain instances using the standard `Functor.apply`. As usual, default instances are arranged by type in the [`cats.instances`][cats.instances] package:
 
 ```scala
 import cats.Functor
@@ -29,7 +29,7 @@ val option2 = Functor[Option].map(option1)(_.toString)
 // option2: Option[String] = Some(123)
 ```
 
-`Functor` also provides the `lift` method, which converts a function of type `A => B` to one that operates over a monad and has type `F[A] => F[B]`:
+`Functor` also provides the `lift` method, which converts a function of type `A => B` to one that operates over a functor and has type `F[A] => F[B]`:
 
 ```scala
 val func = (x: Int) => x + 1
@@ -70,14 +70,14 @@ Other methods are available but we won't discuss them here. `Functors` are more 
 
 ### Instances for Custom Types
 
-We can define a functor simply by defining its map method. Here's an example of a `Functor` for `Option`, even though such a thing already exists in [`cats.std`][cats.std]:
+We can define a functor simply by defining its map method. Here's an example of a `Functor` for `Option`, even though such a thing already exists in [`cats.instances`][cats.instances]:
 
 ```scala
 val optionFunctor = new Functor[Option] {
   def map[A, B](value: Option[A])(func: A => B): Option[B] =
     value map func
 }
-// optionFunctor: cats.Functor[Option] = $anon$1@6671030f
+// optionFunctor: cats.Functor[Option] = $anon$1@6529350d
 ```
 
 The implementation is trivial---simply call `Option's` `map` method.
@@ -119,7 +119,7 @@ implicit val resultFunctor = new Functor[Result] {
       case Failure(message)        => Failure(message)
     }
 }
-// resultFunctor: cats.Functor[Result] = $anon$1@8396897
+// resultFunctor: cats.Functor[Result] = $anon$1@7924a44
 ```
 
 Let's use our `Functor` in a sample application:

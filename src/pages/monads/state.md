@@ -17,7 +17,7 @@ import cats.data.State
 val a = State[Int, String] { state =>
   (state, s"The state is $state")
 }
-// a: cats.data.State[Int,String] = cats.data.StateT@4617b2b9
+// a: cats.data.State[Int,String] = cats.data.StateT@1ebeaf16
 ```
 
 In other words, an instance of `State` is a combination of two things:
@@ -57,19 +57,19 @@ val step1 = State[Int, String] { num =>
   val ans = num + 1
   (ans, s"Result of step1: $ans")
 }
-// step1: cats.data.State[Int,String] = cats.data.StateT@55d5b020
+// step1: cats.data.State[Int,String] = cats.data.StateT@7433a77d
 
 val step2 = State[Int, String] { num =>
   val ans = num * 2
   (ans, s"Result of step2: $ans")
 }
-// step2: cats.data.State[Int,String] = cats.data.StateT@4994c4ed
+// step2: cats.data.State[Int,String] = cats.data.StateT@670f6ab
 
 val both = for {
   a <- step1
   b <- step2
 } yield (a, b)
-// both: cats.data.StateT[cats.Eval,Int,(String, String)] = cats.data.StateT@6f07ec87
+// both: cats.data.StateT[cats.Eval,Int,(String, String)] = cats.data.StateT@4df79632
 
 val (state, result) = both.run(20).value
 // state: Int = 42
@@ -92,19 +92,19 @@ Cats provides several convenience constructors for creating primitive steps:
 
 ```scala
 val step1 = State.get[Int]
-// step1: cats.data.State[Int,Int] = cats.data.StateT@3a125ea9
+// step1: cats.data.State[Int,Int] = cats.data.StateT@1424ff54
 
 val step2 = State.set[Int](30)
-// step2: cats.data.State[Int,Unit] = cats.data.StateT@11fc2937
+// step2: cats.data.State[Int,Unit] = cats.data.StateT@71b50647
 
 val step3 = State.pure[Int, String]("Result")
-// step3: cats.data.State[Int,String] = cats.data.StateT@3fc158de
+// step3: cats.data.State[Int,String] = cats.data.StateT@42126010
 
 val step4 = State.inspect[Int, String](_ + "!")
-// step4: cats.data.State[Int,String] = cats.data.StateT@34d12fc5
+// step4: cats.data.State[Int,String] = cats.data.StateT@5366c34b
 
 val step5 = State.modify[Int](_ + 1)
-// step5: cats.data.State[Int,Unit] = cats.data.StateT@2e9d31c6
+// step5: cats.data.State[Int,Unit] = cats.data.StateT@15a52983
 
 val (state, result) = step1.run(10).value
 // state: Int = 10
@@ -142,7 +142,7 @@ val program: State[Int, (Int, Int, Int)] = for {
   _ <- modify[Int](_ + 1)
   c <- inspect[Int, Int](_ * 1000)
 } yield (a, b, c)
-// program: cats.data.State[Int,(Int, Int, Int)] = cats.data.StateT@13fc608
+// program: cats.data.State[Int,(Int, Int, Int)] = cats.data.StateT@3827a1d0
 
 val (state, result) = program.run(1).value
 // state: Int = 3
@@ -297,7 +297,7 @@ val program = for {
   _   <- evalOne("2")
   ans <- evalOne("+")
 } yield ans
-// program: cats.data.StateT[cats.Eval,List[Int],Int] = cats.data.StateT@35d179ae
+// program: cats.data.StateT[cats.Eval,List[Int],Int] = cats.data.StateT@593241f9
 
 program.runA(Nil).value
 // res2: Int = 3

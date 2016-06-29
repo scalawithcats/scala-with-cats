@@ -18,20 +18,27 @@ Let's see this in action.
 The code below summons a `Cartesian` for `Option`
 and uses it to zip two values:
 
-```tut:book
+```scala
 import cats.Cartesian
+// import cats.Cartesian
+
 import cats.instances.option._
+// import cats.instances.option._
 
 Cartesian[Option].product(Some(123), Some("abc"))
+// res0: Option[(Int, String)] = Some((123,abc))
 ```
 
 In the case of `Option`,
 if either or both of the argument values is `None`,
 the result is always `None`:
 
-```tut:book
+```scala
 Cartesian[Option].product(None, Some("abc"))
+// res1: Option[(Nothing, String)] = None
+
 Cartesian[Option].product(Some(123), None)
+// res2: Option[(Int, Nothing)] = None
 ```
 
 ### Combining *Futures*
@@ -39,56 +46,70 @@ Cartesian[Option].product(Some(123), None)
 The semantics of `product` are, of course, different for every data type.
 For example, the `Cartesian[Future]` combines `Futures` in parallel:
 
-```tut:book
+```scala
 import scala.concurrent._
+// import scala.concurrent._
+
 import scala.concurrent.ExecutionContext.Implicits.global
+// import scala.concurrent.ExecutionContext.Implicits.global
+
 import scala.concurrent.duration.Duration
+// import scala.concurrent.duration.Duration
 
 import cats.instances.future._
+// import cats.instances.future._
 
 val future = Cartesian[Future].product(Future(123), Future("abc"))
+// future: scala.concurrent.Future[(Int, String)] = scala.concurrent.impl.Promise$DefaultPromise@313f0f80
 
 Await.result(future, Duration.Inf)
+// res3: (Int, String) = (123,abc)
 ```
 
 ### Combining *Xors*
 
 When combining `Xors`, we have to use a type alias to fix the left hand side:
 
-```tut:book
+```scala
 import cats.data.Xor
+// import cats.data.Xor
 
 type ErrorOr[A] = List[String] Xor A
+// defined type alias ErrorOr
 
 Cartesian[ErrorOr].product(
   Xor.right(123),
   Xor.right("abc")
 )
+// res4: ErrorOr[(Int, String)] = Right((123,abc))
 ```
 
 If we try to combine failed and successful `Xors`,
 the `product` method returns the errors from the failed parameter:
 
-```tut:book
+```scala
 Cartesian[ErrorOr].product(
   Xor.left(List("Fail parameter 1")),
   Xor.right("abc")
 )
+// res5: ErrorOr[(Nothing, String)] = Left(List(Fail parameter 1))
 
 Cartesian[ErrorOr].product(
   Xor.right(123),
   Xor.left(List("Fail parameter 2"))
 )
+// res6: ErrorOr[(Int, Nothing)] = Left(List(Fail parameter 2))
 ```
 
 However, if *both* sides are failures,
 only one set of errors is retained:
 
-```tut:book
+```scala
 Cartesian[ErrorOr].product(
   Xor.left(List("Fail parameter 1")),
   Xor.left(List("Fail parameter 2"))
 )
+// res7: ErrorOr[(Nothing, Nothing)] = Left(List(Fail parameter 1))
 ```
 
 Why does this happen? It seems counter-intuitive.
