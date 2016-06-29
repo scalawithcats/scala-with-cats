@@ -114,7 +114,7 @@ The classic use case for a `Reader` is to inject a configuration into a computat
 import cats.data.Reader
 import cats.syntax.applicative._
 
-case class Database(users: Map[Int, String], passwords: Map[String, String])
+final case class Database(users: Map[Int, String], passwords: Map[String, String])
 
 type DatabaseReader[A] = Reader[Database, A]
 

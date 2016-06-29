@@ -3,7 +3,7 @@
 [`cats.data.State`][cats.data.State] allows us to pass additional state around as part of a computation.
 We define `State` instances representing atomic operations on the state,
 and thread them together using `map` and `flatMap`.
-In this way we can model "mutable" state without in a purely functional way without using mutation.
+In this way we can model "mutable" state in a purely functional way without using mutation.
 
 ### Creating and Unpacking State
 
@@ -93,7 +93,7 @@ val (state, result) = step4.run(10).value
 val (state, result) = step5.run(10).value
 ```
 
-We can assemble these building blocks to into useful computations.
+We can assemble these building blocks into useful computations.
 We often end up ignoring the results of intermediate stages
 when they only represent transformations on the state:
 
@@ -121,7 +121,7 @@ We can see a simple example of this by implementing
 a calculator for post-order integer arithmetic expressions.
 
 In case you haven't heard of post-order expressions before (I wouldn't be surprised if you haven't),
-they are a notation where we write the operator *after* its oprands.
+they are a notation where we write the operator *after* its operands.
 So, for example, instead of writing `1 + 2` we would write:
 
 ```scala
