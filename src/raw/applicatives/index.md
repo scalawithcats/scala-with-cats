@@ -2,7 +2,7 @@
 
 In previous chapters we saw how functors and monads let us transform values within a context.
 While these are both immensely useful abstractions,
-there are types of transformation that we can't represent with `map` and `flatMap`.
+there are types of transformation that are inconvenient to represent with `map` and `flatMap`.
 
 One such example is form validation, where we want to accumulate errors as we go along.
 If we model this with a monad like `Xor`, we fail fast and lose errors.

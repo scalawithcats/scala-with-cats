@@ -48,10 +48,10 @@ Note that `product` is defined in terms of `ap` and `map`.
 There is an equivalence between these three methods that
 allows any one of them to be defined in terms of the other two.
 
-The intuitive reading of this definition is as follows:
+The intuitive reading of this definition of `product` is as follows:
 
 - `map` over `F[A]` to produce a value of type `F[B => (A, B)]`;
-- apply `F[B]` to `F[B => (A, B)]` to get a value of type `F[B]`.
+- apply `F[B]` to `F[B => (A, B)]` to get a value of type `F[(A, B)]`.
 
 By defining one of these methods in terms of the other two,
 we ensure that the definitions are consistent
@@ -90,7 +90,7 @@ def product[A, B](fa: F[A], fb: F[B]): F[(A, B)] =
 ```
 
 Note that the implementation of `product`
-is essentially monadic comprehension.
+is essentially a monadic comprehension.
 This is what gives the `product` method for `Xor`
 the fail-fast semantics we saw earlier.
 

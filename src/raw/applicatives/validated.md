@@ -1,6 +1,7 @@
 ## *Validated*
 
-Cats provides two types for error handling: `Xor`, and a new type called `Validated`.
+Cats provides two types for error handling: `Xor`, which we have already seen, and `Validated`, which we introduce here.
+
 We've met `Xor` and its fail-fast semantics already.
 In the example below, the calculations for `a` and `b` both fail but we only retain errors for `a`:
 

@@ -147,7 +147,7 @@ so we can't use `Xor` to accumulate errors.
 
 Fortunately there is a solution to this problem.
 Cats provides another data type called `Validated` in addition to `Xor`.
-`Validated` is a `Cartesian` but it is not a `Monad.
+`Validated` is a `Cartesian` but it is not a `Monad`.
 This means Cats can provide an error-accumulating implementation of `product`
 without introducing inconsistent semantics.
 
