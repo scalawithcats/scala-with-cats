@@ -26,14 +26,14 @@ To validate forms we need to be able to combine results in parallel:
 
 In this chapter we will look at two type classes that support this pattern:
 
-- *Applicative functors*, also known as *applicatives*,
-  are a well known functional programming construct
-  that appear in many functional programming languages and libraries.
-  Cats models these with the `Applicative` type class.
+- The *cartesian* type class encompasses the notion of "zipping" pairs of contexts.
+  Cats provides a `CartesianBuilder` syntax that
+  combines `Cartesians` and `Functors` to allow users
+  to join values within a context using arbitrary functions.
 
-- As we will see later,
-  the encoding of applicatives in Scala is slightly cumbersome.
-  Cats introduces a simpler type class called `Cartesian`.
-  that provides some basic functionality and acts as a basis for `Applicative`.
-
-We will look at `Cartesian` next and then see what `Applicative` adds.
+- The *applicative functor* type class, also known simply as *applicative*,
+  provides an alternative formulation of cartesian
+  in terms of the application of an argument to a function within a context.
+  Applicative functors are a common mechanism for joining contexts
+  in other functional languages such as Haskell,
+  although their formulation in Scala is cumbersome.

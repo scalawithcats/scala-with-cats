@@ -1,4 +1,4 @@
-## *Eval* {#eval}
+## The *Eval* Monad {#eval}
 
 [`cats.Eval`][cats.Eval] is a monad that allows us to
 abstract over different *models of evaluation*.

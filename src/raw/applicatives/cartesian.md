@@ -1,16 +1,20 @@
-## The *Cartesian* type class
+## *Cartesian* {#cartesian}
 
-`Cartesian` is a type class that allows us to "zip" values.
+`Cartesian` is a type class that allows us to "zip" values within a context.
 If we have two objects of type `F[A]` and `F[B]`,
 a `Cartesian[F]` allows us to zip combine them to form an `F[(A, B)]`.
-
-The definition of Cartesian in Cats is:
+Its definition in Cats is:
 
 ```scala
 trait Cartesian[F[_]] {
   def product[A, B](fa: F[A], fb: F[B]): F[(A, B)]
 }
 ```
+
+The intuition is that `product`
+combines the results of *independent* computations.
+This is in contrast to `flatMap`,
+which combines the results of *dependent* computations.
 
 ### Combining *Options*
 
@@ -25,8 +29,7 @@ import cats.instances.option._
 Cartesian[Option].product(Some(123), Some("abc"))
 ```
 
-In the case of `Option`,
-if either or both of the argument values is `None`,
+If either or both of the argument values is `None`,
 the result is always `None`:
 
 ```tut:book
@@ -37,7 +40,8 @@ Cartesian[Option].product(Some(123), None)
 ### Combining *Futures*
 
 The semantics of `product` are, of course, different for every data type.
-For example, the `Cartesian[Future]` combines `Futures` in parallel:
+For example, the `Cartesian` for `Future`
+zips the results of asynchronous computations:
 
 ```tut:book
 import scala.concurrent._
@@ -49,6 +53,46 @@ import cats.instances.future._
 val future = Cartesian[Future].product(Future(123), Future("abc"))
 
 Await.result(future, Duration.Inf)
+```
+
+The example above illustrates nicely what we mean
+by combining the results of *independent* compuatations.
+The two `Futures`, `Future(123)` and `Future("abc")`,
+are started independently of one another and execute in parallel.
+This is in contrast to monadic combination, which executes them in sequence:
+
+```tut:book
+val future = for {
+  a <- Future(1)
+  b <- Future(2)
+} yield (a, b)
+```
+
+In fact, for consistency, Cats implements the `product` method
+for all monadic data types in the same way: in terms of `flatMap`:
+
+```scala
+def product[A, B](fa: F[A], fb: F[B]): F[(A, B)] =
+  for {
+    a <- fa
+    b <- fb
+  } yield (a, b)
+```
+
+This means our `product` example above is semantically identical
+to the conventional approach for combining parallel compuatations in Scala:
+create the `Futures` first and combine the results using `flatMap`:
+
+```tut:book
+// Start the futures in parallel:
+val fa = Future(123)
+val fb = Future("abc")
+
+// Combine their results using flatMap:
+val future = for {
+  a <- fa
+  b <- fb
+} yield (a, b)
 ```
 
 ### Combining *Xors*
@@ -66,8 +110,8 @@ Cartesian[ErrorOr].product(
 )
 ```
 
-If we try to combine failed and successful `Xors`,
-the `product` method returns the errors from the failed parameter:
+If we try to combine successful and failed `Xors`,
+the `product` method returns the errors from the failed side:
 
 ```tut:book
 Cartesian[ErrorOr].product(
@@ -81,8 +125,7 @@ Cartesian[ErrorOr].product(
 )
 ```
 
-However, if *both* sides are failures,
-only one set of errors is retained:
+Surprisingly, if *both* sides are failures, only the left-most errors are retained:
 
 ```tut:book
 Cartesian[ErrorOr].product(
@@ -91,23 +134,18 @@ Cartesian[ErrorOr].product(
 )
 ```
 
-Why does this happen? It seems counter-intuitive.
-The reason is that `Xor` is a monad.
-The designers of Cats decided to keep
-the definitions of `product` and `flatMap` consistent for all monads
-by defining the one in terms of the other:
+If you think back to our examples regarding `Futures`,
+you'll see why this is the case.
+`Xor` is a monad, so Cats implements `product` in terms of `flatMap`.
+As we saw at the beginning of this chapter,
+`flatMap` implements fail-fast error handling
+so we can't use `Xor` to accumulate errors.
 
-```scala
-def product[A, B](fa: F[A], fb: F[B]): F[(A, B)] =
-  for {
-    a <- fa
-    b <- fb
-  } yield (a, b)
-```
+Fortunately there is a solution to this problem.
+Cats provides another data type called `Validated` in addition to `Xor`.
+`Validated` is a `Cartesian` but it is not a `Monad.
+This means Cats can provide an error-accumulating implementation of `product`
+without introducing inconsistent semantics.
 
-To retain errors from both sides,
-we have to use a different data type called `Validated`.
-`Validated` is very similar to `Xor`,
-except it isn't a `Monad`
-and its `Cartesian` and `Applicative` instances retain all errors.
-We will look at `Validated` in more detail later in the chapter.
+`Validated` is an important data type,
+so we will cover it separately and extensively later on this chapter.

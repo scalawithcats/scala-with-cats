@@ -1,10 +1,9 @@
-## The *Cartesian* type class
+## *Cartesian* {#cartesian}
 
-`Cartesian` is a type class that allows us to "zip" values.
+`Cartesian` is a type class that allows us to "zip" values within a context.
 If we have two objects of type `F[A]` and `F[B]`,
 a `Cartesian[F]` allows us to zip combine them to form an `F[(A, B)]`.
-
-The definition of Cartesian in Cats is:
+Its definition in Cats is:
 
 ```scala
 trait Cartesian[F[_]] {
@@ -29,8 +28,7 @@ Cartesian[Option].product(Some(123), Some("abc"))
 // res0: Option[(Int, String)] = Some((123,abc))
 ```
 
-In the case of `Option`,
-if either or both of the argument values is `None`,
+If either or both of the argument values is `None`,
 the result is always `None`:
 
 ```scala
@@ -60,7 +58,7 @@ import cats.instances.future._
 // import cats.instances.future._
 
 val future = Cartesian[Future].product(Future(123), Future("abc"))
-// future: scala.concurrent.Future[(Int, String)] = scala.concurrent.impl.Promise$DefaultPromise@313f0f80
+// future: scala.concurrent.Future[(Int, String)] = scala.concurrent.impl.Promise$DefaultPromise@2de90dad
 
 Await.result(future, Duration.Inf)
 // res3: (Int, String) = (123,abc)

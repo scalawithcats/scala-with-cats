@@ -1,93 +1,73 @@
 ## *Validated*
 
 Cats provides two types for error handling: `Xor`, and a new type called `Validated`.
-We've met `Xor` already---it is a monad that provides fail-fast error handling semantics.
-In the following example, we never call `fail2` because `fail1` returns and error:
+We've met `Xor` already---it is a monad that provides fail-fast error handling semantics:
 
 ```tut:book
 import cats.data.Xor
 
-type FailFast[A] = List[String] Xor A
-
-def fail1: FailFast[Int] = {
-  println("Calling fail1")
-  Xor.left(List("Fail1"))
-}
-
-def fail2: FailFast[Int] = {
-  println("Calling fail2")
-  Xor.left(List("Fail2"))
-}
-
 for {
-  a <- fail1
-  b <- fail2
+  a <- Xor.left[List[String], Int](List("Fail1"))
+  b <- Xor.left[List[String], Int](List("Fail2"))
 } yield a + b
 ```
 
-The `Xor` type is a `Cartesian` and an `Applicative` as well as a `Monad`.
-However, the definitions of `product` and `ap` are written in terms of `flatMap`,
-so we get the same fail-fast semantics:
+Fail-fast semantics aren't always what we need.
+For example, when validating a web form we want to report errors for all invalid fields,
+not just the first one we find.
 
-```tut:book
-import cats.Cartesian
-
-Cartesian[FailFast].product(fail1, fail2)
-```
-
-Fail-fast is not always the correct type of error handling.
-Imagine validating a web form:
-we want to check all validation rules and return all errors we find.
-Cats models this cumulative style of error handling with a different type called `Validated`.
-`Validated` is a `Cartesian` and an `Applicative` but not a `Monad`.
-It accumulates errors on failure:
+Fortunately, Cats provides another data type called `Validated`
+that allows us to *accumulate* errors on failure.
+Here's an example:
 
 ```tut:book
 import cats.data.Validated
 import cats.instances.list._
 
-type FailSlow[A] = Validated[List[String], A]
-
-def fail1: FailSlow[String] = {
-  println("Calling fail1")
-  Validated.invalid(List("Fail1"))
-}
-
-def fail2: FailSlow[Int] = {
-  println("Calling fail2")
-  Validated.invalid(List("Fail2"))
-}
-
-Cartesian[FailSlow].product(fail1, fail2)
+(
+  Validated.invalid[List[String], Int](List("Fail1")) |@|
+  Validated.invalid[List[String], Int](List("Fail2"))
+}.map(_ + _)
 ```
 
-`Validated` uses a `Semigroup` to accumulate errors.
+`Validated` is a `Cartesian` but not a `Monad`.
+Its `product` method isn't implemented in terms of `flatMap`,
+which frees it up to accumulate errors from both parameters using a `Semigroup`.
 Remember that a `Semigroup` is the `append` operation of a `Monoid`
 without the `zero` component.
 Here are a few concrete examples:
 
 ```tut:book
-import cats.instances.string._
-import cats.instances.vector._
-
 type StringOr[A] = Validated[String, A]
 type ListOr[A]   = Validated[List[String], A]
-// type VectorOr[A] = Validated[Vector[Int], A]
+type VectorOr[A] = Validated[Vector[Int], A]
 
+// Import the Semigroup for String:
+import cats.instances.string._
+
+// Concatenate error strings:
 Cartesian[StringOr].product(
   Validated.invalid("Hello"),
   Validated.invalid("world")
 )
 
+// Import the Semigroup for List:
+import cats.instances.list._
+
+// Combine lists of errors:
 Cartesian[ListOr].product(
   Validated.invalid(List("Hello")),
   Validated.invalid(List("world"))
 )
 
-// Cartesian[VectorOr].product(
-//   Validated.invalid(Vector(404)),
-//   Validated.invalid(Vector(500))
-// )
+// Import the Semigroup for Vector:
+import cats.instances.vector._
+
+// Combine vectors of errors:
+Cartesian[VectorOr].product(
+  Validated.invalid(Vector(404)),
+  Validated.invalid(Vector(500))
+)
 ```
 
 ### Validated Methods and Syntax
