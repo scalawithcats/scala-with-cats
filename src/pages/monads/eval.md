@@ -1,4 +1,4 @@
-## *Eval* {#eval}
+## The *Eval* Monad {#eval}
 
 [`cats.Eval`][cats.Eval] is a monad that allows us to
 abstract over different *models of evaluation*.
@@ -93,10 +93,10 @@ val now    = Eval.now(1 + 2)
 // now: cats.Eval[Int] = Now(3)
 
 val later  = Eval.later(3 + 4)
-// later: cats.Eval[Int] = cats.Later@6ddacaf8
+// later: cats.Eval[Int] = cats.Later@647275e9
 
 val always = Eval.always(5 + 6)
-// always: cats.Eval[Int] = cats.Always@3743f35c
+// always: cats.Eval[Int] = cats.Always@56017a54
 ```
 
 We can extract the result of an `Eval` using its `value` method:
@@ -140,7 +140,7 @@ val y = Eval.always {
   println("Computing Y")
   1 + 1
 }
-// y: cats.Eval[Int] = cats.Always@253caa7d
+// y: cats.Eval[Int] = cats.Always@3713e580
 
 y.value // first access
 // Computing Y
@@ -159,7 +159,7 @@ val z = Eval.later {
   println("Computing Z")
   1 + 1
 }
-// z: cats.Eval[Int] = cats.Later@7f9960e2
+// z: cats.Eval[Int] = cats.Later@223029ab
 
 z.value // first access
 // Computing Z
@@ -193,7 +193,7 @@ val greeting = Eval.always {
   println("Step 2")
   str + " world"
 }
-// greeting: cats.Eval[String] = cats.Eval$$anon$8@17cc1e4
+// greeting: cats.Eval[String] = cats.Eval$$anon$8@6251d816
 
 greeting.value
 // Step 1
@@ -213,7 +213,7 @@ val ans = for {
   a + b
 }
 // Calculating A
-// ans: cats.Eval[Int] = cats.Eval$$anon$8@3badf266
+// ans: cats.Eval[Int] = cats.Eval$$anon$8@7a8f10a3
 
 ans.value // first access
 // Calculating B
@@ -235,7 +235,7 @@ val saying = Eval.always { println("Step 1") ; "The cat" }.
   map { str => println("Step 2") ; str + " sat on" }.
   memoize.
   map { str => println("Step 3") ; str + " the mat" }
-// saying: cats.Eval[String] = cats.Eval$$anon$8@2c867bb9
+// saying: cats.Eval[String] = cats.Eval$$anon$8@60147c41
 
 saying.value // first access
 // Step 1

@@ -1,23 +1,35 @@
 ## *Validated*
 
 Cats provides two types for error handling: `Xor`, and a new type called `Validated`.
-We've met `Xor` already---it is a monad that provides fail-fast error handling semantics:
+We've met `Xor` and its fail-fast semantics already.
+In the example below, the calculations for `a` and `b` both fail but we only retain errors for `a`:
 
 ```tut:book
 import cats.data.Xor
+import cats.syntax.cartesian._
 
+// Using monadic combination:
 for {
   a <- Xor.left[List[String], Int](List("Fail1"))
   b <- Xor.left[List[String], Int](List("Fail2"))
 } yield a + b
+
+// Using cartesian combination:
+(
+  Xor.left[List[String], Int](List("Fail1")) |@|
+  Xor.left[List[String], Int](List("Fail2"))
+) map (_ + _)
 ```
 
-Fail-fast semantics aren't always what we need.
-For example, when validating a web form we want to report errors for all invalid fields,
+Fail-fast semantics aren't always the best choice.
+When validating a web form, for example, we want to accumulate errors for all invalid fields,
 not just the first one we find.
 
-Fortunately, Cats provides another data type called `Validated`
-that allows us to *accumulate* errors on failure.
+We can't change `Xor` to get the semantics we need.
+As with all monads,
+its definitions of `product` and `flatMap` are necessarily linked for consistency.
+Fortunately, Cats provides another data type called `Validated` that is *not* a monad.
+The implementation of `product` for `Validated` is therefore free to accumulate errors.
 Here's an example:
 
 ```tut:book
@@ -27,7 +39,7 @@ import cats.instances.list._
 (
   Validated.invalid[List[String], Int](List("Fail1")) |@|
   Validated.invalid[List[String], Int](List("Fail2"))
-}.map(_ + _)
+) map (_ + _)
 ```
 
 `Validated` is a `Cartesian` but not a `Monad`.
@@ -38,6 +50,8 @@ without the `zero` component.
 Here are a few concrete examples:
 
 ```tut:book
+import cats.Cartesian
+
 type StringOr[A] = Validated[String, A]
 type ListOr[A]   = Validated[List[String], A]
 type VectorOr[A] = Validated[Vector[Int], A]

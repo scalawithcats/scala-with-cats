@@ -18,9 +18,15 @@ import cats.syntax.cartesian._
 ```
 
 The `|@|` operator, better known as a "tie fighter",
+<<<<<<< HEAD
 creates an intermediate "builder" object that provides
 several methods for combining the parameters
 to create useful data types.
+=======
+wraps values in an intermediate "cartesian builder" object.
+This has several useful methods,
+including the `tupled` method seen above.
+>>>>>>> bb2bfe4b083eae865dbfbf6d8b88eaa174851e73
 
 ### Zipping Values and Building Builders
 
@@ -28,19 +34,19 @@ The simplest method of a cartesian builder is `tupled`.
 This zips the values using an implicit `Cartesian`:
 
 ```tut:book
-val builder2 = Option(123) |@| Option("abc")
+val builder = Option(123) |@| Option("abc")
 
-builder2.tupled
+builder.tupled
 ```
 
-We can use `|@|` repeatedly to create builders for up to 22 values.
-Each arity of builder, from 2 to 22, defines a `tupled` method
-to combine the values to form a tuple of the correct size:
+<<<<<<< HEAD
+We can use `|@|` repeatedly to create a builder for up to 22 values.
+The `tupled` method always returns a tuple of the correct arity:
 
 ```tut:book
 val builder3 = Option(123) |@| Option("abc") |@| Option(true)
 
-builder3.tupled
+builder2.tupled
 
 val builder5 = builder3 |@| Option(0.5) |@| Option('x')
 
@@ -57,10 +63,38 @@ going from single values to a tuple in one step:
   Option(2) |@|
   Option(3)
 ).tupled
+=======
+Cartesian builders also contain a `|@|` method
+that adds another value to the builder
+(up to a maximum of 22 values):
+
+```tut:book
+val builder2 = Option(123) |@| Option("abc")
+val builder3 = builder2    |@| Option(true)
+val builder4 = builder3    |@| Option(0.5)
+val builder5 = builder4    |@| Option('x')
+```
+
+The `tupled` method on each builder zips all of the accumulated values
+into a tuple of the appropriate arity:
+
+```tut:book
+builder3.tupled
+builder5.tupled
+```
+
+In practice, we normally don't hold on to the builder values.
+We combine `|@|` and `tupled` in a single statement,
+going from single values to a tuple in one step:
+
+```tut:book
+(Option(1) |@| Option(2) |@| Option(3)).tupled
+>>>>>>> bb2bfe4b083eae865dbfbf6d8b88eaa174851e73
 ```
 
 ### Combining Values using Custom Functions
 
+<<<<<<< HEAD
 In addition to `tupled`,
 every builder has a `map` method that accepts a function of the correct arity
 and implicit instances of `Cartesian` and `Functor`.
@@ -79,6 +113,20 @@ For example, we can add several nubmers together:
 Or zip parameters to create a case class:
 
 ```tut:book
+=======
+Although it is useful to combine values as a tuple,
+it is much more interesting to combine them as a custom data type.
+Every cartesian builder has a `map` method for this purpose:
+
+```tut:book
+(Option(1) |@| Option(2)).map(_ + _)
+```
+
+Builders keep track of the number and type of parameters collected.
+The `map` method always expects a function of the correct arity and type:
+
+```
+>>>>>>> bb2bfe4b083eae865dbfbf6d8b88eaa174851e73
 case class Cat(name: String, born: Int, color: String)
 
 (
@@ -88,13 +136,20 @@ case class Cat(name: String, born: Int, color: String)
 ).map(Cat.apply)
 ```
 
+<<<<<<< HEAD
 If we supply a function that accepts the wrong number or types of parameters,
+=======
+If we supply a function that accepts the wrong number of parameters,
+>>>>>>> bb2bfe4b083eae865dbfbf6d8b88eaa174851e73
 we get a compile error:
 
 ```tut:book:fail
 (Option(1) |@| Option(2) |@| Option(3)).map(_ + _)
 ```
+<<<<<<< HEAD
 
 ```tut:book:fail
 (Option(1) |@| Option(true)).map(_ + _)
 ```
+=======
+>>>>>>> bb2bfe4b083eae865dbfbf6d8b88eaa174851e73

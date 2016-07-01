@@ -11,15 +11,20 @@ trait Cartesian[F[_]] {
 }
 ```
 
-The intuition is that `product`
-combines the results of *independent* computations.
-This is in contrast to `flatMap`,
-which combines the results of *dependent* computations.
+Note that the parameters `fa` and `fb` are independent of one another.
+This contrasts with `flatMap`,
+in which `fb` is evaluated strictly after `fa`:
+
+```scala
+trait FlatMap[F[_]] {
+  def flatMap[A, B](fa: F[A])(fb: A => F[B]): F[B]
+}
+```
 
 ### Combining *Options*
 
-Let's see this in action.
-The code below summons a `Cartesian` for `Option`
+Let's see `Cartesian` in action.
+The code below summons a type class instance for `Option`
 and uses it to zip two values:
 
 ```tut:book
@@ -29,8 +34,7 @@ import cats.instances.option._
 Cartesian[Option].product(Some(123), Some("abc"))
 ```
 
-If either or both of the argument values is `None`,
-the result is always `None`:
+If either argument evaluates to `None`, the entire result is `None`:
 
 ```tut:book
 Cartesian[Option].product(None, Some("abc"))

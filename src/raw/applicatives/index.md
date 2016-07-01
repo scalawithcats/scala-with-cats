@@ -1,42 +1,69 @@
 # Cartesians and Applicatives {#applicatives}
 
-In previous chapters we saw how functors and monads let us transform values within a context. While these are both immensely useful abstractions, there are types of transformation that we can't represent with either `map` or `flatMap`.
+In previous chapters we saw how functors and monads let us transform values within a context.
+While these are both immensely useful abstractions,
+there are types of transformation that we can't represent with `map` and `flatMap`.
 
-One such example is form validation, where we want to accumulate errors as we go along. If we model this with a monad like `Xor`, we fail fast and lose errors:
+One such example is form validation, where we want to accumulate errors as we go along.
+If we model this with a monad like `Xor`, we fail fast and lose errors.
+For example, the code below fails on the first call to `parseInt` and doesn't go any further:
 
 ```tut:book
 import cats.data.Xor
 
-def readInt(str: String): String Xor Int =
+def parseInt(str: String): String Xor Int =
   Xor.catchOnly[NumberFormatException](str.toInt).
     leftMap(_ => s"Couldn't read $str")
 
 for {
-  a <- readInt("a")
-  b <- readInt("b")
-  c <- readInt("c")
+  a <- parseInt("a")
+  b <- parseInt("b")
+  c <- parseInt("c")
 } yield (a + b + c)
 ```
 
-To validate forms we need to be able to combine results in parallel:
+Another example is the concurrent evaluation of `Futures`.
+If we have several long-running independent tasks,
+it makes sense to execute them concurrently.
+However, monadic comprehension only allows us to run them in sequence.
+Even on a multicore CPU,
+the code below runs in sequence as you can see from the timestamps:
 
-- try to read each of the three `Ints`;
-- if we failed to read one or more `Ints`, return all of the applicable errors;
-- if we successfully managed to read all three `Ints`, return their sum.
+```tut:book
+import cats.data.Xor
+import scala.concurrent._
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
+lazy val timestamp0 = System.currentTimeMillis
+
+def getTimestamp: Long = {
+  val timestamp = System.currentTimeMillis - timestamp0
+  Thread.sleep(1000)
+  timestamp
+}
+
+val timestamps = for {
+  a <- Future(getTimestamp)
+  b <- Future(getTimestamp)
+  c <- Future(getTimestamp)
+} yield (a, b, c)
+
+Await.result(timestamps, Duration.Inf)
+```
+
+To achieve the desired semantics in either of these cases,
+we need a way to combine computations *in parallel*.
 In this chapter we will look at two type classes that support this pattern:
 
-- *Applicative functors*, also known as *applicatives*,
-  are a well known functional programming construct
-  that appear in many functional programming languages and libraries.
-- The *cartesian* type class encompasses the notion of "zipping" pairs of contexts.
+- *Cartesians* encompass the notion of "zipping" pairs of contexts.
   Cats provides a `CartesianBuilder` syntax that
   combines `Cartesians` and `Functors` to allow users
   to join values within a context using arbitrary functions.
 
-- The *applicative functor* type class, also known simply as *applicative*,
-  provides an alternative formulation of cartesian
-  in terms of the application of an argument to a function within a context.
-  Applicative functors are a common mechanism for joining contexts
-  in other functional languages such as Haskell,
-  although their formulation in Scala is cumbersome.
+- *Applicative functors*, also known simply as *applicatives*,
+  provide an alternative formulation of cartesian
+  in terms of function application.
+  While applicatives are less prominent than cartesians in Cats,
+  they provide interesting theoretical links to other libraries
+  and languages such as Scalaz and Haskell.
