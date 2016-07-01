@@ -31,7 +31,7 @@ import cats.instances.option._
 Foldable[Option].foldLeft(maybeInt, "")(_ + _)
 ```
 
-The `Foldable` instance for `Map` allows us to fold over its values.
+The `Foldable` instance for `Map` allows us to fold over its values (as opposed to its keys).
 Because `Map` has two type parameters,
 we have to fix one of them to create the single-parameter type constructor
 we need to summon the `Foldable`:
@@ -59,7 +59,9 @@ Using `Eval` means folding with `Foldable` is always *stack safe*,
 even when the collection's default definition of `foldRight` is not.
 
 For example, the default implementation for `Stream` is not stack safe.
-We can see the stack depth creeping up as we iterate across the stream:
+We can see the stack depth changing as we iterate across the stream.
+The longer the stream, the larger the stack requirements for the fold.
+A sufficiently large stream will trigger a `StackOverflowException`:
 
 ```tut:book
 import cats.Eval
@@ -75,8 +77,8 @@ def stackDepth: Int =
 ```
 
 As we saw in the [monads chapter](#eval), however,
-`Eval's` `map` and `flatMap` are trampolined,
-so `Foldable's` `foldRight` method maintains the same stack depth throughout:
+`Eval's` `map` and `flatMap` are trampolined:
+`Foldable's` `foldRight` maintains the same stack depth throughout:
 
 ```tut:book
 import cats.instances.stream._
