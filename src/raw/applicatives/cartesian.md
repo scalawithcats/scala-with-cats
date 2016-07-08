@@ -51,7 +51,7 @@ def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
 ```
 
 <div class="solution">
-We can implement `proudct` in terms of `map` and `flatMap` like so:
+We can implement `product` in terms of `map` and `flatMap` like so:
 
 ```tut:book
 def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
@@ -71,9 +71,12 @@ def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
   
 product(Some(123), Some("abc"))
 ```
-
-Thus it appears we can implement `product` in terms of the monad operations. Why bother with the `Cartesian` type class then? Using `product` (and in particular the `CartesianBuilder` we'll see in the next section) can be more convenient than writing out the for comprehension. We'll also see some types for which we can define `product` but not a monad.
 </div>
+
+It appears we can implement `product` in terms of the monad operations.
+Why bother with the `Cartesian` type class then? 
+Using `product` (and in particular the `CartesianBuilder` we'll see in the next section) can be more convenient than writing out the for comprehension. 
+We'll also see some types for which we can define `product` but not a monad instance.
 
 
 ### Combining *Lists*
