@@ -11,7 +11,7 @@ Cats provides two additional type classes that extend `Cartesian`:
   within a context;
 
 - `Applicative` extends `Apply`,
-  adding a `pure` method that creates an "empty" value.
+  adding the `pure` "constructor" that we've already seen on `Monad`.
 
 `Applicative` is, in turn, the basis of the `Monad` type class.
 Here is a diagram showing the family:
@@ -31,9 +31,9 @@ feel free to skip ahead to the next section.
 
 The `Apply` type class extends `Cartesian` and `Functor`
 and introduces a new method, `ap`,
-which applies a function to a parameter within a context.
+which applies a function in a context to a parameter within a context.
 In another language `ap` would be called `apply`,
-but that name is already used for many other purposes in Scala:
+but that name is already used for many other purposes in Scala.
 
 ```scala
 trait Apply[F[_]] extends Functor[F] with Cartesian[F] {
