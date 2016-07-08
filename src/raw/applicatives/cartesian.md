@@ -88,7 +88,7 @@ Cartesian[List].product(List(1,2,3), List(4,5,6))
 There are at least two reasonable answers here. The first is that `product` zips the lists, giving `List( (1,4) , (2,5), (3,6) )`. The second is that `product` computes the *cartesian product*, giving `List( (1,4), (1,5), (1,6), (2,4), (2,5), (2,6), (3,4), (3,5), (3,6) )`. The name `Cartesian` is a bit of a hint as to which answer we'll get, but let's run it too see for sure.
 
 ```tut:book
-import cats.std.list._
+import cats.instances.list._
 Cartesian[List].product(List(1,2,3), List(4,5,6))
 ```
 
@@ -110,7 +110,12 @@ This raises two questions:
 The reason we get the cartesian product is to have consistent behavior for all monad instances. We can define `product` for any `Monad` as
 
 ```tut:book
-def product[F : Monad, A, B](fa: F[A], fb: F[B]): F[(A,B)] =
+import cats.Monad
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+import scala.language.higherKinds
+
+def product[F[_]: Monad, A, B](fa: F[A], fb: F[B]): F[(A,B)] =
   for {
    a <- fa
    b <- fb
@@ -157,7 +162,7 @@ As we saw above, for consistency Cats implements the `product` method
 for all monadic data types in the same way in terms of `flatMap`:
 
 ```scala
-def product[F : Monad, A, B](fa: F[A], fb: F[B]): F[(A,B)] =
+def product[F[_]: Monad, A, B](fa: F[A], fb: F[B]): F[(A,B)] =
   for {
    a <- fa
    b <- fb
@@ -256,7 +261,7 @@ In fact there are two different results we can get, depending on the order of ca
 ```tut:book
 val instance = Cartesian[Option]
 
-val result2 = instance.product(instance.product(Some(1), Some(2)), Some(3)))
+val result2 = instance.product(instance.product(Some(1), Some(2)), Some(3))
 ```
 
 This difference is annoying in use, as we need to worry about how values were constructed when we come to use them.
