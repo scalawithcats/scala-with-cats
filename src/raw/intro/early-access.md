@@ -19,7 +19,7 @@ and Noel Welsh ( [noel@underscore.io](mailto:noel@underscore.io) ).
 
 Starting from the March 2016 release, here are the major changes to the book:
 
-- Completed the move from Scalaz to Cats (currently version `0.7.0-SNAPSHOT`).
+- Moved the theoretical chapters from Scalaz to Cats (currently version `0.7.0-SNAPSHOT`).
 
 - Added sections on the `Reader`, `Writer`, `State`, and `Eval` monads.
 
@@ -39,4 +39,4 @@ Here are the major things missing from the book:
 
 4.  We are missing a few summary chapters. These include a condensed discussion of the concepts we've covered in the book.
 
-5.  We are missing some of the case studies that make up the last third of the book. These are in various states of completion so we have chosen to hold them back until we have a better idea of what they will look like.
+5.  We are missing some of the case studies that make up the last third of the book. These are in various states of completion so we have chosen to hold them back until we have a better idea of what they will look like. Some case studies are still written using Scalaz.
