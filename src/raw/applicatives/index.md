@@ -64,8 +64,10 @@ In this chapter we will look at two type classes that support this pattern:
   to join values within a context using arbitrary functions.
 
 - *Applicative functors*, also known simply as *applicatives*,
-  provide an alternative formulation of cartesian
-  in terms of function application.
-  While applicatives are less prominent than cartesians in Cats,
-  they provide interesting theoretical links to other libraries
-  and languages such as Scalaz and Haskell.
+  extend cartesian with functor (`map`)
+  and a constructor (`pure`).
+  
+Applicatives are often formulated in terms of function application,
+instead of the cartesian formulation that is emphasised in Cats.
+This alternative formulation provides a link to other libraries and languages such as Scalaz and Haskell,
+so we'll also look at it.
