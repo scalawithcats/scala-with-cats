@@ -1,60 +1,38 @@
 ## *Validated*
 
-Cats provides two types for error handling: `Xor`, which we have already seen, and `Validated`, which we introduce here.
+Cats provides two types for error handling:
+`Xor`, which we have already seen,
+and `Validated`, which we introduce here.
 
 We've met `Xor` and its fail-fast semantics already.
-In the example below, the calculations for `a` and `b` will both fail but we only retain errors for `a`:
-
-```tut:book
-import cats.data.Xor
-import cats.syntax.cartesian._
-
-// Using monadic combination:
-for {
-  a <- Xor.left[List[String], Int](List("Fail1"))
-  b <- Xor.left[List[String], Int](List("Fail2"))
-} yield a + b
-
-// Using cartesian combination:
-(
-  Xor.left[List[String], Int](List("Fail1")) |@|
-  Xor.left[List[String], Int](List("Fail2"))
-) map (_ + _)
-```
-
-Fail-fast semantics aren't always the best choice.
+However, fail-fast semantics aren't always the best choice.
 When validating a web form, for example, we want to accumulate errors for all invalid fields,
 not just the first one we find.
 
-We can't change `Xor` to get the semantics we need.
-As with all monads,
-its definitions of `product` and `flatMap` are necessarily linked for consistency.
-Fortunately, Cats provides another data type called `Validated` that is *not* a monad.
+Cats provides another data type called `Validated` that is an applicative, *not* a monad.
 The implementation of `product` for `Validated` is therefore free to accumulate errors.
 Here's an example:
 
 ```tut:book
 import cats.data.Validated
 import cats.instances.list._
+import cats.syntax.cartesian._
 
 (
-  Validated.invalid[List[String], Int](List("Fail1")) |@|
-  Validated.invalid[List[String], Int](List("Fail2"))
-) map (_ + _)
+  Validated.invalid(List("Fail1")) |@|
+  Validated.invalid(List("Fail2"))
+).tupled
 ```
 
-`Validated` is a `Cartesian` but not a `Monad`.
-Its `product` method isn't implemented in terms of `flatMap`,
-which frees it up to accumulate errors from both parameters using a `Semigroup`.
-Remember that a `Semigroup` is the `append` operation of a `Monoid`
-without the `zero` component.
+`Validated` accumulates errors using a `Semigroup` (the `append` part of a `Monoid`).
+This means we can use any `Monoid` as an error type, including `Lists`, `Vectors`, and `Strings`.
 Here are a few concrete examples:
 
 ```tut:book
 import cats.Cartesian
 
 type StringOr[A] = Validated[String, A]
-type ListOr[A]   = Validated[List[String], A]
+type ListOr[A] = Validated[List[String], A]
 type VectorOr[A] = Validated[Vector[Int], A]
 
 // Import the Semigroup for String:
@@ -85,7 +63,7 @@ Cartesian[VectorOr].product(
 )
 ```
 
-### Validated Methods and Syntax
+### Creating Instances
 
 `Validated` has two subtypes,
 `Validated.Valid` and `Validated.Invalid`,
@@ -97,7 +75,7 @@ val v = Validated.Valid(123)
 val i = Validated.Invalid("Badness")
 ```
 
-but it is better to use the `valid` and `invalid` smart constructors,
+However, it is better to use the `valid` and `invalid` smart constructors,
 which return a type of `Validated`:
 
 ```tut:book
@@ -115,14 +93,14 @@ import cats.syntax.validated._
 "message".invalid[Int]
 ```
 
-There are also methods on `Validated` to catch certain types of exception.
-For example:
+Finally, there are a variety of methods on `Validated` to created
+instances from exceptions, `Either`, `Option`, and so on:
 
 ```tut:book
 // Catch NumberFormatExceptions:
 Validated.catchOnly[NumberFormatException]("foo".toInt)
 
-// Catch any Exception (not Error):
+// Catch any Exception (but not java.lang.Error):
 Validated.catchNonFatal(sys.error("Badness"))
 
 // Create from a Try:
@@ -135,18 +113,35 @@ Validated.fromEither[String, Int](Left("Badness"))
 Validated.fromOption[String, Int](None, "Badness")
 ```
 
+### Switching between *Validated* and *Xor*
+
 We can convert back and forth between `Validated` and `Xor`
-using the `toXor` and `toValidated` methods.
-This allows us to switch between
-fail-fast and error-accumulating semantics on the fly:
+using the `toXor` and `toValidated` methods:
 
 ```tut:book
 "Badness".invalid[Int].toXor
 "Badness".invalid[Int].toXor.toValidated
 ```
 
-We can `map`, `leftMap`, and `bimap` to
-transform the values in a `Validated`:
+This allows us to switch error-handling semantics on the fly:
+
+```tut:book
+// Accumulate errors in an Xor:
+(
+  Xor.left(List("Fail 1")).toValidated |@|
+  Xor.left(List("Fail 2")).toValidated
+).tupled.toXor
+
+// Sequence operations on Validated using flatMap:
+for {
+  a <- Validated.invalid(List("Fail 1")).toXor
+  b <- Validated.invalid(List("Fail 2")).toXor
+} yield (a, b)
+```
+
+### Methods of *Validated*
+
+We can `map`, `leftMap`, and `bimap` to transform the values in a `Validated`:
 
 ```tut:book
 123.valid.map(_ * 100)
@@ -235,6 +230,8 @@ We use `Xor` in places where we need fail-fast semantics
 and switch to `Validated` when we need to accumulate errors:
 
 ```tut:book
+import cats.data.Xor
+
 def getValue(name: String)(data: Map[String, String]): List[String] Xor String =
   Xor.fromOption(data.get(name), List(s"$name field not specified"))
 
