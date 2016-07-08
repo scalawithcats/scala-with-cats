@@ -14,9 +14,9 @@ What about `fold`? This is not a method we can implement for all functors, but t
 
 What kind of restrictions should we apply to `fold`? If the iterator function is *associative*, meaning
 
-~~~ scala
+```scala
 A op (B op C) == (A op B) op C
-~~~
+```
 
 for a function `op`, the we can arbitrarily distribute work amongst threads or machines so long as we preserve the ordering on the sequence of elements we're processing.
 
@@ -36,47 +36,54 @@ Let's implement a method `foldMap` that:
 
 Here's a basic type signature. You will have to add implicit parameters or context bounds to complete the type signature:
 
-~~~ scala
+```tut:book
 def foldMap[A, B](values: Iterable[A])(func: A => B): B =
   ???
-~~~
+```
 
 Here's some sample output:
 
-~~~ scala
-// Missing the second argument supplies the identity function.
+```tut:book:silent
+import cats.Monoid
+import cats.syntax.semigroup._
+
+def foldMap[A, B: Monoid](values: Iterable[A])(func: A => B): B =
+  values.foldLeft(Monoid[B].empty)(_ |+| func(_))
+```
+
+```tut:book
+import cats.instances.int._
 // The monoid in use here is integer addition:
-foldMap(List(1, 2, 3))()
-// res0: Int = 6
+foldMap(List(1, 2, 3))(identity)
+
+import cats.instances.string._
 
 // Mapping to a String uses the concatenation monoid:
 foldMap(Seq(1, 2, 3))(_.toString + "! ")
-// res1: String = 1! 2! 3!
 
 // Mapping over a String to produce a String:
 foldMap("Hello world!")(_.toString.toUpperCase)
-// res2: String = "HELLO WORLD!"
-~~~
+```
 
 <div class="solution">
-We have to modify the type signature to accept a `Monoid` for `B`. With that change we can use the `mzero` and `|+|` syntax [described in the monoids chapter](#monoid-syntax):
+We have to modify the type signature to accept a `Monoid` for `B`. With that change we can use the `Monoid` a.emptynd `|+|` syntax [described in the monoids chapter](#monoid-syntax):
 
-~~~ scala
-import scalaz.Monoid
-import scalaz.std.anyVal._
-import scalaz.std.string._
-import scalaz.syntax.monoid._
+```tut:book
+import cats.Monoid
+import cats.instances.int._
+import cats.instances.string._
+import cats.syntax.semigroup._
 
 def foldMap[A, B : Monoid](values: Iterable[A])(func: A => B = (a: A) => a): B =
-  values.map(func).foldLeft(mzero[B])(_ |+| _)
-~~~
+  values.map(func).foldLeft(Monoid[B].empty)(_ |+| _)
+```
 
 We can make a slight alteration to this code to do everything in one step:
 
-~~~ scala
+```tut:book
 def foldMap[A, B : Monoid](values: Iterable[A])(func: A => B = (a: A) => a): B =
-  values.foldLeft(mzero[B])(_ |+| func(_))
-~~~
+  values.foldLeft(Monoid[B].empty)(_ |+| func(_))
+```
 </div>
 
 ## Parallelising *foldMap*
@@ -91,87 +98,80 @@ Before we begin we need to introduce some new building blocks: *futures* and *pa
 
 To execute an operation in parallel we can construct a `Future` as follows:
 
-~~~ scala
+```tut:book
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 val future: Future[String] = Future {
   "Construct this string in parallel!"
 }
-// future: Future[String] = ...
-~~~
+```
 
 We need to have an implicit `ExecutionContext` in scope, which determines which thread pool runs the operation. The default `ExecutionContext.Implicits.global` shown above is a good choice, but we can use any choice in practice.
 
 We operate on the value in a `Future` using the familiar `map` and `flatMap` methods:
 
-~~~ scala
+```tut:book
 val future2 = future.map(_.length)
-// future2: Future[Int] = ...
 
 val future3 = future.flatMap { length =>
   Future { length * 1000 }
 }
-// future3: Future[Int] = ...
-~~~
+```
 
 If we have a `Seq[Future[A]]` we can convert it to a `Future[Seq[A]]` using the method `Future.sequence`:
 
-~~~ scala
+```tut:book
 Future.sequence(Seq(Future(1), Future(2), Future(3)))
-// res3: scala.concurrent.Future[Seq[Int]] = // ...
-~~~
+```
 
 Finally, we can use `Await.result` to block on a `Future` till a result is available.
 
-~~~ scala
-import scala.concurrent.duration.Duration
+```tut:book
+import scala.concurrent._
+import scala.concurrent.duration._
 
 Await.result(Future(1), Duration.Inf) // wait forever until a result arrives
-~~~
+```
 
-There are even `Monad` and `Monoid` implementations for `Future`. We have to be careful to refer to Scala `Futures` here because Scalaz has its own `Future` implementation with conflicting names:
-
-~~~ scala
-import scalaz.std.scalaFuture._
-~~~
+There are even `Monad` and `Monoid` implementations for `Future`. We have to be careful to refer to Scala known as a *nnflict tg
+```tut:book
+import cats.instances.future._
+```
 
 ### Partitioning Sequences
 
 We can partition a sequence (actually anything that implements `Iterable`) using the `grouped` method. We'll use this to split off chunks of work for each CPU:
 
-~~~ scala
+```tut:book
 Seq(1, 2, 3, 4).grouped(2)
-// res4: Iterator[Seq[Int]] = non-empty iterator
 
 Seq(1, 2, 3, 4).grouped(2).toList
-// res5: List[Seq[Int]] = List(List(1, 2), List(3, 4))
-~~~
+```
 
 We can query the number of available CPUs on our machine using this API call to the Java standard library:
 
-~~~ scala
+```tut:book
 Runtime.getRuntime.availableProcessors
-// res6: Int = 8
-~~~
+```
 
 ### Parallel *foldMap*
 
 Implement a parallel version of `foldMap` called `foldMapP` using the tools described above:
 
-~~~ scala
+```tut:book
 def foldMapP[A, B : Monoid]
     (values: Iterable[A])
     (func: A => B = (a: A) => a)
     (implicit ec: ExecutionContext): Future[B] = ???
-~~~
+```
 
 Start by splitting the input into a set of even chunks, one per CPU. Create a future to do the work for each chunk using `Future.apply`, and then `foldMap` cross the futures.
 
 <div class="solution">
 The annotated solution is below:
 
-~~~ scala
+```tut:book
 import scala.concurrent.{Await, Future, ExecutionContext}
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -192,19 +192,18 @@ def foldMapP[A, B : Monoid]
   val futures: Iterator[Future[B]] =
     groups map { group =>
       Future {
-        group.foldLeft(mzero[B])(_ |+| func(_))
+        group.foldLeft(Monoid[B].empty)(_ |+| func(_))
       }
     }
 
   // foldMap over the groups to calculate a final result:
   Future.sequence(futures) map { iterable =>
-    iterable.foldLeft(mzero[B])(_ |+| _)
+    iterable.foldLeft(Monoid[B].empty)(_ |+| _)
   }
 }
 
 Await.result(foldMapP(1 to 1000000)(), Duration.Inf)
-// res12: Int = 1784293664
-~~~
+```
 </div>
 
 ## Monadic *foldMap*
@@ -213,111 +212,130 @@ It's useful to allow the user of `foldMap` to perform monadic actions within the
 
 Implement a variant of `foldMap` (without parallelism) called `foldMapM` that allows this. Here's the basic type signature---add implicit parameters and context bounds as necessary to make your code compile:
 
-~~~ scala
+```tut:book
+import scala.language.higherKinds
+
 def foldMapM[A, M[_], B](iter: Iterable[A])(f: A => M[B]): M[B] =
   ???
-~~~
+```
 
-The focus here is on the monadic component so base your code on `foldMap` for simplicity. Here are some examples of use:
+```tut:book:silent
+import cats.Monad
+import cats.syntax.applicative._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
 
-~~~ scala
-import scalaz.std.anyVal._
-import scalaz.std.option._
-import scalaz.std.list._
-
-val seq = Seq(1, 2, 3)
-
-seq.foldMapM(a => some(a))
-// res4: Option[Int] = Some(6)
-
-seq.foldMapM(a => List(a))
-// res5: List[Int] = List(6)
-
-seq.foldMap(a => if(a % 2 == 0) some(a) else none[Int])
-// res6: Option[Int] = Some(2)
-~~~
-
-<div class="solution">
-First we change the type of our `func` parameter from `A => B` to `A => M[B]` and bring in the `Monoid` for `M`. Then we tweak the method implementation to `flatMap` over the monad and call `|+|`:
-
-~~~ scala
 def foldMapM[A, M[_]: Monad, B: Monoid](iter: Iterable[A])(f: A => M[B]): M[B] =
-  iter.foldLeft(mzero[B].point[M]) { (accum, elt) =>
+  iter.foldLeft(Monoid[B].empty.pure[M]) { (accum, elt) =>
     for {
       a <- accum
       b <- f(elt)
     } yield a |+| b
   }
-~~~
+```
+
+The focus here is on the monadic component so base your code on `foldMap` for simplicity. Here are some examples of use:
+
+```tut:book
+import cats.instances.int._
+import cats.instances.option._
+import cats.instances.list._
+
+val seq = List(1, 2, 3)
+
+foldMapM(seq)(a => Option(a))
+
+foldMapM(seq)(a => List(a))
+
+foldMap(seq)(a => if(a % 2 == 0) Option(a) else Option.empty[Int])
+```
+
+<div class="solution">
+First we change the type of our `func` parameter from `A => B` to `A => M[B]` and bring in the `Monoid` for `M`. Then we tweak the method implementation to `flatMap` over the monad and call `|+|`:
+
+```tut:book
+import cats.Monad
+import cats.syntax.applicative._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+
+def foldMapM[A, M[_]: Monad, B: Monoid](iter: Iterable[A])(f: A => M[B]): M[B] =
+  iter.foldLeft(Monoid[B].empty.pure[M]) { (accum, elt) =>
+    for {
+      a <- accum
+      b <- f(elt)
+    } yield a |+| b
+  }
+```
 </div>
 
 ### Exercise: Everything is Monadic
 
 We can unify monadic and normal code by using the `Id` monad described in the [Monads chapter](#id-monad). Using this trick, implement a default `func` parameter for `foldMapM`. This allows us to write code like:
 
-~~~ scala
-seq.foldMapM()
-// res10: scalaz.Id.Id[Int] = 6
-~~~
+```scala
+foldMapM(seq)
+```
 
 <div class="solution">
 We have `Monad[B]` in scope in our method header, so all we need to do is use the `point` syntax:
 
-~~~ scala
-imporgt scalaz.syntax.monad._
+```tut:book
+import cats.Id
+import cats.syntax.flatMap._
+import cats.syntax.functor._
 
-def foldMapM[A, M[_] : Monad, B: Monoid](iter: Iterable[A])(f: A => M[B] = (a: A) => a.point[Id]): M[B] =
-  iter.foldLeft(mzero[B].point[M]) { (accum, elt) =>
+def foldMapM[A, M[_] : Monad, B: Monoid](iter: Iterable[A])(f: A => M[B] = (a: A) => a.pure[Id]): M[B] =
+  iter.foldLeft(Monoid[B].empty.pure[M]) { (accum, elt) =>
     for {
       a <- accum
       b <- f(elt)
     } yield a |+| b
   }
-~~~
+```
 </div>
 
 It also allows us to implement `foldMap` in terms of `foldMapM`. Try it!
 
 <div class="solution">
-~~~ scala
+```tut:book
 def foldMap[A, B : Monoid](iter: Iterable[A])(f: A => B = (a: A) => a): B =
-  foldMapM[A, Id, B](iter) { a => f(a).point[Id] }
-~~~
+  foldMapM[A, Id, B](iter) { a => f(a).pure[Id] }
+```
 </div>
 
 ### Exercise: Seeing is Believing
 
-Call `foldMapM` using the `\/` monad and verify that it really does stop execution as soon an error is encountered.  Start by writing a type alias to convert `\/` to a type constructor with one parameter. We'll use the `str.parseInt.disjunction` syntax to read input, so define your alias using an appropriate error type:
+Call `foldMapM` using the `Xor` monad and verify that it really does stop execution as soon an error is encountered.  Start by writing a type alias to convert `Xor` to a type constructor with one parameter. We'll use `Xor.catchOnly` to read input, so define your alias using an appropriate error type:
 
-~~~ scala
-import scalaz.syntax.std.string._
+```tut:book
+import cats.data.Xor
 
-"Cat".parseInt.disjunction
-// res8: scalaz.\/[NumberFormatException,Int] = ↩
-//   -\/(java.lang.NumberFormatException: For input string: "Cat")
+Xor.catchOnly[NumberFormatException]("Cat".toInt)
 
-"1".parseInt.disjunction
-// res9: scalaz.\/[NumberFormatException,Int] = \/-(1)
-~~~
+Xor.catchOnly[NumberFormatException]("1".toInt)
+```
 
 Once you have your type alias, call `foldMapM`. Start with a sequence of `Strings`---both valid and invalid input---and see what results you get:
 
 <div class="solution">
-The `"123".parseInt.disunction` approach gives us a `NumberFormatException \/ Int` so we'll go with `NumberFormatException` as our error type:
+The `catchOnly` approach gives us a `NumberFormatException Xor Int` so we'll go with `NumberFormatException` as our error type:
 
-~~~ scala
-type ParseResult[A] = NumberFormatException \/ A
-~~~
+```tut:book
+type ParseResult[A] = NumberFormatException Xor A
+```
 
-Now we can use `foldMapM`. The resulting code iterates over the sequence, adding up numbers using the `Monoid` for `Int` until a `NumberFormatException` is encountered. At that point the `Monad` for `\/` fails fast, returning the failure without processing the rest of the list:
+Now we can use `foldMapM`. The resulting code iterates over the sequence, adding up numbers using the `Monoid` for `Int` until a `NumberFormatException` is encountered. At that point the `Monad` for `Xor` fails fast, returning the failure without processing the rest of the list:
 
-~~~ scala
-foldMapM[String, ParseResult, Int](Seq("1", "2", "3"))(_.parseInt.disjunction)
-// res0: ParseResult[Int] = \/-(6)
+```tut:book
+foldMapM[String, ParseResult, Int](Seq("1", "2", "3")) { str =>
+  Xor.catchOnly[NumberFormatException](str.toInt)
+}
 
-foldMapM[String, ParseResult, Int](Seq("1", "x", "3"))(_.parseInt.disjunction)
-// res1: ParseResult[Int] = -\/(java.lang.NumberFormatException: For input string: "x")
-~~~
+foldMapM[String, ParseResult, Int](Seq("1", "x", "3")) { str =>
+  Xor.catchOnly[NumberFormatException](str.toInt)
+}
+```
 </div>
 
 ## Parallel Monadic *foldMap*
@@ -330,7 +348,7 @@ When we looked at [applicatives](#applicatives) we saw they allowed us to accumu
 
 It's easy enough to hard-code a choice of monad and applicative, we can do a lot better than that. If we allow the user to specify the transformation they gain the flexibility to choose the error handling strategy appropriate for their task. They might want fail-fast error handling, accumulating all errors, or even ignoring errors and replacing them with the identity.
 
-This transformation should accept a `F[_]` and return a `G[_]`. This concept is common enough that Scalaz has a trait for it, a [Natural Transformation][scalaz.NaturalTransformation][^kind-polymorphism].
+This transformation should accept a `F[_]` and return a `G[_]`. This concept known as a *natural transformation*[^kind-polymorphism].
 
 [^kind-polymorphism]: Why can't we use a function with type `F => G` to do this? The reason is the kinds are wrong. `F` is a type with kind `*`, while `F[_]` is a type constructor with kind `* => *`. Scala provides no way to abstract over kinds. Such a feature is known as *kind polymorphism*.
 
