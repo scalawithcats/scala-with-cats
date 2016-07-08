@@ -67,7 +67,7 @@ and implicit instances of `Cartesian` and `Functor`.
 `map` applies the parameters to the function,
 allowing us to combine them in any way we choose.
 
-For example, we can add several nubmers together:
+For example, we can add several numbers together:
 
 ```tut:book
 (
@@ -76,7 +76,7 @@ For example, we can add several nubmers together:
 ).map(_ + _)
 ```
 
-Or zip parameters to create a case class:
+Or apply parameters to create a case class:
 
 ```tut:book
 case class Cat(name: String, born: Int, color: String)
@@ -89,12 +89,14 @@ case class Cat(name: String, born: Int, color: String)
 ```
 
 If we supply a function that accepts the wrong number or types of parameters,
-we get a compile error:
+we get a compile-time error:
 
-```tut:book:fail
-(Option(1) |@| Option(2) |@| Option(3)).map(_ + _)
+```tut:book
+val add: (Int, Int) => Int = (a, b) => a + b
 ```
-
 ```tut:book:fail
-(Option(1) |@| Option(true)).map(_ + _)
+(Option(1) |@| Option(2) |@| Option(3)).map(add)
+```
+```tut:book:fail
+(Option("cats") |@| Option(true)).map(add)
 ```
