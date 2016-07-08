@@ -94,7 +94,7 @@ val optionMonad = new Monad[Option] {
   def pure[A](value: A): Option[A] =
     Some(value)
 }
-// optionMonad: cats.Monad[Option] = $anon$1@40dbc26b
+// optionMonad: cats.Monad[Option] = $anon$1@64e5b84f
 ```
 
 ### *Monad* Syntax
@@ -221,7 +221,7 @@ implicit val resultMonad = new Monad[Result] {
         Failure(message)
     }
 }
-// resultMonad: cats.Monad[Result] = $anon$1@1c89fe8d
+// resultMonad: cats.Monad[Result] = $anon$1@7c9c33a
 ```
 
 We'll pre-empt any compile errors concerning variance by defining our usual smart constructors:

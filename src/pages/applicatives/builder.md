@@ -33,7 +33,7 @@ This zips the values using an implicit `Cartesian`:
 
 ```scala
 val builder2 = Option(123) |@| Option("abc")
-// builder2: cats.syntax.CartesianBuilder[Option]#CartesianBuilder2[Int,String] = cats.syntax.CartesianBuilder$CartesianBuilder2@965f017
+// builder2: cats.syntax.CartesianBuilder[Option]#CartesianBuilder2[Int,String] = cats.syntax.CartesianBuilder$CartesianBuilder2@bc0eaef
 
 builder2.tupled
 // res1: Option[(Int, String)] = Some((123,abc))
@@ -45,13 +45,13 @@ to combine the values to form a tuple of the correct size:
 
 ```scala
 val builder3 = Option(123) |@| Option("abc") |@| Option(true)
-// builder3: cats.syntax.CartesianBuilder[Option]#CartesianBuilder3[Int,String,Boolean] = cats.syntax.CartesianBuilder$CartesianBuilder3@44b1d2e3
+// builder3: cats.syntax.CartesianBuilder[Option]#CartesianBuilder3[Int,String,Boolean] = cats.syntax.CartesianBuilder$CartesianBuilder3@392b690a
 
 builder3.tupled
 // res2: Option[(Int, String, Boolean)] = Some((123,abc,true))
 
 val builder5 = builder3 |@| Option(0.5) |@| Option('x')
-// builder5: cats.syntax.CartesianBuilder[Option]#CartesianBuilder5[Int,String,Boolean,Double,Char] = cats.syntax.CartesianBuilder$CartesianBuilder5@62d3f977
+// builder5: cats.syntax.CartesianBuilder[Option]#CartesianBuilder5[Int,String,Boolean,Double,Char] = cats.syntax.CartesianBuilder$CartesianBuilder5@129e38ff
 
 builder5.tupled
 // res3: Option[(Int, String, Boolean, Double, Char)] = Some((123,abc,true,0.5,x))

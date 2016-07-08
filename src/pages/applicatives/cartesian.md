@@ -174,7 +174,7 @@ import cats.instances.future._
 // import cats.instances.future._
 
 val future = Cartesian[Future].product(Future(123), Future("abc"))
-// future: scala.concurrent.Future[(Int, String)] = scala.concurrent.impl.Promise$DefaultPromise@401b9e27
+// future: scala.concurrent.Future[(Int, String)] = scala.concurrent.impl.Promise$DefaultPromise@1a91a6ea
 
 Await.result(future, Duration.Inf)
 // res7: (Int, String) = (123,abc)
@@ -191,7 +191,7 @@ val future = for {
   a <- Future(1)
   b <- Future(2)
 } yield (a, b)
-// future: scala.concurrent.Future[(Int, Int)] = scala.concurrent.impl.Promise$DefaultPromise@2f9389f1
+// future: scala.concurrent.Future[(Int, Int)] = scala.concurrent.impl.Promise$DefaultPromise@c458173
 ```
 
 As we saw above, for consistency Cats implements the `product` method
@@ -212,17 +212,17 @@ create the `Futures` first and combine the results using `flatMap`:
 ```scala
 // Start the futures in parallel:
 val fa = Future(123)
-// fa: scala.concurrent.Future[Int] = scala.concurrent.impl.Promise$DefaultPromise@7022fbbc
+// fa: scala.concurrent.Future[Int] = scala.concurrent.impl.Promise$DefaultPromise@779f3583
 
 val fb = Future("abc")
-// fb: scala.concurrent.Future[String] = scala.concurrent.impl.Promise$DefaultPromise@3d2526f0
+// fb: scala.concurrent.Future[String] = scala.concurrent.impl.Promise$DefaultPromise@238103d1
 
 // Combine their results using flatMap:
 val future = for {
   a <- fa
   b <- fb
 } yield (a, b)
-// future: scala.concurrent.Future[(Int, String)] = scala.concurrent.impl.Promise$DefaultPromise@115f9c27
+// future: scala.concurrent.Future[(Int, String)] = scala.concurrent.impl.Promise$DefaultPromise@77a3ac40
 ```
 
 
@@ -298,7 +298,7 @@ If we combine three elements using `product` we get a nested tuple.
 
 ```scala
 val instance = Cartesian[Option]
-// instance: cats.Cartesian[Option] = cats.instances.OptionInstances$$anon$1@794b8ed2
+// instance: cats.Cartesian[Option] = cats.instances.OptionInstances$$anon$1@787c1924
 
 val result = instance.product(Some(1), instance.product(Some(2), Some(3)))
 // result: Option[(Int, (Int, Int))] = Some((1,(2,3)))
@@ -308,7 +308,7 @@ In fact there are two different results we can get, depending on the order of ca
 
 ```scala
 val instance = Cartesian[Option]
-// instance: cats.Cartesian[Option] = cats.instances.OptionInstances$$anon$1@794b8ed2
+// instance: cats.Cartesian[Option] = cats.instances.OptionInstances$$anon$1@787c1924
 
 val result2 = instance.product(instance.product(Some(1), Some(2)), Some(3))
 // result2: Option[((Int, Int), Int)] = Some(((1,2),3))

@@ -93,10 +93,10 @@ val now    = Eval.now(1 + 2)
 // now: cats.Eval[Int] = Now(3)
 
 val later  = Eval.later(3 + 4)
-// later: cats.Eval[Int] = cats.Later@4344ae74
+// later: cats.Eval[Int] = cats.Later@187a8980
 
 val always = Eval.always(5 + 6)
-// always: cats.Eval[Int] = cats.Always@1c7cdb0a
+// always: cats.Eval[Int] = cats.Always@42c26b21
 ```
 
 We can extract the result of an `Eval` using its `value` method:
@@ -140,7 +140,7 @@ val y = Eval.always {
   println("Computing Y")
   1 + 1
 }
-// y: cats.Eval[Int] = cats.Always@7de57618
+// y: cats.Eval[Int] = cats.Always@6c4d2b95
 
 y.value // first access
 // Computing Y
@@ -159,7 +159,7 @@ val z = Eval.later {
   println("Computing Z")
   1 + 1
 }
-// z: cats.Eval[Int] = cats.Later@492a878b
+// z: cats.Eval[Int] = cats.Later@5e36f3a9
 
 z.value // first access
 // Computing Z
@@ -193,7 +193,7 @@ val greeting = Eval.always {
   println("Step 2")
   str + " world"
 }
-// greeting: cats.Eval[String] = cats.Eval$$anon$8@599f9ce5
+// greeting: cats.Eval[String] = cats.Eval$$anon$8@1c4d12e2
 
 greeting.value
 // Step 1
@@ -213,7 +213,7 @@ val ans = for {
   a + b
 }
 // Calculating A
-// ans: cats.Eval[Int] = cats.Eval$$anon$8@4de14269
+// ans: cats.Eval[Int] = cats.Eval$$anon$8@208bc236
 
 ans.value // first access
 // Calculating B
@@ -235,7 +235,7 @@ val saying = Eval.always { println("Step 1") ; "The cat" }.
   map { str => println("Step 2") ; str + " sat on" }.
   memoize.
   map { str => println("Step 3") ; str + " the mat" }
-// saying: cats.Eval[String] = cats.Eval$$anon$8@5d6aed22
+// saying: cats.Eval[String] = cats.Eval$$anon$8@16ccbf37
 
 saying.value // first access
 // Step 1

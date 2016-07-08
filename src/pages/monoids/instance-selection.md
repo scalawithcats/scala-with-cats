@@ -104,7 +104,7 @@ implicit val multiplicationMonoid =
     def empty: Int = 1
     override def combine(x: Int, y: Int): Int = x * y
   }
-// multiplicationMonoid: cats.Monoid[Int] = $anon$1@7719b3ae
+// multiplicationMonoid: cats.Monoid[Int] = $anon$1@176dcffe
 
 3 |+| 2
 // res4: Int = 6

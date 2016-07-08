@@ -62,10 +62,10 @@ val timestamps = for {
   b <- Future(getTimestamp)
   c <- Future(getTimestamp)
 } yield (a, b, c)
-// timestamps: scala.concurrent.Future[(Long, Long, Long)] = scala.concurrent.impl.Promise$DefaultPromise@1c589952
+// timestamps: scala.concurrent.Future[(Long, Long, Long)] = scala.concurrent.impl.Promise$DefaultPromise@677c8b69
 
 Await.result(timestamps, Duration.Inf)
-// res1: (Long, Long, Long) = (0,1006,2011)
+// res1: (Long, Long, Long) = (0,1007,2011)
 ```
 
 To achieve the desired semantics in either of these cases,

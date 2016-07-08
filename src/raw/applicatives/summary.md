@@ -4,4 +4,4 @@ While monads and functors are the most widely used types we've covered in this b
 
 Cartesians and applicatives are most commonly used as a means of combining independent values such as the results of validation rules. Cats provides the `Validated` type for this specific purpose, along with cartesian builder syntax as a convenient way to express the combination of rules.
 
-We have almost covered all of the functional programming concepts on our agenda for this book. The next chapter covers `Traverse` and `Foldable`, two powerful type classes for converting between data types. After that we'll cover invariant and contravariant functors, and then we'll look at several case studies that bring all of the concepts together.
+We have almost covered all of the functional programming concepts on our agenda for this book. The next chapter covers `Traverse` and `Foldable`, two powerful type classes for converting between data types. After that we'll cover invariant and contravariant functors, and then we'll look at several case studies that bring together all of the concepts covered.
