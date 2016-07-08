@@ -3,7 +3,7 @@
 Cats provides two types for error handling: `Xor`, which we have already seen, and `Validated`, which we introduce here.
 
 We've met `Xor` and its fail-fast semantics already.
-In the example below, the calculations for `a` and `b` both fail but we only retain errors for `a`:
+In the example below, the calculations for `a` and `b` will both fail but we only retain errors for `a`:
 
 ```tut:book
 import cats.data.Xor
@@ -97,7 +97,7 @@ val v = Validated.Valid(123)
 val i = Validated.Invalid("Badness")
 ```
 
-or we can use the `valid` and `invalid` smart constructors,
+but it is better to use the `valid` and `invalid` smart constructors,
 which return a type of `Validated`:
 
 ```tut:book
