@@ -1,39 +1,15 @@
 ## *Validated*
 
-Cats provides two types for error handling: `Xor`, and a new type called `Validated`.
+Cats provides two types for error handling:
+`Xor`, which we have already seen,
+and `Validated`, which we introduce here.
+
 We've met `Xor` and its fail-fast semantics already.
-In the example below, the calculations for `a` and `b` both fail but we only retain errors for `a`:
-
-```scala
-import cats.data.Xor
-// import cats.data.Xor
-
-import cats.syntax.cartesian._
-// import cats.syntax.cartesian._
-
-// Using monadic combination:
-for {
-  a <- Xor.left[List[String], Int](List("Fail1"))
-  b <- Xor.left[List[String], Int](List("Fail2"))
-} yield a + b
-// res1: cats.data.Xor[List[String],Int] = Left(List(Fail1))
-
-// Using cartesian combination:
-(
-  Xor.left[List[String], Int](List("Fail1")) |@|
-  Xor.left[List[String], Int](List("Fail2"))
-) map (_ + _)
-// res3: cats.data.Xor[List[String],Int] = Left(List(Fail1))
-```
-
-Fail-fast semantics aren't always the best choice.
+However, fail-fast semantics aren't always the best choice.
 When validating a web form, for example, we want to accumulate errors for all invalid fields,
 not just the first one we find.
 
-We can't change `Xor` to get the semantics we need.
-As with all monads,
-its definitions of `product` and `flatMap` are necessarily linked for consistency.
-Fortunately, Cats provides another data type called `Validated` that is *not* a monad.
+Cats provides another data type called `Validated` that is an applicative, *not* a monad.
 The implementation of `product` for `Validated` is therefore free to accumulate errors.
 Here's an example:
 
@@ -44,18 +20,18 @@ import cats.data.Validated
 import cats.instances.list._
 // import cats.instances.list._
 
+import cats.syntax.cartesian._
+// import cats.syntax.cartesian._
+
 (
-  Validated.invalid[List[String], Int](List("Fail1")) |@|
-  Validated.invalid[List[String], Int](List("Fail2"))
-) map (_ + _)
-// res4: cats.data.Validated[List[String],Int] = Invalid(List(Fail1, Fail2))
+  Validated.invalid(List("Fail1")) |@|
+  Validated.invalid(List("Fail2"))
+).tupled
+// res0: cats.data.Validated[List[String],(Nothing, Nothing)] = Invalid(List(Fail1, Fail2))
 ```
 
-`Validated` is a `Cartesian` but not a `Monad`.
-Its `product` method isn't implemented in terms of `flatMap`,
-which frees it up to accumulate errors from both parameters using a `Semigroup`.
-Remember that a `Semigroup` is the `append` operation of a `Monoid`
-without the `zero` component.
+`Validated` accumulates errors using a `Semigroup` (the `append` part of a `Monoid`).
+This means we can use any `Monoid` as an error type, including `Lists`, `Vectors`, and `Strings`.
 Here are a few concrete examples:
 
 ```scala
@@ -65,7 +41,7 @@ import cats.Cartesian
 type StringOr[A] = Validated[String, A]
 // defined type alias StringOr
 
-type ListOr[A]   = Validated[List[String], A]
+type ListOr[A] = Validated[List[String], A]
 // defined type alias ListOr
 
 type VectorOr[A] = Validated[Vector[Int], A]
@@ -80,7 +56,7 @@ Cartesian[StringOr].product(
   Validated.invalid("Hello"),
   Validated.invalid("world")
 )
-// res7: StringOr[(Nothing, Nothing)] = Invalid(Helloworld)
+// res3: StringOr[(Nothing, Nothing)] = Invalid(Helloworld)
 
 // Import the Semigroup for List:
 import cats.instances.list._
@@ -91,7 +67,7 @@ Cartesian[ListOr].product(
   Validated.invalid(List("Hello")),
   Validated.invalid(List("world"))
 )
-// res10: ListOr[(Nothing, Nothing)] = Invalid(List(Hello, world))
+// res6: ListOr[(Nothing, Nothing)] = Invalid(List(Hello, world))
 
 // Import the Semigroup for Vector:
 import cats.instances.vector._
@@ -102,10 +78,10 @@ Cartesian[VectorOr].product(
   Validated.invalid(Vector(404)),
   Validated.invalid(Vector(500))
 )
-// res13: VectorOr[(Nothing, Nothing)] = Invalid(Vector(404, 500))
+// res9: VectorOr[(Nothing, Nothing)] = Invalid(Vector(404, 500))
 ```
 
-### Validated Methods and Syntax
+### Creating Instances
 
 `Validated` has two subtypes,
 `Validated.Valid` and `Validated.Invalid`,
@@ -120,7 +96,7 @@ val i = Validated.Invalid("Badness")
 // i: cats.data.Validated.Invalid[String] = Invalid(Badness)
 ```
 
-or we can use the `valid` and `invalid` smart constructors,
+However, it is better to use the `valid` and `invalid` smart constructors,
 which return a type of `Validated`:
 
 ```scala
@@ -139,52 +115,74 @@ import cats.syntax.validated._
 // import cats.syntax.validated._
 
 123.valid[String]
-// res14: cats.data.Validated[String,Int] = Valid(123)
+// res10: cats.data.Validated[String,Int] = Valid(123)
 
 "message".invalid[Int]
-// res15: cats.data.Validated[String,Int] = Invalid(message)
+// res11: cats.data.Validated[String,Int] = Invalid(message)
 ```
 
-There are also methods on `Validated` to catch certain types of exception.
-For example:
+Finally, there are a variety of methods on `Validated` to created
+instances from exceptions, `Either`, `Option`, and so on:
 
 ```scala
 // Catch NumberFormatExceptions:
 Validated.catchOnly[NumberFormatException]("foo".toInt)
-// res17: cats.data.Validated[NumberFormatException,Int] = Invalid(java.lang.NumberFormatException: For input string: "foo")
+// res13: cats.data.Validated[NumberFormatException,Int] = Invalid(java.lang.NumberFormatException: For input string: "foo")
 
-// Catch any Exception (not Error):
+// Catch any Exception (but not java.lang.Error):
 Validated.catchNonFatal(sys.error("Badness"))
-// res19: cats.data.Validated[Throwable,Nothing] = Invalid(java.lang.RuntimeException: Badness)
+// res15: cats.data.Validated[Throwable,Nothing] = Invalid(java.lang.RuntimeException: Badness)
 
 // Create from a Try:
 Validated.fromTry(scala.util.Try("foo".toInt))
-// res21: cats.data.Validated[Throwable,Int] = Invalid(java.lang.NumberFormatException: For input string: "foo")
+// res17: cats.data.Validated[Throwable,Int] = Invalid(java.lang.NumberFormatException: For input string: "foo")
 
 // Create from an Either:
 Validated.fromEither[String, Int](Left("Badness"))
-// res23: cats.data.Validated[String,Int] = Invalid(Badness)
+// res19: cats.data.Validated[String,Int] = Invalid(Badness)
 
 // Create from an Option:
 Validated.fromOption[String, Int](None, "Badness")
-// res25: cats.data.Validated[String,Int] = Invalid(Badness)
+// res21: cats.data.Validated[String,Int] = Invalid(Badness)
 ```
+
+### Switching between *Validated* and *Xor*
 
 We can convert back and forth between `Validated` and `Xor`
-using the `toXor` and `toValidated` methods.
-This allows us to switch between
-fail-fast and error-accumulating semantics on the fly:
+using the `toXor` and `toValidated` methods:
 
 ```scala
+import cats.data.Xor
+// import cats.data.Xor
+
 "Badness".invalid[Int].toXor
-// res26: cats.data.Xor[String,Int] = Left(Badness)
+// res22: cats.data.Xor[String,Int] = Left(Badness)
 
 "Badness".invalid[Int].toXor.toValidated
-// res27: cats.data.Validated[String,Int] = Invalid(Badness)
+// res23: cats.data.Validated[String,Int] = Invalid(Badness)
 ```
 
-We can `map`, `leftMap`, and `bimap` to
-transform the values in a `Validated`:
+This allows us to switch error-handling semantics on the fly:
+
+```scala
+// Accumulate errors in an Xor:
+(
+  Xor.left[List[String], Int](List("Fail 1")).toValidated |@|
+  Xor.left[List[String], Int](List("Fail 2")).toValidated
+).tupled.toXor
+// res25: cats.data.Xor[List[String],(Int, Int)] = Left(List(Fail 1, Fail 2))
+
+// Sequence operations on Validated using flatMap:
+for {
+  a <- Validated.invalid[List[String], Int](List("Fail 1")).toXor
+  b <- Validated.invalid[List[String], Int](List("Fail 2")).toXor
+} yield (a, b)
+// res27: cats.data.Xor[List[String],(Int, Int)] = Left(List(Fail 1))
+```
+
+### Methods of *Validated*
+
+We can `map`, `leftMap`, and `bimap` to transform the values in a `Validated`:
 
 ```scala
 123.valid.map(_ * 100)
@@ -281,6 +279,9 @@ We use `Xor` in places where we need fail-fast semantics
 and switch to `Validated` when we need to accumulate errors:
 
 ```scala
+import cats.data.Xor
+// import cats.data.Xor
+
 def getValue(name: String)(data: Map[String, String]): List[String] Xor String =
   Xor.fromOption(data.get(name), List(s"$name field not specified"))
 // getValue: (name: String)(data: Map[String,String])cats.data.Xor[List[String],String]

@@ -33,7 +33,7 @@ This zips the values using an implicit `Cartesian`:
 
 ```scala
 val builder2 = Option(123) |@| Option("abc")
-// builder2: cats.syntax.CartesianBuilder[Option]#CartesianBuilder2[Int,String] = cats.syntax.CartesianBuilder$CartesianBuilder2@35dba8b1
+// builder2: cats.syntax.CartesianBuilder[Option]#CartesianBuilder2[Int,String] = cats.syntax.CartesianBuilder$CartesianBuilder2@965f017
 
 builder2.tupled
 // res1: Option[(Int, String)] = Some((123,abc))
@@ -45,13 +45,13 @@ to combine the values to form a tuple of the correct size:
 
 ```scala
 val builder3 = Option(123) |@| Option("abc") |@| Option(true)
-// builder3: cats.syntax.CartesianBuilder[Option]#CartesianBuilder3[Int,String,Boolean] = cats.syntax.CartesianBuilder$CartesianBuilder3@2becab45
+// builder3: cats.syntax.CartesianBuilder[Option]#CartesianBuilder3[Int,String,Boolean] = cats.syntax.CartesianBuilder$CartesianBuilder3@44b1d2e3
 
 builder3.tupled
 // res2: Option[(Int, String, Boolean)] = Some((123,abc,true))
 
 val builder5 = builder3 |@| Option(0.5) |@| Option('x')
-// builder5: cats.syntax.CartesianBuilder[Option]#CartesianBuilder5[Int,String,Boolean,Double,Char] = cats.syntax.CartesianBuilder$CartesianBuilder5@79646edd
+// builder5: cats.syntax.CartesianBuilder[Option]#CartesianBuilder5[Int,String,Boolean,Double,Char] = cats.syntax.CartesianBuilder$CartesianBuilder5@62d3f977
 
 builder5.tupled
 // res3: Option[(Int, String, Boolean, Double, Char)] = Some((123,abc,true,0.5,x))
@@ -78,7 +78,7 @@ and implicit instances of `Cartesian` and `Functor`.
 `map` applies the parameters to the function,
 allowing us to combine them in any way we choose.
 
-For example, we can add several nubmers together:
+For example, we can add several numbers together:
 
 ```scala
 (
@@ -88,7 +88,7 @@ For example, we can add several nubmers together:
 // res5: Option[Int] = Some(3)
 ```
 
-Or zip parameters to create a case class:
+Or apply parameters to create a case class:
 
 ```scala
 case class Cat(name: String, born: Int, color: String)
@@ -103,30 +103,25 @@ case class Cat(name: String, born: Int, color: String)
 ```
 
 If we supply a function that accepts the wrong number or types of parameters,
-we get a compile error:
+we get a compile-time error:
 
 ```scala
-(Option(1) |@| Option(2) |@| Option(3)).map(_ + _)
-// <console>:18: error: missing parameter type for expanded function ((x$1, x$2) => x$1.$plus(x$2))
-//        (Option(1) |@| Option(2) |@| Option(3)).map(_ + _)
-//                                                    ^
-// <console>:18: error: missing parameter type for expanded function ((x$1: <error>, x$2) => x$1.$plus(x$2))
-//        (Option(1) |@| Option(2) |@| Option(3)).map(_ + _)
-//                                                        ^
+val add: (Int, Int) => Int = (a, b) => a + b
+// add: (Int, Int) => Int = <function2>
 ```
-
 ```scala
-(Option(1) |@| Option(true)).map(_ + _)
-// <console>:18: error: overloaded method value + with alternatives:
-//   (x: Double)Double <and>
-//   (x: Float)Float <and>
-//   (x: Long)Long <and>
-//   (x: Int)Int <and>
-//   (x: Char)Int <and>
-//   (x: Short)Int <and>
-//   (x: Byte)Int <and>
-//   (x: String)String
-//  cannot be applied to (Boolean)
-//        (Option(1) |@| Option(true)).map(_ + _)
-//                                           ^
+(Option(1) |@| Option(2) |@| Option(3)).map(add)
+// <console>:19: error: type mismatch;
+//  found   : (Int, Int) => Int
+//  required: (Int, Int, Int) => ?
+//        (Option(1) |@| Option(2) |@| Option(3)).map(add)
+//                                                    ^
+```
+```scala
+(Option("cats") |@| Option(true)).map(add)
+// <console>:19: error: type mismatch;
+//  found   : (Int, Int) => Int
+//  required: (String, Boolean) => ?
+//        (Option("cats") |@| Option(true)).map(add)
+//                                              ^
 ```

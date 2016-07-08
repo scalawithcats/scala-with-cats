@@ -119,6 +119,8 @@ We can convert back and forth between `Validated` and `Xor`
 using the `toXor` and `toValidated` methods:
 
 ```tut:book
+import cats.data.Xor
+
 "Badness".invalid[Int].toXor
 "Badness".invalid[Int].toXor.toValidated
 ```
@@ -128,14 +130,14 @@ This allows us to switch error-handling semantics on the fly:
 ```tut:book
 // Accumulate errors in an Xor:
 (
-  Xor.left(List("Fail 1")).toValidated |@|
-  Xor.left(List("Fail 2")).toValidated
+  Xor.left[List[String], Int](List("Fail 1")).toValidated |@|
+  Xor.left[List[String], Int](List("Fail 2")).toValidated
 ).tupled.toXor
 
 // Sequence operations on Validated using flatMap:
 for {
-  a <- Validated.invalid(List("Fail 1")).toXor
-  b <- Validated.invalid(List("Fail 2")).toXor
+  a <- Validated.invalid[List[String], Int](List("Fail 1")).toXor
+  b <- Validated.invalid[List[String], Int](List("Fail 2")).toXor
 } yield (a, b)
 ```
 

@@ -63,7 +63,7 @@ We saw above that `Apply` is related to `Functor`;
 `Applicative` forms the basis of `Monad`.
 Here is a diagram showing the complete family:
 
-![Monad type class hierarchy](src/pages/applicatives/hierarchy.png)
+![Monad type class hierarchy](src/raw/applicatives/hierarchy.png)
 
 Each type class represents a particular set of sequencing semantics.
 It introduces its characteristic methods,

@@ -52,7 +52,7 @@ List(1, 2, 3).foldRight(0)(_ + _)
 
 The process is illustrated in the figure below. The result is the same regardless of which direction we fold because `+` is associative. If we had provided a non-associative operator, the order of evaluation makes a difference.
 
-![Illustration of foldLeft and foldRight](src/pages/foldable/fold.png)
+![Illustration of foldLeft and foldRight](src/raw/foldable/fold.png)
 
 ### Exercise: Reflecting on folds
 

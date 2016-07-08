@@ -2,9 +2,11 @@
 
 In previous chapters we saw how functors and monads let us transform values within a context.
 While these are both immensely useful abstractions,
-there are types of transformation that we can't represent with `map` and `flatMap`.
+there are types of transformation that are inconvenient to represent with `map` and `flatMap`.
 
-One such example is form validation, where we want to accumulate errors as we go along.
+One such example is form validation.
+When we validate a form we want to return *all* the errors to the user,
+not just stop on the first error we encounter.
 If we model this with a monad like `Xor`, we fail fast and lose errors.
 For example, the code below fails on the first call to `parseInt` and doesn't go any further:
 
@@ -45,8 +47,8 @@ import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 // import scala.concurrent.ExecutionContext.Implicits.global
 
-val timestamp0 = System.currentTimeMillis
-// timestamp0: Long = 1467375912398
+lazy val timestamp0 = System.currentTimeMillis
+// timestamp0: Long = <lazy>
 
 def getTimestamp: Long = {
   val timestamp = System.currentTimeMillis - timestamp0
@@ -60,10 +62,10 @@ val timestamps = for {
   b <- Future(getTimestamp)
   c <- Future(getTimestamp)
 } yield (a, b, c)
-// timestamps: scala.concurrent.Future[(Long, Long, Long)] = scala.concurrent.impl.Promise$DefaultPromise@30db1ef2
+// timestamps: scala.concurrent.Future[(Long, Long, Long)] = scala.concurrent.impl.Promise$DefaultPromise@1c589952
 
 Await.result(timestamps, Duration.Inf)
-// res1: (Long, Long, Long) = (285,1293,2297)
+// res1: (Long, Long, Long) = (0,1006,2011)
 ```
 
 To achieve the desired semantics in either of these cases,
@@ -76,8 +78,10 @@ In this chapter we will look at two type classes that support this pattern:
   to join values within a context using arbitrary functions.
 
 - *Applicative functors*, also known simply as *applicatives*,
-  provide an alternative formulation of cartesian
-  in terms of function application.
-  While applicatives are less prominent than cartesians in Cats,
-  they provide interesting theoretical links to other libraries
-  and languages such as Scalaz and Haskell.
+  extend cartesian with functor (`map`)
+  and a constructor (`pure`).
+  
+Applicatives are often formulated in terms of function application,
+instead of the cartesian formulation that is emphasised in Cats.
+This alternative formulation provides a link to other libraries and languages such as Scalaz and Haskell,
+so we'll also look at it.
