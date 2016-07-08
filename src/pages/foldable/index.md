@@ -10,7 +10,8 @@ We can also invent new sequence types and plug them into our code.
 
 Let's start with a quick recap on the concept of folding.
 In general, a `fold` function allows users to transform one algebraic data type to another.
-For example, the `fold` method on `Option` can return any data type we want by providing handlers for the `Some` and `None` cases:
+For example, the `fold` method on `Option` can return any algebraic data type
+by providing handlers for the `Some` and `None` cases:
 
 ```scala
 def show[A](option: Option[A]): String =
@@ -51,7 +52,7 @@ List(1, 2, 3).foldRight(0)(_ + _)
 
 The process is illustrated in the figure below. The result is the same regardless of which direction we fold because `+` is associative. If we had provided a non-associative operator, the order of evaluation makes a difference.
 
-![Illustration of foldLeft and foldRight](src/pages/foldable/fold.png)
+![Illustration of foldLeft and foldRight](src/raw/foldable/fold.png)
 
 ### Exercise: Reflecting on folds
 

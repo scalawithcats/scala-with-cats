@@ -9,14 +9,6 @@ where traditional logging can result in interleaved messages from different cont
 With a `Writer` the log for the computation is tied to the result,
 so we can run concurrent computations without mixing log messages.
 
-<div class="callout callout-danger">
-  TODO: Convert the `Lists` in the examples below to `Vectors`.
-
-  `Vector` is a much more sensible type for use as a log for `Writer`
-  because it supports efficient append operations.
-  However, Algebra doesn't currently have `Monoid` instances for `Vector`.
-  Implement these (or wait for them to be implemented) and rewrite this bit.
-</div>
 
 ### Creating and Unpacking Writers
 
@@ -26,12 +18,17 @@ A `Writer[W, A]` carries two values: a *log* of type `W` and a *result* of type 
 import cats.data.Writer
 // import cats.data.Writer
 
-Writer(List("It all starts here."), 123)
-// res0: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(It all starts here.),123))
+import cats.instances.vector._
+// import cats.instances.vector._
+
+Writer(Vector("It all starts here."), 123)
+// res0: cats.data.WriterT[cats.Id,scala.collection.immutable.Vector[String],Int] = WriterT((Vector(It all starts here.),123))
 ```
 
-Notice that the type of the writer is actually `WriterT[Id, List[String], Int]`
-instead of `Writer[List[String], Int]` as we might expect.
+We've used a `Vector` to hold our log as it has a more efficient append operation than `List`.
+
+Notice that the type of the writer is actually `WriterT[Id, Vector[String], Int]`
+instead of `Writer[Vector[String], Int]` as we might expect.
 In the spirit of code reuse, Cats implements the `Writer` monad in terms of another type, `WriterT`.
 `WriterT` is an example of a new concept called a "monad tranformer".
 We will introduce monad transformers in the next chapter.
@@ -42,17 +39,14 @@ In order to use `pure` the log has to be a type with a `Monoid`.
 This tells Cats what to use as the initial empty log:
 
 ```scala
-import cats.instances.list._
-// import cats.instances.list._
-
 import cats.syntax.applicative._
 // import cats.syntax.applicative._
 
-type Logged[A] = Writer[List[String], A]
+type Logged[A] = Writer[Vector[String], A]
 // defined type alias Logged
 
 123.pure[Logged]
-// res1: Logged[Int] = WriterT((List(),123))
+// res1: Logged[Int] = WriterT((Vector(),123))
 ```
 
 We can create a `Writer` from a log using the `tell` syntax.
@@ -62,8 +56,8 @@ The `Writer` is initialised with the value `()`:
 import cats.syntax.writer._
 // import cats.syntax.writer._
 
-List("msg1", "msg2", "msg3").tell
-// res2: cats.data.Writer[List[String],Unit] = WriterT((List(msg1, msg2, msg3),()))
+Vector("msg1", "msg2", "msg3").tell
+// res2: cats.data.Writer[scala.collection.immutable.Vector[String],Unit] = WriterT((Vector(msg1, msg2, msg3),()))
 ```
 
 If we have both a result and a log, we can create a `Writer` in two ways:
@@ -73,11 +67,11 @@ using the `Writer.apply` method or the `writer` syntax:
 import cats.syntax.writer._
 // import cats.syntax.writer._
 
-val a = Writer(123, List("msg1", "msg2", "msg3"))
-// a: cats.data.WriterT[cats.Id,Int,List[String]] = WriterT((123,List(msg1, msg2, msg3)))
+val a = Writer(123, Vector("msg1", "msg2", "msg3"))
+// a: cats.data.WriterT[cats.Id,Int,scala.collection.immutable.Vector[String]] = WriterT((123,Vector(msg1, msg2, msg3)))
 
-val b = 123.writer(List("msg1", "msg2", "msg3"))
-// b: cats.data.Writer[List[String],Int] = WriterT((List(msg1, msg2, msg3),123))
+val b = 123.writer(Vector("msg1", "msg2", "msg3"))
+// b: cats.data.Writer[scala.collection.immutable.Vector[String],Int] = WriterT((Vector(msg1, msg2, msg3),123))
 ```
 
 We can extract the result and log from a `Writer`
@@ -85,7 +79,7 @@ using the `value` and `written` methods respectively:
 
 ```scala
 a.value
-// res3: cats.Id[List[String]] = List(msg1, msg2, msg3)
+// res3: cats.Id[scala.collection.immutable.Vector[String]] = Vector(msg1, msg2, msg3)
 
 a.written
 // res4: cats.Id[Int] = 123
@@ -94,8 +88,9 @@ a.written
 or both at once using the `run` method:
 
 ```scala
-b.run
-// res5: cats.Id[(List[String], Int)] = (List(msg1, msg2, msg3),123)
+val (log, result) = b.run
+// log: scala.collection.immutable.Vector[String] = Vector(msg1, msg2, msg3)
+// result: Int = 123
 ```
 
 ### Composing and Transforming Writers
@@ -103,18 +98,18 @@ b.run
 When we transform or `map` over a `Writer`, its log is preserved.
 When we `flatMap`, the logs of the two `Writers` are appended.
 For this reason it's good practice to use a log type that has an efficient append operation,
-such as a `Vector`:
+such as a `Vector`.
 
 ```scala
 val writer1 = for {
   a <- 10.pure[Logged]
-  _ <- List("a", "b", "c").tell
-  b <- 32.writer(List("x", "y", "z"))
+  _ <- Vector("a", "b", "c").tell
+  b <- 32.writer(Vector("x", "y", "z"))
 } yield a + b
-// writer1: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(a, b, c, x, y, z),42))
+// writer1: cats.data.WriterT[cats.Id,Vector[String],Int] = WriterT((Vector(a, b, c, x, y, z),42))
 
 writer1.run
-// res6: cats.Id[(List[String], Int)] = (List(a, b, c, x, y, z),42)
+// res5: cats.Id[(Vector[String], Int)] = (Vector(a, b, c, x, y, z),42)
 ```
 
 In addition to transforming the result with `map` and `flatMap`,
@@ -122,10 +117,10 @@ we can transform the log with the `mapWritten` method:
 
 ```scala
 val writer2 = writer1.mapWritten(_.map(_.toUpperCase))
-// writer2: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(A, B, C, X, Y, Z),42))
+// writer2: cats.data.WriterT[cats.Id,scala.collection.immutable.Vector[String],Int] = WriterT((Vector(A, B, C, X, Y, Z),42))
 
 writer2.run
-// res7: cats.Id[(List[String], Int)] = (List(A, B, C, X, Y, Z),42)
+// res6: cats.Id[(scala.collection.immutable.Vector[String], Int)] = (Vector(A, B, C, X, Y, Z),42)
 ```
 
 We can also tranform both log and result simultaneously using `bimap` or `mapBoth`.
@@ -137,20 +132,20 @@ val writer3 = writer1.bimap(
   log    => log.map(_.toUpperCase),
   result => result * 100
 )
-// writer3: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(A, B, C, X, Y, Z),4200))
+// writer3: cats.data.WriterT[cats.Id,scala.collection.immutable.Vector[String],Int] = WriterT((Vector(A, B, C, X, Y, Z),4200))
 
 writer3.run
-// res8: cats.Id[(List[String], Int)] = (List(A, B, C, X, Y, Z),4200)
+// res7: cats.Id[(scala.collection.immutable.Vector[String], Int)] = (Vector(A, B, C, X, Y, Z),4200)
 
 val writer4 = writer1.mapBoth { (log, result) =>
   val log2    = log.map(_ + "!")
   val result2 = result * 1000
   (log2, result2)
 }
-// writer4: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(a!, b!, c!, x!, y!, z!),42000))
+// writer4: cats.data.WriterT[cats.Id,scala.collection.immutable.Vector[String],Int] = WriterT((Vector(a!, b!, c!, x!, y!, z!),42000))
 
 writer4.run
-// res9: cats.Id[(List[String], Int)] = (List(a!, b!, c!, x!, y!, z!),42000)
+// res8: cats.Id[(scala.collection.immutable.Vector[String], Int)] = (Vector(a!, b!, c!, x!, y!, z!),42000)
 ```
 
 Finally, we can clear the log with the `reset` method
@@ -158,16 +153,16 @@ and swap log and result with the `swap` method:
 
 ```scala
 val writer5 = writer1.reset
-// writer5: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(),42))
+// writer5: cats.data.WriterT[cats.Id,Vector[String],Int] = WriterT((Vector(),42))
 
 writer5.run
-// res10: cats.Id[(List[String], Int)] = (List(),42)
+// res9: cats.Id[(Vector[String], Int)] = (Vector(),42)
 
 val writer6 = writer1.swap
-// writer6: cats.data.WriterT[cats.Id,Int,List[String]] = WriterT((42,List(a, b, c, x, y, z)))
+// writer6: cats.data.WriterT[cats.Id,Int,Vector[String]] = WriterT((42,Vector(a, b, c, x, y, z)))
 
 writer6.run
-// res11: cats.Id[(Int, List[String])] = (42,List(a, b, c, x, y, z))
+// res10: cats.Id[(Int, Vector[String])] = (42,Vector(a, b, c, x, y, z))
 ```
 
 ### Exercise: Show Your Working
@@ -178,18 +173,8 @@ Let's confirm this by computing (and logging) some factorials.
 The `factorial` function below computes a factorial,
 printing out the intermediate steps in the calculation as it runs.
 The `slowly` helper function ensures this takes a while to run,
-even on the very small examples we have to use to fit in these pages.
-
-<div class="callout callout-danger">
-  TODO: `goSlowly` is a fairly weak thing to include here.
-
-  Is there another example we can use to demo `Writers` in a cleaner way?
-  Maybe logging the steps in Towers of Hanoi?
-  Or fibonacci numbers?
-
-  If we do fibonacci numbers, maybe we could parallelise it
-  with `WriterT` in the monad transformers chapter?
-</div>
+even on the very small examples we have to use to fit in these pages,
+so we can see the interleaving when we run multiple factorials in parallel.
 
 ```scala
 def slowly[A](body: => A) =
@@ -216,7 +201,7 @@ factorial(5)
 // fact 3 6
 // fact 4 24
 // fact 5 120
-// res12: Int = 120
+// res11: Int = 120
 ```
 
 If we start several factorials in parallel,
@@ -233,11 +218,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 // import scala.concurrent.duration._
 
-Await.result(Future.sequence(List(
+Await.result(Future.sequence(Vector(
   Future(factorial(5)),
   Future(factorial(5))
 )), Duration.Inf)
-// res13: List[Int] = List(120, 120)
+// res12: scala.collection.immutable.Vector[Int] = Vector(120, 120)
 
 // fact 0 1
 // fact 0 1
@@ -268,11 +253,11 @@ import cats.data.Writer
 import cats.syntax.applicative._
 // import cats.syntax.applicative._
 
-type Logged[A] = Writer[List[String], A]
+type Logged[A] = Writer[Vector[String], A]
 // defined type alias Logged
 
 42.pure[Logged]
-// res26: Logged[Int] = WriterT((List(),42))
+// res25: Logged[Int] = WriterT((Vector(),42))
 ```
 
 We'll import the `tell` syntax as well:
@@ -281,19 +266,19 @@ We'll import the `tell` syntax as well:
 import cats.syntax.writer._
 // import cats.syntax.writer._
 
-List("Message").tell
-// res27: cats.data.Writer[List[String],Unit] = WriterT((List(Message),()))
+Vector("Message").tell
+// res26: cats.data.Writer[scala.collection.immutable.Vector[String],Unit] = WriterT((Vector(Message),()))
 ```
 
-Finally, we'll import the `Semigroup` instance for `List`.
+Finally, we'll import the `Semigroup` instance for `Vector`.
 We need this to `map` and `flatMap` over `Logged`:
 
 ```scala
-import cats.instances.list._
-// import cats.instances.list._
+import cats.instances.vector._
+// import cats.instances.vector._
 
 41.pure[Logged].map(_ + 1)
-// res28: cats.data.WriterT[cats.Id,List[String],Int] = WriterT((List(),42))
+// res27: cats.data.WriterT[cats.Id,Vector[String],Int] = WriterT((Vector(),42))
 ```
 
 With these in scope, the definition of `factorial` becomes:
@@ -305,7 +290,7 @@ def factorial(n: Int): Logged[Int] = {
   } else {
     for {
       a <- slowly(factorial(n - 1))
-      _ <- List(s"fact $n ${a*n}").tell
+      _ <- Vector(s"fact $n ${a*n}").tell
     } yield a * n
   }
 }
@@ -317,7 +302,7 @@ to extract the log and our factorial:
 
 ```scala
 val (log, result) = factorial(5).run
-// log: List[String] = List(fact 1 1, fact 2 2, fact 3 6, fact 4 24, fact 5 120)
+// log: Vector[String] = Vector(fact 1 1, fact 2 2, fact 3 6, fact 4 24, fact 5 120)
 // result: Int = 120
 ```
 
@@ -325,14 +310,14 @@ We can run several `factorials` in parallel as follows,
 capturing their logs independently without fear of interleaving:
 
 ```scala
-val List((logA, ansA), (logB, ansB)) =
-  Await.result(Future.sequence(List(
+val Vector((logA, ansA), (logB, ansB)) =
+  Await.result(Future.sequence(Vector(
     Future(factorial(5).run),
     Future(factorial(5).run)
   )), Duration.Inf)
-// logA: List[String] = List(fact 1 1, fact 2 2, fact 3 6, fact 4 24, fact 5 120)
+// logA: Vector[String] = Vector(fact 1 1, fact 2 2, fact 3 6, fact 4 24, fact 5 120)
 // ansA: Int = 120
-// logB: List[String] = List(fact 1 1, fact 2 2, fact 3 6, fact 4 24, fact 5 120)
+// logB: Vector[String] = Vector(fact 1 1, fact 2 2, fact 3 6, fact 4 24, fact 5 120)
 // ansB: Int = 120
 ```
 </div>

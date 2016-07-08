@@ -28,7 +28,7 @@ to obtain a (wrapped) function of type `A => F[C]` which we can then apply to a 
 
 The abstract concept of composing functions of type `A => F[B]` has a name: a *Kleisli*. We can replace all our uses of `Check` with it. It has all the methods on `Check`, and some additional ones. Here is a simple example of `Kleisli`, transforming an integer into a list of integers through three steps.
 
-```tut:book
+```scala
 object kleisli {
   import cats.data.Kleisli
   import cats.instances.list._
@@ -51,7 +51,10 @@ object kleisli {
   // Apply the pipeline to data
   val result = pipeline.run(20)
 }
+// defined object kleisli
+
 kleisli.result
+// res0: List[Int] = List(42, 10, -42, -10, 38, 9, -38, -9)
 ```
 
 Now let's use `Kleisli` in our examples where we had previously used `Check`. To do so we need to make a few changes to `Predicate`. We must be able to convert a `Predicate` to a function, as `Klesii` only works with functions. Somewhat more subtly, when we convert a `Predicate` to a function, it should have type `A => Xor[E,A]` rather than `A => Validated[E,A]`. Why is this? Remember that in the implementation of `andThen` we converted the `Validated` to an `Xor` so we could call its `flatMap` method. It's exactly the same in the `Kleisli`---it must be able to `flatMap` on the function's return type so it can implement sequencing.
@@ -63,7 +66,7 @@ Implement this.
 <div class="solution">
 I chose to implement the conversion to a function as a method named `run` (following the convention of `run` on `Kleisli` and other similar methods within Cats). This method must, like `apply`, accept an implicit `Semigroup`. Here's the complete code.
 
-```tut:book
+```scala
 object predicate {
   import cats.Semigroup
   import cats.data.{Validated,Xor}
@@ -125,7 +128,7 @@ Working around limitations of type inference was annoying when writing this code
 
 This is more complex than it should be. We'll discuss this soon enough. For now, here's the working code.
 
-```tut:book
+```scala
 object example {
   import cats.data.{Kleisli,NonEmptyList,OneAnd,Validated,Xor}
   import cats.instances.list._
@@ -202,7 +205,7 @@ It would be useful to be able to join together two predicates, so if we have `Pr
 
 Here's the complete code.
 
-```tut:book
+```scala
 object predicate {
   import cats.{Monoidal,Semigroup}
   import cats.data.{Validated,Xor}
@@ -272,7 +275,7 @@ object predicate {
 
 With this we implement the example quite clearly.
 
-```tut:book
+```scala
 object example {
   import cats.data.{Kleisli,NonEmptyList,OneAnd,Validated,Xor}
   import cats.instances.list._

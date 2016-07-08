@@ -1,4 +1,4 @@
-## *Eval* {#eval}
+## The *Eval* Monad {#eval}
 
 [`cats.Eval`][cats.Eval] is a monad that allows us to
 abstract over different *models of evaluation*.
@@ -200,28 +200,35 @@ import cats.Monad
 import cats.syntax.flatMap._
 import scala.language.higherKinds
 
-def loopM[M[_] : Monad](m: M[Int], count: Int): M[Int] =
+def stackDepth: Int =
+  Thread.currentThread.getStackTrace.length
+
+def loopM[M[_] : Monad](m: M[Int], count: Int): M[Int] = {
+  println(s"Stack depth $stackDepth")
   count match {
     case 0 => m
     case n => m.flatMap { _ => loopM(m, n - 1) }
   }
+}
 ```
 
-When we run `loopM` with an `Option` we can easily blow the stack.
+When we run `loopM` with an `Option` we can see the stack depth slowly increasing.
+With a sufficiently high value of `count`, we would blow the stack:
 
 ```tut:book
-import cats.instances.option.__
+import cats.instances.option._
 import cats.syntax.option._
 ```
 
-```tut:book:fail
-loopM(1.some, 1000)
+```tut:book
+loopM(1.some, 5)
 ```
 
-Now let's consider the same code rewritten using `Eval`:
+Now let's see the same code rewritten using `Eval`.
+The trampoline keeps the stack depth constant:
 
 ```tut:book
-loopM(Eval.now(1), 1000).value
+loopM(Eval.now(1), 5).value
 ```
 
 We see that this runs without issue.
@@ -230,7 +237,7 @@ We can use `Eval` as a mechanism to prevent to prevent stack overflows
 when working on very large data structures.
 However, we should bear in mind that trampolining is not free.
 It effectively avoids consuming stack by
-creating a linked list of function calls on the heap.
+creating a chain of function calls on the heap.
 There are still limits on how deeply we can nest computations,
 but they are bounded by the size of the heap rather than the stack.
 
