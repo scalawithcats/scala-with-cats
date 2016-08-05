@@ -22,21 +22,36 @@ show(None)
 show(Some(10))
 ```
 
-`Foldable` is a type class for folding over sequences.
-The typical use case is to accumulate a value as we traverse.
+`Foldable` is a type class for folding over sequences,
+which we can model as a sum type consisting of a
+pair and a terminator, similar to a regular `List`.
 We supply an *accumulator* value and a *binary function*
-to combine it with an item in the sequence.
-The function produces another accumulator,
-allowing us to recurse down the sequence.
-When we reach the end, the final accumulator is our result.
+to combine it with an item in the sequence:
 
-The order in which we visit the items may be important
-so we normally define two variants:
+```tut:book
+def show[A](list: List[A]): String =
+  list.foldLeft("nil")((accum, item) => s"$item then $accum")
+
+show(Nil)
+
+show(List(1, 2, 3))
+```
+
+Sequences are recursive, so our binary function is called
+recursively for each item in the sequence.
+The function produces another accumulator,
+which we use to process the tail of the list.
+When we reach the end, the final accumulator is our result.
+The typical use case is to accumulate a value as we traverse.
+
+Depending on the operation we're performing,
+the order in which we visit the items may be important.
+Because of this, we normally define two variants of fold:
 
 - `foldLeft` traverses the sequence from "left" to "right" (start to finish);
 - `foldRight` traverses the sequence from "right" to "left" (finish to start).
 
-For example, we can sum a `List[Int]` by folding in either direction,
+We can sum a `List[Int]` by folding in either direction,
 using `0` as our accumulator and `+` as our binary operation:
 
 ```tut:book
@@ -44,9 +59,20 @@ List(1, 2, 3).foldLeft(0)(_ + _)
 List(1, 2, 3).foldRight(0)(_ + _)
 ```
 
-The process is illustrated in the figure below. The result is the same regardless of which direction we fold because `+` is associative. If we had provided a non-associative operator, the order of evaluation makes a difference.
+The process of folding is illustrated in the figure below.
+The result is the same regardless of which direction we fold because `+` is commutative:
 
 ![Illustration of foldLeft and foldRight](src/raw/foldable/fold.png)
+
+If provide a non-commutative operator
+the order of evaluation makes a difference.
+For example, if we fold using `-`,
+we get different results in each direction:
+
+```tut:book
+List(1, 2, 3).foldLeft(0)(_ - _)
+List(1, 2, 3).foldRight(0)(_ - _)
+```
 
 ### Exercise: Reflecting on folds
 
