@@ -1,14 +1,13 @@
 ## Foldable in Cats
 
 Cats' `Foldable` abstracts the two operations `foldLeft` and `foldRight` into a type class.
-Instances of `Foldable` have to define those two methods,
-but inherit a host of derived methods for free.
+Instances of `Foldable` define those two methods
+and inherit a host of derived methods for free.
 
 Cats provides out-of-the-box instances of `Foldable` for a handful of Scala data types:
 `List`, `Vector`, `Stream`, `Option`, and `Map`.
 We can summon instances as usual using `Foldable.apply`
-and call their implementations of `foldLeft` directly on the instances.
-
+and call their implementations of `foldLeft` directly.
 Here is an example using `List`:
 
 ```tut:book
@@ -33,8 +32,7 @@ Foldable[Option].foldLeft(maybeInt, "")(_ + _)
 
 The `Foldable` instance for `Map` allows us to fold over its values (as opposed to its keys).
 Because `Map` has two type parameters,
-we have to fix one of them to create the single-parameter type constructor
-we need to summon the `Foldable`:
+we have to fix one of them to summon the `Foldable`:
 
 ```tut:book
 type StringMap[A] = Map[String, A]
@@ -95,6 +93,7 @@ val result: Eval[Int] = // and the result is an Eval
       accum.map(_ + item)
   }
 
+// We call the value method to start the actual calculation:
 result.value
 ```
 
@@ -114,6 +113,8 @@ We can either resort to regular recursion,
 using the stack to combine values on the way back up,
 or use a technique called "trampolining"
 to rewrite the computation as a (heap allocated) list of functions.
+Regular recursion is not stack safe.
+Trampolining, on the other hand, is.
 
 A discussion of trampolining is beyond the scope of this book,
 suffice to say that `Eval` uses this technique
