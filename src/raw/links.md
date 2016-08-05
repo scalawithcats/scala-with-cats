@@ -10,7 +10,7 @@
 [cats.Monad]: http://typelevel.org/cats/api/#cats.Monad
 [cats.Monoid]: http://typelevel.org/cats/api/#cats.Monoid
 [cats.Show]: http://typelevel.org/cats/api/#cats.Show
-[cats.Traversable]: http://typelevel.org/cats/api/#cats.Traversable
+[cats.Traverse]: http://typelevel.org/cats/api/#cats.Traverse
 [cats.data.IdT]: http://typelevel.org/cats/api/#cats.data.IdT
 [cats.data.ListT]: http://typelevel.org/cats/api/#cats.data.ListT
 [cats.data.OptionT]: http://typelevel.org/cats/api/#cats.data.OptionT
