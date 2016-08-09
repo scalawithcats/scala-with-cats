@@ -18,5 +18,6 @@ target/
 project/target
 
 src/pages/case-studies/validation
+src/pages/case-studies/crdt
 src/pages/intro
 src/pages/type-classes
