@@ -56,15 +56,14 @@ pages:
   # - src/pages/applicatives/cats.md
   - src/pages/applicatives/summary.md
 
+  - src/pages/foldable/index.md
+  - src/pages/foldable/cats.md
+  - src/pages/foldable/summary.md
   - src/pages/traverse/index.md
   - src/pages/traverse/cats.md
   - src/pages/traverse/laws.md
   - src/pages/traverse/unapply.md
   - src/pages/traverse/summary.md
-
-  - src/pages/foldable/index.md
-  - src/pages/foldable/cats.md
-  - src/pages/foldable/summary.md
 
   - src/pages/case-studies/mapreduce/index.md
 

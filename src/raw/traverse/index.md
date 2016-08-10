@@ -1,80 +1,305 @@
 # *Traverse*
 
-In the last chapter we saw how `Cartesian` allowed us to zip values within a context,
-and how `Applicative` used this concept to apply arguments to functions within a context.
-In this chapter we will see a new type class called [`cats.Traverse`],
-which uses `Applicatives` to abstract over iteration patterns[^not-traverse].
+The `foldLeft` and `foldRight` methods we saw in the last section are very flexible iteration methods,
+but they require us to do a lot of work in terms of defining accumulators and combinator functions.
+The `Traverse` type class is a higher level tool that leverages `Applicatives`
+to provide a much more convenient, more lawful, pattern for iteration.
 
-[^not-traverse]: Don't confuse `Traverse`
-with the `Traversable` type in the Scala standard library.
-The former is a type class in Cats, while the latter is
-the supertype of all sequences in the Scala collections framework.
-You *can*, however, confuse [`cats.Traverse`]
-with the equivalent type class in Scalaz, [`scalaz.Traversable`].
+## Traverse and Futures
 
-To motivate `Traverse` we will look at a common use case:
-turning a `List[Future[A]]` into a `Future[List[A]]`.
-As an example, suppose we have a function that fetches the traffic for a web server,
-returning a snapshot value of type `Future[Int]`:
+We can demonstrate `Traverse` using
+the `Future.traverse` and `Future.sequence` methods in the Scala standard library.
+These methods provide `Future`-specific implementations of the `Traverse` type class.
+As an example, suppose we have a list of server hostnames
+and a method to poll a host for its uptime:
 
 ```tut:book
-import scala.concurrent.Future
-import scala.concurrent.{ExecutionContext => EC}
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._, duration._, ExecutionContext.Implicits.global
 
-def getTraffic(hostname: String)(implicit ec: EC): Future[Int] =
-  ???
+val hostnames = List("alpha.example.com", "beta.example.com", "gamma.demo.com")
+
+def getUptime(hostname: String): Future[Int] =
+  Future(hostname.length * 60) // just for demonstration
 ```
 
-Now suppose we want to write a function that
-polls a list of web servers and fetches the traffic from each:
+Now, suppose we want to poll all of the hosts and collect all of their uptimes.
+We can't simply `map` over `hostnames`
+because the result---a `List[Future[Int]]`---would contain more than one `Future`.
+To get something we can block on, we need to reduce the results to a single `Future`.
+Let's start by doing this manually using a fold:
 
 ```tut:book
-def getAllTraffic(hostnames: List[String])(implicit ec: EC): Future[List[Int]] =
-  ???
+val allUptimes: Future[List[Int]] =
+  hostnames.foldLeft(Future(List[Int]())) { (uptimes, host) =>
+    val uptime = getUptime(host)
+    for {
+      uptimes <- uptimes
+      uptime  <- uptime
+    } yield uptimes :+ uptime
+  }
+
+Await.result(allUptimes, Duration.Inf)
 ```
 
-How do we implement this function?
-If we simply map the `getTraffic` function over `hostnames`,
-we get back a value of type `List[Future[Int]]`,
-instead of the `Future[List[Int]]` we need:
-
-```tut:book:fail
-def getAllTraffic(hostnames: List[String]): Future[List[Int]] =
-  hostnames.map(getTraffic)
-```
-
-To convert one type to the other, we need to traverse the `List` we have,
-"zipping" the `Futures` together and accumulating a `List[Int]`.
-Fortunately, the Scala standard library provices the `Future.sequence` method
-to do just this:
+Intuitively, we iterate over `hostnames`, call `func` for each item,
+and combine the results into a list.
+This sounds simple, but the code is fairly unwieldy
+because of the need to create and combine `Futures` at every iteration.
+We can improve on things greatly using `Future.traverse`,
+which is tailor made for this pattern:
 
 ```tut:book
-def getAllTraffic(hostnames: List[String]): Future[List[Int]] =
-  Future.sequence(hostnames.map(getTraffic))
+val allUptimes: Future[List[Int]] =
+  Future.traverse(hostnames)(getUptime)
+
+Await.result(allUptimes, Duration.Inf)
 ```
 
-The `Future.sequence` method is specific to `Futures` and sequences.
-Given a sequence type `S`, it converts an `S[Future[A]]` to a `Future[S[A]]`.
-Cats' `Traverse` type class generalises this to arbitrary inner and outer types,
-and gives us more control over how values are combined on traversal.
+This is much clearer and more concise---let's see how it works.
+If we ignore distractions like `CanBuildFrom` and `ExecutionContext`,
+the implementation of `Future.traverse` in the standard library looks like this:
 
-# The *Traverse* Type Class
+```scala
+object Future {
+  def traverse[A, B](futures: List[A])(func: A => Future[B]): Future[List[B]] =
+    hostnames.foldLeft(Future(List[A]())) { (accum, host) =>
+      val item = func(host)
+      for {
+        accum <- accum
+        item  <- item
+      } yield accum :+ item
+    }
+}
+```
 
-- Main operations (traverse and sequence)
-- Laws
+This is essentially the same as our example code above.
+`Future.traverse` takes away the pain of folding
+and defining accumulators and combination functions,
+and gives us a clean, high-level, interface to do what we want:
 
-# *Traverse* in Cats
+- start with a `List[A]`;
+- provide a function `A => Future[B]`;
+- end up with a `Future[List[B]]`.
 
-- Summoning instances
-- Main methods
-- Syntax
+The standard library also provides another method, `Future.sequence`,
+that assumes we're starting with a `Future[List[B]]`
+and don't need to provide an identity function:
 
-# *Unapply*, *traverseU*, and *sequenceU*
+```scala
+object Future {
+  def sequence[B](futures: List[B]): Future[List[B]] =
+    traverse(futures)(identity)
 
-- Show when traverse and sequence fail
-- Show traverseU and sequenceU fixing the problem
-- Show how Unapply works
-- Mention Scala 2.12 and SI-2712
+  // etc...
+}
+```
 
-# Summary
+In this case the intuitive understanding is even simpler:
+
+- start with a `List[Future[A]]`;
+- end up with a `Future[List[A]]`.
+
+`Future.traverse` and `Future.sequence` solve a very specific problem:
+they allow us to iterate over a sequence and accumulate a result,
+ignoring the fact that the code we're writing is asynchronous.
+The simplified examples above only work with `Lists`,
+but the real `Future.traverse` and `Future.sequence`
+work with any standard Scala collection.
+
+Cats' `Traverse` type class generalises the `traverse` and `sequence` patterns
+to work with any type of sequence type and any type of "effect",
+including `Future`, `Option`, `Validated`, and so on.
+We'll approach `Traverse` in the next sections in two steps:
+first we'll generalise over the effect type,
+then we'll generalise over the sequence type.
+We'll end up with an extremely valauable tool that trivialises
+many operations involving sequences and other data types.
+
+## Traverse and Applicatives
+
+If we squint, we'll see that we can rewrite the `traverse` method in terms of an `Applicative`.
+Our accumulator is equivalent to `Applicative.pure`:
+
+```tut:book
+import cats.Applicative,
+       cats.instances.future._,
+       cats.syntax.applicative._
+
+// Creating an accumulator manually:
+val oldAccum = Future(List[Int]())
+
+// Creating an accumulator using an Applicative:
+val newAccum = List[Int]().pure[Future]
+```
+
+and our combinator is equivalent to `Cartesian.combine`:
+
+```tut:book
+// Combining an accumulator and a hostname manually:
+def oldCombine(uptimes: Future[List[Int]], host: String): Future[List[Int]] = {
+  val uptime = getUptime(host)
+  for {
+    uptimes <- uptimes
+    uptime  <- uptime
+  } yield uptimes :+ uptime
+}
+
+import cats.syntax.cartesian._
+
+// Combining an accumulator and a hostname using an Applicative:
+def newCombine(accum: Future[List[Int]], host: String): Future[List[Int]] =
+  (accum |@| getUptime(host)).map(_ :+ _)
+```
+
+If we substitute these snippets back into the definition of `traverse`,
+we can generalise it to to work with any `Applicative`:
+
+```tut:book
+import scala.language.higherKinds
+
+def listTraverse[F[_] : Applicative, A, B](inputs: List[A])(func: A => F[B]): F[List[B]] =
+  inputs.foldLeft(List.empty[B].pure[F]) { (accum, item) =>
+    (accum |@| func(item)).map(_ :+ _)
+  }
+
+def listSequence[F[_] : Applicative, B](inputs: List[F[B]]): F[List[B]] =
+  listTraverse(inputs)(identity)
+```
+
+We can use this new `listTraverse` to re-implement our uptime example:
+
+```tut:book
+Await.result(listTraverse(hostnames)(getUptime), Duration.Inf)
+```
+
+or we can use it with with other `Applicative` data types
+as shown in the following exercises.
+
+### Exercise: Traversing with Vectors
+
+What is the result of the following?
+
+```scala
+listSequence(List(Vector(1, 2), Vector(3, 4)))
+```
+
+<div class="solution">
+The argument is of type `List[Vector[Int]]`, so we're using the `Applicative` for `Vector`
+and the return type is going to be `Vector[List[Int]]`.
+
+`Vector` is a monad, so its cartesian `combine` function is based on `flatMap`.
+We'll end up with a `Vector` of `Lists` of all the possible combinations of `List(1, 2)` and `List(3, 4)`:
+
+```tut:book
+import cats.instances.vector._
+
+listSequence(List(Vector(1, 2), Vector(3, 4)))
+```
+</div>
+
+What about a list of three parameters?
+
+```scala
+listSequence(List(Vector(1, 2), Vector(3, 4), Vector(5, 6)))
+```
+
+<div class="solution">
+With three items in the input list, we end up with combinations of three `Ints`:
+one from the first item, one from the second, and one from the third:
+
+```tut:book
+listSequence(List(Vector(1, 2), Vector(3, 4), Vector(5, 6)))
+```
+</div>
+
+### Exercise: Traversing with Options
+
+Here's an example that uses `Options`:
+
+```tut:book
+import cats.instances.option._
+
+def process(inputs: List[Int]) =
+  listTraverse(inputs)(n => if(n % 2 == 0) Some(n) else None)
+```
+
+What is the return type of this method? What does it produce for the following inputs?
+
+```scala
+process(List(2, 4, 6))
+process(List(1, 2, 3))
+```
+
+<div class="solution">
+The arguments to `listTraverse` are of types `List[Int]` and `Int => Option[Int]`,
+so the return type is `Option[List[Int]]`.
+Again, `Option` is a monad, so the cartesian `combine` function follows from `flatMap`.
+The semantics are therefore fail fast error handling:
+if all inputs are even, we get a list of outputs.
+Otherwise we get `None`:
+
+```tut:book
+process(List(2, 4, 6))
+process(List(1, 2, 3))
+```
+</div>
+
+## Exercise: Traversing with Validated
+
+Finally, gere's an example that uses `Validated`:
+
+```tut:book
+import cats.data.Validated,
+       cats.instances.list._ // Applicative[ErrorOr] needs a Monoid[List]
+
+type ErrorOr[A] = Validated[List[String], A]
+
+def process(inputs: List[Int]): ErrorOr[List[Int]] =
+  listTraverse(inputs) { n =>
+    if(n % 2 == 0) {
+      Validated.valid(n)
+    } else {
+      Validated.invalid(List(s"$n is not even"))
+    }
+  }
+```
+
+What is the return type of this method? What does it produce for the following inputs?
+
+```scala
+process(List(2, 4, 6))
+process(List(1, 2, 3))
+```
+
+<div class="solution">
+The return type here is `ErrorOr[List[Int]]`, which expands to `Validated[List[String], List[Int]]`.
+The semantics for cartesian `combine` on validated are accumulating error handling,
+so the result is either a list of even `Ints`,
+or a list of errors detailing which `Ints` failed the test:
+
+```tut:book
+process(List(2, 4, 6))
+process(List(1, 2, 3))
+```
+</div>
+
+## Traversing with Different Types of Sequence
+
+Our `listTraverse` and `listSequence` methods work with any type of `Applicative` effect,
+but they only work with one type of sequence: `List`.
+We can generalise over different sequence types using a type class,
+which brings us to the essential definition of `Traverse`:
+
+```scala
+trait Traverse[F[_]] {
+  def traverse[G[_] : Applicative, A, B](inputs: F[A])(func: A => G[B]): G[F[B]]
+
+  def sequence[G[_] : Applicative, B](inputs: F[G[B]]): G[F[B]] =
+    traverse(inputs)(func)
+}
+```
+
+We can implement `Traverse` for a variety of different types of sequence---Cats
+provides implementations for `List`, `Vector`, and `Option`---and introduce syntax
+to make it easy to iterate over a variety of sequences with a variety of effects.
+Rather than do this ourselves, let's look at the real definition of `Traverse` in Cats.
