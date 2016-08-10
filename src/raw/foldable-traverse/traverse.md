@@ -1,11 +1,11 @@
-# *Traverse*
+## *Traverse*
 
-The `foldLeft` and `foldRight` methods we saw in the last section are very flexible iteration methods,
-but they require us to do a lot of work in terms of defining accumulators and combinator functions.
+`foldLeft` and `foldRight` are very flexible iteration methods,
+but they require us to do a lot of work to define accumulators and combinator functions.
 The `Traverse` type class is a higher level tool that leverages `Applicatives`
 to provide a much more convenient, more lawful, pattern for iteration.
 
-## Traverse and Futures
+### Traversing with Futures
 
 We can demonstrate `Traverse` using
 the `Future.traverse` and `Future.sequence` methods in the Scala standard library.
@@ -115,7 +115,7 @@ then we'll generalise over the sequence type.
 We'll end up with an extremely valauable tool that trivialises
 many operations involving sequences and other data types.
 
-## Traverse and Applicatives
+### Traversing with Applicatives
 
 If we squint, we'll see that we can rewrite the `traverse` method in terms of an `Applicative`.
 Our accumulator is equivalent to `Applicative.pure`:
@@ -175,7 +175,7 @@ Await.result(listTraverse(hostnames)(getUptime), Duration.Inf)
 or we can use it with with other `Applicative` data types
 as shown in the following exercises.
 
-### Exercise: Traversing with Vectors
+#### Exercise: Traversing with Vectors
 
 What is the result of the following?
 
@@ -212,7 +212,7 @@ listSequence(List(Vector(1, 2), Vector(3, 4), Vector(5, 6)))
 ```
 </div>
 
-### Exercise: Traversing with Options
+#### Exercise: Traversing with Options
 
 Here's an example that uses `Options`:
 
@@ -244,7 +244,7 @@ process(List(1, 2, 3))
 ```
 </div>
 
-## Exercise: Traversing with Validated
+#### Exercise: Traversing with Validated
 
 Finally, gere's an example that uses `Validated`:
 
@@ -283,7 +283,7 @@ process(List(1, 2, 3))
 ```
 </div>
 
-## Traversing with Different Types of Sequence
+### Traversing with Different Types of Sequence
 
 Our `listTraverse` and `listSequence` methods work with any type of `Applicative` effect,
 but they only work with one type of sequence: `List`.

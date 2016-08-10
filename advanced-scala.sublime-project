@@ -4,6 +4,7 @@
 		{
 			"file_exclude_patterns":
 			[
+        ".DS_Store",
 				"Gemfile",
 				"Gemfile.lock",
 				".ruby-version",
@@ -12,16 +13,7 @@
 			],
 			"folder_exclude_patterns":
 			[
-				"src/pages/intro",
-				"src/pages/type-classes",
-				"src/pages/monoids",
-				"src/pages/foldable",
-				"src/pages/functors",
-				"src/pages/monads",
-				"src/pages/monad-transformers",
-				"src/pages/applicatives",
-				"src/pages/preview",
-        "src/pages/case-studies/validation",
+				"src/pages",
 				"dist",
 				"core-scala",
 				"bower_components",

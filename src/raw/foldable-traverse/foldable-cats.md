@@ -1,4 +1,4 @@
-## Foldable in Cats
+### *Foldable* in Cats
 
 Cats' `Foldable` abstracts the two operations `foldLeft` and `foldRight` into a type class.
 Instances of `Foldable` define those two methods
@@ -44,7 +44,7 @@ import cats.instances.map._
 Foldable[StringMap].foldLeft(stringMap, "nil")(_ + "," + _)
 ```
 
-### Folding right
+#### Folding Right
 
 `Foldable` defines `foldRight` differently to `foldLeft`,
 in terms of the `Eval` monad:
@@ -121,7 +121,7 @@ suffice to say that `Eval` uses this technique
 to ensure that all our `foldRights` are stack safe by default.
 </div>
 
-### Folding with Monoids
+#### Folding with Monoids
 
 Cats' `Foldable` provides us with a host of useful methods defined on top of `foldLeft`.
 Many of these are facimiles of familiar methods from the standard library,
@@ -165,7 +165,7 @@ val ints = List(Vector(1, 2, 3), Vector(4, 5, 6))
 Foldable[List].compose(Foldable[Vector]).combineAll(ints)
 ```
 
-### Syntax for Foldable
+#### Syntax for Foldable
 
 Every method in `Foldable` is available in syntax form via `cats.syntax.foldable`.
 In each case, the first argument to the method on `Foldable` becomes the method receiver:

@@ -1,4 +1,4 @@
-## *Unapply*, *traverseU*, and *sequenceU*
+### *Unapply*, *traverseU*, and *sequenceU*
 
 - Show when traverse and sequence fail
 - Show traverseU and sequenceU fixing the problem

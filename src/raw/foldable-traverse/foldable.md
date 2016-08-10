@@ -1,14 +1,14 @@
-# *Foldable*
+## *Foldable*
 
-The `Foldable` type class captures the concept of data structures that we can iterate over.
-`Lists` are foldable, as are `Vectors` and `Streams`.
-Using `Foldable`, we can generalise code across any sequence type.
-We can also invent new sequence types and plug them into our code.
+The `Foldable` type class captures the `foldLeft` and `foldRight` methods
+we're used to in sequences like `Lists`, `Vectors`, and `Streams`.
+Using `Foldable`, we can write generic folds that work with a variety of sequence types.
+We can also invent new sequences and plug them into our code.
 `Foldable` gives us great use cases for `Monoids` and the `Eval` monad.
 
-## Folds and Folding
+### Folds and Folding
 
-Let's start with a quick recap on the concept of folding.
+Let's start with a quick recap on the general concept of folding.
 In general, a `fold` function allows users to transform one algebraic data type to another.
 For example, the `fold` method on `Option` can return any algebraic data type
 by providing handlers for the `Some` and `None` cases:
@@ -62,7 +62,7 @@ List(1, 2, 3).foldRight(0)(_ + _)
 The process of folding is illustrated in the figure below.
 The result is the same regardless of which direction we fold because `+` is commutative:
 
-![Illustration of foldLeft and foldRight](src/raw/foldable/fold.png)
+![Illustration of foldLeft and foldRight](src/raw/foldable-traverse/fold.png)
 
 If provide a non-commutative operator
 the order of evaluation makes a difference.
@@ -116,7 +116,7 @@ List(1, 2, 3).foldLeft(List.empty[Int])(_ :: _)
 ```
 </div>
 
-### Exercise: Scaf-fold-ing other methods
+#### Exercise: Scaf-fold-ing other methods
 
 `foldLeft` and `foldRight` are very general transformations---they let us transform sequences into any other algebraic data type. We can use folds to implement all of the other high-level sequence operations we know. Prove this to yourself my implementing substitutes for `List's` `map`, `flatMap`, `filter`, and `sum` methods in terms of `foldRight`.
 

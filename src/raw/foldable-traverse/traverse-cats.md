@@ -1,4 +1,4 @@
-## *Traverse* in Cats
+### *Traverse* in Cats
 
 It's time to see how we can use [`cats.Traverse`].
 An instance `Traverse[F]` helps us iterate over values of type `F[A]`.

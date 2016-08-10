@@ -28,13 +28,13 @@ object predicate {
 
   sealed trait Predicate[E,A] {
     import cats.data.Validated._ // For Valid and Invalid
-  
+
     def and(that: Predicate[E,A]): Predicate[E,A] =
       And(this, that)
-  
+
     def or(that: Predicate[E,A]): Predicate[E,A] =
       Or(this, that)
-  
+
     def apply(a: A)(implicit s: Semigroup[E]): Validated[E,A] =
       this match {
         case Pure(f) => f(a)
@@ -86,7 +86,7 @@ object check {
   sealed trait Check[E,A,B] {
     def map[C](f: B => C): Check[E,A,C] =
       Map[E,A,B,C](this, f)
-  
+
     def apply(in: A)(implicit s: Semigroup[E]): Validated[E,B]
   }
   object Check {
@@ -305,7 +305,7 @@ object example {
 
   type Error = NonEmptyList[String]
   def error(s: String): NonEmptyList[String] =
-    OneAnd(s, Nil)
+    NonEmptyList(s, Nil)
 
   // Utilities. We could implement all the checks using regular expressions but
   // this shows off the compositionality of the library.
@@ -342,7 +342,7 @@ object example {
 
   type Error = NonEmptyList[String]
   def error(s: String): NonEmptyList[String] =
-    OneAnd(s, Nil)
+    NonEmptyList(s, Nil)
 
   // Utilities. We could implement all the checks using regular expressions but
   // this shows off the compositionality of the library.
