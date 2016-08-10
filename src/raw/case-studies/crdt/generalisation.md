@@ -32,16 +32,18 @@ Formally, a binary operation `max` is idempotent if `a max a = a`.
 Written more compactly, we have:
 
 
-|-------------+-----------+-------------+-------------+------------|
-| Method      | Identity  | Commutative | Associative | Idempotent |
-|-------------+-----------+-------------+-------------+------------|
-| `increment` | Y         | N           | Y           | N          |
-| `get`       | Y         | Y           | Y           | N          |
-| `merge`     | Y         | Y           | Y           | Y          |
-|-------------+-----------+-------------+-------------+------------|
-{: .table .table-bordered .table-responsive }
+--------------------------------------------------------------------
+  Method        Identity    Commutative   Associative   Idempotent  
+-------------- ----------- ------------- ------------- -------------
+  `increment`   Y           N             Y             N           
+  
+  `get`         Y           Y             Y             N           
+
+  `merge`       Y           Y             Y             Y           
+--------------------------------------------------------------------
 
 From this we can see that
+
 - `increment` requires a monoid;
 - `get` requires a commutative monoid; and
 - `merge` required an idempotent commutative monoid, also called a bounded semilattice.

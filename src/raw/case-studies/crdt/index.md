@@ -1,4 +1,4 @@
-# Commutative Replicated Data Types
+# Case Study: Commutative Replicated Data Types
 
 In this case study we explore commutative replicated data types (CRDTs), a data structure that can be used to reconcile eventually consistent data.
 

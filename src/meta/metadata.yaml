@@ -69,6 +69,13 @@ pages:
   - src/pages/case-studies/validation/kleisli.md
   - src/pages/case-studies/validation/conclusions.md
 
+  - src/pages/case-studies/crdt/index.md
+  - src/pages/case-studies/crdt/eventual-consistency.md
+  - src/pages/case-studies/crdt/g-counter.md
+  - src/pages/case-studies/crdt/generalisation.md
+  - src/pages/case-studies/crdt/abstraction.md
+  - src/pages/case-studies/crdt/summary.md
+
   - src/pages/case-studies/parser/index.md
   # - src/pages/case-studies/parser/intro.md
   # - src/pages/case-studies/parser/error-handling.md
