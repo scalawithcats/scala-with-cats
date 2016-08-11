@@ -282,24 +282,3 @@ process(List(2, 4, 6))
 process(List(1, 2, 3))
 ```
 </div>
-
-### Traversing with Different Types of Sequence
-
-Our `listTraverse` and `listSequence` methods work with any type of `Applicative` effect,
-but they only work with one type of sequence: `List`.
-We can generalise over different sequence types using a type class,
-which brings us to the essential definition of `Traverse`:
-
-```scala
-trait Traverse[F[_]] {
-  def traverse[G[_] : Applicative, A, B](inputs: F[A])(func: A => G[B]): G[F[B]]
-
-  def sequence[G[_] : Applicative, B](inputs: F[G[B]]): G[F[B]] =
-    traverse(inputs)(func)
-}
-```
-
-We can implement `Traverse` for a variety of different types of sequence---Cats
-provides implementations for `List`, `Vector`, and `Option`---and introduce syntax
-to make it easy to iterate over a variety of sequences with a variety of effects.
-Rather than do this ourselves, let's look at the real definition of `Traverse` in Cats.
