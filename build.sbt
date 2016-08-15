@@ -1,11 +1,11 @@
 lazy val root = project.in(file("."))
   .settings(tutSettings)
 
-tutSourceDirectory := sourceDirectory.value / "raw"
+tutSourceDirectory := sourceDirectory.value / "pages"
 
-tutTargetDirectory := sourceDirectory.value / "pages"
+tutTargetDirectory := target.value / "pages"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 scalacOptions ++= Seq(
   "-deprecation",

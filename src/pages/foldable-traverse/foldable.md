@@ -62,7 +62,7 @@ List(1, 2, 3).foldRight(0)(_ + _)
 The process of folding is illustrated in the figure below.
 The result is the same regardless of which direction we fold because `+` is commutative:
 
-![Illustration of foldLeft and foldRight](src/raw/foldable-traverse/fold.png)
+![Illustration of foldLeft and foldRight](src/pages/foldable-traverse/fold.png)
 
 If provide a non-commutative operator
 the order of evaluation makes a difference.

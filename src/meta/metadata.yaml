@@ -12,107 +12,108 @@ filenameStem: "advanced-scala"
 # Used by Grunt to create a ZIP of source code:
 exercisesRepo: null # "git@github.com:underscoreio/advanced-scala-code.git"
 tocDepth: 3
+copyright: "2014-16"
 # Used by Grunt to assemble pandoc command line:
 pages:
-  - src/pages/intro/foreword.md
-  - src/pages/intro/early-access.md
-  - src/pages/intro/conventions.md
-  - src/pages/intro/acknowledgements.md
+  - intro/foreword.md
+  - intro/early-access.md
+  - intro/conventions.md
+  - intro/acknowledgements.md
 
-  - src/pages/type-classes/index.md
-  - src/pages/type-classes/anatomy.md
-  - src/pages/type-classes/cats.md
-  - src/pages/type-classes/equal.md
-  - src/pages/type-classes/summary.md
+  - type-classes/index.md
+  - type-classes/anatomy.md
+  - type-classes/cats.md
+  - type-classes/equal.md
+  - type-classes/summary.md
 
-  - src/pages/monoids/index.md
-  - src/pages/monoids/cats.md
-  - src/pages/monoids/instance-selection.md
-  # - src/pages/monoids/summary.md
+  - monoids/index.md
+  - monoids/cats.md
+  - monoids/instance-selection.md
+  # - monoids/summary.md
 
-  - src/pages/functors/index.md
-  - src/pages/functors/cats.md
-  - src/pages/functors/summary.md
+  - functors/index.md
+  - functors/cats.md
+  - functors/summary.md
 
-  - src/pages/monads/index.md
-  - src/pages/monads/cats.md
-  - src/pages/monads/id.md
-  - src/pages/monads/xor.md
-  - src/pages/monads/eval.md
-  # - src/pages/monads/error-recovery.md
-  - src/pages/monads/writer.md
-  - src/pages/monads/reader.md
-  - src/pages/monads/state.md
-  # - src/pages/monads/summary.md
+  - monads/index.md
+  - monads/cats.md
+  - monads/id.md
+  - monads/xor.md
+  - monads/eval.md
+  # - monads/error-recovery.md
+  - monads/writer.md
+  - monads/reader.md
+  - monads/state.md
+  # - monads/summary.md
 
-  - src/pages/monad-transformers/index.md
-  - src/pages/monad-transformers/summary.md
+  - monad-transformers/index.md
+  - monad-transformers/summary.md
 
-  - src/pages/applicatives/index.md
-  - src/pages/applicatives/cartesian.md
-  - src/pages/applicatives/builder.md
-  - src/pages/applicatives/applicative.md
-  - src/pages/applicatives/validated.md
-  # - src/pages/applicatives/cats.md
-  - src/pages/applicatives/summary.md
+  - applicatives/index.md
+  - applicatives/cartesian.md
+  - applicatives/builder.md
+  - applicatives/applicative.md
+  - applicatives/validated.md
+  # - applicatives/cats.md
+  - applicatives/summary.md
 
-  - src/pages/foldable-traverse/index.md
-  - src/pages/foldable-traverse/foldable.md
-  - src/pages/foldable-traverse/foldable-cats.md
-  - src/pages/foldable-traverse/traverse.md
-  - src/pages/foldable-traverse/traverse-cats.md
-  - src/pages/foldable-traverse/traverse-laws.md
-  - src/pages/foldable-traverse/unapply.md
-  - src/pages/foldable-traverse/summary.md
+  - foldable-traverse/index.md
+  - foldable-traverse/foldable.md
+  - foldable-traverse/foldable-cats.md
+  - foldable-traverse/traverse.md
+  - foldable-traverse/traverse-cats.md
+  - foldable-traverse/traverse-laws.md
+  - foldable-traverse/unapply.md
+  - foldable-traverse/summary.md
 
-  - src/pages/case-studies/mapreduce/index.md
+  - case-studies/mapreduce/index.md
 
-  - src/pages/case-studies/validation/index.md
-  - src/pages/case-studies/validation/sketch.md
-  - src/pages/case-studies/validation/check.md
-  - src/pages/case-studies/validation/map.md
-  - src/pages/case-studies/validation/kleisli.md
-  - src/pages/case-studies/validation/conclusions.md
+  - case-studies/validation/index.md
+  - case-studies/validation/sketch.md
+  - case-studies/validation/check.md
+  - case-studies/validation/map.md
+  - case-studies/validation/kleisli.md
+  - case-studies/validation/conclusions.md
 
-  - src/pages/case-studies/crdt/index.md
-  - src/pages/case-studies/crdt/eventual-consistency.md
-  - src/pages/case-studies/crdt/g-counter.md
-  - src/pages/case-studies/crdt/generalisation.md
-  - src/pages/case-studies/crdt/abstraction.md
-  - src/pages/case-studies/crdt/summary.md
+  - case-studies/crdt/index.md
+  - case-studies/crdt/eventual-consistency.md
+  - case-studies/crdt/g-counter.md
+  - case-studies/crdt/generalisation.md
+  - case-studies/crdt/abstraction.md
+  - case-studies/crdt/summary.md
 
-  - src/pages/case-studies/parser/index.md
-  # - src/pages/case-studies/parser/intro.md
-  # - src/pages/case-studies/parser/error-handling.md
-  # - src/pages/case-studies/parser/transforms.md
-  # - src/pages/case-studies/parser/applicative.md
+  - case-studies/parser/index.md
+  # - case-studies/parser/intro.md
+  # - case-studies/parser/error-handling.md
+  # - case-studies/parser/transforms.md
+  # - case-studies/parser/applicative.md
 
-  - src/pages/solutions.md
-  - src/pages/links.md
+  - solutions.md
+  - links.md
 previewPages:
-  - src/pages/preview/prologue.md
+  - preview/prologue.md
 
-  - src/pages/intro/foreword.md
-  - src/pages/intro/early-access.md
-  - src/pages/intro/conventions.md
+  - intro/foreword.md
+  - intro/early-access.md
+  - intro/conventions.md
 
-  - src/pages/type-classes/index.md
-  - src/pages/type-classes/anatomy.md
-  - src/pages/type-classes/cats.md
-  - src/pages/type-classes/equal.md
-  - src/pages/type-classes/summary.md
+  - type-classes/index.md
+  - type-classes/anatomy.md
+  - type-classes/cats.md
+  - type-classes/equal.md
+  - type-classes/summary.md
 
-  - src/pages/monoids/index.md
-  - src/pages/monoids/cats.md
-  - src/pages/monoids/instance-selection.md
-  - src/pages/monoids/summary.md
+  - monoids/index.md
+  - monoids/cats.md
+  - monoids/instance-selection.md
+  - monoids/summary.md
 
-  - src/pages/functors/index.md
-  - src/pages/functors/cats.md
-  # - src/pages/functors/summary.md
+  - functors/index.md
+  - functors/cats.md
+  # - functors/summary.md
 
-  - src/pages/solutions.md
-  - src/pages/links.md
+  - solutions.md
+  - links.md
 
-  - src/pages/preview/epilogue.md
+  - preview/epilogue.md
 ...
