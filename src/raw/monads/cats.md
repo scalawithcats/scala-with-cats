@@ -64,19 +64,49 @@ There are also some Cats-specific monad instances that we'll see later on.
 
 ### Defining Custom Instances
 
-We can define a `Monad` for a custom type simply by providing the implementations of `flatMap` and `pure`. Other methods such as `map` are provided for us based on these definitions.
+We can define a `Monad` for a custom type by providing implementations of thee methods:
+`flatMap`, `pure`, and a new method called `tailRecM`:
 
 Here is an implementation of `Monad` for `Option` as an example:
 
 ```tut:book
-val optionMonad = new Monad[Option] {
+import cats.RecursiveTailRecM
+import cats.data.Xor
+import scala.annotation.tailrec
+
+val optionMonad = new Monad[Option] with RecursiveTailRecM[Option] {
   def flatMap[A, B](value: Option[A])(func: A => Option[B]): Option[B] =
     value flatMap func
 
   def pure[A](value: A): Option[A] =
     Some(value)
+
+  @tailrec
+  def tailRecM[A, B](a: A)(f: A => Option[A Xor B]): Option[B] =
+    f(a) match {
+      case None               => None
+      case Some(Xor.Left(a1)) => tailRecM(a1)(f)
+      case Some(Xor.Right(b)) => Some(b)
+    }
 }
 ```
+
+`tailRecM` is an internal optimisation that limits
+the amount of stack space used by nested calls to `flatMap`.
+The technique comes from a [2015 paper][link-phil-freeman-tailrecm]
+by PureScript creator Phil Freeman.
+The method should recursively call itself
+as long as the result of `f` contains an `Xor.Right`.
+If we can make `tailRecM` tail recursive,
+we should do so and inherit from `RecursiveTailRecM`
+to allow Cats to perform additional internal optimisations.
+
+<div class="alert alert-danger">
+  TODO: Remove this? Or move it after the discussion of `Xor`?
+
+  The `tailRecM` stuff (new in Cats 0.7) seems a little heavyweight for discussion here,
+  and defining custom instances is arguably not that important.
+</div>
 
 ### *Monad* Syntax
 
@@ -126,69 +156,78 @@ sumSquare[Option](3, 4)
 sumSquare[List](3, 4)
 ```
 
-### Exercise: My Monad is Way More Valid Than Your Functor
+### Exercise: Branching out Further with Monads
 
-Let's write a `Monad` for our `Result` data type from last chapter:
+Let's write a `Monad` for our `Tree` data type from last chapter.
+Here's the type again, together with the smart constructors we used
+to simplify type class instance selection:
 
 ```tut:book
-sealed trait Result[+A]
-final case class Success[A](value: A) extends Result[A]
-final case class Warning[A](value: A, message: String) extends Result[A]
-final case class Failure(message: String) extends Result[Nothing]
+sealed trait Tree[+A]
+final case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+final case class Leaf[A](value: A) extends Tree[A]
+
+def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
+  Branch(left, right)
+
+def leaf[A](value: A): Tree[A] =
+  Leaf(value)
 ```
 
-Assume similar fail-fast semantics to the `Functor` we wrote previously: apply the mapping function to `Successes` and `Warnings` and return `Failures` unaltered.
+Verify that the code works on instances of `Branch` and `Leaf`,
+and that the `Monad` provides `Functor`-like behaviour for free.
 
-Verify that the code works on instances of `Success`, `Warning`, and `Failure`, and that the `Monad` provides `Functor`-like behaviour for free.
-
-Finally, verify that having a `Monad` in scope allows us to use for comprehensions, despite the fact that we haven't directly implemented `flatMap` or `map` on `Result`.
+Verify that having a `Monad` in scope allows us to use for comprehensions,
+despite the fact that we haven't directly implemented `flatMap` or `map` on `Tree`.
 
 <div class="solution">
-We'll keep the same semantics as our previous `Functor`---apply the mapping function to instances of `Success` and `Warning` but not `Failures`.
+The code for `flatMap` is simple. It's similar to the code for `map`.
+Again, we recurse down the structure
+and use the results from `func` to build a new `Tree`.
 
-There is a wrinkle here. What should we do when we `flatMap` from a `Warning` to another `Result`? Do we keep the message from the old warning? Do we throw it away? Do we ignore any new error messages and stick with the original?
-
-This is a design decision. The "correct" answer depends on the semantics we want to create. This ambiguity perhaps indicates why types like our `Result` are not more commonly available in libraries.
-
-In this solution we'll opt to preserve all messages as we go. You may choose different semantics. This will give you different results from your tests, which is fine.
+The code for `tailRecM` is less simple.
+In fact, it's fairly complex!
+However, if we follow the types the solution falls out.
+Note that we can't make `tailRecM` recursive in this case
+because of the double-left case.
+We implement the `tailRecM` method,
+but don't extend `RecursiveTailRecM`
+and we don't use the `tailrec` annotation:
 
 ```tut:book
-import cats.Monad
+import cats.{Monad, RecursiveTailRecM}
 
-implicit val resultMonad = new Monad[Result] {
-  def pure[A](value: A): Result[A] =
-    Success(value)
+implicit val treeMonad = new Monad[Tree] {
+  def pure[A](value: A): Tree[A] =
+    Leaf(value)
 
-  def flatMap[A, B](result: Result[A])(func: A => Result[B]): Result[B] =
-    result match {
-      case Success(value) =>
-        func(value)
-      case Warning(value, message1) =>
-        func(value) match {
-          case Success(value) =>
-            Warning(value, message1)
-          case Warning(value, message2) =>
-            Warning(value, s"$message1 $message2")
-          case Failure(message2) =>
-            Failure(s"$message1 $message2")
-        }
-      case Failure(message) =>
-        Failure(message)
+  def flatMap[A, B](tree: Tree[A])(func: A => Tree[B]): Tree[B] =
+    tree match {
+      case Branch(l, r) => Branch(flatMap(l)(func), flatMap(r)(func))
+      case Leaf(value)  => func(value)
+    }
+
+  def tailRecM[A, B](arg: A)(func: A => Tree[A Xor B]): Tree[B] =
+    func(arg) match {
+      case Branch(l: Tree[A Xor B], r: Tree[A Xor B]) =>
+        Branch(
+          flatMap(l) {
+            case Xor.Left(l)  => tailRecM(l)(func)
+            case Xor.Right(l) => pure(l)
+          },
+          flatMap(r) {
+            case Xor.Left(r)  => tailRecM(r)(func)
+            case Xor.Right(r) => pure(r)
+          }
+        )
+
+      case Leaf(Xor.Left(value)) =>
+        tailRecM(value)(func)
+
+      case Leaf(Xor.Right(value)) =>
+        Leaf(value)
     }
 }
-```
-
-We'll pre-empt any compile errors concerning variance by defining our usual smart constructors:
-
-```tut:book
-def success[A](value: A): Result[A] =
-  Success(value)
-
-def warning[A](value: A, message: String): Result[A] =
-  Warning(value, message)
-
-def failure[A](message: String): Result[A] =
-  Failure(message)
 ```
 
 Now we can use our `Monad` to `flatMap` and `map`:
@@ -197,18 +236,23 @@ Now we can use our `Monad` to `flatMap` and `map`:
 import cats.syntax.functor._
 import cats.syntax.flatMap._
 
-warning(100, "Message1") flatMap (x => Warning(x*2, "Message2"))
-
-warning(10, "Too low") map (_ - 5)
+branch(leaf(100), leaf(200)) flatMap (x => branch(leaf(x - 1), leaf(x + 1)))
 ```
 
-We can also `Results` in for comprehensions:
+We can also transform `Trees` using for comprehensions:
 
 ```tut:book
 for {
-  a <- success(1)
-  b <- warning(2, "Message1")
-  c <- warning(a + b, "Message2")
-} yield c * 10
+  a <- branch(leaf(100), leaf(200))
+  b <- branch(leaf(a - 10), leaf(a + 10))
+  c <- branch(leaf(b - 1), leaf(b + 1))
+} yield c
 ```
+
+The monad for `Option` provides fail-fast semantics.
+The monad for `List` provides concatenation semantics.
+What are the semantics of `flatMap` for a binary tree?
+Every node in the tree has the potential to be replaced with a whole subtree,
+producing a kind of "growing" or "feathering" behaviour,
+reminiscent of list concatenation along two axes.
 </div>

@@ -60,63 +60,57 @@ val optionFunctor = new Functor[Option] {
 
 The implementation is trivial---simply call `Option's` `map` method.
 
-### Exercise: This Functor is Totally Valid
+### Exercise: Branching out with Functors
 
-Imagine our application contains a custom validation type:
+Write a `Functor` for the following binary tree data type.
+Verify that the code works as expected on instances of `Branch` and `Leaf`:
 
 ```tut:book
-sealed trait Result[+A]
-final case class Success[A](value: A) extends Result[A]
-final case class Warning[A](value: A, message: String) extends Result[A]
-final case class Failure(message: String) extends Result[Nothing]
+sealed trait Tree[+A]
+final case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+final case class Leaf[A](value: A) extends Tree[A]
 ```
 
-Write a `Functor` for this data type. Use similar fail-fast semantics to `Option`. Verify that the code works as expected on instances of `Success`, `Warning`, and `Failure`.
-
-Note that we haven't specified what to do with `Warning`. Do we apply the mapping function or pass `Warnings` through unaltered? If you follow the types, you'll see that only one approach will work.
-
 <div class="solution">
-It is sensible to assume that we want to apply the `Functor's` mapping function to instances of `Success` and `Warning` but pass `Failures` straight through:
+The semantics are similar to writing a `Functor` for `List`.
+We recurse over the data structure, applying the function to every `Leaf` we find:
 
 ```tut:book
 import cats.Functor
+import cats.syntax.functor._
 
-implicit val resultFunctor = new Functor[Result] {
-  def map[A, B](result: Result[A])(func: A => B): Result[B] =
-    result match {
-      case Success(value)          => Success(func(value))
-      case Warning(value, message) => Warning(func(value), message)
-      case Failure(message)        => Failure(message)
+implicit val treeFunctor = new Functor[Tree] {
+  def map[A, B](tree: Tree[A])(func: A => B): Tree[B] =
+    tree match {
+      case Branch(left, right) => Branch(map(left)(func), map(right)(func))
+      case Leaf(value)         => Leaf(func(value))
     }
 }
 ```
 
-Let's use our `Functor` in a sample application:
+Let's use our `Functor` to transform some `Trees`:
 
 ```tut:book:fail
-Success(100) map (_ * 2)
+Leaf(10) map (_ * 2)
 ```
 
-Oops! This is the same invariance problem we saw with `Monoids`. Let's add some smart constructors to compensate:
+Oops! This is the same invariance problem we saw with `Monoids`.
+The compiler can't find a `Functor` instance for `Leaf`.
+Let's add some smart constructors to compensate:
 
 ```tut:book
-def success[A](value: A): Result[A] =
-  Success(value)
+def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
+  Branch(left, right)
 
-def warning[A](value: A, message: String): Result[A] =
-  Warning(value, message)
-
-def failure[A](message: String): Result[A] =
-  Failure(message)
+def leaf[A](value: A): Tree[A] =
+  Leaf(value)
 ```
 
 Now we can use our `Functor` properly:
 
 ```tut:book
-success(100) map (_ * 2)
+leaf(100) map (_ * 2)
 
-warning(10, "Too low") map (_ * 2)
-
-failure[Int]("Far too low") map (_ * 2)
+branch(leaf(10), leaf(20)) map (_ * 2)
 ```
 </div>
