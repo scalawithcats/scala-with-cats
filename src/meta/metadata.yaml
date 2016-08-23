@@ -68,6 +68,7 @@ pages:
 
   - contravariant-invariant/index.md
   - contravariant-invariant/cats.md
+  - contravariant-invariant/builder.md
 
   - case-studies/mapreduce/index.md
 
