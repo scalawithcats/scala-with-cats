@@ -12,10 +12,10 @@ that represents some functionality we want to implement.
 For example, we can represent generic "serialize to JSON" behaviour
 as follows:
 
-```tut:book
+```tut:book:silent
 // Define a very simple JSON AST
 sealed trait Json
-final case class JsObject(get: Map[String,Json]) extends Json
+final case class JsObject(get: Map[String, Json]) extends Json
 final case class JsString(get: String) extends Json
 final case class JsNumber(get: Double) extends Json
 
@@ -36,10 +36,10 @@ We define instances by creating
 concrete implementations of the type class
 and tagging them with the `implicit` keyword:
 
-```tut:book
+```tut:book:silent
 final case class Person(name: String, email: String)
 
-object DefaultJsonWriters {
+object JsonWriterInstances {
   implicit val stringJsonWriter = new JsonWriter[String] {
     def write(value: String): Json =
       JsString(value)
@@ -66,7 +66,7 @@ There are two common ways of specifying an interface:
 The simplest way of creating an interface
 is to place methods in a singleton object:
 
-```tut:book
+```tut:book:silent
 object Json {
   def toJson[A](value: A)(implicit writer: JsonWriter[A]): Json =
     writer.write(value)
@@ -76,10 +76,12 @@ object Json {
 To use this object, we import any type class instances we care about
 and call the relevant method:
 
-```tut:book
-import DefaultJsonWriters._
+```tut:book:silent
+import JsonWriterInstances._
+```
 
-val json: Json = Json.toJson(Person("Dave", "dave@example.com"))
+```tut:book
+Json.toJson(Person("Dave", "dave@example.com"))
 ```
 
 **Interface Syntax**
@@ -92,12 +94,11 @@ Cats refers to this as *"syntax"* for the type class:
 referred to as "type enrichment" or "pimping".
 The latter is an older term that we don't use anymore.
 
-```tut:book
+```tut:book:silent
 object JsonSyntax {
   implicit class JsonWriterOps[A](value: A) {
-    def toJson(implicit writer: JsonWriter[A]): Json = {
+    def toJson(implicit writer: JsonWriter[A]): Json =
       writer.write(value)
-    }
   }
 }
 ```
@@ -105,11 +106,13 @@ object JsonSyntax {
 We use interface syntax by importing it
 along-side the instances for the types we need:
 
-```tut:book
-import DefaultJsonWriters._
+```tut:book:silent
+import JsonWriterInstances._
 import JsonSyntax._
+```
 
-val json: Json = Person("Dave", "dave@example.com").toJson
+```tut:book
+Person("Dave", "dave@example.com").toJson
 ```
 
 ### Exercise: *Printable* Library
@@ -126,7 +129,7 @@ Let's define a `Printable` type class to work around these problems:
  1. Define a type class `Printable[A]` containing a single method `format`.
     `format` should accept a value of type `A` and returns a `String`.
 
- 2. Create an object `PrintInstances`
+ 2. Create an object `PrintableInstances`
     containing instances of `Printable` for `String` and `Int`.
 
  3. Define an object `PrintSyntax` with two generic interface methods:
@@ -142,17 +145,17 @@ Let's define a `Printable` type class to work around these problems:
 These steps define the three main components of our type class.
 First we define `Printable`---the *type class* itself:
 
-```tut:book
+```tut:book:silent
 trait Printable[A] {
   def format(value: A): String
 }
 ```
 
 Then we define some default *instances* of `Printable`
-and package then in `PrintInstances`:
+and package then in `PrintableInstances`:
 
-```tut:book
-object PrintInstances {
+```tut:book:silent
+object PrintableInstances {
   implicit val stringPrintable = new Printable[String] {
     def format(input: String) = input
   }
@@ -165,7 +168,7 @@ object PrintInstances {
 
 Finally we define an *interface* object, `Printable`:
 
-```tut:book
+```tut:book:silent
 object Printable {
   def format[A](input: A)(implicit printer: Printable[A]): String = {
     printer.format(input)
@@ -220,7 +223,7 @@ These either go into the companion object of `Cat`
 or a separate object to act as a namespace:
 
 ```tut:book:silent
-import PrintInstances._
+import PrintableInstances._
 
 implicit val catPrintable = new Printable[Cat] {
   def format(cat: Cat) = {
@@ -286,9 +289,11 @@ With `PrintOps` in scope,
 we can call the imaginary `print` and `format` methods
 on any value for which Scala can locate an implicit instance of `Printable`:
 
-```tut:book
+```tut:book:silent
 import PrintSyntax._
+```
 
+```tut:book
 Cat("Garfield", 35, "ginger and black").print
 ```
 
