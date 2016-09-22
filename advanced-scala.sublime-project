@@ -7,13 +7,10 @@
         ".DS_Store",
 				"Gemfile",
 				"Gemfile.lock",
-				".ruby-version",
-        "src/pages/links.md",
-        "src/pages/solutions.md"
+				".ruby-version"
 			],
 			"folder_exclude_patterns":
 			[
-				"src/pages",
 				"dist",
 				"core-scala",
 				"bower_components",

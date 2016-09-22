@@ -82,11 +82,11 @@ val optionMonad = new Monad[Option] with RecursiveTailRecM[Option] {
     Some(value)
 
   @tailrec
-  def tailRecM[A, B](a: A)(f: A => Option[A Xor B]): Option[B] =
+  def tailRecM[A, B](a: A)(f: A => Option[Either[A, B]]): Option[B] =
     f(a) match {
-      case None               => None
-      case Some(Xor.Left(a1)) => tailRecM(a1)(f)
-      case Some(Xor.Right(b)) => Some(b)
+      case None           => None
+      case Some(Left(a1)) => tailRecM(a1)(f)
+      case Some(Right(b)) => Some(b)
     }
 }
 ```
@@ -96,7 +96,7 @@ the amount of stack space used by nested calls to `flatMap`.
 The technique comes from a [2015 paper][link-phil-freeman-tailrecm]
 by PureScript creator Phil Freeman.
 The method should recursively call itself
-as long as the result of `f` contains an `Xor.Right`.
+as long as the result of `f` returns a `Right`.
 If we can make `tailRecM` tail recursive,
 we should do so and inherit from `RecursiveTailRecM`
 to allow Cats to perform additional internal optimisations.
@@ -207,24 +207,24 @@ implicit val treeMonad = new Monad[Tree] {
       case Leaf(value)  => func(value)
     }
 
-  def tailRecM[A, B](arg: A)(func: A => Tree[A Xor B]): Tree[B] =
+  def tailRecM[A, B](arg: A)(func: A => Tree[Either[A, B]]): Tree[B] =
     func(arg) match {
-      case Branch(l: Tree[A Xor B], r: Tree[A Xor B]) =>
+      case Branch(l: Tree[Either[A, B]], r: Tree[Either[A, B]]) =>
         Branch(
           flatMap(l) {
-            case Xor.Left(l)  => tailRecM(l)(func)
-            case Xor.Right(l) => pure(l)
+            case Left(l)  => tailRecM(l)(func)
+            case Right(l) => pure(l)
           },
           flatMap(r) {
-            case Xor.Left(r)  => tailRecM(r)(func)
-            case Xor.Right(r) => pure(r)
+            case Left(r)  => tailRecM(r)(func)
+            case Right(r) => pure(r)
           }
         )
 
-      case Leaf(Xor.Left(value)) =>
+      case Leaf(Left(value)) =>
         tailRecM(value)(func)
 
-      case Leaf(Xor.Right(value)) =>
+      case Leaf(Right(value)) =>
         Leaf(value)
     }
 }
