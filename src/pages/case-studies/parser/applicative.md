@@ -11,11 +11,11 @@ We'll attack the second and along the way get the first.
 
 There is a basic issue in most statically typed languages that we can't easily abstract over arity. What this means is that we can't express a function or tuple of varying size. When we specify, for example, a tuple type it must have a fixed number of elements.
 
-Given a nested tuple like `((1, 2), 3)` we could write an implicit conversion to a flat tuple. It's worth doing this exercise to better understand the issue. We'll use the enrichment pattern here so we can add a method `flatten` to a tuple.
+Given a nested tuple like `((1, 2), 3)` we could write an implicit conversion to a flat tuple. It's worth doing this exercise to better understand the issue. We'll use extension methods here so we can add a method `flatten` to a tuple.
 
 ### Exercise: Flattening
 
-Define a `Tuple2Flatten` enrichment with a method `flatten`, and an instance of `Flattener` for a nested tuple like `((1, 2), 3)`.
+Define a `Tuple2Flatten` implicit class with an extension method `flatten`, and an instance of `Flattener` for a nested tuple like `((1, 2), 3)`.
 
 <div class="solution">
 ~~~ scala
@@ -27,7 +27,7 @@ implicit class Tuple2Flatten[A, B, C](val in: ((A, B), C)) extends AnyVal {
 }
 ~~~
 
-It's fairly straightforward to define this class, but we can't abstract over it in any way. If we want to define `flatten` for a tuple like `(a, (b, c))` we need to define a new enrichment. Similarly if we want to flatten a tuple with four elements.
+It's fairly straightforward to define this class, but we can't abstract over it in any way. If we want to define `flatten` for a tuple like `(a, (b, c))` we need to define a new extension method. Similarly if we want to flatten a tuple with four elements.
 </div>
 
 
@@ -134,7 +134,7 @@ A few notes:
 Scalaz provides some fairly elaborate infrastructure for us:
 
 - instances of `Applicative` for many common types such as `Option`;
-- enrichment helpers that provide the `<*>` syntax we've already seen; and
+- extension method helpers that provide the `<*>` syntax we've already seen; and
 - the actual `Applicative` type class itself, containing many utility functions.
 
 

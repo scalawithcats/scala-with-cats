@@ -2,7 +2,7 @@
 
 [tut]: https://github.com/tpolecat/tut
 
-[cats]: http://typelevel.org/cats/api/#cats.package
+[cats.package]: http://typelevel.org/cats/api/#cats.package
 [cats.Eq]: http://typelevel.org/cats/api/#cats.Eq
 [cats.Eval]: http://typelevel.org/cats/api/#cats.Eval
 [cats.functor.package]: http://typelevel.org/cats/api/#cats.functor.package
@@ -37,6 +37,7 @@
 [cats.syntax.eq]: http://typelevel.org/cats/api/#cats.syntax.package$$eq$
 [cats.syntax.flatMap]: http://typelevel.org/cats/api/#cats.syntax.package$$flatMap$
 [cats.syntax.functor]: http://typelevel.org/cats/api/#cats.syntax.package$$functor$
+[cats.syntax.option]: http://typelevel.org/cats/api/#cats.syntax.package$$option$
 [cats.syntax.semigroup]: http://typelevel.org/cats/api/#cats.syntax.package$$semigroup$
 [cats.syntax.show]: http://typelevel.org/cats/api/#cats.syntax.package$$show$
 [cats.syntax.xor]: http://typelevel.org/cats/api/#cats.syntax.package$$xor$
@@ -74,6 +75,7 @@
 
 [link-algebird]: https://github.com/twitter/algebird
 [link-bloom-filter]: http://en.wikipedia.org/wiki/Bloom_filter
+[link-cats]: http://typelevel.org/cats
 [link-don-stewart]: https://donsbot.wordpress.com
 [link-don-stewart-so]: http://stackoverflow.com/questions/27852709/enterprise-patterns-with-functional-programming/27860072#27860072
 [link-essential-scala]: http://underscore.io/training/courses/essential-scala/
