@@ -4,10 +4,12 @@ The `product` method has two main drawbacks:
 it only accepts two parameters,
 and it can only combine them to create a pair.
 Fortunately, Cats provides syntax
-to allow us to combine arbitrary numbers of values (well... up to 22 at least)
+to allow us to combine arbitrary numbers of values
+(well... up to 22 at least)
 in a variety of different ways.
 
-We import the syntax, called "cartesian builder" syntax, from `cats.syntax.cartesian`.
+We import the syntax, called "cartesian builder" syntax,
+from `cats.syntax.cartesian`.
 Here is an example:
 
 ```tut:book
@@ -100,3 +102,42 @@ val add: (Int, Int) => Int = (a, b) => a + b
 ```tut:book:fail
 (Option("cats") |@| Option(true)).map(add)
 ```
+
+### Fancy Functors and Cartesian Builder Syntax
+
+The cartesian builder syntax also supports
+[contravariant](#contravariant) and [invariant](#invariant) functors.
+In addition to the `tupled` and `map` methods,
+each builder also sports `contramap` and `imap` methods
+that accept implicit instances of `Contravariant` and `Invariant`.
+
+For example, `Option` is a regular covariant functor,
+so we can use it with `map`, `imap`, and `tupled` but not `contramap`:
+
+```tut:book
+import cats.instances.option._,
+       cats.syntax.cartesian._
+
+(Option(1) |@| Option(2)).map(_ + _)
+
+(Option(1) |@| Option(2)).tupled
+
+(Option(1) |@| Option(2)).imap((a, b) => List(a, b))(list => (list(0), list(1)))
+```
+
+```tut:book:fail
+(Option(1) |@| Option(2)).contramap[List[Int]](list => (list(0), list(1)))
+```
+
+Note that, surprisingly, the call to `imap` compiles and runs,
+even though `Option` has an instance of `Functor` and not `Invariant`.
+This is because the `Functor` and `Contravariant` type classes both *extend* `Invariant`.
+Each provides sensible behaviour for one direction of mapping in `imap`
+and implements the other direction with the `identity` function.
+
+This behaviour seems odd.
+In fact, it allows some convenience when it comes to the `tupled` method.
+Although we skipped this detail earlier,
+`tupled` actually accepts an implicit `Invariant` parameter,
+allowing us to use it with any type of functor:
+invariant, covariant, or contravariant.

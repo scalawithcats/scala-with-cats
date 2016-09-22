@@ -3,6 +3,7 @@
 [tut]: https://github.com/tpolecat/tut
 
 [cats]: http://typelevel.org/cats/api/#cats.package
+[cats.functor]: http://typelevel.org/cats/api/#cats.functor.package
 [cats.Eq]: http://typelevel.org/cats/api/#cats.Eq
 [cats.Eval]: http://typelevel.org/cats/api/#cats.Eval
 [cats.Functor]: http://typelevel.org/cats/api/#cats.Functor

@@ -101,7 +101,7 @@ If we can make `tailRecM` tail recursive,
 we should do so and inherit from `RecursiveTailRecM`
 to allow Cats to perform additional internal optimisations.
 
-<div class="alert alert-danger">
+<div class="callout callout-danger">
   TODO: Remove this? Or move it after the discussion of `Xor`?
 
   The `tailRecM` stuff (new in Cats 0.7) seems a little heavyweight for discussion here,

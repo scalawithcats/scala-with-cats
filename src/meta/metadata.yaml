@@ -33,6 +33,8 @@ pages:
 
   - functors/index.md
   - functors/cats.md
+  - functors/contravariant-invariant.md
+  - functors/contravariant-invariant-cats.md
   - functors/summary.md
 
   - monads/index.md
@@ -67,6 +69,8 @@ pages:
   - foldable-traverse/summary.md
 
   - case-studies/mapreduce/index.md
+
+  - case-studies/json-codec/index.md
 
   - case-studies/validation/index.md
   - case-studies/validation/sketch.md
