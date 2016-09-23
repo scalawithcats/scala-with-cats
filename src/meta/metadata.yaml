@@ -29,7 +29,7 @@ pages:
   - monoids/index.md
   - monoids/cats.md
   - monoids/instance-selection.md
-  # - monoids/summary.md
+  - monoids/summary.md
 
   - functors/index.md
   - functors/cats.md

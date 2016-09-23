@@ -3,17 +3,16 @@
 [tut]: https://github.com/tpolecat/tut
 
 [cats.package]: http://typelevel.org/cats/api/#cats.package
-[cats.Eq]: http://typelevel.org/cats/api/#cats.Eq
 [cats.Eval]: http://typelevel.org/cats/api/#cats.Eval
 [cats.functor.package]: http://typelevel.org/cats/api/#cats.functor.package
 [cats.Functor]: http://typelevel.org/cats/api/#cats.Functor
 [cats.Id]: http://typelevel.org/cats/api/#cats.Id
 [cats.Monad]: http://typelevel.org/cats/api/#cats.Monad
-[cats.Monoid]: http://typelevel.org/cats/api/#cats.Monoid
 [cats.Show]: http://typelevel.org/cats/api/#cats.Show
 [cats.Traverse]: http://typelevel.org/cats/api/#cats.Traverse
 [cats.data.IdT]: http://typelevel.org/cats/api/#cats.data.IdT
 [cats.data.ListT]: http://typelevel.org/cats/api/#cats.data.ListT
+[cats.data.NonEmptyList]: http://typelevel.org/cats/api/#cats.data.NonEmptyList
 [cats.data.OptionT]: http://typelevel.org/cats/api/#cats.data.OptionT
 [cats.data.Reader]: http://typelevel.org/cats/api/#cats.data.Reader
 [cats.data.ReaderT]: http://typelevel.org/cats/api/#cats.data.ReaderT
@@ -32,6 +31,10 @@
 [cats.instances.option]: http://typelevel.org/cats/api/#cats.instances.package$$option$
 [cats.instances.map]: http://typelevel.org/cats/api/#cats.instances.package$$map$
 [cats.instances.all]: http://typelevel.org/cats/api/#cats.instances.package$$all$
+[cats.kernel.package]: http://typelevel.org/cats/api/#cats.kernel.package
+[cats.kernel.Eq]: http://typelevel.org/cats/api/#cats.kernel.Eq
+[cats.kernel.Monoid]: http://typelevel.org/cats/api/#cats.kernel.Monoid
+[cats.kernel.Semigroup]: http://typelevel.org/cats/api/#cats.kernel.Semigroup
 [cats.syntax]: http://typelevel.org/cats/api/#cats.syntax.package
 [cats.syntax.applicative]: http://typelevel.org/cats/api/#cats.syntax.package$$applicative$
 [cats.syntax.eq]: http://typelevel.org/cats/api/#cats.syntax.package$$eq$
