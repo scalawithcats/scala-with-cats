@@ -1,11 +1,11 @@
 ## Example: *Eq*
 
 We will finish off this chapter by looking at another useful type class:
-[`cats.Eq`][cats.Eq].
+[`cats.Eq`][cats.kernel.Eq].
 
 ### Equality, Liberty, and Fraternity
 
-We can use `Eq` to define type-safe equality 
+We can use `Eq` to define type-safe equality
 between instances of any given type:
 
 ```scala
@@ -17,8 +17,8 @@ trait Eq[A] {
 }
 ```
 
-The interface syntax, defined in [`cats.syntax.equal`][cats.syntax.equal], 
-provides two methods for performing type-safe equality checks 
+The interface syntax, defined in [`cats.syntax.equal`][cats.syntax.equal],
+provides two methods for performing type-safe equality checks
 provided there is an instance `Eq[A]` in scope:
 
  - `===` compares two objects for equality;
@@ -47,8 +47,8 @@ eqInt.eqv(123, 123)
 eqInt.eqv(123, 234)
 ```
 
-Unlike Scala's `==` method, 
-if we try to compare objects of different types using `eqv` 
+Unlike Scala's `==` method,
+if we try to compare objects of different types using `eqv`
 we get a compile error:
 
 ```tut:book:fail
@@ -69,8 +69,8 @@ import cats.syntax.eq._
 
 ### Comparing *Options*
 
-Now for a more interesting example---`Option[Int]`. 
-To compare values of type `Option[Int]` 
+Now for a more interesting example---`Option[Int]`.
+To compare values of type `Option[Int]`
 we need to import instances of `Eq` for `Option` as well as `Int`:
 
 ```tut:book:silent
@@ -84,17 +84,17 @@ Now we can try some comparisons:
 Some(1) === None
 ```
 
-We have received a compile error here 
-because the `Eq` type class is invariant. 
-The instances we have in scope 
-are for `Int` and `Option[Int]`, not `Some[Int]`. 
+We have received a compile error here
+because the `Eq` type class is invariant.
+The instances we have in scope
+are for `Int` and `Option[Int]`, not `Some[Int]`.
 To fix the issue we have to re-type the arguments as `Option[Int]`:
 
 ```tut:book
 (Some(1) : Option[Int]) === (None : Option[Int])
 ```
 
-We can do this in a friendlier fashion using 
+We can do this in a friendlier fashion using
 the `Option.apply` and `Option.empty` methods from the standard library:
 
 ```tut:book
@@ -114,7 +114,7 @@ import cats.syntax.option._
 
 ### Comparing Custom Types
 
-We can define our own instances of `Eq` using the `Eq.instance` method, 
+We can define our own instances of `Eq` using the `Eq.instance` method,
 which accepts a function of type `(A, A) => Boolean` and returns an `Eq[A]`:
 
 ```tut:book:silent
@@ -157,9 +157,9 @@ val optionCat2 = Option.empty[Cat]
 ```
 
 <div class="solution">
-First we need our Cats imports. 
-In this exercise we'll be using the `Eq` type class 
-and the `Eq` interface syntax. 
+First we need our Cats imports.
+In this exercise we'll be using the `Eq` type class
+and the `Eq` interface syntax.
 We'll bring instances of `Eq` into scope as we need them below:
 
 ```tut:book:silent
@@ -173,7 +173,7 @@ Our `Cat` class is the same as ever:
 final case class Cat(name: String, age: Int, color: String)
 ```
 
-We bring the `Eq` instances for `Int` and `String` 
+We bring the `Eq` instances for `Int` and `String`
 into scope for the implementation of `Eq[Cat]`:
 
 ```tut:book:silent
@@ -212,17 +212,17 @@ optionCat1 =!= optionCat2
 
 ### Take Home Points
 
-In this section we introduced 
-a new type class---[`cats.Eq`][cats.Eq]---that lets us 
+In this section we introduced
+a new type class---[`cats.Eq`][cats.Eq]---that lets us
 perform type-safe equality checks:
 
- - we create an instance `Eq[A]` to 
+ - we create an instance `Eq[A]` to
    implement equality-testing functionality for `A`.
 
- - [`cats.syntax.eq`][cats.syntax.eq] provides two methods of interest: 
+ - [`cats.syntax.eq`][cats.syntax.eq] provides two methods of interest:
    `===` for testing equality and `=!=` for testing inequality.
 
-Because `Eq[A]` is invariant in `A`, 
-we have to be precise about the types of the values we use as arguments. 
+Because `Eq[A]` is invariant in `A`,
+we have to be precise about the types of the values we use as arguments.
 We sometimes need to manually type expressions in our code
 to help the compiler locate the correct type class instances.
