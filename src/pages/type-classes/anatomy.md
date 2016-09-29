@@ -7,8 +7,9 @@ and the *interface* methods that we expose to users.
 
 ### The Type Class
 
-The *type class* itself is a generic type
+A *type class* is an interface or API
 that represents some functionality we want to implement.
+In Cats a type class is represented by a trait with at least one type parameter.
 For example, we can represent generic "serialize to JSON" behaviour
 as follows:
 
@@ -28,11 +29,11 @@ trait JsonWriter[A] {
 ### Type Class Instances
 
 The *instances* of a type class
-provide implementations for the types we care about,
+provide implementations of the type class for the types we care about,
 including types from the Scala standard library
 and types from our domain model.
 
-We define instances by creating
+In Scala define instances by creating
 concrete implementations of the type class
 and tagging them with the `implicit` keyword:
 
@@ -92,7 +93,7 @@ Cats refers to this as *"syntax"* for the type class:
 
 [^pimping]: You may occasionally see extension methods
 referred to as "type enrichment" or "pimping".
-The latter is an older term that we don't use anymore.
+These are older term that we don't use anymore.
 
 ```tut:book:silent
 object JsonSyntax {
