@@ -20,7 +20,7 @@ scalacOptions ++= Seq(
 resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"))
 
 libraryDependencies ++= Seq(
-  "org.typelevel" %% "cats" % "0.7.0"
+  "org.typelevel" %% "cats" % "0.7.2"
 )
 
 lazy val pdf  = taskKey[Unit]("Build the PDF version of the book")
