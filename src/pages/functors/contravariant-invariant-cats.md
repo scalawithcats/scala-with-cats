@@ -1,6 +1,7 @@
 ## *Contravariant* and *Invariant* in Cats
 
-Cats's [`Contravariant`][cats.functor.Contravariant] and [`Invariant`][cats.functor.Invariant] type classes functors are slightly different to its other type classes: they live under [`cats.functor`][cats.functor.package] instead of [`cats`][cats.package]. Here's a simplified version of the code, throwing regular `Functor` into the mix as well:
+Cats's [`Contravariant`][cats.functor.Contravariant] and [`Invariant`][cats.functor.Invariant] type classes functors are slightly different to its other type classes: they live under [`cats.functor`][cats.functor.package] instead of [`cats`][cats.package]. 
+Here's a simplified version of the code, throwing regular `Functor` into the mix as well:
 
 ```scala
 package cats.functor {
