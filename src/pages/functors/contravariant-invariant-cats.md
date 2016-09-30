@@ -1,6 +1,6 @@
 ## *Contravariant* and *Invariant* in Cats
 
-Cats's [`Contravariant`][cats.functor.Contravariant] and [`Invariant`][cats.functor.Invariant] type classes functors are slightly different to its other type classes: they live under [`cats.functor`][cats.functor.package] instead of [`cats`][cats.package]. 
+Cats's [`Contravariant`][cats.functor.Contravariant] and [`Invariant`][cats.functor.Invariant] type classes are slightly different to its other type classes: they live under [`cats.functor`][cats.functor.package] instead of [`cats`][cats.package]. 
 Here's a simplified version of the code, throwing regular `Functor` into the mix as well:
 
 ```scala
@@ -32,7 +32,7 @@ Each implements `imap` by throwing away one of the two transformation functions.
 If we write code that depends on `Invariant`,
 it will work with both the other types of functor as well.
 
-#### *Contravariant* in Cats
+### *Contravariant* in Cats
 
 We can summon instances of `Contravariant`
 using the `Contravariant.apply` method.
