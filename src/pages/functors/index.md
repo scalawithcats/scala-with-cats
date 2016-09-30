@@ -4,17 +4,26 @@ In this chapter we will investigate **functors**.
 Functors on their own aren't so useful, but special cases of functors such as as **monads** and **applicative functors** are some of the most commonly used abstractions in Cats.
 
 Informally, a functor is anything with a `map` method. 
-You probably know lots of types that have this: `Option`, `Seq`, `Either`, and `Future`, to name a few.
+You probably know lots of types that have this: `Option`, `List`, `Either`, and `Future`, to name a few.
 
 Let's start as we did with monoids by looking at a few types and operations and seeing what general principles we can abstract.
 
 **Sequences**
 
-The `map` method is perhaps the most commonly used method on `Seq`. 
-If we have a `Seq[A]` and a function `A => B`, `map` will create a `Seq[B]`.
+The `map` method is perhaps the most commonly used method on `List`. 
+If we have a `List[A]` and a function `A => B`, `map` will create a `List[B]`.
 
 ```tut:book
-Seq(1, 2, 3) map (_ * 2)
+List(1, 2, 3) map { x => (x % 2) == 0 }
+```
+
+There are some properties of `map` that we rely without even thinking about them.
+For example, we expect the two code fragments below to produce the same output.
+
+```tut:book
+List(1, 2, 3) map { x => x * 2 } map { x => x + 4 }
+
+List(1, 2, 3) map { x => (x * 2) + 4 }
 ```
 
 **Options**
@@ -23,12 +32,22 @@ We can do the same thing with an `Option`.
 If we have a `Option[A]` and a function `A => B`, `map` will create a `Option[B]`:
 
 ```tut:book
-Some(1) map (_.toString)
+Option(1) map (_.toString)
+```
+
+We expect `map` on  `Option` to behave in the same way as `List`.
+
+```tut:book
+Option(1, 2, 3) map { x => x * 2 } map { x => x + 4 }
+
+Option(1, 2, 3) map { x => (x * 2) + 4 }
 ```
 
 **Functions (?!)**
 
-Now let's think about mapping over functions of a single argument. What would this mean?
+Now let's expand how we think about `map`.
+Can we map over functions of a single argument?
+What would this mean?
 
 All our examples above have had the following general shape:
 
@@ -37,7 +56,7 @@ All our examples above have had the following general shape:
  - get back `F[B]`.
 
 A function with a single argument has two types: the parameter type and the result type. 
-To get them to the same shape we can fix the parameter and let the result type vary:
+To get them to the same shape we can fix the parameter type and let the result type vary:
 
  - start with `R => A`;
  - supply a function `A => B`;
@@ -53,7 +72,11 @@ val func1 = (x: Int) => x.toDouble
 val func2 = (y: Double) => y * 2
 val func3 = func1 map func2
 
+// Function composition by calling map
 func3(1)
+
+// Function composition written out by hand
+func2(func1(1))
 ```
 
 ## Definition of a Functor
@@ -66,7 +89,7 @@ The following laws must hold:
 - `map` respects composition, meaning `fa map (g(f(_)))` is equal to `(fa map f) map g`.
 
 If we consider the laws in the context of the functors we've discussed above, we can see they make sense and are true. 
-But that's a job for category theorists, so let's move on!
+We've seen some examples of the second law already.
 
 A simplified version of the definition from Cats is:
 
