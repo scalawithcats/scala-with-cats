@@ -1,8 +1,8 @@
 # Monoids and Semigroups
 
-In this section we explore our first type classes: `Monoid` and `Semigroup`.
-These allow us to add or combine values:
-`Ints`, `Strings`, `Lists`, `Options`, and many, many more.
+In this section we explore our first type classes, **monoid** and **semigroup**.
+These allow us to add or combine values.
+There are instances for `Ints`, `Strings`, `Lists`, `Options`, and many, many more.
 Let's start by looking at a few simple types and operations
 to see what common principles we can extract.
 
