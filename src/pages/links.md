@@ -25,12 +25,12 @@
 [cats.data.XorT]: http://typelevel.org/cats/api/#cats.data.XorT
 [cats.implicits]: http://typelevel.org/cats/api/#cats.implicits
 [cats.instances]: http://typelevel.org/cats/api/#cats.instances.package
+[cats.instances.all]: http://typelevel.org/cats/api/#cats.instances.package$$all$
 [cats.instances.int]: http://typelevel.org/cats/api/#cats.instances.package$$int$
 [cats.instances.string]: http://typelevel.org/cats/api/#cats.instances.package$$string$
 [cats.instances.list]: http://typelevel.org/cats/api/#cats.instances.package$$list$
 [cats.instances.option]: http://typelevel.org/cats/api/#cats.instances.package$$option$
 [cats.instances.map]: http://typelevel.org/cats/api/#cats.instances.package$$map$
-[cats.instances.all]: http://typelevel.org/cats/api/#cats.instances.package$$all$
 [cats.kernel.package]: http://typelevel.org/cats/api/#cats.kernel.package
 [cats.kernel.Eq]: http://typelevel.org/cats/api/#cats.kernel.Eq
 [cats.kernel.Monoid]: http://typelevel.org/cats/api/#cats.kernel.Monoid
