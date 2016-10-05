@@ -1,16 +1,22 @@
 # Functors
 
-In this chapter we will investigate **functors**. 
-Functors on their own aren't so useful, but special cases of functors such as as **monads** and **applicative functors** are some of the most commonly used abstractions in Cats.
+In this chapter we will investigate **functors**.
+Functors on their own aren't so useful,
+but special cases of functors such as
+**monads** and **applicative functors**
+are some of the most commonly used abstractions in Cats.
 
-Informally, a functor is anything with a `map` method. 
-You probably know lots of types that have this: `Option`, `List`, `Either`, and `Future`, to name a few.
+Informally, a functor is anything with a `map` method.
+You probably know lots of types that have this:
+`Option`, `List`, `Either`, and `Future`, to name a few.
 
-Let's start as we did with monoids by looking at a few types and operations and seeing what general principles we can abstract.
+Let's start as we did with monoids by looking at
+a few types and operations
+and seeing what general principles we can abstract.
 
 **Sequences**
 
-The `map` method is perhaps the most commonly used method on `List`. 
+The `map` method is perhaps the most commonly used method on `List`.
 If we have a `List[A]` and a function `A => B`, `map` will create a `List[B]`.
 
 ```tut:book
@@ -28,7 +34,7 @@ List(1, 2, 3) map { x => (x * 2) + 4 }
 
 **Options**
 
-We can do the same thing with an `Option`. 
+We can do the same thing with an `Option`.
 If we have a `Option[A]` and a function `A => B`, `map` will create a `Option[B]`:
 
 ```tut:book
@@ -55,7 +61,7 @@ All our examples above have had the following general shape:
  - supply a function `A => B`;
  - get back `F[B]`.
 
-A function with a single argument has two types: the parameter type and the result type. 
+A function with a single argument has two types: the parameter type and the result type.
 To get them to the same shape we can fix the parameter type and let the result type vary:
 
  - start with `R => A`;
@@ -88,7 +94,8 @@ The following laws must hold:
 - `map` preserves identity, meaning `fa map (a => a)` is equal to `fa`.
 - `map` respects composition, meaning `fa map (g(f(_)))` is equal to `(fa map f) map g`.
 
-If we consider the laws in the context of the functors we've discussed above, we can see they make sense and are true. 
+If we consider the laws in the context of the functors we've discussed above,
+we can see they make sense and are true.
 We've seen some examples of the second law already.
 
 A simplified version of the definition from Cats is:
@@ -101,23 +108,32 @@ trait Functor[F[_]] {
 }
 ```
 
-If you haven't seen syntax like `F[_]` before, it's time to take a brief detour to discuss *type constructors* and *higher kinded types*. 
+If you haven't seen syntax like `F[_]` before,
+it's time to take a brief detour to discuss
+*type constructors* and *higher kinded types*.
 We'll explain that `scala.language` import as well.
 
 ## Aside: Higher Kinds and Type Constructors
 
-Kinds are like types for types. 
-They describe the number of "holes" in a type. 
-We distinguish between regular types that have no holes, and "type constructors" that have holes that we can fill to produce types.
+Kinds are like types for types.
+They describe the number of "holes" in a type.
+We distinguish between regular types that have no holes,
+and "type constructors" that have holes that we can fill to produce types.
 
-For example, `List` is a type constructor with one hole. We fill that hole by specifying a parameter to produce a regular type like `List[Int]` or `List[A]`. The trick is not to confuse type constructors with generic types. `List` is a type constructor, `List[A]` is a type:
+For example, `List` is a type constructor with one hole.
+We fill that hole by specifying a parameter to produce
+a regular type like `List[Int]` or `List[A]`.
+The trick is not to confuse type constructors with generic types.
+`List` is a type constructor, `List[A]` is a type:
 
 ```scala
 List    // type constructor, takes one parameter
 List[A] // type, produced using a type parameter
 ```
 
-There's a close analogy here with functions and values. Functions are "value constructors"---they produce values when we supply parameters:
+There's a close analogy here with functions and values.
+Functions are "value constructors"---they
+produce values when we supply parameters:
 
 ```scala
 math.abs    // function, takes one parameter
@@ -127,10 +143,17 @@ math.abs(x) // value, produced using a value parameter
 <div class="callout callout-warning">
 *Kind notation*
 
-We sometimes use "kind notation" to describe the shape of types and their constructors. Regular types have a kind `*`. `List` has kind `* => *` to indicate that it produces a type given a single parameter. `Either` has kind `* => * => *` because it accepts two parameters, and so on.
+We sometimes use "kind notation" to describe
+the shape of types and their constructors.
+Regular types have a kind `*`.
+`List` has kind `* => *` to indicate that it
+produces a type given a single parameter.
+`Either` has kind `* => * => *` because it accepts two parameters,
+and so on.
 </div>
 
-In Scala we declare type constructors using underscores but refer to them without:
+In Scala we declare type constructors using underscores
+but refer to them without:
 
 ```scala
 // Declare F using underscores:
@@ -143,7 +166,8 @@ def myMethod[F[_]] = {
 }
 ```
 
-This is analogous to specifying a function's parameters in its definition and omitting them when referring to it:
+This is analogous to specifying a function's parameters
+in its definition and omitting them when referring to it:
 
 ```scala
 // Declare f specifying parameters:
@@ -153,13 +177,17 @@ val f = (x: Int) => x * 2
 val f2 = f andThen f
 ```
 
-Armed with this knowledge of type constructors, we can see that the Cats definition of `Functor` allows us to create instances for any single-parameter type constructor, such as `List`, `Option`, or `Future`.
+Armed with this knowledge of type constructors,
+we can see that the Cats definition of `Functor`
+allows us to create instances for any single-parameter type constructor,
+such as `List`, `Option`, or `Future`.
 
 <div class="callout callout-info">
 *Language feature imports*
 
-Higher kinded types are considered an advanced language feature in Scala. 
-Wherever we *declare* a type constructor with `A[_]` syntax, we need to "import" the feature to suppress compiler warnings:
+Higher kinded types are considered an advanced language feature in Scala.
+Wherever we *declare* a type constructor with `A[_]` syntax,
+ we need to "import" the feature to suppress compiler warnings:
 
 ```scala
 import scala.language.higherKinds

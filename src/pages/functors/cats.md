@@ -1,13 +1,17 @@
 ## Functors in Cats
 
-Let's look at the implementation of functors in Cats. 
-We'll follow the usual pattern of looking at the three main aspects of the implementation: the *type class*, the *instances*, and the *interface*.
+Let's look at the implementation of functors in Cats.
+We'll follow the usual pattern of looking at
+the three main aspects of the implementation:
+the *type class*, the *instances*, and the *interface*.
 
 ### The *Functor* Type Class
 
-The functor type class is [`cats.Functor`][cats.Functor]. 
-We obtain instances using the standard `Functor.apply` method on the companion object.
-As usual, default instances are arranged by type in the [`cats.instances`][cats.instances] package:
+The functor type class is [`cats.Functor`][cats.Functor].
+We obtain instances using the standard `Functor.apply`
+method on the companion object.
+As usual, default instances are arranged by type in
+the [`cats.instances`][cats.instances] package:
 
 ```tut:book
 import cats.Functor
@@ -23,7 +27,9 @@ val option1 = Option(123)
 val option2 = Functor[Option].map(option1)(_.toString)
 ```
 
-`Functor` also provides the `lift` method, which converts a function of type `A => B` to one that operates over a functor and has type `F[A] => F[B]`:
+`Functor` also provides the `lift` method,
+which converts a function of type `A => B`
+to one that operates over a functor and has type `F[A] => F[B]`:
 
 ```tut:book
 val func = (x: Int) => x + 1
@@ -35,9 +41,11 @@ lifted(Option(1))
 
 ### *Functor* Syntax
 
-The main method provided by the syntax for `Functor` is `map`. 
-It's difficult to demonstrate this with `Options` and `Lists` as they have their own built-in `map` operations. 
-If there is a built-in method it will always be called in preference to an extension method.
+The main method provided by the syntax for `Functor` is `map`.
+It's difficult to demonstrate this with `Options` and `Lists`
+as they have their own built-in `map` operations.
+If there is a built-in method it will always be called
+in preference to an extension method.
 Instead we will use *functions*:
 
 ```tut:book
@@ -51,13 +59,16 @@ val func3 = func1 map func2
 func3(123)
 ```
 
-Other methods are available but we won't discuss them here. 
-`Functors` are more important to us as building blocks for later abstractions than they are as a tool for direct use.
+Other methods are available but we won't discuss them here.
+`Functors` are more important to us
+as building blocks for later abstractions
+than they are as a tool for direct use.
 
 ### Instances for Custom Types
 
-We can define a functor simply by defining its map method. 
-Here's an example of a `Functor` for `Option`, even though such a thing already exists in [`cats.instances`][cats.instances]:
+We can define a functor simply by defining its map method.
+Here's an example of a `Functor` for `Option`,
+even though such a thing already exists in [`cats.instances`][cats.instances]:
 
 ```tut:book
 val optionFunctor = new Functor[Option] {

@@ -118,7 +118,8 @@ trait JsonCodec[A] {
 }
 ```
 
-As the types tell us, `imap` lets us build a `JsonCodec[B]` from a `JsonCodec[A]` if we have functions to tranform `A` to `B` and `B` to `A`.
+As the types tell us, `imap` lets us build a `JsonCodec[B]` from a `JsonCodec[A]`
+if we have functions to tranform `A` to `B` and `B` to `A`.
 
 <div class="callout callout-danger">
   TODO: Mention why it's called "invariant"
