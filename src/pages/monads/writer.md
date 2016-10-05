@@ -1,7 +1,9 @@
 ## The *Writer* Monad {#writer-monad}
 
-[`cats.data.Writer`][cats.data.Writer] is a monad that lets us carry a log along with a computation.
-We can use it to record messages, errors, or additional data about a computation,
+[`cats.data.Writer`][cats.data.Writer]
+is a monad that lets us carry a log along with a computation.
+We can use it to record messages, errors,
+or additional data about a computation,
 and extract the log with the final result.
 
 One common use for `Writers` is logging during multi-threaded computations,
@@ -12,7 +14,9 @@ so we can run concurrent computations without mixing log messages.
 
 ### Creating and Unpacking Writers
 
-A `Writer[W, A]` carries two values: a *log* of type `W` and a *result* of type `A`. We can create a `Writer` from a log and a result as follows:
+A `Writer[W, A]` carries two values: a *log* of type `W`
+and a *result* of type `A`.
+We can create a `Writer` from a log and a result as follows:
 
 ```tut:book
 import cats.data.Writer
@@ -21,11 +25,13 @@ import cats.instances.vector._
 Writer(Vector("It all starts here."), 123)
 ```
 
-We've used a `Vector` to hold our log as it has a more efficient append operation than `List`.
+We've used a `Vector` to hold our log
+as it has a more efficient append operation than `List`.
 
 Notice that the type of the writer is actually `WriterT[Id, Vector[String], Int]`
 instead of `Writer[Vector[String], Int]` as we might expect.
-In the spirit of code reuse, Cats implements the `Writer` monad in terms of another type, `WriterT`.
+In the spirit of code reuse,
+Cats implements the `Writer` monad in terms of another type, `WriterT`.
 `WriterT` is an example of a new concept called a "monad tranformer".
 We will introduce monad transformers in the next chapter.
 For now, try to ignore this detail by reading `WriterT[Id, W, A]` as `Writer[W, A]`.
@@ -80,7 +86,8 @@ val (log, result) = b.run
 
 When we transform or `map` over a `Writer`, its log is preserved.
 When we `flatMap`, the logs of the two `Writers` are appended.
-For this reason it's good practice to use a log type that has an efficient append operation,
+For this reason it's good practice to use a log type
+that has an efficient append operation,
 such as a `Vector`.
 
 ```tut:book
@@ -138,7 +145,8 @@ writer6.run
 
 ### Exercise: Show Your Working
 
-We mentioned earlier that `Writers` are useful for logging operations in multi-threaded environments.
+We mentioned earlier that `Writers` are useful
+for logging operations in multi-threaded environments.
 Let's confirm this by computing (and logging) some factorials.
 
 The `factorial` function below computes a factorial,
@@ -196,7 +204,8 @@ Await.result(Future.sequence(Vector(
 <!-- HACK: tut isn't capturing stdout from the threads above, so i gone done hacked it. -->
 
 Rewrite `factorial` so it captures the log messages in a `Writer`.
-Demonstrate that this allows us to reliably separate the logs for concurrent computations.
+Demonstrate that this allows us to
+reliably separate the logs for concurrent computations.
 
 <div class="solution">
 We'll start by defining a type alias for `Writer` so we can use it with `pure` syntax:

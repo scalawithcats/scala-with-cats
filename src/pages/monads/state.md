@@ -1,13 +1,16 @@
 ## The *State* Monad
 
-[`cats.data.State`][cats.data.State] allows us to pass additional state around as part of a computation.
+[`cats.data.State`][cats.data.State]
+allows us to pass additional state around as part of a computation.
 We define `State` instances representing atomic operations on the state,
 and thread them together using `map` and `flatMap`.
-In this way we can model "mutable" state in a purely functional way without using mutation.
+In this way we can model "mutable" state
+in a purely functional way without using mutation.
 
 ### Creating and Unpacking State
 
-Boiled down to its simplest form, instances of `State[S, A]` represent functions of type `S => (S, A)`.
+Boiled down to its simplest form,
+instances of `State[S, A]` represent functions of type `S => (S, A)`.
 `S` is the type of the state and and `A` is the type of the result.
 
 ```tut:book
@@ -65,8 +68,10 @@ val both = for {
 val (state, result) = both.run(20).value
 ```
 
-As you can see, in this example the final state is the result of applying both transformations in sequence.
-The state is threaded from step to step even though we don't interact with it in the for comprehension.
+As you can see, in this example the final state
+is the result of applying both transformations in sequence.
+The state is threaded from step to step
+even though we don't interact with it in the for comprehension.
 
 The general model for using the `State` monad, then,
 is to represent each step of a computation as an instance of `State`,
@@ -120,7 +125,8 @@ and combine them to evaluate whole sequences of inputs.
 We can see a simple example of this by implementing
 a calculator for post-order integer arithmetic expressions.
 
-In case you haven't heard of post-order expressions before (I wouldn't be surprised if you haven't),
+In case you haven't heard of post-order expressions before
+(I wouldn't be surprised if you haven't),
 they are a notation where we write the operator *after* its operands.
 So, for example, instead of writing `1 + 2` we would write:
 
@@ -157,9 +163,11 @@ representing a context-free stack transform and intermediate result.
 The `State` instances can be threaded together using `flatMap`
 to produce an interpreter for any sequence of symbols.
 
-Let's do this now. Start by writing a function `evalOne` that parses a single symbol
+Let's do this now.
+Start by writing a function `evalOne` that parses a single symbol
 into an instance of `State`. Use the code below as a template.
-Don't worry about error handling for now---if the stack is in the wrong configuration,
+Don't worry about error handling for now---if
+the stack is in the wrong configuration,
 it's ok to throw an exception and fail.
 
 ```tut:book:reset
@@ -170,8 +178,10 @@ type CalcState[A] = State[List[Int], A]
 def evalOne(sym: String): CalcState[Int] = ???
 ```
 
-If this seems difficult, think about the basic form of the `State` instances you're returning.
-Each instance represents a functional transformation from a stack to a pair of a stack and a result.
+If this seems difficult,
+think about the basic form of the `State` instances you're returning.
+Each instance represents a functional transformation
+from a stack to a pair of a stack and a result.
 You can ignore any wider context and focus on just that one step:
 
 ```tut:book:invisible
@@ -206,7 +216,8 @@ def evalOne(sym: String): CalcState[Int] =
   }
 ```
 
-Let's look at `operand` first. All we have to do is push a number onto the stack.
+Let's look at `operand` first.
+All we have to do is push a number onto the stack.
 We also return the operand as an intermediate result:
 
 ```tut:book
@@ -267,8 +278,10 @@ val program = for {
 program.runA(Nil).value
 ```
 
-Generalise this example by writing an `evalAll` method that computes the result of a `List[String]`.
-Use `evalOne` to process each symbol, and thread the resulting `State` monads together using `flatMap`.
+Generalise this example by writing an `evalAll` method
+that computes the result of a `List[String]`.
+Use `evalOne` to process each symbol,
+and thread the resulting `State` monads together using `flatMap`.
 Your function should have the following signature:
 
 ```tut:book
@@ -278,7 +291,8 @@ def evalAll(input: List[String]): CalcState[Int] = ???
 <div class="solution">
 We implement `evalAll` by folding over the input.
 We start with a pure `CalcState` that returns `0` if the list is empty.
-We `flatMap` at each stage, ignoring the intermediate results as we saw in the example:
+We `flatMap` at each stage,
+ignoring the intermediate results as we saw in the example:
 
 ```tut:book
 import cats.syntax.applicative._

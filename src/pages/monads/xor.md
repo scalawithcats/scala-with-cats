@@ -1,11 +1,19 @@
 ## *Either* and *Xor*
 
-The Scala standard library has a type `Either`. Cats provides an alternative called [`cats.data.Xor`][cats.data.Xor]. Why have this? Aside from providing a few useful methods, the main reason is that `Xor` is *right biased*.
+The Scala standard library has a type `Either`.
+Cats provides an alternative called [`cats.data.Xor`][cats.data.Xor].
+Why have this? Aside from providing a few useful methods,
+the main reason is that `Xor` is *right biased*.
 
 <div class="callout callout-info">
 *Cats data types*
 
-`Xor` is the first concrete data type we've seen in Cats. Cats provides numerous data types, all of which exist in the [`cats.data`][cats.data] package. Other examples include the monad transformers that we will see in the next chapter, and the [`Validated`][cats.data.Validated] type that we will see in the chapter on [applicatives](#applicatives).
+`Xor` is the first concrete data type we've seen in Cats.
+Cats provides numerous data types,
+all of which exist in the [`cats.data`][cats.data] package.
+Other examples include the monad transformers that we will see in the next chapter,
+and the [`Validated`][cats.data.Validated] type
+that we will see in the chapter on [applicatives](#applicatives).
 </div>
 
 ### Left and Right Bias
@@ -16,7 +24,9 @@ The Scala standard library has a type `Either`. Cats provides an alternative cal
 Right(123).flatMap(x => Right(x * 2))
 ```
 
-Instead of calling `map` or `flatMap` directly, we have to decide which side we want to be the "correct" side by taking a left- or right-projection:
+Instead of calling `map` or `flatMap` directly,
+we have to decide which side we want to be the "correct" side
+by taking a left- or right-projection:
 
 ```tut:book
 val either: Either[String, Int] = Right(123)
@@ -26,7 +36,10 @@ either.right.flatMap(x => Right(x * 2))
 either.left.flatMap(x => Left(x + "!!!"))
 ```
 
-This makes `Either` incovenient to use as a monad, especially as the convention in most functional languages is that `Right` side represents. `Xor` makes the decision that the right side is always the success case and thus it supports `map` and `flatMap` directly:
+This makes `Either` incovenient to use as a monad,
+especially as the convention in most functional languages is that `Right` side represents.
+`Xor` makes the decision that the right side
+is always the success case and thus it supports `map` and `flatMap` directly:
 
 ```tut:book
 import cats.data.Xor
@@ -36,7 +49,11 @@ Xor.right(1).flatMap(x => Xor.right(x + 2))
 
 ### Creating Xors
 
-The `Xor` object provides the `Xor.left` and `Xor.right` factory methods as we saw above. However, these are slightly unwieldy due to the finger gymnastics required to write `Xor`. We typically import syntax from [`cats.syntax.xor`][cats.syntax.xor] to get nicer constructors---`left` and `right` as enriched methods:
+The `Xor` object provides the `Xor.left` and `Xor.right` factory methods as we saw above.
+However, these are slightly unwieldy
+due to the finger gymnastics required to write `Xor`.
+We typically import syntax from [`cats.syntax.xor`][cats.syntax.xor]
+to get nicer constructors---`left` and `right` as enriched methods:
 
 ```tut:book
 import cats.syntax.xor._
@@ -89,7 +106,9 @@ and fails with a specified error if it does not:
 
 ### Fail-Fast Error Handling
 
-`Xor` is typically used to implement fail-fast error handling. We sequence a number of computations using `flatMap`, and if one computation fails the remaining computations are not run:
+`Xor` is typically used to implement fail-fast error handling.
+We sequence a number of computations using `flatMap`,
+and if one computation fails the remaining computations are not run:
 
 ```tut:book
 for {
@@ -101,7 +120,9 @@ for {
 
 ### Representing Errors {#representing-errors}
 
-When using `Xor` for error handling, we need to determine what type we want to use to represent errors. We could use `Throwable` for this as follows:
+When using `Xor` for error handling,
+we need to determine what type we want to use to represent errors.
+We could use `Throwable` for this as follows:
 
 ```tut:book
 type Result[A] = Xor[Throwable, A]
@@ -110,9 +131,12 @@ type Result[A] = Xor[Throwable, A]
 type Result[A] = Throwable Xor A
 ```
 
-This gives us similar semantics to `Try` from the Scala standard library. The problem, however, is that `Throwable` is an extremely broad supertype. We have (almost) no idea about what type of error occurred.
+This gives us similar semantics to `Try` from the Scala standard library.
+The problem, however, is that `Throwable` is an extremely broad supertype.
+We have (almost) no idea about what type of error occurred.
 
-Another approach is to define an algebraic data type to represent the types of error that can occur:
+Another approach is to define an algebraic data type
+to represent the types of error that can occur:
 
 ```tut:book
 case class User(username: String, password: String)
@@ -125,7 +149,10 @@ trait UnexpectedError extends LoginError
 type LoginResult = LoginError Xor User
 ```
 
-This approach solves the problems we saw with `Throwable`. It gives us a fixed set of expected error types and a catch-all for anything else that we didn't expect. We also get the safety of exhaustivity checking on any pattern matching we do:
+This approach solves the problems we saw with `Throwable`.
+It gives us a fixed set of expected error types
+and a catch-all for anything else that we didn't expect.
+We also get the safety of exhaustivity checking on any pattern matching we do:
 
 ```tut:book
 // Choose precise error-handling behaviour based on the error type:
@@ -144,7 +171,9 @@ result2.fold(handleError, println)
 
 ### Swapping Control Flow
 
-Occasionally we want to run a sequence of steps until one succeeds. We can model this using `Xor` by flipping the left and right cases. The `swap` method provides this:
+Occasionally we want to run a sequence of steps until one succeeds.
+We can model this using `Xor` by flipping the left and right cases.
+The `swap` method provides this:
 
 ```tut:book
 val a = 123.right[String]
@@ -153,14 +182,28 @@ val b = a.swap
 
 ### Exercise: What is Best?
 
-Is the error handling strategy in the previous exercises well suited for all purposes? What other features might we want from error handling?
+Is the error handling strategy in the previous exercises
+well suited for all purposes?
+What other features might we want from error handling?
 
 <div class="solution">
-This is an open question. It's also kind of a trick question---the answer depends on the semantics we're looking for. Some points to ponder:
+This is an open question.
+It's also kind of a trick question---the
+answer depends on the semantics we're looking for.
+Some points to ponder:
 
-- Error recovery is important when processing large jobs. We don't want to run a job for a day and then find it failed on the last element.
+- Error recovery is important when processing large jobs.
+We don't want to run a job for a day
+and then find it failed on the last element.
 
-- Error reporting is equally important. We need to know what went wrong, not just that something went wrong.
+- Error reporting is equally important.
+We need to know what went wrong,
+not just that something went wrong.
 
-- In a number of cases we want to collect all the errors, not just the first one we encountered. A typical example is validating a web form. It's a far better experience to report all errors to the user when they submit a form than to report them one at a time.
+- In a number of cases we want to collect all the errors,
+not just the first one we encountered.
+A typical example is validating a web form.
+It's a far better experience to
+report all errors to the user when they submit a form
+than to report them one at a time.
 </div>

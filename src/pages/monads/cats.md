@@ -1,10 +1,15 @@
 ## Monads in Cats
 
-It's time to give monads our standard Cats treatment. As usual we'll look at the type class, instances, and syntax.
+It's time to give monads our standard Cats treatment.
+As usual we'll look at the type class, instances, and syntax.
 
 ### The *Monad* Type Class {#monad-type-class}
 
-The monad type class is [`cats.Monad`][cats.Monad]. `Monad` extends two other type classes: `FlatMap`, which provides the `flatMap` method, and `Applicative`, which extends `Functor`. We'll discuss `Applicatives` in a later chapter.
+The monad type class is [`cats.Monad`][cats.Monad].
+`Monad` extends two other type classes: `FlatMap`,
+which provides the `flatMap` method, and `Applicative`,
+which extends `Functor`.
+We'll discuss `Applicatives` in a later chapter.
 
 The main methods on `Monad` are `pure` and `flatMap`:
 
@@ -24,7 +29,9 @@ val list2 = List(1, 2, 3)
 val list3 = Monad[List].flatMap(list2)(x => List(x, x*10))
 ```
 
-`Monad` provides all of the methods from `Functor`, including `map` and `lift`, and adds plenty of new methods as well. Here are a couple of examples:
+`Monad` provides all of the methods from `Functor`,
+including `map` and `lift`, and adds plenty of new methods as well.
+Here are a couple of examples:
 
 The `tupleN` methods convert a tuple of monads into a monad of tuples:
 
@@ -33,18 +40,21 @@ val tupled: Option[(Int, String, Double)] =
   Monad[Option].tuple3(Option(1), Option("hi"), Option(3.0))
 ```
 
-The `sequence` method converts a type like `F[G[A]]` to `G[F[A]]`. For example, we can convert a `List[Option[Int]]` to a `Option[List[Int]]`:
+The `sequence` method converts a type like `F[G[A]]` to `G[F[A]]`.
+For example, we can convert a `List[Option[Int]]` to a `Option[List[Int]]`:
 
 ```tut:book
 val sequence: Option[List[Int]] =
   Monad[Option].sequence(List(Option(1), Option(2), Option(3)))
 ```
 
-`sequence` requires an instance of [`cats.Traversable`][cats.Traversable] to be in scope.
+`sequence` requires an instance of [`cats.Traversable`][cats.Traversable]
+to be in scope.
 
 ### Default Instances
 
-Cats provides instances for all the monads in the standard library (`Option`, `List`, `Vector` and so on) via [`cats.instances`][cats.instances]:
+Cats provides instances for all the monads in the standard library
+(`Option`, `List`, `Vector` and so on) via [`cats.instances`][cats.instances]:
 
 ```tut:book
 import cats.instances.option._
@@ -60,11 +70,13 @@ import cats.instances.vector._
 Monad[Vector].flatMap(Vector(1, 2, 3))(x => Vector(x, x*10))
 ```
 
-There are also some Cats-specific monad instances that we'll see later on.
+There are also some Cats-specific monad instances
+that we'll see later on.
 
 ### Defining Custom Instances
 
-We can define a `Monad` for a custom type by providing implementations of thee methods:
+We can define a `Monad` for a custom type
+by providing implementations of thee methods:
 `flatMap`, `pure`, and a new method called `tailRecM`:
 
 Here is an implementation of `Monad` for `Option` as an example:
@@ -104,7 +116,8 @@ to allow Cats to perform additional internal optimisations.
 <div class="callout callout-danger">
   TODO: Remove this? Or move it after the discussion of `Xor`?
 
-  The `tailRecM` stuff (new in Cats 0.7) seems a little heavyweight for discussion here,
+  The `tailRecM` stuff (new in Cats 0.7) seems
+  a little heavyweight for discussion here,
   and defining custom instances is arguably not that important.
 </div>
 
@@ -116,9 +129,15 @@ The syntax for monads comes from three places:
  - [`cats.syntax.functor`][cats.syntax.functor] provides syntax for `map`;
  - [`cats.syntax.applicative`][cats.syntax.applicative] provides syntax for `pure`.
 
-In practice it's often easier to import everything in one go from [`cats.implicits`][cats.implicits]. However, we'll use the individual imports here for clarity.
+In practice it's often easier to import everything in one go
+from [`cats.implicits`][cats.implicits].
+However, we'll use the individual imports here for clarity.
 
-It's difficult to demonstrate the `flatMap` and `map` directly on Scala monads like `Option` and `List`, because they define their own explicit versions of those methods. Instead we'll write a contrived generic function that returns `3*3 + 4*4` wrapped in a monad of the user's choice:
+It's difficult to demonstrate the `flatMap` and `map`
+directly on Scala monads like `Option` and `List`,
+because they define their own explicit versions of those methods.
+Instead we'll write a contrived generic function that
+returns `3*3 + 4*4` wrapped in a monad of the user's choice:
 
 ```tut:book
 import scala.language.higherKinds
@@ -141,7 +160,10 @@ sumSquare[Option](3, 4)
 sumSquare[List](3, 4)
 ```
 
-We can rewrite this code using for comprehensions. The Scala compiler will "do the right thing" by rewriting our comprehension in terms of `flatMap` and `map` and inserting the correct implicit conversions to use our `Monad`:
+We can rewrite this code using for comprehensions.
+The Scala compiler will "do the right thing" by
+rewriting our comprehension in terms of `flatMap` and `map`
+and inserting the correct implicit conversions to use our `Monad`:
 
 ```tut:book
 def sumSquare[A[_] : Monad](a: Int, b: Int): A[Int] = {
