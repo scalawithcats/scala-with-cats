@@ -17,7 +17,7 @@ chain of operations.
 The main use case for these new type classes is
 building libraries that transform, read, and write values.
 The content ties in tightly to the [JSON codec](#json-codec)
-case study at the back of the book.
+case study later in the book.
 
 ### Contravariant functors and the *contramap* method {#contravariant}
 
@@ -32,7 +32,7 @@ that represents "prepending" a transformation to a chain:
 We'll talk about `contramap` itself directly for now,
 bringing the type class in later when we talk about Cats.
 
-The `contramap` method only makes sense for data types.
+The `contramap` method only makes sense for certain data types.
 For example, we can't define `contramap` for an `Option`
 because there is no way of feeding a value in an
 `Option[B]` backwards through a function `A => B`.
@@ -49,9 +49,11 @@ trait JsonEncoder[A] {
 }
 ```
 
+A `JsonEncoder[A]` represents a transformation from `A` to `Json`.
+
 We can define a `contramap` method for `JsonEncoder` that
 "prepends" the encoder with a function,
-transforming the input to value that it can encode:
+transforming the input to a value that it can encode:
 
 ```tut:book
 trait JsonEncoder[A] {
@@ -111,10 +113,12 @@ trait JsonCodec[A] {
   def encode(value: A): Json
   def decode(value: Json): A
 
-  def inmap[B](prependFunc: B => A, appendFunc: A => B): JsonCodec[B] =
+  def imap[B](prependFunc: B => A, appendFunc: A => B): JsonCodec[B] =
     ???
 }
 ```
+
+As the types tell us, `imap` lets us build a `JsonCodec[B]` from a `JsonCodec[A]` if we have functions to tranform `A` to `B` and `B` to `A`.
 
 <div class="callout callout-danger">
   TODO: Mention why it's called "invariant"
@@ -122,7 +126,7 @@ trait JsonCodec[A] {
 
 #### Exercise: Reading and Writing JSON
 
-Implement the `contramap` method for `JsonEncoder` above.
+Implement the `imap` method for `JsonEncoder` above.
 Get your code to compile. Don't worry about running it yet.
 
 <div class="solution">
@@ -133,7 +137,7 @@ trait JsonCodec[A] {
   def encode(value: A): Json
   def decode(value: Json): A
 
-  def inmap[B](prependFunc: B => A, appendFunc: A => B): JsonCodec[B] = {
+  def imap[B](prependFunc: B => A, appendFunc: A => B): JsonCodec[B] = {
     val self = this
     new JsonCodec[B] {
       def encode(value: B): Json = self.encode(func(value))
@@ -144,6 +148,6 @@ trait JsonCodec[A] {
 ```
 
 Note that this simple example doesn't take into account
-that decoding is a fallible.
+that decoding is fallible.
 For a full treatment see the [JSON Codec](#json-codec) case study.
 </div>

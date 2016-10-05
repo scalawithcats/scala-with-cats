@@ -2,14 +2,14 @@
 
 We covered three types of functor in this chapter:
 regular covariant `Functors` with their `map` method,
-as well as `Contravariant` and `Invariant` functors
-with their `contramap` and `imap` methods.
+as well as `Contravariant` functors with their `contramap` methods,
+and `Invariant` functors with their `imap` methods.
 
-Regular `Functors` are by far the most common of these type classes.
-It is rare to use them on their own.
+Regular `Functors` are by far the most common of these type classes,
+but even then is rare to use them on their own.
 However, they form the building block of
 several more interesting abstractions that we use all the time.
-In the following chapters we will look at two of these useful abstractions:
+In the following chapters we will look at two of these abstractions:
 `Monads` and `Applicatives`.
 
 `Contravariant` and `Invariant` functors
