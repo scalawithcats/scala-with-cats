@@ -44,9 +44,9 @@ Option(1) map (_.toString)
 We expect `map` on  `Option` to behave in the same way as `List`.
 
 ```tut:book
-Option(1, 2, 3) map { x => x * 2 } map { x => x + 4 }
+Option(123) map { x => x * 2 } map { x => x + 4 }
 
-Option(1, 2, 3) map { x => (x * 2) + 4 }
+Option(123) map { x => (x * 2) + 4 }
 ```
 
 **Functions (?!)**
