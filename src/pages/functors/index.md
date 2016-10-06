@@ -100,7 +100,7 @@ We've seen some examples of the second law already.
 
 A simplified version of the definition from Cats is:
 
-```tut:book
+```tut:book:silent
 import scala.language.higherKinds
 
 trait Functor[F[_]] {

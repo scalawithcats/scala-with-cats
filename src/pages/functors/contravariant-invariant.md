@@ -41,8 +41,11 @@ because there is no way of feeding a value in an
 that represent tranformations.
 For example, consider a simple data type `JsonEncoder[A]`:
 
-```tut:book
-sealed trait Json // imagine we've defined a whole ADT here
+```tut:book:silent
+sealed trait Json
+final case class JsObject(get: Map[String, Json]) extends Json
+final case class JsString(get: String) extends Json
+final case class JsNumber(get: Double) extends Json
 
 trait JsonEncoder[A] {
   def encode(value: A): Json
@@ -55,7 +58,7 @@ We can define a `contramap` method for `JsonEncoder` that
 "prepends" the encoder with a function,
 transforming the input to a value that it can encode:
 
-```tut:book
+```tut:book:silent
 trait JsonEncoder[A] {
   def encode(value: A): Json
 
@@ -108,7 +111,7 @@ bidirectional transformations between two data types.
 We can demonstrate this by extending our `JsonEncoder` example
 to create a bidirectional `JsonCodec`:
 
-```tut:book
+```tut:book:silent
 trait JsonCodec[A] {
   def encode(value: A): Json
   def decode(value: Json): A

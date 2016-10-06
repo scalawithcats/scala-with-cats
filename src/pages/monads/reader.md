@@ -15,9 +15,11 @@ accepts the configuration as a parameter and runs everything as specified.
 
 We can create a `Reader[A, B]` from a function `A => B` using the `Reader.apply` constructor:
 
-```tut:book
+```tut:book:silent
 import cats.data.Reader
+```
 
+```tut:book
 def double(a: Int): Int =
   a * 2
 
@@ -111,7 +113,7 @@ sequencingExample(15)
 
 The classic use case for a `Reader` is to inject a configuration into a computation:
 
-```tut:book
+```tut:book:silent
 import cats.data.Reader
 import cats.syntax.applicative._
 
@@ -145,9 +147,15 @@ check whether user `1` has access to our software.
 We simply need to provide a `Database` to get a result:
 
 ```tut:book
-program(Database(Map(123 -> "noel", 321 -> "dave"), Map("noel" -> "shhh", "dave" -> "secret")))
+program(Database(
+  Map(123 -> "noel", 321 -> "dave"),
+  Map("noel" -> "shhh", "dave" -> "secret"))
+)
 
-program(Database(Map(123 -> "dave", 321 -> "noel"), Map("noel" -> "shhh", "dave" -> "secret")))
+program(Database(
+  Map(123 -> "dave", 321 -> "noel"),
+  Map("noel" -> "shhh", "dave" -> "secret"))
+)
 ```
 
 In practice, Scala has many other tools that we can use for dependency injection,

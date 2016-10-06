@@ -13,11 +13,13 @@ method on the companion object.
 As usual, default instances are arranged by type in
 the [`cats.instances`][cats.instances] package:
 
-```tut:book
+```tut:book:silent
 import cats.Functor
 import cats.instances.list._
 import cats.instances.option._
+```
 
+```tut:book
 val list1 = List(1, 2, 3)
 
 val list2 = Functor[List].map(list1)(_ * 2)
@@ -48,10 +50,12 @@ If there is a built-in method it will always be called
 in preference to an extension method.
 Instead we will use *functions*:
 
-```tut:book
+```tut:book:silent
 import cats.instances.function._
 import cats.syntax.functor._
+```
 
+```tut:book
 val func1 = (a: Int) => a + 1
 val func2 = (a: Int) => a * 2
 val func3 = func1 map func2
@@ -70,7 +74,7 @@ We can define a functor simply by defining its map method.
 Here's an example of a `Functor` for `Option`,
 even though such a thing already exists in [`cats.instances`][cats.instances]:
 
-```tut:book
+```tut:book:silent
 val optionFunctor = new Functor[Option] {
   def map[A, B](value: Option[A])(func: A => B): Option[B] =
     value map func
@@ -84,7 +88,7 @@ The implementation is trivial---simply call `Option's` `map` method.
 Write a `Functor` for the following binary tree data type.
 Verify that the code works as expected on instances of `Branch` and `Leaf`:
 
-```tut:book
+```tut:book:silent
 sealed trait Tree[+A]
 final case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
 final case class Leaf[A](value: A) extends Tree[A]
@@ -94,7 +98,7 @@ final case class Leaf[A](value: A) extends Tree[A]
 The semantics are similar to writing a `Functor` for `List`.
 We recurse over the data structure, applying the function to every `Leaf` we find:
 
-```tut:book
+```tut:book:silent
 import cats.Functor
 import cats.syntax.functor._
 
@@ -117,7 +121,7 @@ Oops! This is the same invariance problem we saw with `Monoids`.
 The compiler can't find a `Functor` instance for `Leaf`.
 Let's add some smart constructors to compensate:
 
-```tut:book
+```tut:book:silent
 def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
   Branch(left, right)
 

@@ -44,16 +44,18 @@ using the `Contravariant.apply` method.
 Cats provides instances for data types that consume parameters,
 including `Eq`, `Show`, `Writer`, `WriterT`, and `Function1`:
 
-```tut:book
-import cats.Show,
-       cats.functor.Contravariant,
-       cats.instances.string._
+```tut:book:silent
+import cats.Show
+import cats.functor.Contravariant
+import cats.instances.string._
 
 val showString = Show[String]
 
 val showSymbol = Contravariant[Show].
   contramap(showString)((sym: Symbol) => s"'${sym.name}")
+```
 
+```tut:book
 showSymbol.show('dave)
 ```
 
@@ -61,13 +63,15 @@ More conveniently, we can use
 [`cats.syntax.contravariant`][cats.syntax.contravariant],
 which provides a `contravariant` extension method:
 
-```tut:book
-import cats.instances.function._,
-       cats.syntax.contravariant._
+```tut:book:silent
+import cats.instances.function._
+import cats.syntax.contravariant._
 
 val div2: Int => Double = _ / 2.0
 val add1: Int => Int    = _ + 1
+```
 
+```tut:book
 div2.contramap(add1)(2)
 ```
 
@@ -79,15 +83,17 @@ and we want to convert it to another type like `Semigroup[Symbol]`.
 To do this we need two functions: one to convert the `Symbol` parameters to `Strings`,
 and one to convert the result of the `String` append back to a `Symbol`:
 
-```tut:book
-import cats.Semigroup,
-       cats.instances.string._, // semigroup for String
-       cats.syntax.invariant._  // imap extension method
+```tut:book:silent
+import cats.Semigroup
+import cats.instances.string._ // semigroup for String
+import cats.syntax.invariant._ // imap extension method
 
 implicit val symbolSemigroup: Semigroup[Symbol] =
   Semigroup[String].imap(Symbol.apply)(_.name)
 
 import cats.syntax.semigroup._
+```
 
+```tut:book
 'a |+| 'few |+| 'words
 ```

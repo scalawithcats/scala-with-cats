@@ -13,9 +13,11 @@ Boiled down to its simplest form,
 instances of `State[S, A]` represent functions of type `S => (S, A)`.
 `S` is the type of the state and and `A` is the type of the result.
 
-```tut:book
+```tut:book:silent
 import cats.data.State
+```
 
+```tut:book
 val a = State[Int, String] { state =>
   (state, s"The state is $state")
 }
@@ -102,9 +104,11 @@ We can assemble these building blocks into useful computations.
 We often end up ignoring the results of intermediate stages
 when they only represent transformations on the state:
 
-```tut:book
+```tut:book:silent
 import State._
+```
 
+```tut:book
 val program: State[Int, (Int, Int, Int)] = for {
   a <- get[Int]
   _ <- set[Int](a + 1)
@@ -170,7 +174,7 @@ Don't worry about error handling for now---if
 the stack is in the wrong configuration,
 it's ok to throw an exception and fail.
 
-```tut:book:reset
+```tut:book:reset:silent
 import cats.data.State
 
 type CalcState[A] = State[List[Int], A]
@@ -220,7 +224,7 @@ Let's look at `operand` first.
 All we have to do is push a number onto the stack.
 We also return the operand as an intermediate result:
 
-```tut:book
+```tut:book:silent
 def operand(num: Int): CalcState[Int] =
   State[List[Int], Int] { stack =>
     (num :: stack, num)
@@ -232,7 +236,7 @@ We have to pop two operands off the stack and push the result in their place.
 The code can fail if the stack doesn't have enough operands on it,
 but the exercise description allows us to throw an exception in this case:
 
-```tut:book
+```tut:book:silent
 def operator(func: (Int, Int) => Int): CalcState[Int] =
   State[List[Int], Int] {
     case a :: b :: tail =>

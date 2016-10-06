@@ -175,10 +175,16 @@ Calculations before the call to `memoize` are cached,
 whereas calculations after the call retain their original semantics:
 
 ```tut:book
-val saying = Eval.always { println("Step 1") ; "The cat" }.
-  map { str => println("Step 2") ; str + " sat on" }.
-  memoize.
-  map { str => println("Step 3") ; str + " the mat" }
+val saying = Eval.always {
+  println("Step 1")
+  "The cat"
+}.map { str =>
+  println("Step 2")
+  s"$str sat on"
+}.memoize.map { str =>
+  println("Step 3")
+  s"$str the mat"
+}
 
 saying.value // first access
 saying.value // second access
@@ -195,7 +201,7 @@ We call this property *"stack safety"*.
 We'll illustrate this by comparing it to `Option`.
 The `loopM` method below creates a loop through a monad's `flatMap`.
 
-```tut:book
+```tut:book:silent
 import cats.Monad
 import cats.syntax.flatMap._
 import scala.language.higherKinds
@@ -215,14 +221,17 @@ def loopM[M[_] : Monad](m: M[Int], count: Int): M[Int] = {
 When we run `loopM` with an `Option` we can see the stack depth slowly increasing.
 With a sufficiently high value of `count`, we would blow the stack:
 
-```tut:book
+```tut:book:silent
 import cats.instances.option._
-import cats.syntax.option._
 ```
 
 ```tut:book
-loopM(1.some, 5)
+loopM(Option(1), 5)
 ```
+
+<div class="callout callout-danger">
+TODO: This isn't actually increasing the stack depth -.-
+</div>
 
 Now let's see the same code rewritten using `Eval`.
 The trampoline keeps the stack depth constant:
@@ -241,10 +250,10 @@ creating a chain of function calls on the heap.
 There are still limits on how deeply we can nest computations,
 but they are bounded by the size of the heap rather than the stack.
 
-<!--
+<div class="callout callout-danger">
 TODO: Process these and check we're covering everything important:
 
 - https://github.com/typelevel/cats/blob/master/core/src/main/scala/cats/Eval.scala
 - http://eed3si9n.com/herding-cats/Eval.html
-- Erik's talk from Typelevel Philly (once the video is up)
--->
+- Erik's talk from Typelevel Philly 2016 (once the video is up)
+</div>

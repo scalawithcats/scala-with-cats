@@ -32,7 +32,6 @@ by taking a left- or right-projection:
 val either: Either[String, Int] = Right(123)
 
 either.right.flatMap(x => Right(x * 2))
-
 either.left.flatMap(x => Left(x + "!!!"))
 ```
 
@@ -41,9 +40,11 @@ especially as the convention in most functional languages is that `Right` side r
 `Xor` makes the decision that the right side
 is always the success case and thus it supports `map` and `flatMap` directly:
 
-```tut:book
+```tut:book:silent
 import cats.data.Xor
+```
 
+```tut:book
 Xor.right(1).flatMap(x => Xor.right(x + 2))
 ```
 
@@ -55,9 +56,11 @@ due to the finger gymnastics required to write `Xor`.
 We typically import syntax from [`cats.syntax.xor`][cats.syntax.xor]
 to get nicer constructors---`left` and `right` as enriched methods:
 
-```tut:book
+```tut:book:silent
 import cats.syntax.xor._
+```
 
+```tut:book
 val a = 3.right[String]
 val b = 4.right[String]
 
@@ -124,7 +127,7 @@ When using `Xor` for error handling,
 we need to determine what type we want to use to represent errors.
 We could use `Throwable` for this as follows:
 
-```tut:book
+```tut:book:silent
 type Result[A] = Xor[Throwable, A]
 
 // Or using infix notation:
@@ -138,7 +141,7 @@ We have (almost) no idea about what type of error occurred.
 Another approach is to define an algebraic data type
 to represent the types of error that can occur:
 
-```tut:book
+```tut:book:silent
 case class User(username: String, password: String)
 
 sealed trait LoginError
@@ -154,14 +157,16 @@ It gives us a fixed set of expected error types
 and a catch-all for anything else that we didn't expect.
 We also get the safety of exhaustivity checking on any pattern matching we do:
 
-```tut:book
+```tut:book:silent
 // Choose precise error-handling behaviour based on the error type:
 def handleError(error: LoginError): Unit = error match {
   case UserNotFound(u)      => println(s"User not found: $u")
   case PasswordIncorrect(u) => println(s"Password incorrect: $u")
   case _ : UnexpectedError  => println(s"Unexpected error")
 }
+```
 
+```tut:book
 val result1: LoginResult = User("dave", "passw0rd").right
 val result2: LoginResult = UserNotFound("dave").left
 

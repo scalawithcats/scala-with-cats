@@ -13,19 +13,18 @@ We'll discuss `Applicatives` in a later chapter.
 
 The main methods on `Monad` are `pure` and `flatMap`:
 
-```tut:book
+```tut:book:silent
 import cats.Monad
 import cats.instances.option._
 import cats.instances.list._
+```
 
+```tut:book
 val opt1 = Monad[Option].pure(3)
-
 val opt2 = Monad[Option].flatMap(opt1)(a => Some(a + 2))
 
 val list1 = Monad[List].pure(3)
-
 val list2 = List(1, 2, 3)
-
 val list3 = Monad[List].flatMap(list2)(x => List(x, x*10))
 ```
 
@@ -56,17 +55,27 @@ to be in scope.
 Cats provides instances for all the monads in the standard library
 (`Option`, `List`, `Vector` and so on) via [`cats.instances`][cats.instances]:
 
-```tut:book
+```tut:book:silent
 import cats.instances.option._
+```
 
+```tut:book
 Monad[Option].flatMap(Option(1))(x => Option(x*2))
+```
 
+```tut:book:silent
 import cats.instances.list._
+```
 
+```tut:book
 Monad[List].flatMap(List(1, 2, 3))(x => List(x, x*10))
+```
 
+```tut:book:silent
 import cats.instances.vector._
+```
 
+```tut:book
 Monad[Vector].flatMap(Vector(1, 2, 3))(x => Vector(x, x*10))
 ```
 
@@ -81,7 +90,7 @@ by providing implementations of thee methods:
 
 Here is an implementation of `Monad` for `Option` as an example:
 
-```tut:book
+```tut:book:silent
 import cats.RecursiveTailRecM
 import cats.data.Xor
 import scala.annotation.tailrec
@@ -139,9 +148,8 @@ because they define their own explicit versions of those methods.
 Instead we'll write a contrived generic function that
 returns `3*3 + 4*4` wrapped in a monad of the user's choice:
 
-```tut:book
+```tut:book:silent
 import scala.language.higherKinds
-
 import cats.Monad
 import cats.syntax.functor._
 import cats.syntax.flatMap._
@@ -155,7 +163,9 @@ def sumSquare[A[_] : Monad](a: Int, b: Int): A[Int] = {
 
 import cats.instances.option._
 import cats.instances.list._
+```
 
+```tut:book
 sumSquare[Option](3, 4)
 sumSquare[List](3, 4)
 ```
@@ -165,16 +175,17 @@ The Scala compiler will "do the right thing" by
 rewriting our comprehension in terms of `flatMap` and `map`
 and inserting the correct implicit conversions to use our `Monad`:
 
-```tut:book
+```tut:book:silent
 def sumSquare[A[_] : Monad](a: Int, b: Int): A[Int] = {
   for {
     x <- a.pure[A]
     y <- b.pure[A]
   } yield x*x + y*y
 }
+```
 
+```tut:book
 sumSquare[Option](3, 4)
-
 sumSquare[List](3, 4)
 ```
 
@@ -184,7 +195,7 @@ Let's write a `Monad` for our `Tree` data type from last chapter.
 Here's the type again, together with the smart constructors we used
 to simplify type class instance selection:
 
-```tut:book
+```tut:book:silent
 sealed trait Tree[+A]
 final case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
 final case class Leaf[A](value: A) extends Tree[A]
@@ -216,7 +227,7 @@ We implement the `tailRecM` method,
 but don't extend `RecursiveTailRecM`
 and we don't use the `tailrec` annotation:
 
-```tut:book
+```tut:book:silent
 import cats.{Monad, RecursiveTailRecM}
 
 implicit val treeMonad = new Monad[Tree] {
@@ -254,10 +265,12 @@ implicit val treeMonad = new Monad[Tree] {
 
 Now we can use our `Monad` to `flatMap` and `map`:
 
-```tut:book
+```tut:book:silent
 import cats.syntax.functor._
 import cats.syntax.flatMap._
+```
 
+```tut:book
 branch(leaf(100), leaf(200)) flatMap (x => branch(leaf(x - 1), leaf(x + 1)))
 ```
 

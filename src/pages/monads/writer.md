@@ -18,11 +18,13 @@ A `Writer[W, A]` carries two values: a *log* of type `W`
 and a *result* of type `A`.
 We can create a `Writer` from a log and a result as follows:
 
-```tut:book
+```tut:book:silent
 import cats.data.Writer
 import cats.instances.vector._
+```
 
-Writer(Vector("It all starts here."), 123)
+```tut:book
+Writer(Vector("It was the best of times, it was the worst of times..."), 123)
 ```
 
 We've used a `Vector` to hold our log
@@ -40,31 +42,36 @@ As with other monads, we can also create a `Writer` using the `pure` syntax.
 In order to use `pure` the log has to be a type with a `Monoid`.
 This tells Cats what to use as the initial empty log:
 
-```tut:book
+```tut:book:silent
 import cats.syntax.applicative._
 
 type Logged[A] = Writer[Vector[String], A]
+```
 
+```tut:book
 123.pure[Logged]
 ```
 
 We can create a `Writer` from a log using the `tell` syntax.
 The `Writer` is initialised with the value `()`:
 
-```tut:book
+```tut:book:silent
 import cats.syntax.writer._
+```
 
+```tut:book
 Vector("msg1", "msg2", "msg3").tell
 ```
 
 If we have both a result and a log, we can create a `Writer` in two ways:
 using the `Writer.apply` method or the `writer` syntax:
 
-```tut:book
+```tut:book:silent
 import cats.syntax.writer._
+```
 
+```tut:book
 val a = Writer(123, Vector("msg1", "msg2", "msg3"))
-
 val b = 123.writer(Vector("msg1", "msg2", "msg3"))
 ```
 
@@ -155,7 +162,7 @@ The `slowly` helper function ensures this takes a while to run,
 even on the very small examples we have to use to fit in these pages,
 so we can see the interleaving when we run multiple factorials in parallel.
 
-```tut:book
+```tut:book:silent
 def slowly[A](body: => A) =
   try body finally Thread.sleep(100)
 
@@ -178,11 +185,13 @@ If we start several factorials in parallel,
 the log messages can become interleaved on standard out.
 This makes it difficult to see which lines of output come from which computation.
 
-```tut:book
+```tut:book:silent
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+```
 
+```tut:book
 Await.result(Future.sequence(Vector(
   Future(factorial(5)),
   Future(factorial(5))
@@ -210,35 +219,41 @@ reliably separate the logs for concurrent computations.
 <div class="solution">
 We'll start by defining a type alias for `Writer` so we can use it with `pure` syntax:
 
-```tut:book
+```tut:book:silent
 import cats.data.Writer
 import cats.syntax.applicative._
 
 type Logged[A] = Writer[Vector[String], A]
+```
 
+```tut:book
 42.pure[Logged]
 ```
 
 We'll import the `tell` syntax as well:
 
-```tut:book
+```tut:book:silent
 import cats.syntax.writer._
+```
 
+```tut:book
 Vector("Message").tell
 ```
 
 Finally, we'll import the `Semigroup` instance for `Vector`.
 We need this to `map` and `flatMap` over `Logged`:
 
-```tut:book
+```tut:book:silent
 import cats.instances.vector._
+```
 
+```tut:book
 41.pure[Logged].map(_ + 1)
 ```
 
 With these in scope, the definition of `factorial` becomes:
 
-```tut:book
+```tut:book:silent
 def factorial(n: Int): Logged[Int] = {
   if(n == 0) {
     1.pure[Logged]

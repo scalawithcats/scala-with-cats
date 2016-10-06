@@ -28,7 +28,7 @@ case class User(id: Long, name: String)
 def lookupUser(id: Long): Xor[Error, Option[User]] = ???
 ```
 
-```tut:book
+```tut:book:silent
 import cats.data.Xor
 
 def lookupUserName(id: Long): Xor[Error, Option[String]] =
@@ -86,7 +86,7 @@ and so on.
 Here's an example that uses `OptionT`
 to squash `List` and `Option` into a single monad:
 
-```tut:book
+```tut:book:silent
 import cats.data.OptionT
 
 type ListOption[A] = OptionT[List, A]
@@ -101,11 +101,13 @@ the transformer for the inner monad.
 
 We can create instances with `pure` as usual:
 
-```tut:book
+```tut:book:silent
 import cats.Monad
 import cats.instances.list._
 import cats.syntax.applicative._
+```
 
+```tut:book
 val result: ListOption[Int] = 42.pure[ListOption]
 ```
 
@@ -222,7 +224,7 @@ However, `Xor` itself has two type parameters
 and monads only have one.
 We need a *type alias* to make everything the correct shape:
 
-```tut:book
+```tut:book:silent
 type Error = String
 
 // Create a type alias, ErrorOr, to convert Xor to
@@ -250,6 +252,10 @@ with an `OptionT` of a `XorT` of `Future`.
 However, we can't define this in one line
 because `XorT` has three type parameters:
 
+```tut:book:silent
+import cats.XorT
+```
+
 ```tut:book:fail
 type FutureXorOption[A] = OptionT[XorT[Future, E, _], A]
 ```
@@ -259,7 +265,7 @@ creating a type alias with a single parameter.
 This time we create an alias for `XorT` that
 fixes `Future` and `Error` and allows `A` to vary:
 
-```tut:book
+```tut:book:silent
 import scala.concurrent.Future
 import cats.data.{XorT, OptionT}
 
@@ -271,12 +277,13 @@ type FutureXorOption[A] = OptionT[FutureXor, A]
 Our mammoth stack composes not two but *three* monads.
 Our `map` and `flatMap` methods cut through three layers of abstraction:
 
-```tut:book
+```tut:book:silent
 // We need an ExecutionContext to summon monad instances involving futures:
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import cats.instances.future._
+```
 
+```tut:book
 val answer: FutureXorOption[Int] =
   for {
     a <- 10.pure[FutureXorOption]
@@ -298,10 +305,12 @@ directly inject raw values into transformed monad stacks.
 We can also create instances from untransformed stacks
 using the monad transformer's `apply` method:
 
-```tut:book
+```tut:book:silent
 type ErrorOr[A] = Xor[String, A]
 type ErrorOrOption[A] = OptionT[ErrorOr, A]
+```
 
+```tut:book
 // Create using pure:
 val monad1: ErrorOrOption[Int] =
   123.pure[ErrorOrOption]
@@ -318,20 +327,21 @@ We can then manipulate the individual monads in the usual way:
 
 ```tut:book
 monad1.value
-
 monad2.value
 ```
 
 Each call to `value` unpacks a single monad transformer,
 so we may need more than one call to completely unpack a large stack:
 
-```tut:book
+```tut:book:silent
 import cats.data.{Writer, XorT, OptionT}
 
 type Logged[A] = Writer[List[String], A]
 type LoggedFallable[A] = XorT[Logged, String, A]
 type LoggedFallableOption[A] = OptionT[LoggedFallable, A]
+```
 
+```tut:book
 val packed = 123.pure[LoggedFallableOption]
 val partiallyPacked = packed.value
 val completelyUnpacked = partiallyPacked.value
@@ -353,7 +363,7 @@ This allows each module of code to make its own decisions
 about which transformers to use.
 Here's an example:
 
-```tut:book
+```tut:book:silent
 type Logged[A] = Writer[List[String], A]
 
 // Example method that returns nested monads:
@@ -377,7 +387,9 @@ def addNumbers(a: String, b: String, c: String): Logged[Option[Int]] = {
   // Return the untransformed monad stack:
   result.value
 }
+```
 
+```tut:book
 // OptionT isn't forced on user code:
 val result1 = addNumbers("1", "2", "3")
 val result2 = addNumbers("1", "a", "3")
@@ -415,7 +427,7 @@ This is a relatively simple combination.
 We want `Future` on the outside and `Xor` on the inside,
 so we build from the inside out using an `XorT` of `Future`:
 
-```tut:book
+```tut:book:silent
 import cats.data.XorT
 import scala.concurrent.Future
 
@@ -427,7 +439,7 @@ Now let's define a simple analytics system to
 collate load averages from a set of imaginary servers.
 Here's the data we'll use:
 
-```tut:book
+```tut:book:silent
 val loadAverages = Map(
   "a.example.com" -> 0.1,
   "b.example.com" -> 0.5,
@@ -441,7 +453,7 @@ Let's define a `getLoad` function that
 accepts a hostname as a parameter and
 returns its load average:
 
-```tut:book
+```tut:book:silent
 def getLoad(hostname: String): FutureXor[Double] =
   ???
 ```
@@ -451,7 +463,7 @@ return an error message reporting that the host was unreachable.
 Include `hostname` in the message for good effect.
 
 <div class="solution">
-```tut:book
+```tut:book:silent
 import cats.instances.future._
 import cats.syntax.flatMap._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -472,7 +484,7 @@ which accepts a list of hostnames as a parameter
 and returns the mean load average across all of them.
 If any hosts are unreachable, fail with an appropriate error message.
 
-```tut:book
+```tut:book:silent
 def getMeanLoad(hostnames: List[String]): FutureXor[Double] =
   ???
 ```
@@ -486,9 +498,9 @@ The `map`, `flatMap`, and `sequence` methods
 cut through both layers in our monad stack,
 allowing us to combine the results without hassle:
 
-```tut:book
-import cats.instances.list._        // for Applicative[List]
-import cats.syntax.traverse._ // for _.sequence
+```tut:book:silent
+import cats.instances.list._  // for Applicative[List]
+import cats.syntax.traverse._ // for foo.sequence
 
 def getMeanLoad(hostnames: List[String]): FutureXor[Double] =
   hostnames.length match {
@@ -503,8 +515,9 @@ takes a `FutureXor` and prints the value inside
 with an appropriate prefix based on
 whether the operation was a success or failure.
 
-```tut:book
-def report[A](input: FutureXor[A]): Unit = ???
+```tut:book:silent
+def report[A](input: FutureXor[A]): Unit =
+  ???
 ```
 
 You should be able to use `report` and `getMeanLoad`
@@ -523,7 +536,7 @@ We use `value` to unpack the monad transformer,
 `Await.result` to block on the `Future`,
 and `fold` to handle the disjunction:
 
-```tut:book
+```tut:book:silent
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -532,7 +545,9 @@ def report[A](input: FutureXor[A]): Unit =
     msg => println("[FAIL] " + msg),
     ans => println("[DONE] " + ans)
   )
+```
 
+```tut:book
 report(getMeanLoad(List("a.example.com", "b.example.com")))
 report(getMeanLoad(List("a.example.com", "c.example.com")))
 report(getMeanLoad(List("a.example.com", "d.example.com")))
