@@ -44,14 +44,14 @@ Create a type `JsonValue` to represent this type hierarchy.
 <div class="solution">
 Here's a suitable ADT, created using sealed traits and case classes:
 
-```tut:book
+```tut:book:silent
 sealed trait JsonValue
 final case class JsonString(value: String) extends JsonValue
 final case class JsonNumber(value: Double) extends JsonValue
 final case class JsonBoolean(value: Boolean) extends JsonValue
-case object JsonNull extends JsonValue
 final case class JsonObject(fields: List[(String, JsonValue)]) extends JsonValue
 final case class JsonArray(values: List[JsonValue]) extends JsonValue
+case object JsonNull extends JsonValue
 ```
 
 There are a couple of notable design decisions here:
@@ -75,13 +75,6 @@ There are a couple of notable design decisions here:
    and allows us to model the order of keys.
 </div>
 
-```scala
-sealed trait JsonValue
-final case class String(...) extends JsonValue
-final case class Boolean(...) extends JsonValue
-// ...
-```
-
 ## Converting Between *JsonValues* and Raw JSON
 
 The first building block we would need
@@ -96,7 +89,7 @@ However, we can discuss their type signatures usefully.
 We can easily serialize a `JsonValue` to a `String`
 without fear failure, so a simple type signature will suffice:
 
-```tut:book
+```tut:book:silent
 object Json {
   def stringify(value: JsonValue): String =
     ???
@@ -111,7 +104,7 @@ The type signature should therefore include
 an error handling monad and a suitable error type.
 Here's an example:
 
-```tut:book
+```tut:book:silent
 import cats.data.Xor
 
 case class JsonParserError(message: String)
@@ -133,7 +126,7 @@ converting `JsonValues` to semantic Scala types.
 
 Imagine we have a Scala application with some app-specific data types:
 
-```tut:book
+```tut:book:silent
 case class Address(house: Int, street: String)
 case class Person(name: String, address: Address)
 ```
@@ -161,7 +154,7 @@ representing the corresponding operation.
 The `decode` operation can fail so
 we model the failure using `Xor` and a custom error type.
 
-```tut:book
+```tut:book:silent
 case class JsonDecoderError(message: String)
 
 trait JsonEncoder[A] {
@@ -199,7 +192,7 @@ Here are the encoders.
 Note that we define a `pure` method to
 avoid continually writing `new JsonEncoder` and `def encode`:
 
-```tut:book
+```tut:book:silent
 trait JsonEncoderInstances {
   def pure[A](func: A => JsonValue): JsonEncoder[A] =
     new JsonEncoder[A] {
@@ -235,7 +228,7 @@ trait JsonEncoderInstances {
 We make it easy for users to import our instances
 with a singleton `encoders `object:
 
-```tut:book
+```tut:book:silent
 object encoders extends JsonEncoderInstances
 ```
 
@@ -248,10 +241,10 @@ We define two helper methods here:
 `pure` to create instances as before,
 and `fail` to make it easier to create `JsonDecoderErrors`:
 
-```tut:book
-import cats.instances.list._,
-       cats.syntax.traverse._,
-       cats.syntax.xor._
+```tut:book:silent
+import cats.instances.list._
+import cats.syntax.traverse._
+import cats.syntax.xor._
 
 trait JsonDecoderInstances {
   def pure[A](func: JsonValue => JsonDecoderError Xor A): JsonDecoder[A] =
@@ -332,7 +325,7 @@ trait JsonDecoderInstances {
 
 Again, we make these easy to import with an object:
 
-```tut:book
+```tut:book:silent
 object decoders extends JsonDecoderInstances
 ```
 </div>

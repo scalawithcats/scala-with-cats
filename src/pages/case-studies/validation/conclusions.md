@@ -1,12 +1,41 @@
 ## Conclusions
 
-This case study has been an exercise in removing rather than building abstractions. We started with a fairly complex `Check` type. Once we realised we were conflating two concepts, we separated out `Predicate` leaving us with something we realised we could be implemented with `Kleisli`.
+This case study has been an exercise in
+removing rather than building abstractions.
+We started with a fairly complex `Check` type.
+Once we realised we were conflating two concepts,
+we separated out `Predicate`
+leaving us with something that could be implemented with `Kleisli`.
 
-`Predicate` is very much like a stripped down version of the matchers found in testing libraries like ScalaTest and Specs2. One next step would be to develop a more elaborate predicate library along these lines. There are a few other directions to consider.
+`Predicate` is very much like a stripped down version
+of the matchers found in testing libraries like ScalaTest and Specs2.
+One next step would be to develop
+a more elaborate predicate library along these lines.
+There are a few other directions to consider.
 
-With the current representation of `Predicate` there is no way to implement logical negation. To implement negation we need to know the error message that a successful predicate would have returned if it had failed (so that the negation can return that message). One way to implement this is to have a predicate return a `Boolean` flag indicating success or failure and the associated message.
+With the current representation of `Predicate`
+there is no way to implement logical negation.
+To implement negation we need to know the error message
+that a successful predicate would have returned if it had failed
+(so that the negation can return that message).
+One way to implement this is to have a predicate return a `Boolean` flag
+indicating success or failure and the associated message.
 
-We could also do better in how error messages are represented. At the moment there is no indication with an error message of the structure of the predicates that failed. For example, if we represent error messsages as a `List[String]` and we get back the message `List("Must be longer than 4 characters", "Must not contain a number")` does this message indicate a failing conjunction (two `ands`) or a failing disjunction (two `ors`)? We can probably guess in this case but in general we don't have sufficient information to work this out. We can solve this problem by wrapping all messages in a type such as
+We could also do better in how error messages are represented.
+At the moment there is no indication with an error message
+of the structure of the predicates that failed.
+For example, if we represent error messsages as a `List[String]`
+and we get back the message:
+
+```tut:book:silent
+List("Must be longer than 4 characters", "Must not contain a number")
+```
+
+does this message indicate a failing conjunction (two `ands`)
+or a failing disjunction (two `ors`)?
+We can probably guess in this case
+but in general we don't have sufficient information to work this out.
+We can solve this problem by wrapping all messages in a type such as
 
 ```scala
 sealed trait Structure[E]
@@ -16,6 +45,25 @@ final case class Not[E](messages: List[Structure[E]]) extends Structure[E]
 final case class Pure[E](message: E) extends Structure[E]
 ```
 
-representing the structure of the predicates that created them. We can simplify this structure by converting all predicates into a normal form. For example, if we use disjunctive normal form the structure of the predicate will always be a disjunction (logical or) of conjunctions (logical and). By doing so we could errors as a `List[List[Xor[E,E]]]`, with the outer list representing disjunction, the inner list representing conjunction, and the `Xor` representing negation.
+representing the structure of the predicates that created them.
+We can simplify this structure by converting all predicates into a normal form.
+For example, if we use disjunctive normal form
+the structure of the predicate will always be
+a disjunction (logical or) of conjunctions (logical and).
+By doing so we could errors as a `List[List[Xor[E, E]]]`,
+with the outer list representing disjunction,
+the inner list representing conjunction,
+and the `Xor` representing negation.
 
-Finally, we made several design choices that reasonable people could disagree with. Should the method that converts a `Predicate` to a function really be called `run` instead of, say, `toFunction`? Should `Predicate` be a subtype of `Function` to begin with? The name `run` makes sense if you have experienced monad transformers and other similar abstractions, but is not clear if you don't have this experience. Avoid subtyping is something that many functional programmers come to prefer, as it plays poorly with implicit resolution and type inference, but a case could be made to use it here. As always the best decisions depend on the context in which the could will be used.
+Finally, we made several design choices
+that reasonable people could disagree with.
+Should the method that converts a `Predicate` to a function
+really be called `run` instead of, say, `toFunction`?
+Should `Predicate` be a subtype of `Function` to begin with?
+The name `run` makes sense if
+you have experienced monad transformers and other similar abstractions,
+but is not clear if you don't have this experience.
+Many functional programmers come to prefer avoiding subtyping,
+as it plays poorly with implicit resolution and type inference,
+but there could be an argument to use it here.
+As always the best decisions depend on the context in which the could will be used.
