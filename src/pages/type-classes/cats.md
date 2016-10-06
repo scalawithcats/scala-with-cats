@@ -1,16 +1,16 @@
 ## Meet Cats
 
-In the previous section we saw how to implement type classes in Scala. 
+In the previous section we saw how to implement type classes in Scala.
 In this section we will look at how type classes are implemented in Cats.
 
-Cats is written using a modular structure 
-that allows us to choose which type classes, instances, 
-and interface methods we want to use. 
+Cats is written using a modular structure
+that allows us to choose which type classes, instances,
+and interface methods we want to use.
 Let's take a first look using [`cats.Show`][cats.Show] as an example.
 
-`Show` is Cats' equivalent of 
-the `Printable` type class we defined in the last section. 
-It provides a mechanism for 
+`Show` is Cats' equivalent of
+the `Printable` type class we defined in the last section.
+It provides a mechanism for
 producing developer-friendly console output without using `toString`.
 
 `Show` defines one method of interest:
@@ -21,29 +21,29 @@ def show(value: A): String
 
 ### Importing Type Classes
 
-The type classes in Cats are defined in the [`cats`][cats.package] package. 
+The type classes in Cats are defined in the [`cats`][cats.package] package.
 We can import `Show` directly from this package:
 
 ```tut:book:silent
 import cats.Show
 ```
 
-The companion object of every Cats type class has an `apply` method 
+The companion object of every Cats type class has an `apply` method
 that locates an instance for any type we specify:
 
 ```tut:book:fail
 val showInt = Show.apply[Int]
 ```
 
-Oops---that didn't work! 
-The `apply` method uses *implicits* to look up individual instances, 
+Oops---that didn't work!
+The `apply` method uses *implicits* to look up individual instances,
 so we'll have to bring some instances into scope.
 
 ### Importing Default Instances {#importing-default-instances}
 
-The [`cats.instances`][cats.instances] package 
-provides default instances for a wide variety of types. 
-We can import these as shown in the table below. 
+The [`cats.instances`][cats.instances] package
+provides default instances for a wide variety of types.
+We can import these as shown in the table below.
 Each import provides instances of all Cats' type classes
 for a specific target type:
 
@@ -66,9 +66,9 @@ and so on...                                     See the [`cats.instances`][cats
 ------------------------------------------------------------------------------
 
 <div class="callout callout-info">
-Most people use `import cats.implicits.all._` 
+Most people use `import cats.implicits.all._`
 to bring all instances into scope at the same time.
-In this book we will use specific imports 
+In this book we will use specific imports
 to show you exactly which instances we need in each case.
 Don't feel you have to do this in your code.
 </div>
@@ -83,7 +83,7 @@ val showInt:    Show[Int]    = Show.apply[Int]
 val showString: Show[String] = Show.apply[String]
 ```
 
-That's better! We now have access to two instances of `Show`, 
+That's better! We now have access to two instances of `Show`,
 and can use them to print `Ints` and `Strings`:
 
 ```tut:book
@@ -94,16 +94,16 @@ val stringAsString: String =
   showString.show("abc")
 ```
 
-Notice that the output for `String` 
+Notice that the output for `String`
 is wrapped in double quotes like a Scala string literal.
-This hints at `Show's` intended purpose---to 
+This hints at `Show's` intended purpose---to
 provide useful debugging output for developers.
 
 ### Importing Interface Syntax
 
-We can make `Show` easier to use by 
+We can make `Show` easier to use by
 importing the *interface syntax* from [`cats.syntax.show`][cats.syntax.show].
-This adds a `show` method to any type 
+This adds a `show` method to any type
 for which we have an instance of `Show` in scope:
 
 ```tut:book:silent
@@ -121,7 +121,7 @@ We will introduce these as we encounter them in later sections and chapters.
 
 ### Defining Custom Instances {#defining-custom-instances}
 
-There are two methods on the companion object of `Show` 
+There are two methods on the companion object of `Show`
 that we can use to define instances for our own types:
 
 ```scala
@@ -136,26 +136,24 @@ These allows us to quickly construct instances of `Show`.
 
 ```tut:book:silent
 import java.util.Date
-```
 
-```tut:book
-implicit val dateShow: Show[Date] = 
+implicit val dateShow: Show[Date] =
   Show.show(date => s"It's been ${date.getTime}ms since the epoch.")
 ```
 
-These definition helpers exist for `Show` 
+These definition helpers exist for `Show`
 but don't make sense for all Cats type classes.
 We will introduce helpers for other type classes as we come to then.
 
 ### Exercise: Cat Show
 
-Re-implement the `Cat` application from the previous section 
+Re-implement the `Cat` application from the previous section
 using `Show` instead of `Printable`.
 
 <div class="solution">
-First let's import everything we need from Cats: 
+First let's import everything we need from Cats:
 the `Show` type class,
-the instances for `Int` and `String`, 
+the instances for `Int` and `String`,
 and the interface syntax:
 
 ```tut:book:silent
@@ -195,12 +193,12 @@ println(Cat("Garfield", 35, "ginger and black").show)
 Cats type classes are defined in the [`cats`][cats.package] package.
 For example, the `Show` type class is defined as [`cats.Show`][cats.Show].
 
-Default instances are defined in the 
+Default instances are defined in the
 [`cats.instances`][cats.instances] package.
-Imports are organized by parameter type 
+Imports are organized by parameter type
 (as opposed to by type class).
 
 Interface syntax is defined in the [`cats.syntax`][cats.syntax] package.
 There are separate syntax imports for each type class.
-For example, the syntax for `Show` is defined in 
+For example, the syntax for `Show` is defined in
 [`cats.syntax.show`][cats.syntax.show].

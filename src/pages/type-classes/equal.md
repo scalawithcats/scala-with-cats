@@ -213,7 +213,7 @@ optionCat1 =!= optionCat2
 ### Take Home Points
 
 In this section we introduced
-a new type class---[`cats.Eq`][cats.Eq]---that lets us
+a new type class---[`cats.Eq`][cats.kernel.Eq]---that lets us
 perform type-safe equality checks:
 
  - we create an instance `Eq[A]` to
