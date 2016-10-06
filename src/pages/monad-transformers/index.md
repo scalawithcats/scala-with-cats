@@ -253,7 +253,7 @@ However, we can't define this in one line
 because `XorT` has three type parameters:
 
 ```tut:book:silent
-import cats.XorT
+import cats.data.XorT
 ```
 
 ```tut:book:fail

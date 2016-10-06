@@ -4,11 +4,13 @@ One of the frequent problems people encounter when using `Traverse`
 is that it doesn't play well with effect types with two or more type parameters.
 For example, suppose we have a `List` of `Xors`:
 
-```tut:book
-import cats.data.Xor,
-       cats.instances.list._,
-       cats.syntax.traverse._
+```tut:book:silent
+import cats.data.Xor
+import cats.instances.list._
+import cats.syntax.traverse._
+```
 
+```tut:book
 val xors: List[Xor[String, Int]] =
   List(Xor.left("poor"), Xor.right(1337))
 ```
@@ -42,7 +44,7 @@ to create a type constructor of the correct shape.
 
 There are two possible solutions as you can see below:
 
-```tut:book
+```tut:book:silent
 type G[A] = Xor[A, Int]
 type G[A] = Xor[String, A]
 ```
@@ -68,11 +70,9 @@ xors.sequenceU
 The inner workings of `Unapply` aren't particularly important---
 all we need to know is that this tool is available to fix these kinds of problems.
 
-It is worth noting that [SI-2712][link-si2712] was fixed by Miles Sabin in a patch to Scala 2.12.
+It is worth noting that [SI-2712][link-si2712] will be fixed in Scala 2.12.1
+and is already fixed in [Typelevel Scala][link-typelevel-scala] 2.11.8.
 The fix allows calls to `traverse` and `sequence` to compile in a much wider set of situations,
 although tools like `Unapply` will still be necessary in certain cases in the future.
-
-For a more comprehensive write-up of SI-2712
-see [this post by Daniel Spiewak][link-spiewak-si2712].
-Miles' SI-2712 fix can also be backported
-to Scala 2.11 and 2.10 using [this compiler plugin][link-si2712-compiler-plugin].
+The SI-2712 fix can be backported to Scala 2.11 and 2.10
+using [this compiler plugin][link-si2712-compiler-plugin].

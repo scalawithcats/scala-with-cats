@@ -136,10 +136,15 @@ that monads cannot.
 `Xor` is a `Monad`, and as we have seen,
 `Monads` define `product` in terms of `flatMap` and `pure`:
 
-```scala
-def product[A, B](fa: Xor[A], fb: Xor[B]): Xor[(A, B)] =
-  flatMap(fa) { a =>
-    map(fb) { b =>
+```tut:book:silent
+import cats.Monad
+import cats.data.Xor
+
+type ErrorOr[A] = String Xor A
+
+def product[A, B](fa: ErrorOr[A], fb: ErrorOr[B]): ErrorOr[(A, B)] =
+  Monad[ErrorOr].flatMap(fa) { a =>
+    Monad[ErrorOr].map(fb) { b =>
       (a, b)
     }
   }

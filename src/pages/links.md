@@ -95,3 +95,6 @@
 [link-scalaz-contrib]: https://github.com/typelevel/scalaz-contrib
 [link-json]: http://json.org/
 [link-bnf]: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_Form
+[link-si2712]: https://issues.scala-lang.org/browse/SI-2712
+[link-si2712-compiler-plugin]: https://github.com/milessabin/si2712fix-plugin
+[link-typelevel-scala]: https://github.com/typelevel/scala

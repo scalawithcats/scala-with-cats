@@ -13,11 +13,13 @@ Cats provides another data type called `Validated` that is an applicative, *not*
 The implementation of `product` for `Validated` is therefore free to accumulate errors.
 Here's an example:
 
-```tut:book
+```tut:book:silent
 import cats.data.Validated
 import cats.instances.list._
 import cats.syntax.cartesian._
+```
 
+```tut:book
 (
   Validated.invalid(List("Fail1")) |@|
   Validated.invalid(List("Fail2"))
@@ -28,34 +30,41 @@ import cats.syntax.cartesian._
 This means we can use any `Monoid` as an error type, including `Lists`, `Vectors`, and `Strings`.
 Here are a few concrete examples:
 
-```tut:book
+```tut:book:silent
 import cats.Cartesian
 
 type StringOr[A] = Validated[String, A]
 type ListOr[A] = Validated[List[String], A]
 type VectorOr[A] = Validated[Vector[Int], A]
 
-// Import the Semigroup for String:
-import cats.instances.string._
+import cats.instances.string._ // Semigroup for String
+```
 
+```tut:book
 // Concatenate error strings:
 Cartesian[StringOr].product(
   Validated.invalid("Hello"),
   Validated.invalid("world")
 )
+```
 
-// Import the Semigroup for List:
-import cats.instances.list._
+```tut:book:silent
+import cats.instances.list._ // Semigroup for List
+```
 
+```tut:book
 // Combine lists of errors:
 Cartesian[ListOr].product(
   Validated.invalid(List("Hello")),
   Validated.invalid(List("world"))
 )
+```
 
-// Import the Semigroup for Vector:
-import cats.instances.vector._
+```tut:book:silent
+import cats.instances.vector._ // Semigroup for Vector
+```
 
+```tut:book
 // Combine vectors of errors:
 Cartesian[VectorOr].product(
   Validated.invalid(Vector(404)),
@@ -86,9 +95,11 @@ val i = Validated.invalid[String, Int]("Badness")
 As a third option, we can import enriched `valid` and `invalid` methods
 from `cats.syntax.validated`:
 
-```tut:book
+```tut:book:silent
 import cats.syntax.validated._
+```
 
+```tut:book
 123.valid[String]
 "message".invalid[Int]
 ```
@@ -118,9 +129,11 @@ Validated.fromOption[String, Int](None, "Badness")
 We can convert back and forth between `Validated` and `Xor`
 using the `toXor` and `toValidated` methods:
 
-```tut:book
+```tut:book:silent
 import cats.data.Xor
+```
 
+```tut:book
 "Badness".invalid[Int].toXor
 "Badness".invalid[Int].toXor.toValidated
 ```
@@ -176,7 +189,7 @@ We want to validate an HTML registration form.
 We receive request data from the client in a `Map[String, String]`
 and we want to parse it to create a `User` object:
 
-```tut:book
+```tut:book:silent
 case class User(name: String, age: Int)
 ```
 
@@ -205,7 +218,7 @@ to create a type constructor with a single parameter
 that we can use with `Cartesian`.
 We can do this with a simple type alias:
 
-```tut:book
+```tut:book:silent
 type Result[A] = Validated[List[String], A]
 ```
 </div>
@@ -231,7 +244,7 @@ Here are the methods.
 We use `Xor` in places where we need fail-fast semantics
 and switch to `Validated` when we need to accumulate errors:
 
-```tut:book
+```tut:book:silent
 import cats.data.Xor
 
 def getValue(name: String)(data: Map[String, String]): List[String] Xor String =
@@ -270,13 +283,15 @@ Finally, use a `Cartesian` to combine the results of `readName` and `readAge` to
 There are a couple of ways to do this.
 One option is to use `product` and `map`:
 
-```tut:book
+```tut:book:silent
 def readUser(data: Map[String, String]): Result[User] =
   Cartesian[Result].product(
     readName(data),
     readAge(data)
   ).map(User.tupled)
+```
 
+```tut:book
 readUser(Map("name" -> "Dave", "age" -> "37"))
 
 readUser(Map("age" -> "-1"))
@@ -284,14 +299,16 @@ readUser(Map("age" -> "-1"))
 
 More idiomatically we can use the cartesian builder syntax:
 
-```tut:book
+```tut:book:silent
 import cats.syntax.cartesian._
 
 def readUser(data: Map[String, String]): Result[User] = (
   readName(data) |@|
   readAge(data)
 ).map(User.apply)
+```
 
+```tut:book
 readUser(Map("name" -> "Dave", "age" -> "37"))
 
 readUser(Map("age" -> "-1"))

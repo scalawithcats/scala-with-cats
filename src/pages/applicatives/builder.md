@@ -12,10 +12,12 @@ We import the syntax, called "cartesian builder" syntax,
 from `cats.syntax.cartesian`.
 Here is an example:
 
-```tut:book
+```tut:book:silent
 import cats.instances.option._
 import cats.syntax.cartesian._
+```
 
+```tut:book
 (Option(123) |@| Option("abc")).tupled
 ```
 
@@ -96,9 +98,11 @@ we get a compile-time error:
 ```tut:book
 val add: (Int, Int) => Int = (a, b) => a + b
 ```
+
 ```tut:book:fail
 (Option(1) |@| Option(2) |@| Option(3)).map(add)
 ```
+
 ```tut:book:fail
 (Option("cats") |@| Option(true)).map(add)
 ```
@@ -114,10 +118,12 @@ that accept implicit instances of `Contravariant` and `Invariant`.
 For example, `Option` is a regular covariant functor,
 so we can use it with `map`, `imap`, and `tupled` but not `contramap`:
 
-```tut:book
-import cats.instances.option._,
-       cats.syntax.cartesian._
+```tut:book:silent
+import cats.instances.option._
+import cats.syntax.cartesian._
+```
 
+```tut:book
 (Option(1) |@| Option(2)).map(_ + _)
 
 (Option(1) |@| Option(2)).tupled

@@ -12,13 +12,15 @@ If we model this with a monad like `Xor`, we fail fast and lose errors.
 For example, the code below fails on the first call to `parseInt`
 and doesn't go any further:
 
-```tut:book
+```tut:book:silent
 import cats.data.Xor
 
 def parseInt(str: String): String Xor Int =
   Xor.catchOnly[NumberFormatException](str.toInt).
     leftMap(_ => s"Couldn't read $str")
+```
 
+```tut:book
 for {
   a <- parseInt("a")
   b <- parseInt("b")
@@ -33,7 +35,7 @@ However, monadic comprehension only allows us to run them in sequence.
 Even on a multicore CPU,
 the code below runs in sequence as you can see from the timestamps:
 
-```tut:book
+```tut:book:silent
 import cats.data.Xor
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -52,7 +54,9 @@ val timestamps = for {
   b <- Future(getTimestamp)
   c <- Future(getTimestamp)
 } yield (a, b, c)
+```
 
+```tut:book
 Await.result(timestamps, Duration.Inf)
 ```
 

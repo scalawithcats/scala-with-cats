@@ -12,23 +12,26 @@ We can summon instances as usual using `Foldable.apply`
 and call their implementations of `foldLeft` directly.
 Here is an example using `List`:
 
-```tut:book
+```tut:book:silent
 import cats.Foldable
-
-val ints = List(1, 2, 3)
-
 import cats.instances.list._
 
+val ints = List(1, 2, 3)
+```
+
+```tut:book
 Foldable[List].foldLeft(ints, 0)(_ + _)
 ```
 
 And here is an example using `Option`:
 
-```tut:book
-val maybeInt = Option(1)
-
+```tut:book:silent
 import cats.instances.option._
 
+val maybeInt = Option(1)
+```
+
+```tut:book
 Foldable[Option].foldLeft(maybeInt, "")(_ + _)
 ```
 
@@ -37,13 +40,15 @@ fold over its values (as opposed to its keys).
 Because `Map` has two type parameters,
 we have to fix one of them to summon the `Foldable`:
 
-```tut:book
+```tut:book:silent
+import cats.instances.map._
+
 type StringMap[A] = Map[String, A]
 
 val stringMap = Map("a" -> "b", "c" -> "d")
+```
 
-import cats.instances.map._
-
+```tut:book
 Foldable[StringMap].foldLeft(stringMap, "nil")(_ + "," + _)
 ```
 
@@ -64,13 +69,15 @@ We can see the stack depth changing as we iterate across the stream.
 The longer the stream, the larger the stack requirements for the fold.
 A sufficiently large stream will trigger a `StackOverflowException`:
 
-```tut:book
+```tut:book:silent
 import cats.Eval
 import cats.Foldable
 
 def stackDepth: Int =
   Thread.currentThread.getStackTrace.length
+```
 
+```tut:book
 (1 to 5).toStream.foldRight(0) { (item, accum) =>
   println(stackDepth)
   item + accum
@@ -81,11 +88,13 @@ As we saw in the [monads chapter](#eval), however,
 `Eval's` `map` and `flatMap` are trampolined:
 `Foldable's` `foldRight` maintains the same stack depth throughout:
 
-```tut:book
+```tut:book:silent
 import cats.instances.stream._
 
 val foldable = Foldable[Stream]
+```
 
+```tut:book
 val accum: Eval[Int] = // the accumulator is an Eval
   Eval.now(0)
 
@@ -96,8 +105,7 @@ val result: Eval[Int] = // and the result is an Eval
       accum.map(_ + item)
   }
 
-// We call the value method to start the actual calculation:
-result.value
+result.value // we call `value` to start the actual calculation
 ```
 
 <div class="callout callout-info">
@@ -148,28 +156,34 @@ Cats provides two methods that make use of `Monoids`:
 
 For example, we can use `combineAll` to sum over a `List[Int]`:
 
-```tut:book
-import cats.instances.int._ // import Monoid[Int]
+```tut:book:silent
+import cats.instances.int._ // Monoid of Int
+```
 
+```tut:book
 Foldable[List].combineAll(List(1, 2, 3))
 ```
 
 Alternatively, we can use `foldMap`
 to convert each `Int` to a `String` and concatenate them:
 
-```tut:book
-import cats.instances.string._ // import Monoid[String]
+```tut:book:silent
+import cats.instances.string._ // Monoid of String
+```
 
+```tut:book
 Foldable[List].foldMap(List(1, 2, 3))(_.toString)
 ```
 
 Finally, we can compose `Foldables` to support deep traversal of nested sequences:
 
-```tut:book
-import cats.instances.vector._
+```tut:book:silent
+import cats.instances.vector._ // Monoid of Vector
 
 val ints = List(Vector(1, 2, 3), Vector(4, 5, 6))
+```
 
+```tut:book
 Foldable[List].compose(Foldable[Vector]).combineAll(ints)
 ```
 
@@ -180,9 +194,11 @@ in syntax form via `cats.syntax.foldable`.
 In each case, the first argument to the method on `Foldable`
 becomes the method receiver:
 
-```tut:book
+```tut:book:silent
 import cats.syntax.foldable._
+```
 
+```tut:book
 List(1, 2, 3).combineAll
 
 List(1, 2, 3).foldMap(_.toString)
@@ -202,9 +218,11 @@ List(1, 2, 3).foldLeft(0)(_ + _)
 
 whereas the following generic code will use `Foldable`:
 
-```tut:book
+```tut:book:silent
 import scala.language.higherKinds
+```
 
+```tut:book
 def sum[F[_]: Foldable](values: F[Int]): Int =
   values.foldLeft(0)(_ + _)
 ```

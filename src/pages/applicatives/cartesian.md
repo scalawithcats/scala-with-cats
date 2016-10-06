@@ -28,10 +28,12 @@ Let's see `Cartesian` in action.
 The code below summons a type class instance for `Option`
 and uses it to zip two values:
 
-```tut:book
+```tut:book:silent
 import cats.Cartesian
 import cats.instances.option._
+```
 
+```tut:book
 Cartesian[Option].product(Some(123), Some("abc"))
 ```
 
@@ -47,7 +49,7 @@ can you implement the `product` method for `Option`
 purely in terms of operations on `Monad` (i.e. `flatMap`, `map`, and `pure`)?
 Your method should have the signature
 
-```tut:book
+```tut:book:silent
 def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
   ???
 ```
@@ -55,10 +57,12 @@ def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
 <div class="solution">
 We can implement `product` in terms of `map` and `flatMap` like so:
 
-```tut:book
+```tut:book:silent
 def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
   fa.flatMap { a => fb.map { b => (a, b) } }
+```
 
+```tut:book
 product(Some(123), Some("abc"))
 ```
 
@@ -66,13 +70,15 @@ You might recognise the `flatMap` / `map` combination
 as being equivalent to a for comprehension,
 so we can alternatively write `product` as
 
-```tut:book
+```tut:book:silent
 def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
   for {
     a <- fa
     b <- fb
   } yield (a, b)
+```
 
+```tut:book
 product(Some(123), Some("abc"))
 ```
 </div>
@@ -89,20 +95,23 @@ We'll also see some types for which we can define `product` but not a monad inst
 There is also a `Cartesian` instance for `List`. What do you think the following expression will evaluate to?
 
 ```scala
-Cartesian[List].product(List(1,2,3), List(4,5,6))
+Cartesian[List].product(List(1, 2), List(3, 4))
 ```
 
 <div class="solution">
 There are at least two reasonable answers here.
-The first is that `product` zips the lists, giving `List( (1,4) , (2,5), (3,6) )`.
+The first is that `product` *zips* the lists, giving `List((1, 3), (2, 4))`.
 The second is that `product` computes the *cartesian product*,
-giving `List( (1,4), (1,5), (1,6), (2,4), (2,5), (2,6), (3,4), (3,5), (3,6) )`.
+giving `List((1, 3), (1, 4), (2, 3), (2, 4))`.
 The name `Cartesian` is a bit of a hint as to which answer we'll get,
 but let's run it too see for sure.
 
-```tut:book
+```tut:book:silent
 import cats.instances.list._
-Cartesian[List].product(List(1,2,3), List(4,5,6))
+```
+
+```tut:book
+Cartesian[List].product(List(1, 2), List(3, 4))
 ```
 
 We see that we get the cartesian product,
@@ -112,9 +121,9 @@ that we developed for `Option`.
 
 ```tut:book
 for {
-  a <- List(1,2,3)
-  b <- List(4,5,6)
-} yield (a,b)
+  a <- List(1, 2)
+  b <- List(3, 4)
+} yield (a, b)
 ```
 </div>
 
@@ -127,7 +136,7 @@ The reason we get the cartesian product is
 to have consistent behavior for all monad instances.
 We can define `product` for any `Monad` as
 
-```tut:book
+```tut:book:silent
 import cats.Monad
 import cats.syntax.flatMap._
 import cats.syntax.functor._
@@ -160,7 +169,7 @@ The semantics of `product` are, of course, different for every data type.
 For example, the `Cartesian` for `Future`
 zips the results of asynchronous computations:
 
-```tut:book
+```tut:book:silent
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
@@ -168,7 +177,9 @@ import scala.concurrent.duration.Duration
 import cats.instances.future._
 
 val future = Cartesian[Future].product(Future(123), Future("abc"))
+```
 
+```tut:book
 Await.result(future, Duration.Inf)
 ```
 
@@ -201,11 +212,13 @@ This means our `product` example above is semantically identical
 to the conventional approach for combining parallel compuatations in Scala:
 create the `Futures` first and combine the results using `flatMap`:
 
-```tut:book
+```tut:book:silent
 // Start the futures in parallel:
 val fa = Future(123)
 val fb = Future("abc")
+```
 
+```tut:book
 // Combine their results using flatMap:
 val future = for {
   a <- fa
@@ -213,16 +226,17 @@ val future = for {
 } yield (a, b)
 ```
 
-
 ### Combining *Xors*
 
 When combining `Xors`, we have to use a type alias to fix the left hand side:
 
-```tut:book
+```tut:book:silent
 import cats.data.Xor
 
 type ErrorOr[A] = List[String] Xor A
+```
 
+```tut:book
 Cartesian[ErrorOr].product(
   Xor.right(123),
   Xor.right("abc")
@@ -280,17 +294,17 @@ For simplicity we'll use `Option`, but the idea generalises to other types.
 
 If we combine three elements using `product` we get a nested tuple.
 
-```tut:book
+```tut:book:silent
 val instance = Cartesian[Option]
+```
 
+```tut:book
 val result = instance.product(Some(1), instance.product(Some(2), Some(3)))
 ```
 
 In fact there are two different results we can get, depending on the order of calls to `product`.
 
 ```tut:book
-val instance = Cartesian[Option]
-
 val result2 = instance.product(instance.product(Some(1), Some(2)), Some(3))
 ```
 
@@ -302,7 +316,9 @@ What property would we like `product` to have, to avoid this issue?
 <div class="solution">
 We would like `product` to be associative, so that
 
-`product(a, product(b, c)) == product(product(a, b), c)`
+```scala
+product(a, product(b, c)) == product(product(a, b), c)
+```
 </div>
 
 The `CartesianBuilder` provides associativity

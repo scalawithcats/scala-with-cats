@@ -13,10 +13,12 @@ In general, a `fold` function allows users to transform one algebraic data type 
 For example, the `fold` method on `Option` can return any algebraic data type
 by providing handlers for the `Some` and `None` cases:
 
-```tut:book
+```tut:book:silent
 def show[A](option: Option[A]): String =
   option.fold("it's none")(v => s"it's some with value $v")
+```
 
+```tut:book
 show(None)
 
 show(Some(10))
@@ -28,10 +30,12 @@ pair and a terminator, similar to a regular `List`.
 We supply an *accumulator* value and a *binary function*
 to combine it with an item in the sequence:
 
-```tut:book
+```tut:book:silent
 def show[A](list: List[A]): String =
   list.foldLeft("nil")((accum, item) => s"$item then $accum")
+```
 
+```tut:book
 show(Nil)
 
 show(List(1, 2, 3))
@@ -129,30 +133,36 @@ in terms of `foldRight`.
 <div class="solution">
 Here are the solutions:
 
-```tut:book
+```tut:book:silent
 def map[A, B](list: List[A])(func: A => B): List[B] =
   list.foldRight(List.empty[B]) { (item, accum) =>
     func(item) :: accum
   }
-
-map(List(1, 2, 3))(_ * 2)
 ```
 
 ```tut:book
+map(List(1, 2, 3))(_ * 2)
+```
+
+```tut:book:silent
 def flatMap[A, B](list: List[A])(func: A => List[B]): List[B] =
   list.foldRight(List.empty[B]) { (item, accum) =>
     func(item) ::: accum
   }
-
-flatMap(List(1, 2, 3))(a => List(a, a * 10, a * 100))
 ```
 
 ```tut:book
+flatMap(List(1, 2, 3))(a => List(a, a * 10, a * 100))
+```
+
+```tut:book:silent
 def filter[A](list: List[A])(func: A => Boolean): List[A] =
   list.foldRight(List.empty[A]) { (item, accum) =>
     if(func(item)) item :: accum else accum
   }
+```
 
+```tut:book
 filter(List(1, 2, 3))(_ % 2 == 1)
 ```
 
@@ -160,26 +170,30 @@ We've provided two definitions of `sum`,
 one using `scala.math.Numeric`
 (which recreates the built-in functionality accurately)...
 
-```tut:book
+```tut:book:silent
 import scala.math.Numeric
 
 def sumWithNumeric[A](list: List[A])(implicit numeric: Numeric[A]): A =
   list.foldRight(numeric.zero)(numeric.plus)
+```
 
+```tut:book
 sumWithNumeric(List(1, 2, 3))
 ```
 
 and one using `cats.Monoid`
 (which is more appropriate to the content of this book):
 
-```tut:book
+```tut:book:silent
 import cats.Monoid
 
 def sumWithMonoid[A](list: List[A])(implicit monoid: Monoid[A]): A =
   list.foldRight(monoid.empty)(monoid.combine)
 
 import cats.instances.int._
+```
 
+```tut:book
 sumWithMonoid(List(1, 2, 3))
 ```
 </div>

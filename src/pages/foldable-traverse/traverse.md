@@ -13,8 +13,10 @@ These methods provide `Future`-specific implementations of the `Traverse` type c
 As an example, suppose we have a list of server hostnames
 and a method to poll a host for its uptime:
 
-```tut:book
-import scala.concurrent._, duration._, ExecutionContext.Implicits.global
+```tut:book:silent
+import scala.concurrent._
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 val hostnames = List("alpha.example.com", "beta.example.com", "gamma.demo.com")
 
@@ -28,7 +30,7 @@ because the result---a `List[Future[Int]]`---would contain more than one `Future
 To get something we can block on, we need to reduce the results to a single `Future`.
 Let's start by doing this manually using a fold:
 
-```tut:book
+```tut:book:silent
 val allUptimes: Future[List[Int]] =
   hostnames.foldLeft(Future(List[Int]())) { (uptimes, host) =>
     val uptime = getUptime(host)
@@ -37,7 +39,9 @@ val allUptimes: Future[List[Int]] =
       uptime  <- uptime
     } yield uptimes :+ uptime
   }
+```
 
+```tut:book
 Await.result(allUptimes, Duration.Inf)
 ```
 
@@ -48,10 +52,12 @@ because of the need to create and combine `Futures` at every iteration.
 We can improve on things greatly using `Future.traverse`,
 which is tailor made for this pattern:
 
-```tut:book
+```tut:book:silent
 val allUptimes: Future[List[Int]] =
   Future.traverse(hostnames)(getUptime)
+```
 
+```tut:book
 Await.result(allUptimes, Duration.Inf)
 ```
 
@@ -120,10 +126,10 @@ many operations involving sequences and other data types.
 If we squint, we'll see that we can rewrite the `traverse` method in terms of an `Applicative`.
 Our accumulator is equivalent to `Applicative.pure`:
 
-```tut:book
-import cats.Applicative,
-       cats.instances.future._,
-       cats.syntax.applicative._
+```tut:book:silent
+import cats.Applicative
+import cats.instances.future._
+import cats.syntax.applicative._
 
 // Creating an accumulator manually:
 val oldAccum = Future(List[Int]())
@@ -134,7 +140,7 @@ val newAccum = List[Int]().pure[Future]
 
 and our combinator is equivalent to `Cartesian.combine`:
 
-```tut:book
+```tut:book:silent
 // Combining an accumulator and a hostname manually:
 def oldCombine(uptimes: Future[List[Int]], host: String): Future[List[Int]] = {
   val uptime = getUptime(host)
@@ -154,7 +160,7 @@ def newCombine(accum: Future[List[Int]], host: String): Future[List[Int]] =
 If we substitute these snippets back into the definition of `traverse`,
 we can generalise it to to work with any `Applicative`:
 
-```tut:book
+```tut:book:silent
 import scala.language.higherKinds
 
 def listTraverse[F[_] : Applicative, A, B](inputs: List[A])(func: A => F[B]): F[List[B]] =
@@ -193,9 +199,11 @@ so its cartesian `combine` function is based on `flatMap`.
 We'll end up with a `Vector` of `Lists`
 of all the possible combinations of `List(1, 2)` and `List(3, 4)`:
 
-```tut:book
+```tut:book:silent
 import cats.instances.vector._
+```
 
+```tut:book
 listSequence(List(Vector(1, 2), Vector(3, 4)))
 ```
 </div>
@@ -219,7 +227,7 @@ listSequence(List(Vector(1, 2), Vector(3, 4), Vector(5, 6)))
 
 Here's an example that uses `Options`:
 
-```tut:book
+```tut:book:silent
 import cats.instances.option._
 
 def process(inputs: List[Int]) =
@@ -252,9 +260,9 @@ process(List(1, 2, 3))
 
 Finally, gere's an example that uses `Validated`:
 
-```tut:book
-import cats.data.Validated,
-       cats.instances.list._ // Applicative[ErrorOr] needs a Monoid[List]
+```tut:book:silent
+import cats.data.Validated
+import cats.instances.list._ // Applicative[ErrorOr] needs a Monoid[List]
 
 type ErrorOr[A] = Validated[List[String], A]
 
