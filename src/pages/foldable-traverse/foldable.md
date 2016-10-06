@@ -76,7 +76,8 @@ List(1, 2, 3).foldRight(0)(_ - _)
 
 ### Exercise: Reflecting on folds
 
-Try using `foldLeft` and `foldRight` with an empty list as the accumulator and `::` as the binary operator. What results do you get in each case?
+Try using `foldLeft` and `foldRight` with an empty list as the accumulator
+and `::` as the binary operator. What results do you get in each case?
 
 <div class="solution">
 Folding from left to right reverses the list:
@@ -118,7 +119,12 @@ List(1, 2, 3).foldLeft(List.empty[Int])(_ :: _)
 
 #### Exercise: Scaf-fold-ing other methods
 
-`foldLeft` and `foldRight` are very general transformations---they let us transform sequences into any other algebraic data type. We can use folds to implement all of the other high-level sequence operations we know. Prove this to yourself my implementing substitutes for `List's` `map`, `flatMap`, `filter`, and `sum` methods in terms of `foldRight`.
+`foldLeft` and `foldRight` are very general transformations---they
+let us transform sequences into any other algebraic data type.
+We can use folds to implement all of the other high-level sequence operations we know.
+Prove this to yourself by
+implementing substitutes for `List's` `map`, `flatMap`, `filter`, and `sum` methods
+in terms of `foldRight`.
 
 <div class="solution">
 Here are the solutions:

@@ -184,11 +184,14 @@ listSequence(List(Vector(1, 2), Vector(3, 4)))
 ```
 
 <div class="solution">
-The argument is of type `List[Vector[Int]]`, so we're using the `Applicative` for `Vector`
+The argument is of type `List[Vector[Int]]`,
+so we're using the `Applicative` for `Vector`
 and the return type is going to be `Vector[List[Int]]`.
 
-`Vector` is a monad, so its cartesian `combine` function is based on `flatMap`.
-We'll end up with a `Vector` of `Lists` of all the possible combinations of `List(1, 2)` and `List(3, 4)`:
+`Vector` is a monad,
+so its cartesian `combine` function is based on `flatMap`.
+We'll end up with a `Vector` of `Lists`
+of all the possible combinations of `List(1, 2)` and `List(3, 4)`:
 
 ```tut:book
 import cats.instances.vector._
@@ -233,7 +236,8 @@ process(List(1, 2, 3))
 <div class="solution">
 The arguments to `listTraverse` are of types `List[Int]` and `Int => Option[Int]`,
 so the return type is `Option[List[Int]]`.
-Again, `Option` is a monad, so the cartesian `combine` function follows from `flatMap`.
+Again, `Option` is a monad,
+so the cartesian `combine` function follows from `flatMap`.
 The semantics are therefore fail fast error handling:
 if all inputs are even, we get a list of outputs.
 Otherwise we get `None`:
@@ -272,7 +276,8 @@ process(List(1, 2, 3))
 ```
 
 <div class="solution">
-The return type here is `ErrorOr[List[Int]]`, which expands to `Validated[List[String], List[Int]]`.
+The return type here is `ErrorOr[List[Int]]`,
+which expands to `Validated[List[String], List[Int]]`.
 The semantics for cartesian `combine` on validated are accumulating error handling,
 so the result is either a list of even `Ints`,
 or a list of errors detailing which `Ints` failed the test:

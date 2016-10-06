@@ -72,5 +72,7 @@ It is worth noting that [SI-2712][link-si2712] was fixed by Miles Sabin in a pat
 The fix allows calls to `traverse` and `sequence` to compile in a much wider set of situations,
 although tools like `Unapply` will still be necessary in certain cases in the future.
 
-For a more comprehensive write-up of SI-2712 see [this post by Daniel Spiewak][link-spiewak-si2712].
-Miles' SI-2712 fix can also be backported to Scala 2.11 and 2.10 using [this compiler plugin][link-si2712-compiler-plugin].
+For a more comprehensive write-up of SI-2712
+see [this post by Daniel Spiewak][link-spiewak-si2712].
+Miles' SI-2712 fix can also be backported
+to Scala 2.11 and 2.10 using [this compiler plugin][link-si2712-compiler-plugin].

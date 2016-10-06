@@ -1,6 +1,7 @@
 ### *Traverse* in Cats
 
-Our `listTraverse` and `listSequence` methods work with any type of `Applicative` effect,
+Our `listTraverse` and `listSequence` methods
+work with any type of `Applicative` effect,
 but they only work with one type of sequence: `List`.
 We can generalise over different sequence types using a type class,
 which brings us to Cats' `Traverse`.
@@ -17,7 +18,8 @@ trait Traverse[F[_]] {
 }
 ```
 
-Cats provides instances for `List`, `Vector`, `Stream`, `Option`, `Xor`, and a variety of other types.
+Cats provides instances for `List`, `Vector`, `Stream`, `Option`, `Xor`,
+and a variety of other types.
 We can summon instances as usual using `Traverse.apply` as usual:
 
 ```tut:book
@@ -27,7 +29,8 @@ import cats.Traverse,
 Traverse[List]
 ```
 
-The `traverse` and `sequence` methods work exactly as described in the previous section:
+The `traverse` and `sequence` methods
+work exactly as described in the previous section:
 
 ```tut:book:invisible
 import scala.concurrent._,
@@ -54,7 +57,8 @@ val numbers = List(Future(1), Future(2), Future(3))
 Await.result(Traverse[List].sequence(numbers), Duration.Inf)
 ```
 
-There are also syntax versions of the methods, imported via [`cats.syntax.traverse`]:
+There are also syntax versions of the methods,
+imported via [`cats.syntax.traverse`]:
 
 ```tut:book
 import cats.syntax.traverse._

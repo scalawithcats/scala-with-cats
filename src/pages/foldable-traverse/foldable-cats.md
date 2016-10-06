@@ -1,10 +1,12 @@
 ### *Foldable* in Cats
 
-Cats' `Foldable` abstracts the two operations `foldLeft` and `foldRight` into a type class.
-Instances of `Foldable` define those two methods
+Cats' `Foldable` abstracts the two operations
+`foldLeft` and `foldRight` into a type class.
+Instances of `Foldable` define these two methods
 and inherit a host of derived methods for free.
 
-Cats provides out-of-the-box instances of `Foldable` for a handful of Scala data types:
+Cats provides out-of-the-box instances of `Foldable`
+for a handful of Scala data types:
 `List`, `Vector`, `Stream`, `Option`, and `Map`.
 We can summon instances as usual using `Foldable.apply`
 and call their implementations of `foldLeft` directly.
@@ -30,7 +32,8 @@ import cats.instances.option._
 Foldable[Option].foldLeft(maybeInt, "")(_ + _)
 ```
 
-The `Foldable` instance for `Map` allows us to fold over its values (as opposed to its keys).
+The `Foldable` instance for `Map` allows us to
+fold over its values (as opposed to its keys).
 Because `Map` has two type parameters,
 we have to fix one of them to summon the `Foldable`:
 
@@ -123,7 +126,8 @@ to ensure that all our `foldRights` are stack safe by default.
 
 #### Folding with Monoids
 
-Cats' `Foldable` provides us with a host of useful methods defined on top of `foldLeft`.
+Cats' `Foldable` provides us with
+a host of useful methods defined on top of `foldLeft`.
 Many of these are facimiles of familiar methods from the standard library,
 including `find`, `exists`, `forall`, `toList`, `isEmpty`, and `nonEmpty`:
 
@@ -136,8 +140,11 @@ Foldable[List].find(List(1, 2, 3))(_ % 2 == 0)
 In addition to these familiar methods,
 Cats provides two methods that make use of `Monoids`:
 
-- `combineAll` (and its alias `fold`) combines all elements in the sequence using their `Monoid`;
-- `foldMap` maps a user-supplied function over the sequence and combines the results using a `Monoid`.
+- `combineAll` (and its alias `fold`) combines
+  all elements in the sequence using their `Monoid`;
+
+- `foldMap` maps a user-supplied function over the sequence
+  and combines the results using a `Monoid`.
 
 For example, we can use `combineAll` to sum over a `List[Int]`:
 
@@ -147,7 +154,8 @@ import cats.instances.int._ // import Monoid[Int]
 Foldable[List].combineAll(List(1, 2, 3))
 ```
 
-Alternatively, we can use `foldMap` to convert each `Int` to a `String` and concatenate them:
+Alternatively, we can use `foldMap`
+to convert each `Int` to a `String` and concatenate them:
 
 ```tut:book
 import cats.instances.string._ // import Monoid[String]
@@ -167,8 +175,10 @@ Foldable[List].compose(Foldable[Vector]).combineAll(ints)
 
 #### Syntax for Foldable
 
-Every method in `Foldable` is available in syntax form via `cats.syntax.foldable`.
-In each case, the first argument to the method on `Foldable` becomes the method receiver:
+Every method in `Foldable` is available
+in syntax form via `cats.syntax.foldable`.
+In each case, the first argument to the method on `Foldable`
+becomes the method receiver:
 
 ```tut:book
 import cats.syntax.foldable._
@@ -183,7 +193,8 @@ List(1, 2, 3).foldMap(_.toString)
 
 Remember that Scala will only use an instance of `Foldable`
 if the method isn't explicitly available on the receiver.
-For example, the following code will use the version of `foldLeft` defined on `List`:
+For example, the following code will
+use the version of `foldLeft` defined on `List`:
 
 ```tut:book
 List(1, 2, 3).foldLeft(0)(_ + _)

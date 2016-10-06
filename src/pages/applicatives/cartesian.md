@@ -42,8 +42,10 @@ Cartesian[Option].product(None, Some("abc"))
 Cartesian[Option].product(Some(123), None)
 ```
 
-Given that `Option` is also a monad can you implement the `product` method for `Option` purely in terms of operations on `Monad` (i.e. `flatMap`, `map`, and `pure`)?
-Your method should have the signature 
+Given that `Option` is also a monad
+can you implement the `product` method for `Option`
+purely in terms of operations on `Monad` (i.e. `flatMap`, `map`, and `pure`)?
+Your method should have the signature
 
 ```tut:book
 def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
@@ -56,11 +58,13 @@ We can implement `product` in terms of `map` and `flatMap` like so:
 ```tut:book
 def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
   fa.flatMap { a => fb.map { b => (a, b) } }
-  
+
 product(Some(123), Some("abc"))
 ```
 
-You might recognise the `flatMap` / `map` combination as being equivalent to a for comprehension, so we can alternatively write `product` as
+You might recognise the `flatMap` / `map` combination
+as being equivalent to a for comprehension,
+so we can alternatively write `product` as
 
 ```tut:book
 def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
@@ -68,14 +72,15 @@ def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
     a <- fa
     b <- fb
   } yield (a, b)
-  
+
 product(Some(123), Some("abc"))
 ```
 </div>
 
 It appears we can implement `product` in terms of the monad operations.
-Why bother with the `Cartesian` type class then? 
-Using `product` (and in particular the `CartesianBuilder` we'll see in the next section) can be more convenient than writing out the for comprehension. 
+Why bother with the `Cartesian` type class then?
+Using `product` (and in particular the `CartesianBuilder` we'll see in the next section)
+can be more convenient than writing out the for comprehension.
 We'll also see some types for which we can define `product` but not a monad instance.
 
 
@@ -88,14 +93,22 @@ Cartesian[List].product(List(1,2,3), List(4,5,6))
 ```
 
 <div class="solution">
-There are at least two reasonable answers here. The first is that `product` zips the lists, giving `List( (1,4) , (2,5), (3,6) )`. The second is that `product` computes the *cartesian product*, giving `List( (1,4), (1,5), (1,6), (2,4), (2,5), (2,6), (3,4), (3,5), (3,6) )`. The name `Cartesian` is a bit of a hint as to which answer we'll get, but let's run it too see for sure.
+There are at least two reasonable answers here.
+The first is that `product` zips the lists, giving `List( (1,4) , (2,5), (3,6) )`.
+The second is that `product` computes the *cartesian product*,
+giving `List( (1,4), (1,5), (1,6), (2,4), (2,5), (2,6), (3,4), (3,5), (3,6) )`.
+The name `Cartesian` is a bit of a hint as to which answer we'll get,
+but let's run it too see for sure.
 
 ```tut:book
 import cats.instances.list._
 Cartesian[List].product(List(1,2,3), List(4,5,6))
 ```
 
-We see that we get the cartesian product, which is also the same answer we get if we generalise the monadic implementation of `product` that we developed for `Option`.
+We see that we get the cartesian product,
+which is also the same answer we get
+if we generalise the monadic implementation of `product`
+that we developed for `Option`.
 
 ```tut:book
 for {
@@ -110,7 +123,9 @@ This raises two questions:
 - why do we get the cartesian product, not `zip`; and
 - what does "cartesian product" mean?
 
-The reason we get the cartesian product is to have consistent behavior for all monad instances. We can define `product` for any `Monad` as
+The reason we get the cartesian product is
+to have consistent behavior for all monad instances.
+We can define `product` for any `Monad` as
 
 ```tut:book
 import cats.Monad
@@ -125,9 +140,18 @@ def product[F[_]: Monad, A, B](fa: F[A], fb: F[B]): F[(A,B)] =
   } yield (a, b)
 ```
 
-Making this choice makes it easier to reason about uses of `product` for a specific monad instance---we only have to remember the semantics of `flatMap` to understand how `product` will work.
+Making this choice makes it easier
+to reason about uses of `product` for a specific monad instance---we
+only have to remember the semantics of `flatMap`
+to understand how `product` will work.
 
-As for the term "cartesian product", you may recall the *Cartesian coordinate system*, otherwise known as the standard xy plane we plot graphs on. In mathematics terminology this is the product of the x and y axes, and includes all possible combinations of x and y. The cartesian product is a generalisation of this idea. For lists it means we get all possible combinations of the elements in the two lists.
+As for the term "cartesian product",
+you may recall the *Cartesian coordinate system*,
+otherwise known as the standard xy plane we plot graphs on.
+In mathematics terminology this is the product of the x and y axes,
+and includes all possible combinations of x and y.
+The cartesian product is a generalisation of this idea.
+For lists it means we get all possible combinations of the elements in the two lists.
 
 
 ### Combining *Futures*
@@ -152,7 +176,8 @@ The example above illustrates nicely what we mean
 by combining the results of *independent* compuatations.
 The two `Futures`, `Future(123)` and `Future("abc")`,
 are started independently of one another and execute in parallel.
-This is in contrast to the following monadic combination, which executes them in sequence:
+This is in contrast to the following monadic combination,
+which executes them in sequence:
 
 ```tut:book
 val future = for {
@@ -247,8 +272,10 @@ so we will cover it separately and extensively later on this chapter.
 
 ### Limitations of Product
 
-In the next section we will introduce the `CartesianBuilder`, which gives us more convenient syntax for combining elements using `product`. 
-To see the problem that this solves, let's look at combining three or more elements using `product`. 
+In the next section we will introduce the `CartesianBuilder`,
+which gives us more convenient syntax for combining elements using `product`.
+To see the problem that this solves,
+let's look at combining three or more elements using `product`.
 For simplicity we'll use `Option`, but the idea generalises to other types.
 
 If we combine three elements using `product` we get a nested tuple.
@@ -267,7 +294,8 @@ val instance = Cartesian[Option]
 val result2 = instance.product(instance.product(Some(1), Some(2)), Some(3))
 ```
 
-This difference is annoying in use, as we need to worry about how values were constructed when we come to use them.
+This difference is annoying in use
+as we need to worry about how values were constructed when we come to use them.
 
 What property would we like `product` to have, to avoid this issue?
 
@@ -277,4 +305,5 @@ We would like `product` to be associative, so that
 `product(a, product(b, c)) == product(product(a, b), c)`
 </div>
 
-The `CartesianBuilder` provides associativity, by effectively flattening tuples when they are combined with `product`.
+The `CartesianBuilder` provides associativity
+by effectively flattening tuples when they are combined with `product`.

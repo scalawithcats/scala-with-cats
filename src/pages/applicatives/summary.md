@@ -1,7 +1,17 @@
 ## Summary
 
-While monads and functors are the most widely used types we've covered in this book, cartesians and applicatives are the most general. These type classes provide a generic mechanism to combine values and apply functions within a context, from which we can fashion monads and a variety of other combinators.
+While monads and functors are the most widely used types we've covered in this book,
+cartesians and applicatives are the most general.
+These type classes provide a generic mechanism
+to combine values and apply functions within a context,
+from which we can fashion monads and a variety of other combinators.
 
-Cartesians and applicatives are most commonly used as a means of combining independent values such as the results of validation rules. Cats provides the `Validated` type for this specific purpose, along with cartesian builder syntax as a convenient way to express the combination of rules.
+Cartesians and applicatives are most commonly used as
+a means of combining independent values such as the results of validation rules.
+Cats provides the `Validated` type for this specific purpose,
+along with cartesian builder syntax as a convenient way to express the combination of rules.
 
-We have almost covered all of the functional programming concepts on our agenda for this book. The next chapter covers `Traverse` and `Foldable`, two powerful type classes for converting between data types. After that we'll cover invariant and contravariant functors, and then we'll look at several case studies that bring together all of the concepts covered.
+We have almost covered all of the functional programming concepts on our agenda for this book.
+The next chapter covers `Traverse` and `Foldable`,
+two powerful type classes for converting between data types.
+After that we'll look at several case studies that bring together all of the concepts covered.

@@ -82,7 +82,7 @@
 [link-don-stewart]: https://donsbot.wordpress.com
 [link-don-stewart-so]: http://stackoverflow.com/questions/27852709/enterprise-patterns-with-functional-programming/27860072#27860072
 [link-essential-scala]: http://underscore.io/training/courses/essential-scala/
-[link-phil-freeman-tailrecm]: http://functorial.com/stack-safety-for-free/index.pdf Stack Safety for Free
+[link-phil-freeman-tailrecm]: http://functorial.com/stack-safety-for-free/index.pdf
 [link-hyperloglog]: http://en.wikipedia.org/wiki/HyperLogLog
 [link-mapreduce]: http://research.google.com/archive/mapreduce.html
 [link-mapreduce-monoid]: http://arxiv.org/abs/1304.7544

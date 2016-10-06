@@ -1,6 +1,9 @@
 ## Combining Futures in Parallel
 
-Scala `Futures` provide a fantastic example of the differences between monadic and applicative combination. If you've ever written code using `Futures`, you've probably made this mistake:
+Scala `Futures` provide a fantastic example of
+the differences between monadic and applicative combination.
+If you've ever written code using `Futures`,
+you've probably made this mistake:
 
 ```tut:book
 import scala.concurrent.Future
@@ -21,7 +24,11 @@ def totalTraffic: Future[Int] =
   } yield a + b + c
 ```
 
-The mistake in this code is that the calls to `getTraffic` are made in sequence rather than in parallel as we expected. We can see this by expanding the for comprehension into its underlying monadic implementation:
+The mistake in this code is that
+the calls to `getTraffic` are made in sequence
+rather than in parallel as we expected.
+We can see this by expanding the for comprehension
+into its underlying monadic implementation:
 
 ```tut:book
 def totalTraffic: Future[Int] =
@@ -34,9 +41,15 @@ def totalTraffic: Future[Int] =
   }
 ```
 
-As you can see in this expanded codebase, the call to `host2` is only made once the call to `host1` is complete. Similarly, the call to `host3` is only made once the call to `host2` is complete. The calls are entirely independent, of course---there's no reason they can't be made in parallel.
+As you can see in this expanded codebase,
+the call to `host2` is only made once the call to `host1` is complete.
+Similarly, the call to `host3` is only made once the call to `host2` is complete.
+The calls are entirely independent, of course---there's
+no reason they can't be made in parallel.
 
-The solution you are probably aware of is to start the three futures running indepedently of one another before combining their results using the for comprehension:
+The solution you are probably aware of
+is to start the three futures running indepedently of one another
+before combining their results using the for comprehension:
 
 ```tut:book
 def totalTraffic: Future[Int] = {
@@ -54,7 +67,10 @@ def totalTraffic: Future[Int] = {
 }
 ```
 
-However, this code misses the point. The problem here is we're using monadic comprehension to combine values when we should be using applicative combination. Here is the same code written using Cats applicatives:
+However, this code misses the point.
+The problem here is we're using monadic comprehension
+to combine values when we should be using applicative combination.
+Here is the same code written using Cats applicatives:
 
 ```tut:book
 import scala.concurrent.Future
@@ -71,4 +87,8 @@ def totalTraffic: Future[Int] =
   )(_ + _ + _)
 ```
 
-In this version of the code, the calls to `getTraffic` are all parameters to `apply3`, meaning they are all started before the call to `apply3`. The semantics are therefore correct: we make the calls to the three hosts in parallel and combine their results when the three `Futures` are complete.
+In this version of the code, the calls to `getTraffic` are all parameters to `apply3`,
+meaning they are all started before the call to `apply3`.
+The semantics are therefore correct:
+we make the calls to the three hosts in parallel
+and combine their results when the three `Futures` are complete.
