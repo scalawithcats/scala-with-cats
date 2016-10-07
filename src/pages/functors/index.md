@@ -6,6 +6,8 @@ but special cases of functors such as
 **monads** and **applicative functors**
 are some of the most commonly used abstractions in Cats.
 
+## Examples of Functors
+
 Informally, a functor is anything with a `map` method.
 You probably know lots of types that have this:
 `Option`, `List`, `Either`, and `Future`, to name a few.
@@ -68,6 +70,84 @@ Again, the structure is preserved:
 if we start with a `Some` we end up with a `Some`:
 
 ![Type chart: mapping over an Option](src/pages/functors/option-map.pdf+svg)
+
+## More Examples of Functors
+
+Let's expand how we think about `map`
+by taking some other examples into account:
+
+**Futures**
+
+`Future` is also a functor
+with a `map` method[^future-error-handling].
+If we start with a `Future[A]`
+and call map supplying a function `A => B`,
+we end up with a `Future[B]`:
+
+[^future-error-handling]: Some functional purists disagree with this
+because the exception handling in Scala futures breaks the functor laws.
+We're going to ignore this detail
+because *real* functional programs don't do exceptions.
+
+```tut:book:silent
+import scala.concurrent.{Future, Await}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+```
+
+```tut:book
+val future1 = Future("Hello world!")
+val future2 = future1.map(_.length)
+
+Await.result(future1, Duration.Inf)
+Await.result(future2, Duration.Inf)
+```
+
+The general pattern looks like the following. Seem familiar?
+
+![Type chart: mapping over a Future](src/pages/functors/future-map.pdf+svg)
+
+**Functions (?!)**
+
+Can we map over functions of a single argument?
+What would this mean?
+
+All our examples above have had the following general shape:
+
+ - start with `F[A]`;
+ - supply a function `A => B`;
+ - get back `F[B]`.
+
+A function with a single argument has two types:
+the parameter type and the result type.
+To get them to the same shape we can
+fix the parameter type and let the result type vary:
+
+ - start with `X => A`;
+ - supply a function `A => B`;
+ - get back `X => B`.
+
+We can see this with our trusty type charts:
+
+![Type chart: mapping over a Function1](src/pages/functors/function-map.pdf+svg)
+
+In other words, "mapping" over a `Function1`
+is just function composition:
+
+```tut:book:silent
+import cats.instances.function._
+import cats.syntax.functor._
+```
+
+```tut:book
+val func1 = (x: Int)    => x.toDouble
+val func2 = (y: Double) => y * 2
+val func3 = func1.map(func2)
+
+func3(1) // function composition by calling map
+
+func2(func1(1)) // function composition written out by hand
+```
 
 ## Definition of a Functor
 
@@ -190,81 +270,3 @@ Wherever we *declare* a type constructor with `A[_]` syntax,
 import scala.language.higherKinds
 ```
 </div>
-
-## Other types of Functors
-
-*Futures*
-
-`Future` is also a functor
-with a `map` method[^future-error-handling].
-If we start with a `Future[A]`
-and call map supplying a function `A => B`,
-we end up with a `Future[B]`:
-
-```tut:book:silent
-import scala.concurrent.{Future, Await}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
-```
-
-```tut:book
-val future1 = Future("Hello world!")
-val future2 = future1.map(_.length)
-
-Await.result(future1, Duration.Inf)
-Await.result(future2, Duration.Inf)
-```
-
-The general pattern looks like the following. Seem familiar?
-
-![Type chart: mapping over a Future](src/pages/functors/future-map.pdf+svg)
-
-[^future-error-handling]: Some functional purists
-disagree with this point
-because the excpetion handling behaviour
-in standard Scala futures breaks the functor laws.
-We're going to ignore this detail
-because *real* programmers don't do exceptions.
-
-*Functions (?!)*
-
-Now let's expand how we think about `map`.
-Can we map over functions of a single argument?
-What would this mean?
-
-All our examples above have had the following general shape:
-
- - start with `F[A]`;
- - supply a function `A => B`;
- - get back `F[B]`.
-
-A function with a single argument has two types:
-the parameter type and the result type.
-To get them to the same shape we can
-fix the parameter type and let the result type vary:
-
- - start with `R => A`;
- - supply a function `A => B`;
- - get back `R => B`.
-
-In other words, "mapping" over a `Function1`
-is just function composition:
-
-```tut:book
-import cats.instances.function._
-import cats.syntax.functor._
-
-val func1 = (x: Int) => x.toDouble
-val func2 = (y: Double) => y * 2
-val func3 = func1 map func2
-
-// Function composition by calling map
-func3(1)
-
-// Function composition written out by hand
-func2(func1(1))
-```
-
-We can see this with our trusty type charts:
-
-![Type chart: mapping over a Function1](src/pages/functors/function-map.pdf+svg)

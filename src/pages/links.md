@@ -5,6 +5,8 @@
 [cats.package]: http://typelevel.org/cats/api/#cats.package
 [cats.Eval]: http://typelevel.org/cats/api/#cats.Eval
 [cats.functor.package]: http://typelevel.org/cats/api/#cats.functor.package
+[cats.functor.Contravariant]: http://typelevel.org/cats/api/#cats.functor.Contravariant
+[cats.functor.Invariant]: http://typelevel.org/cats/api/#cats.functor.Invariant
 [cats.Functor]: http://typelevel.org/cats/api/#cats.Functor
 [cats.Id]: http://typelevel.org/cats/api/#cats.Id
 [cats.Monad]: http://typelevel.org/cats/api/#cats.Monad
@@ -84,6 +86,7 @@
 [link-don-stewart-so]: http://stackoverflow.com/questions/27852709/enterprise-patterns-with-functional-programming/27860072#27860072
 [link-don-stewart]: https://donsbot.wordpress.com
 [link-essential-scala]: http://underscore.io/training/courses/essential-scala/
+[link-hadoop]: http://hadoop.apache.org/
 [link-hyperloglog]: http://en.wikipedia.org/wiki/HyperLogLog
 [link-json]: http://json.org/
 [link-kind-projector]: https://github.com/non/kind-projector

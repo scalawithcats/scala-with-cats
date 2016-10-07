@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1567px" height="360px" viewBox="0 0 1567 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40 (33762) - http://www.bohemiancoding.com/sketch -->
+    <title>generic-imap</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <ellipse id="path-1" cx="43.7924731" cy="44.4146341" rx="43.7924731" ry="43.4146341"></ellipse>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="87.5849462" height="86.8292683" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <polygon id="path-3" points="215.456278 73.804878 186.498137 88.8977203 192.02865 56.9305675 168.601022 34.2913041 200.977207 29.6273594 215.456278 0.542682927 229.935349 29.6273594 262.311535 34.2913041 238.883906 56.9305675 244.414419 88.8977203"></polygon>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="93.7105131" height="88.3550373" fill="white">
+            <use xlink:href="#path-3"></use>
+        </mask>
+        <polygon id="path-5" points="110.575995 33.5609756 132.472231 33.5609756 132.472231 22.7073171 154.368468 44.1420809 132.472231 66.1219512 132.472231 55.2682927 110.575995 55.2682927"></polygon>
+        <mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="43.7924731" height="43.4146341" fill="white">
+            <use xlink:href="#path-5"></use>
+        </mask>
+        <ellipse id="path-7" cx="214.792473" cy="47.4146341" rx="43.7924731" ry="43.4146341"></ellipse>
+        <mask id="mask-8" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="87.5849462" height="86.8292683" fill="white">
+            <use xlink:href="#path-7"></use>
+        </mask>
+        <polygon id="path-9" points="47.0892058 73.2621951 18.1310647 88.3550373 23.6615776 56.3878845 0.233949287 33.7486212 32.6101353 29.0846764 47.0892058 6.32383035e-15 61.5682764 29.0846764 93.9444624 33.7486212 70.5168341 56.3878845 76.0473469 88.3550373"></polygon>
+        <mask id="mask-10" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="93.7105131" height="88.3550373" fill="white">
+            <use xlink:href="#path-9"></use>
+        </mask>
+        <polygon id="path-11" points="110.575995 32.5609756 132.472231 32.5609756 132.472231 21.7073171 154.368468 43.1420809 132.472231 65.1219512 132.472231 54.2682927 110.575995 54.2682927"></polygon>
+        <mask id="mask-12" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="43.7924731" height="43.4146341" fill="white">
+            <use xlink:href="#path-11"></use>
+        </mask>
+        <polygon id="path-13" points="44.509445 70.2 17.0010952 84.6619953 22.2547225 54.0309977 -1.15019105e-13 32.3380047 30.7552701 27.8690023 44.509445 0 58.2636199 27.8690023 89.0188899 32.3380047 66.7641674 54.0309977 72.0177948 84.6619953"></polygon>
+        <mask id="mask-14" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="89.0188899" height="84.6619953" fill="white">
+            <use xlink:href="#path-13"></use>
+        </mask>
+        <rect id="path-15" x="0" y="0" width="104" height="104" rx="6.4"></rect>
+        <mask id="mask-16" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="104" height="104" fill="white">
+            <use xlink:href="#path-15"></use>
+        </mask>
+        <ellipse id="path-17" cx="41.6" cy="41.6" rx="41.6" ry="41.6"></ellipse>
+        <mask id="mask-18" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="83.2" height="83.2" fill="white">
+            <use xlink:href="#path-17"></use>
+        </mask>
+        <rect id="path-19" x="0" y="0" width="104" height="104" rx="6.4"></rect>
+        <mask id="mask-20" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="104" height="104" fill="white">
+            <use xlink:href="#path-19"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="generic-imap">
+            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1567" height="360"></rect>
+            <g id="Group-7" transform="translate(508.000000, 92.000000)" stroke="#000000" stroke-width="6.4">
+                <use id="Oval-1" mask="url(#mask-2)" fill="#FFFFFF" xlink:href="#path-1"></use>
+                <use id="Star-1" mask="url(#mask-4)" fill="#FFFFFF" xlink:href="#path-3"></use>
+                <use id="Path-1" mask="url(#mask-6)" fill="#000000" xlink:href="#path-5"></use>
+            </g>
+            <g id="Group-7" transform="translate(840.000000, 93.000000)" stroke="#000000" stroke-width="6.4">
+                <use id="Oval-1" mask="url(#mask-8)" fill="#FFFFFF" xlink:href="#path-7"></use>
+                <use id="Star-1" mask="url(#mask-10)" fill="#FFFFFF" xlink:href="#path-9"></use>
+                <use id="Path-1" mask="url(#mask-12)" fill="#000000" xlink:href="#path-11"></use>
+            </g>
+            <polygon id="Path-1" fill="#F6A623" points="1143 121 1175 121 1175 105 1207 136.598214 1175 169 1175 153 1143 153"></polygon>
+            <text id="F[A]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="214.6" y="314">F[A]</tspan>
+            </text>
+            <text id="F[B]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="1258.6" y="314">F[B]</tspan>
+            </text>
+            <text id="A-=&gt;-B" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="585.4" y="314">A =&gt; B</tspan>
+            </text>
+            <text id="," font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#F6A623">
+                <tspan x="788.4" y="185">,</tspan>
+            </text>
+            <text id="B-=&gt;-A" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="885.4" y="314">B =&gt; A</tspan>
+            </text>
+            <g id="Group-9" transform="translate(1249.000000, 85.000000)" stroke="#000000" stroke-width="6.4">
+                <g id="Group" transform="translate(7.150000, 9.750000)" fill="#FFFFFF">
+                    <use id="Star-1" mask="url(#mask-14)" xlink:href="#path-13"></use>
+                </g>
+                <use id="Rectangle-1" mask="url(#mask-16)" xlink:href="#path-15"></use>
+            </g>
+            <g id="Group-8" transform="translate(209.000000, 85.000000)" stroke="#000000" stroke-width="6.4">
+                <g id="Group-2" transform="translate(10.400000, 12.480000)" fill="#FFFFFF">
+                    <use id="Oval-1" mask="url(#mask-18)" xlink:href="#path-17"></use>
+                </g>
+                <use id="Rectangle-1" mask="url(#mask-20)" xlink:href="#path-19"></use>
+            </g>
+            <text id="imap" font-family="FiraMono-Bold, Fira Mono" font-size="51.2" font-weight="bold" fill="#F6A623">
+                <tspan x="349.06" y="148">imap</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

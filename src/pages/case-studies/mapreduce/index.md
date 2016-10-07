@@ -1,4 +1,4 @@
-# Case Study: Pygmy Hadoop
+# Case Study: Pygmy Hadoop {#map-reduce}
 
 In this case study we're going to implement
 a simple-but-powerful parallel processing framework

@@ -21,11 +21,9 @@ import cats.instances.option._
 
 ```tut:book
 val list1 = List(1, 2, 3)
-
 val list2 = Functor[List].map(list1)(_ * 2)
 
 val option1 = Option(123)
-
 val option2 = Functor[Option].map(option1)(_.toString)
 ```
 
@@ -48,7 +46,7 @@ It's difficult to demonstrate this with `Options` and `Lists`
 as they have their own built-in `map` operations.
 If there is a built-in method it will always be called
 in preference to an extension method.
-Instead we will use *functions*:
+Instead we will use *functions* as our example:
 
 ```tut:book:silent
 import cats.instances.function._
@@ -58,7 +56,7 @@ import cats.syntax.functor._
 ```tut:book
 val func1 = (a: Int) => a + 1
 val func2 = (a: Int) => a * 2
-val func3 = func1 map func2
+val func3 = func1.map(func2)
 
 func3(123)
 ```
@@ -75,13 +73,29 @@ Here's an example of a `Functor` for `Option`,
 even though such a thing already exists in [`cats.instances`][cats.instances]:
 
 ```tut:book:silent
-val optionFunctor = new Functor[Option] {
+implicit val optionFunctor = new Functor[Option] {
   def map[A, B](value: Option[A])(func: A => B): Option[B] =
-    value map func
+    value.map(func)
 }
 ```
 
-The implementation is trivial---simply call `Option's` `map` method.
+The implementation is trivial---we simply call `Option's` `map` method.
+
+Sometimes we need to inject dependencies into our instances.
+For example, if we had to define a custom `Functor` for `Future`,
+we would need to account for
+the implicit `ExecutionContext` parameter on `future.map`.
+We can't add extra parameters to `functor.map`
+so we have to account for the dependency when we create the instance:
+
+```tut:book:silent
+import scala.concurrent.{Future, ExecutionContext}
+
+implicit def futureFunctor(implicit ec: ExecutionContext) = new Functor[Future] {
+  def map[A, B](value: Future[A])(func: A => B): Future[B] =
+    value.map(func)
+}
+```
 
 ### Exercise: Branching out with Functors
 
@@ -96,7 +110,9 @@ final case class Leaf[A](value: A) extends Tree[A]
 
 <div class="solution">
 The semantics are similar to writing a `Functor` for `List`.
-We recurse over the data structure, applying the function to every `Leaf` we find:
+We recurse over the data structure, applying the function to every `Leaf` we find.
+The functor laws intuitively require us to retrain the same structure
+with the same pattern of `Branch` and `Leaf` nodes:
 
 ```tut:book:silent
 import cats.Functor
@@ -114,7 +130,7 @@ implicit val treeFunctor = new Functor[Tree] {
 Let's use our `Functor` to transform some `Trees`:
 
 ```tut:book:fail
-Leaf(10) map (_ * 2)
+Branch(Leaf(10), Leaf(20)).map(_ * 2)
 ```
 
 Oops! This is the same invariance problem we saw with `Monoids`.
@@ -132,8 +148,8 @@ def leaf[A](value: A): Tree[A] =
 Now we can use our `Functor` properly:
 
 ```tut:book
-leaf(100) map (_ * 2)
+leaf(100).map(_ * 2)
 
-branch(leaf(10), leaf(20)) map (_ * 2)
+branch(leaf(10), leaf(20)).map(_ * 2)
 ```
 </div>
