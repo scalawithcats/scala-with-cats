@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1720px" height="360px" viewBox="0 0 1720 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40.2 (33826) - http://www.bohemiancoding.com/sketch -->
+    <title>option-flatmap</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="200" height="200" rx="8"></rect>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="200" height="200" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <path d="M53.5580639,143.194146 L47,181.430593 L99.9006727,153.619064 L152.801345,181.430593 L142.698216,122.524828 L185.495759,80.807534 L126.351009,72.2132988 L125.75221,71 L53.5580639,143.194146 Z" id="path-3"></path>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="138.495759" height="110.430593" fill="white">
+            <use xlink:href="#path-3"></use>
+        </mask>
+        <path d="M51.977795,151.007053 L56.7975432,122.905765 L14,81.1884705 L73.1447501,72.5942353 L99.5950865,19 L126.045423,72.5942353 L129.839326,73.1455217 L51.977795,151.007053 Z" id="path-5"></path>
+        <mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="115.839326" height="132.007053" fill="white">
+            <use xlink:href="#path-5"></use>
+        </mask>
+        <rect id="path-7" x="0" y="0" width="200" height="200" rx="8"></rect>
+        <mask id="mask-8" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="200" height="200" fill="white">
+            <use xlink:href="#path-7"></use>
+        </mask>
+        <path d="M53.5580639,143.194146 L47,181.430593 L99.9006727,153.619064 L152.801345,181.430593 L142.698216,122.524828 L185.495759,80.807534 L126.351009,72.2132988 L125.75221,71 L53.5580639,143.194146 Z" id="path-9"></path>
+        <mask id="mask-10" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="138.495759" height="110.430593" fill="white">
+            <use xlink:href="#path-9"></use>
+        </mask>
+        <path d="M51.977795,151.007053 L56.7975432,122.905765 L14,81.1884705 L73.1447501,72.5942353 L99.5950865,19 L126.045423,72.5942353 L129.839326,73.1455217 L51.977795,151.007053 Z" id="path-11"></path>
+        <mask id="mask-12" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="115.839326" height="132.007053" fill="white">
+            <use xlink:href="#path-11"></use>
+        </mask>
+        <path d="M153.820422,42.0071389 C169.321446,56.7797646 179,77.7454802 179,101 C179,145.735065 143.18278,182 99,182 C75.675188,182 54.6818214,171.893119 40.058808,155.768753 L153.820422,42.0071389 Z" id="path-13"></path>
+        <mask id="mask-14" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="138.941192" height="139.992861" fill="white">
+            <use xlink:href="#path-13"></use>
+        </mask>
+        <path d="M157.058837,44.9260115 C142.544644,30.1585052 122.341864,21 100,21 C55.81722,21 20,56.81722 20,101 C20,123.341864 29.1585052,143.544644 43.9260115,158.058837 L157.058837,44.9260115 Z" id="path-15"></path>
+        <mask id="mask-16" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="137.058837" height="137.058837" fill="white">
+            <use xlink:href="#path-15"></use>
+        </mask>
+        <rect id="path-17" x="0" y="0" width="200" height="200" rx="8"></rect>
+        <mask id="mask-18" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="200" height="200" fill="white">
+            <use xlink:href="#path-17"></use>
+        </mask>
+        <ellipse id="path-19" cx="790" cy="140" rx="80" ry="80"></ellipse>
+        <mask id="mask-20" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="160" height="160" fill="white">
+            <use xlink:href="#path-19"></use>
+        </mask>
+        <polygon id="path-21" points="894 120 934 120 934 100 974 139.497767 934 180 934 160 894 160"></polygon>
+        <mask id="mask-22" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="80" height="80" fill="white">
+            <use xlink:href="#path-21"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="option-flatmap">
+            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1720" height="360"></rect>
+            <g id="Group-3" transform="translate(1360.000000, 38.000000)" stroke-width="8">
+                <use id="Rectangle-1" stroke="#000000" mask="url(#mask-2)" xlink:href="#path-1"></use>
+                <use id="Combined-Shape" stroke="#9B9B9B" mask="url(#mask-4)" stroke-dasharray="10,5" fill="#FFFFFF" xlink:href="#path-3"></use>
+                <use id="Combined-Shape" stroke="#000000" mask="url(#mask-6)" fill="#FFFFFF" xlink:href="#path-5"></use>
+            </g>
+            <g id="Group-3" transform="translate(1000.000000, 39.000000)" stroke-width="8">
+                <use id="Rectangle-1" stroke="#000000" mask="url(#mask-8)" xlink:href="#path-7"></use>
+                <use id="Combined-Shape" stroke="#9B9B9B" mask="url(#mask-10)" stroke-dasharray="10,5" fill="#FFFFFF" xlink:href="#path-9"></use>
+                <use id="Combined-Shape" stroke="#000000" mask="url(#mask-12)" fill="#FFFFFF" xlink:href="#path-11"></use>
+            </g>
+            <g id="Group-4" transform="translate(157.000000, 38.000000)" stroke-width="8">
+                <use id="Combined-Shape" stroke="#9B9B9B" mask="url(#mask-14)" stroke-dasharray="10,5" fill="#FFFFFF" xlink:href="#path-13"></use>
+                <use id="Combined-Shape" stroke="#000000" mask="url(#mask-16)" fill="#FFFFFF" xlink:href="#path-15"></use>
+                <use id="Rectangle-1" stroke="#000000" mask="url(#mask-18)" xlink:href="#path-17"></use>
+            </g>
+            <use id="Oval-1" stroke="#000000" mask="url(#mask-20)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-19"></use>
+            <use id="Path-1" stroke="#000000" mask="url(#mask-22)" stroke-width="8" fill="#000000" xlink:href="#path-21"></use>
+            <polygon id="Path-1" fill="#F6A623" points="1242 120 1282 120 1282 100 1322 139.497767 1282 180 1282 160 1242 160"></polygon>
+            <text id="Option[A]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="147.1" y="314">Option[A]</tspan>
+            </text>
+            <text id="flatMap" font-family="FiraMono-Bold, Fira Mono" font-size="64" font-weight="bold" fill="#F6A623">
+                <tspan x="394.2" y="156">flatMap</tspan>
+            </text>
+            <text id="Option[B]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="1348.6" y="314">Option[B]</tspan>
+            </text>
+            <text id="A-=&gt;-Option[B]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="785.6" y="314">A =&gt; Option[B]</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

@@ -21,6 +21,7 @@
 [cats.data.ReaderWriterStateT]: http://typelevel.org/cats/api/#cats.data.ReaderWriterStateT
 [cats.data.State]: http://typelevel.org/cats/api/#cats.data.State
 [cats.data.StateT]: http://typelevel.org/cats/api/#cats.data.StateT
+[cats.data.Validated]: http://typelevel.org/cats/api/#cats.data.Validated
 [cats.data.Writer]: http://typelevel.org/cats/api/#cats.data.Writer
 [cats.data.WriterT]: http://typelevel.org/cats/api/#cats.data.WriterT
 [cats.data.Xor]: http://typelevel.org/cats/api/#cats.data.Xor

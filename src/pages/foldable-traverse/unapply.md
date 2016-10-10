@@ -59,7 +59,7 @@ whose purpose is to hint to the compiler which hole to "fix" to turn a
 binary type constructor into a unary one.
 Cats provides instances of `Unapply` for all the common binary types:
 `Either`, `Xor`, `Validated`, and `Function1`, and so on.
-The `Traversable` type class provides variants
+The `Traverse` type class provides variants
 of `traverse` and `sequence`---called `traverseU` and `sequenceU`---that
 use `Unapply` to fix the problem and guide the compiler to the correct solution:
 
