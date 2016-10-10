@@ -15,7 +15,7 @@ Option(1).map(_ + 2).map(_ * 3).map(_ + 100)
 
 We're now going to look at two other type classes,
 one that represents *prepending* operations to a chain,
-and one that represents building a *codecrectional*
+and one that represents building a *bidirectional*
 chain of operations.
 
 One great use case for these new type classes is
