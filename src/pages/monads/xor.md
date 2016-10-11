@@ -1,5 +1,6 @@
 ## *Either* and *Xor*
 
+Let's look at another useful monadic data type.
 The Scala standard library has a type `Either`.
 Cats provides an alternative called [`cats.data.Xor`][cats.data.Xor].
 Why have this? Aside from providing a few useful methods,
@@ -10,7 +11,7 @@ the main reason is that `Xor` is *right biased*.
 
 `Xor` is the first concrete data type we've seen in Cats.
 Cats provides numerous data types,
-all of which exist in the [`cats.data`][cats.data] package.
+all of which exist in the [`cats.data`][cats.data.package] package.
 Other examples include the monad transformers that we will see in the next chapter,
 and the [`Validated`][cats.data.Validated] type
 that we will see in the chapter on [applicatives](#applicatives).
