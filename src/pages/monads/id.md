@@ -49,43 +49,42 @@ package cats
 type Id[A] = A
 ```
 
-`Id` is a type alias that turns any concrete type
-into a type constructor with one parameter.
-We can cast any value of any type to `Id` of that type:
+`Id` is actually a type alias 
+that turns an atomic type into a single-parameter type constructor.
+We can cast any value of any type to a corresponding `Id`:
 
 ```tut:book
-"Dave"        : Id[String]
-123           : Id[Int]
+"Dave" : Id[String]
+123 : Id[Int]
 List(1, 2, 3) : Id[List[Int]]
 ```
 
-Cats introduced this type constructor 
-because it lets us write the types of normal values 
-in a shape that supports summoning instances of type classes
-such as `Monad` and `Functor`:
+Cats provides instances of various type classes for `Id`,
+including `Functor` and `Monad`.
+These let us call `map`, `flatMap` and so on on plain values:
 
 ```tut:book
-Monad[Id].pure(123)
-Monad[Id].flatMap(40)(_ + 2)
+val a = Monad[Id].pure(3)
+val b = Monad[Id].flatMap(a)(_ + 1)
 ```
 
-The definitions of `pure`, `map`, and `flatMap` are trivial,
-but the existence of these methods 
-lets us use monadic code on plain values:
+```tut:book:silent
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+```
 
 ```tut:book
-val a: Id[Int] = 1
-val b: Id[Int] = 2
-
 for {
   x <- a
   y <- b
 } yield x + y
 ```
 
-The main use for this is to write generic methods like `sumSquare` above.
-For example, we can run code asynchronously in production
-and synchronously in test by abstracting over `Future` and `Id`:
+The main use for `Id` is to write generic methods like `sumSquare`
+that operate on monadic and non-monadic data types.
+For example, 
+we can run code asynchronously in production using `Future`
+and synchronously in test using `Id`:
 
 ```tut:book:silent
 import scala.concurrent._
@@ -99,6 +98,83 @@ import cats.instances.future._
 Await.result(sumSquare(Future(3), Future(4)), Duration.Inf)
 
 // In test:
-sumSquare(4 : Id[Int], 5 : Id[Int])
+sumSquare(a, b)
 ```
 
+### Exercise: Monadic Secret Identities
+
+Implement `pure`, `map`, and `flatMap` for `Id`!
+What interesting discoveries do you uncover about the implementation?
+
+<div class="solution">
+Let's start by defining the method headers:
+
+```tut:book:silent
+import cats.Id
+
+def pure[A](value: A): Id[A] =
+  ???
+
+def map[A, B](initial: Id[A])(func: A => B): Id[B] =
+  ???
+
+def flatMap[A, B](initial: Id[A])(func: A => Id[B]): Id[B] =
+  ???
+```
+
+Now let's look at each method in turn.
+The `pure` operation is a constructor---it 
+creates an `Id[A]` from an initial value of type `A`.
+But `A` and `Id[A]` are the same type!
+All we have to do is return the initial value:
+
+```tut:book:silent
+def pure[A](value: A): Id[A] =
+  value
+```
+
+```tut:book
+pure(123)
+```
+
+The `map` method applies a function of type `A => B` to an `Id[A]`,
+creating an `Id[B]`.
+But `Id[A]` is simply `A` and `Id[B]` is simply `B`!
+All we have to do is call the function---no packing or unpacking required:
+
+```tut:book:silent
+def map[A, B](initial: Id[A])(func: A => B): Id[B] =
+  func(initial)
+```
+
+```tut:book
+map(123)(_ * 2)
+```
+
+The final punch line is that,
+once we strip away the `Id` type constructors,
+`flatMap` and `map` are actually identical:
+
+```tut:book
+def flatMap[A, B](initial: Id[A])(func: A => Id[B]): Id[B] =
+  func(initial)
+```
+
+```tut:book
+flatMap(123)(_ * 2)
+```
+
+Notice that we haven't had to add any casts 
+to any of the examples in this solution.
+Scala is able to interpret values of type `A` as `Id[A]` and vice versa, 
+simply by the context in which they are used.
+
+The only restriction to this is that Scala cannot unify
+different shapes of type constructor when searching for implicits.
+Hence our need to cast to `Id[A]` 
+in the call to `sumSquare` at the opening of this section:
+
+```tut:book:silent
+sumSquare(3 : Id[Int], 4 : Id[Int])
+```
+</div>
