@@ -1,43 +1,46 @@
 # Monads
 
-*Monads* are one of the most common abstractions in Scala
-and one that most Scala programmers are familiar with
-even if they don't know the name.
+*Monads* are one of the most common abstractions in Scala.
+Many Scala programmers quickly become intuitively familiar with monads,
+even if we don't know them by name.
 
 Informally, a monad is anything with a `flatMap` method.
 All of the functors we saw in the last chapter are also monads,
 including `Option`, `Seq`, `Either`, and `Future`.
-We even have special syntax in Scala to support monads:
-for comprehensions.
-
-Despite the ubiquity of the concept,
+We even have special syntax to support monads: for comprehensions.
+However, despite the ubiquity of the concept,
 Scala lacks a concrete type to encompass "things that can be flatMapped".
 This is one of the benefits that Cats brings us.
 
-We will start by looking at the motivation for monads.
-We'll proceed to look at at their formal definition,
-and finally to their implementation in Cats.
+In this chapter we will take a deep dive into monads.
+We will start by motivating them with a few examples.
+We'll proceed to their formal definition and their implementation in Cats.
+Finally, we'll tour some interesting monads that you may not have heard of,
+providing introductions and examples of their use.
 
 ## What is a Monad?
 
-This is the question that has been posed in a thousand blog posts
-involving concepts as diverse as cats, burritos, 
+This is the question that has been posed in a thousand blog posts,
+with explanations and analogies involving concepts as diverse as cats, mexican food, 
 and monoids in the category of endofunctors (whatever they are).
-We're going to solve this problem once and for all by stating very simply:
-a monad is a control mechanism for *sequencing computations*.
+We're going to solve the problem of explaining monads once and for all by stating very simply:
+
+> A monad is a control mechanism for *sequencing computations*.
+
+That was easy! Problem solved, right? Ok, maybe we need some more discussion...
 
 Informally, the most important feature of a monad is its `flatMap` method,
-which allows users to sequence a computation.
-The user provides the application-specific parts of the computation
-as a function parameter, 
-and the `flatMap` method itself takes care of some complication.
-Let's ground this by looking at some examples.
+which allows us specify what happens next in the sequence.
+We specify the application-specific part of the computation as a function parameter, 
+and `flatMap` runs our function and takes care of some kind of complication
+(conventionally referred to as an ``effect'').
+Let's ground things by looking at some examples.
 
-**Option**
+**Options**
 
-`Option` is a monad that handles the complication
-that some operations in a program may or may not be able to return values.
-Here are some example operations:
+`Option` is a monad that allows us to sequence computations
+that may or may not to return values.
+Here are some examples:
 
 ```tut:book:silent
 def parseInt(str: String): Option[Int] =
@@ -47,10 +50,11 @@ def divide(a: Int, b: Int): Option[Int] =
   if(b == 0) None else Some(a / b)
 ```
 
-The `flatMap` method on `Option` allows us to sequence operations such as these
+Each of these computations may fail, as indicated by their `Option` return types.
+The `flatMap` method on `Option` allows us to sequence these operations
 without having to constantly check whether they return `Some` or `None`:
 
-```tut:book
+```tut:book:silent
 def stringDivideBy(aStr: String, bStr: String): Option[Int] =
   parseInt(aStr).flatMap { aNum => 
     parseInt(bStr).flatMap { bNum => 
@@ -59,12 +63,22 @@ def stringDivideBy(aStr: String, bStr: String): Option[Int] =
   }
 ```
 
-At each step, the user-supplied function to `flatMap` 
-generates the next `Option` for the next step:
+We know the semantics well: 
+
+- the first call to `parseInt` returns a `None` or a `Some`;
+- if it returns a `Some`, the `flatMap` method calls our function and passes us `aNum`;
+- the second call to `parseInt` returns a `None` or a `Some`;
+- if it returns a `Some`, the `flatMap` method calls our function and passes us `bNum`;
+- the call to `divide` returns a `None` or a `Some`, which is our result.
+
+At each step, `flatMap` chooses whether to call our function.
+and our function generates the next computation in the sequence:
 
 ![Type chart: flatMap for Option](src/pages/monads/option-flatmap.pdf+svg)
 
-This results in a fail-fast error handling behaviour
+The result of computation is an `Option`, 
+allowing us to call `flatMap` again and so the process continues.
+This results in the fail-fast error handling behaviour that we know and love,
 where a `None` at any step results in a `None` overall:
 
 ```tut:book
@@ -82,7 +96,7 @@ Plus, if we have both `flatMap` and `map`
 we can use for comprehensions
 to clarify the sequencing behaviour:
 
-```tut:book
+```tut:book:silent
 def stringDivideBy(aStr: String, bStr: String): Option[Int] =
   for {
     aNum <- parseInt(aStr)
@@ -91,42 +105,50 @@ def stringDivideBy(aStr: String, bStr: String): Option[Int] =
   } yield ans
 ```
 
-**List**
+**Lists**
 
-We can think of functions that return `Lists`
-as returning a variable number of results:
+When we first encounter `flatMap` as budding Scala developers, 
+we tend to think of it as a pattern for iterating over `Lists`.
+This is reinforced by the syntax of for comprehensions,
+which look very much like imperative for loops:
 
 ```tut:book:silent
 def numbersBetween(min: Int, max: Int): List[Int] =
   (min to max).toList
-
-def pairs(a: Int, b: Int): List[(Int, Int)] =
-  List((a, b), (b, a))
 ```
-
-The `flatMap` method on `List` allows us to calculate
-permutations and combinations of intermediate results:
 
 ```tut:book
 for {
-  a <- numbersBetween(1, 2)
-  b <- numbersBetween(3, 4)
-  p <- pairs(a, b)
-} yield p
+  x <- numbersBetween(1, 3)
+  y <- numbersBetween(4, 5)
+} yield (x, y)
 ```
 
-At each step, the user-supplied function 
-generates a list of possible results.
-The `flatMap` method calls the function 
-with every input accumulated so far,
-generating result for every combination of input and output:
+However, there is another mental model we can apply
+that highlights the monadic behaviour of `List`.
+If we think of functions that return `Lists`
+as functions with multiple return values,
+`flatMap` becomes a construct that calculates 
+results from permutations and combinations of intermediate values.
+
+For example, in the for comprehension above, 
+there are three possible values of `x` and two possible values of `y`.
+This means there are six possible values of the overall expression.
+`flatMap` is generating these combinations from our code, 
+which simply says "get x from here and y from over there".
+
+The type chart below illustrates this behaviour:
+although the result of `flatMap` (`List[B]`) 
+is the same type as the result of the user-supplied function,
+the end result is actually a larger list
+created from combinations of intermediate `As` and `Bs`:
 
 ![Type chart: flatMap for List](src/pages/monads/list-flatmap.pdf+svg)
 
 **Futures**
 
 `Future` is a monad that allows us to sequence computations
-without worrying about the fact they are asynchronous:
+without worrying that they are asynchronous:
 
 ```tut:book:silent
 import scala.concurrent.Future
@@ -134,21 +156,50 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
 def getTrafficFromHost(hostname: String): Future[Int] =
-  ???
+  ??? // grab traffic information using a network client
 
 def getTrafficFromAllHosts: Future[Int] =
   for {
     traffic1 <- getTrafficFromHost("host1")
     traffic2 <- getTrafficFromHost("host2")
-  } yield traffic1 + traffic2
+    traffic3 <- getTrafficFromHost("host3")
+  } yield traffic1 + traffic2 + traffic3
 ```
 
-Again, the `flatMap` method allows us to specify 
-the application-specific parts of the behaviour.
-It takes care all of the complexities of scheduling,
-threads, and thread pools internally:
+Again, we specify the code to run at each step,
+and `flatMap` takes care of all the horrifying
+underlying complexities of thread pools and schedulers.
+
+If you've made extensive use of Scala's `Futures`,
+you'll know that the code above 
+is fetching traffic from each server *in sequence*.
+This becomes clearer if we expand out the for comprehension
+to show the nested calls to `flatMap`:
+
+```tut:book:silent
+def getTrafficFromAllHosts: Future[Int] =
+  getTrafficFromHost("host1").flatMap { traffic1 =>
+    getTrafficFromHost("host2").flatMap { traffic2 =>
+      getTrafficFromHost("host3").map { traffic3 =>
+        traffic1 + traffic2 + traffic3
+      }
+    }
+  }
+```
+
+Each `Future` in our sequence is created 
+by a function that receives the result from a previous `Future`.
+In other words, each step in our computation can only start
+once the previous step is finished.
+This is born out by the type chart for `flatMap`,
+which shows the function parameter of type `A => Future[B]`:
 
 ![Type chart: flatMap for Future](src/pages/monads/future-flatmap.pdf+svg)
+
+In other words, the monadic behaviour of `Future`
+allows us to sequence asynchronous computations one after the other.
+We can run `Futures` in parallel, but that's a different topic of conversation.
+Monads are truly all about sequencing.
 
 ### Monad Definition and Laws
 
@@ -158,10 +209,18 @@ The monad behaviour is formally captured in two operations:
 - an operation `pure` with type `A => F[A]`;
 - an operation `flatMap`[^bind] with type `(F[A], A => F[B]) => F[B]`.
 
-The `pure` operation abstracts over the constructor,
-providing a way to create a new monad from a value.
+[^bind]: In some languages and libraries,
+notably Haskell and Scalaz, `flatMap` is referred to as `bind`.
+This is purely a difference in terminology.
+We'll use the term `flatMap` 
+for compatibility with Cats and the Scala standard library.
 
-Here is a simple Scala definition of a `Monad` type class:
+The `pure` operation abstracts over constructors,
+providing a way to create a new monadic context from a plain value.
+`flatMap` provides the sequencing step we have already discussed,
+extracting the value from a context and using the supplied function
+to generate the next context in the sequence.
+Here is a simplified version of the `Monad` type class in Cats:
 
 ```tut:book:silent
 import scala.language.higherKinds
@@ -173,7 +232,7 @@ trait Monad[F[_]] {
 }
 ```
 
-The `pure` and `flatMap` methods must obey three laws:
+Importantly, the `pure` and `flatMap` methods must obey three laws:
 
 *Left identity*: calling `pure` 
 then transforming the result with a function `f`
@@ -196,11 +255,6 @@ is the same as `flatMapping` over `f` and then `flatMapping` over `g`:
 ```scala
 m.flatMap(f).flatMap(g) == m.flatMap(x => f(x).flatMap(g))
 ```
-
-These laws guarantee that our `pure` and `flatMap` methods
-behave simply and consistently.
-They allow us to write generic code that works with any monad,
-regardless of what complication(s) it eliminates from our code.
 
 ### Exercise: Getting Func-y
 

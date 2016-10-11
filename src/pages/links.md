@@ -16,6 +16,7 @@
 [cats.data.ListT]: http://typelevel.org/cats/api/#cats.data.ListT
 [cats.data.NonEmptyList]: http://typelevel.org/cats/api/#cats.data.NonEmptyList
 [cats.data.OptionT]: http://typelevel.org/cats/api/#cats.data.OptionT
+[cats.data.package]: http://typelevel.org/cats/api/#cats.data.package
 [cats.data.Reader]: http://typelevel.org/cats/api/#cats.data.Reader
 [cats.data.ReaderT]: http://typelevel.org/cats/api/#cats.data.ReaderT
 [cats.data.ReaderWriterStateT]: http://typelevel.org/cats/api/#cats.data.ReaderWriterStateT
