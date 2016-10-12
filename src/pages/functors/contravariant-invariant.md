@@ -248,3 +248,43 @@ Your instance should work as follows:
 encode(Box(123))
 decode[Box[Int]]("123")
 ```
+
+### What's With the Name?
+
+What's the relationship between contravariance, invariance, and covariance as we usually understand them in Scala,
+and the names for the functors above?
+
+The usual meaning of these terms in Scala relates to subtypes. 
+We say that `B` is a subtype of `A` if we can use `B` anywhere we want an `A`.
+Put another way, we can convert `A` into `B` and our program keeps on working.
+
+Co- and contravariance usually arises in Scala when working with type constructors like `List` and `Option`.
+If we declare a type constructor `F`, 
+and we want `F[B]` to be a subtype of `F[A]` when `B` is a subtype of `A`,
+we declare the type parameter to be covariant. 
+
+```tut:silent
+trait F[+A] // A is covariant
+```
+
+If `B` is a subtype of `A`,
+and we want `F[A]` to be a subtype of `F[B]`,
+then we declare `F` to have a contravariant type parameter.
+
+```tut:silent
+trait F[-A] // A is contravariant
+```
+
+Co- and contravariant functors capture the same principle without the limitations of subtyping. 
+As we said above subtyping can be viewed as a conversion.
+`B` is a subtype of `A` if we can convert `A` to `B`.
+In other words there exists a function `A => B`.
+A covariant functor, which is what the standard `Functor` is,
+captures exactly this.
+If `F` is a (covariant) functor,
+whenever we have a `F[A]` and a conversion `A => B`
+we have a `F[B]`.
+A contravariant functor captures the case in the opposite direction.
+If `F` is a contravariant functor,
+whenever we have a `F[A]` and a conversion `B => A`
+we have a `F[B]`.
