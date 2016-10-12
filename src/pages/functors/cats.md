@@ -111,7 +111,7 @@ final case class Leaf[A](value: A) extends Tree[A]
 <div class="solution">
 The semantics are similar to writing a `Functor` for `List`.
 We recurse over the data structure, applying the function to every `Leaf` we find.
-The functor laws intuitively require us to retrain the same structure
+The functor laws intuitively require us to retain the same structure
 with the same pattern of `Branch` and `Leaf` nodes:
 
 ```tut:book:silent
