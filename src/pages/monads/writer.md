@@ -6,17 +6,18 @@ We can use it to record messages, errors,
 or additional data about a computation,
 and extract the log with the final result.
 
-One common use for `Writers` is logging during multi-threaded computations,
-where traditional logging can result in interleaved messages from different contexts.
-With a `Writer` the log for the computation is tied to the result,
-so we can run concurrent computations without mixing log messages.
-
+One common use for `Writers` is 
+recording sequences of steps in multi-threaded computations,
+where standard imperative logging techniques 
+can result in interleaved messages from different contexts.
+With `Writer` the log for the computation is tied to the result,
+so we can run concurrent computations without mixing logs.
 
 ### Creating and Unpacking Writers
 
-A `Writer[W, A]` carries two values: a *log* of type `W`
-and a *result* of type `A`.
-We can create a `Writer` from a log and a result as follows:
+A `Writer[W, A]` carries two values: 
+a *log* of type `W` and a *result* of type `A`.
+We can create a `Writer` from values of each type as follows:
 
 ```tut:book:silent
 import cats.data.Writer
@@ -24,26 +25,36 @@ import cats.instances.vector._
 ```
 
 ```tut:book
-Writer(Vector("It was the best of times, it was the worst of times..."), 123)
+Writer(Vector("It was the best of times", "It was the worst of times"), 123)
 ```
 
-We've used a `Vector` to hold our log
-as it has a more efficient append operation than `List`.
+We've used a `Vector` as the log in this example 
+as it is a sequence structure with an efficient append operation.
 
-Notice that the type of the writer is actually `WriterT[Id, Vector[String], Int]`
+Notice that the type of the writer reported on the console
+is actually `WriterT[Id, Vector[String], Int]`
 instead of `Writer[Vector[String], Int]` as we might expect.
 In the spirit of code reuse,
-Cats implements the `Writer` monad in terms of another type, `WriterT`.
-`WriterT` is an example of a new concept called a "monad tranformer".
-We will introduce monad transformers in the next chapter.
-For now, try to ignore this detail by reading `WriterT[Id, W, A]` as `Writer[W, A]`.
+Cats implements `Writer` in terms of another type, `WriterT`.
+`WriterT` is an example of a new concept called a "monad tranformer",
+which we will cover in the next chapter.
 
-As with other monads, we can also create a `Writer` using the `pure` syntax.
-In order to use `pure` the log has to be a type with a `Monoid`.
-This tells Cats what to use as the initial empty log:
+Let's try to ignore this detail for now.
+`Writer` is a type alias for `WriterT`,
+so we can read types like `WriterT[Id, W, A]` as `Writer[W, A]`:
 
-```tut:book:silent
-import cats.syntax.applicative._
+```scala
+type Writer[W, A] = WriterT[Id, W, A]
+```
+
+For convenience, Cats provides a way of creating `Writers`
+specifying only the log or the result.
+If we only have a result we can use the standard `pure` syntax.
+To do this we must have a `Monoid[W]` in scope 
+so Cats knows how to produce an empty log:
+
+```tut:book:silent:reset
+import cats.syntax.applicative._ // `pure` method
 
 type Logged[A] = Writer[Vector[String], A]
 ```
@@ -52,8 +63,9 @@ type Logged[A] = Writer[Vector[String], A]
 123.pure[Logged]
 ```
 
-We can create a `Writer` from a log using the `tell` syntax.
-The `Writer` is initialised with the value `()`:
+If we have a log and no result,
+we can create a `Writer[Unit]` using the `tell` syntax
+from [`cats.syntax.writer`][cats.syntax.writer]:
 
 ```tut:book:silent
 import cats.syntax.writer._
@@ -63,8 +75,10 @@ import cats.syntax.writer._
 Vector("msg1", "msg2", "msg3").tell
 ```
 
-If we have both a result and a log, we can create a `Writer` in two ways:
-using the `Writer.apply` method or the `writer` syntax:
+If we have both a result and a log,
+in addition to using `Writer.apply` as we did above 
+we can use the `writer` syntax 
+from [`cats.syntax.writer`][cats.syntax.writer]:
 
 ```tut:book:silent
 import cats.syntax.writer._
@@ -83,7 +97,8 @@ a.value
 a.written
 ```
 
-or both at once using the `run` method:
+or we can extract log and result at the same time
+using the `run` method:
 
 ```tut:book
 val (log, result) = b.run
@@ -91,11 +106,12 @@ val (log, result) = b.run
 
 ### Composing and Transforming Writers
 
-When we transform or `map` over a `Writer`, its log is preserved.
-When we `flatMap`, the logs of the two `Writers` are appended.
+The log in a `Writer` is preserved when we `map` or `flatMap` over it.
+`flatMap` actually appends the logs 
+from the source `Writer` and the result of the user's sequencing function.
 For this reason it's good practice to use a log type
-that has an efficient append operation,
-such as a `Vector`.
+that has an efficient append and concatenate operations,
+such as a `Vector`:
 
 ```tut:book
 val writer1 = for {
@@ -108,7 +124,7 @@ writer1.run
 ```
 
 In addition to transforming the result with `map` and `flatMap`,
-we can transform the log with the `mapWritten` method:
+we can transform the log in a `Writer` with the `mapWritten` method:
 
 ```tut:book
 val writer2 = writer1.mapWritten(_.map(_.toUpperCase))
@@ -116,9 +132,9 @@ val writer2 = writer1.mapWritten(_.map(_.toUpperCase))
 writer2.run
 ```
 
-We can also tranform both log and result simultaneously using `bimap` or `mapBoth`.
+We can tranform both log and result simultaneously using `bimap` or `mapBoth`.
 `bimap` takes two function parameters, one for the log and one for the result.
-`mapBoth` takes a single function of two parameters:
+`mapBoth` takes a single function that accepts two parameters:
 
 ```tut:book
 val writer3 = writer1.bimap(
@@ -152,15 +168,14 @@ writer6.run
 
 ### Exercise: Show Your Working
 
-We mentioned earlier that `Writers` are useful
-for logging operations in multi-threaded environments.
+`Writers` are useful for logging operations in multi-threaded environments.
 Let's confirm this by computing (and logging) some factorials.
 
 The `factorial` function below computes a factorial,
 printing out the intermediate steps in the calculation as it runs.
 The `slowly` helper function ensures this takes a while to run,
-even on the very small examples we have to use to fit in these pages,
-so we can see the interleaving when we run multiple factorials in parallel.
+even on the very small examples we need in this book 
+to fit the output on the page:
 
 ```tut:book:silent
 def slowly[A](body: => A) =
@@ -183,18 +198,17 @@ factorial(5)
 
 If we start several factorials in parallel,
 the log messages can become interleaved on standard out.
-This makes it difficult to see which lines of output come from which computation.
+This makes it difficult to see 
+which messages come from which computation.
 
 ```tut:book:silent
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-```
 
-```tut:book
 Await.result(Future.sequence(Vector(
-  Future(factorial(5)),
-  Future(factorial(5))
+  Future(factorial(3)),
+  Future(factorial(3))
 )), Duration.Inf)
 // fact 0 1
 // fact 0 1
@@ -204,10 +218,7 @@ Await.result(Future.sequence(Vector(
 // fact 2 2
 // fact 3 6
 // fact 3 6
-// fact 4 24
-// fact 4 24
-// fact 5 120
-// fact 5 120
+// res14: scala.collection.immutable.Vector[Int] = Vector(120, 120)
 ```
 
 <!-- HACK: tut isn't capturing stdout from the threads above, so i gone done hacked it. -->
