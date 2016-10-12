@@ -53,7 +53,7 @@ If we only have a result we can use the standard `pure` syntax.
 To do this we must have a `Monoid[W]` in scope 
 so Cats knows how to produce an empty log:
 
-```tut:book:silent:reset
+```tut:book:silent
 import cats.syntax.applicative._ // `pure` method
 
 type Logged[A] = Writer[Vector[String], A]

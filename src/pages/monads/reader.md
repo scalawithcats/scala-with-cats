@@ -58,7 +58,7 @@ val greetKitty: Reader[Cat, String] =
 ```
 
 ```tut:book
-greetKitty.run(Config("Heathcliff", "junk food"))
+greetKitty.run(Cat("Heathcliff", "junk food"))
 ```
 
 The `flatMap` method is more interesting.
@@ -70,15 +70,18 @@ and displays different messages depending on whether it was valid:
 
 ```tut:book:silent
 val feedKitty: Reader[Cat, String] =
+  Reader(cat => s"Have a nice bowl of ${cat.favoriteFood}")
+
+val greetAndFeed: Reader[Cat, String] =
   for {
     msg1 <- greetKitty
-    msg2 <- Reader(cat => "Have a nice bowl of ${cat.favoriteFood}")
+    msg2 <- feedKitty
   } yield s"${msg1} ${msg2}"
 ```
 
 ```tut:book
-completeLoginSystem(Cat("Garfield", "lasagne"))
-completeLoginSystem(Cat("Heathcliff", "junk food"))
+greetAndFeed(Cat("Garfield", "lasagne"))
+greetAndFeed(Cat("Heathcliff", "junk food"))
 ```
 
 ### Exercise: Hacking on Readers
@@ -91,7 +94,7 @@ Our configuration will consist of two databases:
 a list of valid users, and a list of their passwords:
 
 ```tut:book:silent
-case class Db(users: Map[Int, String], passwords: Map[String, String])
+case class Db(usernames: Map[Int, String], passwords: Map[String, String])
 ```
 
 Start by creating a type alias `DbReader` for 
@@ -127,10 +130,10 @@ and check it against the concrete user info we have been given:
 
 ```tut:book:silent
 def findUsername(userId: Int): DbReader[Option[String]] =
-  Reader(config => config.usernames.get(userId))
+  Reader(db => db.usernames.get(userId))
 
 def checkPassword(username: String, password: String): DbReader[Boolean] =
-  Reader(config => config.passwords.get(username).contains(password))
+  Reader(db => db.passwords.get(username).contains(password))
 ```
 
 </div>
@@ -151,6 +154,8 @@ We use `pure` to lift a `Boolean` to a `DbReader[Boolean]`
 when the username is not found:
 
 ```tut:book:silent
+import cats.syntax.applicative._ // for `pure`
+
 def checkLogin(userId: Int, password: String): DbReader[Boolean] =
   for {
     username   <- findUsername(userId)
@@ -178,8 +183,8 @@ val db = Db(
   )
 )
 
-checkLogin("dade", "zerocool").run(db)
-checkLogin("theplague", "davinci").run(db)
+checkLogin(1, "zerocool").run(db)
+checkLogin(4, "davinci").run(db)
 ```
 
 ### When to Use Readers?
