@@ -15,7 +15,7 @@ Option(1).map(_ + 2).map(_ * 3).map(_ + 100)
 
 We're now going to look at two other type classes,
 one that represents *prepending* operations to a chain,
-and one that represents building a *codecrectional*
+and one that represents building a *bidirectional*
 chain of operations.
 
 One great use case for these new type classes is
@@ -27,12 +27,13 @@ case study later in the book.
 
 The first of our type classes, the *contravariant functor*,
 provides an operation called `contramap`
-that represents "prepending" a transformation to a chain:
+that represents "prepending" a transformation to a chain. 
+This is illustrated in [@fig:functors:contramap-type-chart].
 
-![Type chart: the contramap method](src/pages/functors/generic-contramap.pdf+svg)
+![Type chart: the contramap method](src/pages/functors/generic-contramap.pdf+svg){#fig:functor:contramap-type-chart}
 
 We'll talk about `contramap` itself directly for now,
-bringing the type class in a moment.
+bringing in the type class in a moment.
 
 The `contramap` method only makes sense for certain data types.
 For example, we can't define `contramap` for an `Option`
@@ -65,6 +66,8 @@ trait Printable[A] {
 def format[A](value: A)(implicit printable: Printable[A]): String =
   printable.format(value)
 ```
+
+This says that if `A` is `Printable`, and we can transform `B` into `A`, then `B` is also `Printable`.
 
 #### Exercise: Showing off with Contramap
 
@@ -117,7 +120,7 @@ Define an instance of `Printable` that prints
 the value from this case class:
 
 ```tut:book:silent
-case class Box[A](value: A)
+final case class Box[A](value: A)
 ```
 
 Rather than writing out
@@ -174,9 +177,9 @@ def decode[A](value: String)(implicit codec: Codec[A]): Option[A] =
   codec.decode(value)
 ```
 
-Here's the type chart for `imap`:
+The type chart for `imap` is showin in [@fig:functors:imap-type-chart].
 
-![Type chart: the imap method](src/pages/functors/generic-imap.pdf+svg)
+![Type chart: the imap method](src/pages/functors/generic-imap.pdf+svg){#fig:functors:imap-type-chart}
 
 #### Transformative Thinking with Imap
 
