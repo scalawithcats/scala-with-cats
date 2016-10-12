@@ -47,6 +47,7 @@
 [cats.syntax.option]: http://typelevel.org/cats/api/#cats.syntax.package$$option$
 [cats.syntax.semigroup]: http://typelevel.org/cats/api/#cats.syntax.package$$semigroup$
 [cats.syntax.show]: http://typelevel.org/cats/api/#cats.syntax.package$$show$
+[cats.syntax.writer]: http://typelevel.org/cats/api/#cats.syntax.package$$writer$
 [cats.syntax.xor]: http://typelevel.org/cats/api/#cats.syntax.package$$xor$
 
 [scalaz.\/]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.$bslash$div
