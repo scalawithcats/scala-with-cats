@@ -36,8 +36,7 @@ either.right.flatMap(x => Right(x * 2))
 either.left.flatMap(x => Left(x + "!!!"))
 ```
 
-This makes `Either` incovenient to use as a monad,
-especially as the convention in most functional languages is that `Right` side represents.
+This makes `Either` incovenient to use as a monad.
 `Xor` makes the decision that the right side
 is always the success case and thus it supports `map` and `flatMap` directly:
 
@@ -148,7 +147,7 @@ case class User(username: String, password: String)
 sealed trait LoginError
 final case class UserNotFound(username: String) extends LoginError
 final case class PasswordIncorrect(username: String) extends LoginError
-trait UnexpectedError extends LoginError
+case object UnexpectedError extends LoginError
 
 type LoginResult = LoginError Xor User
 ```
@@ -163,7 +162,7 @@ We also get the safety of exhaustivity checking on any pattern matching we do:
 def handleError(error: LoginError): Unit = error match {
   case UserNotFound(u)      => println(s"User not found: $u")
   case PasswordIncorrect(u) => println(s"Password incorrect: $u")
-  case _ : UnexpectedError  => println(s"Unexpected error")
+  case UnexpectedError      => println(s"Unexpected error")
 }
 ```
 
