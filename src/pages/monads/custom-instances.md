@@ -69,8 +69,8 @@ and use the results from `func` to build a new `Tree`.
 The code for `tailRecM` is less simple.
 In fact, it's fairly complex!
 However, if we follow the types the solution falls out.
-Note that we can't make `tailRecM` recursive in this case
-because of the double-left case.
+Note that we can't make `tailRecM` tail recursive in this case
+because we have to recurse twice when processing a `Branch`.
 We implement the `tailRecM` method,
 but don't extend `RecursiveTailRecM`
 and we don't use the `tailrec` annotation:
