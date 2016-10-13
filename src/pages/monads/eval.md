@@ -7,8 +7,8 @@ We typically hear of two such models: *eager* and *lazy*.
 *memoized* and *unmemoized* to create three models of evaluation:
 
  - *now*---evaluated once immediately (equivalent to `val`);
- - *later*---evaluated once when value is needed (equivalent to `lazy val`);
- - *always*---evaluated every time value is needed (equivalent to `def`).
+ - *later*---evaluated once when the value is first needed (equivalent to `lazy val`);
+ - *always*---evaluated every time the value is needed (equivalent to `def`).
 
 ### Eager, lazy, memoized, oh my!
 
@@ -48,7 +48,7 @@ y // first access
 y // second access
 ```
 
-Last but not least, `lazy vals` are eager and memoized.
+Last but not least, `lazy vals` are lazy and memoized.
 The code to compute `z` below
 is not run until we access it for the first time (lazy).
 The result is then cached and re-used on subsequent accesses (memoized):
@@ -128,13 +128,13 @@ z.value // second access
 
 The three behaviours are summarized below:
 
-+------------------+-------------------------+--------------------------+
++------------------|-------------------------|--------------------------+
 |                  | Eager                   | Lazy                     |
 +==================+=========================+==========================+
 | Memoized         | `val`, `Eval.now`       | `lazy val`, `Eval.later` |
-+------------------+-------------------------+--------------------------+
++------------------|-------------------------|--------------------------+
 | Not memoized     | <span>-</span>          | `def`, `Eval.always`     |
-+------------------+-------------------------+--------------------------+
++------------------|-------------------------|--------------------------+
 
 ### Eval as a Monad
 
@@ -190,7 +190,7 @@ saying.value // first access
 saying.value // second access
 ```
 
-### Trampolining
+### Trampolining and *Eval.defer*
 
 One useful property of `Eval` is
 that its `map` and `flatMap` methods are *trampolined*.
@@ -198,62 +198,97 @@ This means we can nest calls to `map` and `flatMap` arbitrarily
 without consuming stack frames.
 We call this property *"stack safety"*.
 
-We'll illustrate this by comparing it to `Option`.
-The `loopM` method below creates a loop through a monad's `flatMap`.
+For example, consider this function for calculating factorials:
 
 ```tut:book:silent
-import cats.Monad
-import cats.syntax.flatMap._
-import scala.language.higherKinds
-
-def stackDepth: Int =
-  Thread.currentThread.getStackTrace.length
-
-def loopM[M[_] : Monad](m: M[Int], count: Int): M[Int] = {
-  println(s"Stack depth $stackDepth")
-  count match {
-    case 0 => m
-    case n => m.flatMap { _ => loopM(m, n - 1) }
-  }
-}
+def factorial(n: BigInt): BigInt =
+  if(n == 1) n else n * factorial(n - 1)
 ```
 
-When we run `loopM` with an `Option` we can see the stack depth slowly increasing.
-With a sufficiently high value of `count`, we would blow the stack:
+It is relatively easy to make this method stack overflow:
+
+```scala
+factorial(50000)
+// java.lang.StackOverflowError
+//   ...
+```
+
+We can rewrite the method using `Eval` to make it stack safe:
 
 ```tut:book:silent
-import cats.instances.option._
+def factorial(n: BigInt): Eval[BigInt] =
+  if(n == 1) Eval.now(n) else factorial(n - 1).map(_ * n)
+```
+
+```scala
+factorial(50000).value
+// java.lang.StackOverflowError
+//   ...
+```
+
+Oops! That didn't work---our stack still blew up!
+This is because we're still making all the recursive calls to `factorial`
+before we start working with `Eval's` `map` method.
+We can work around this using `Eval.defer`,
+which takes an existing instance of `Eval` and defers its evaluation until later.
+`defer` is trampolined like `Eval's` `map` and `flatMap` methods,
+so we can use it as a way to quickly make an existing operation stack safe:
+
+```tut:book:silent
+def factorial(n: BigInt): Eval[BigInt] =
+  if(n == 1) Eval.now(n) else Eval.defer(factorial(n - 1).map(_ * n))
 ```
 
 ```tut:book
-loopM(Option(1), 5)
+factorial(50000).value
 ```
 
-<div class="callout callout-danger">
-TODO: This isn't actually increasing the stack depth -.-
-</div>
-
-Now let's see the same code rewritten using `Eval`.
-The trampoline keeps the stack depth constant:
-
-```tut:book
-loopM(Eval.now(1), 5).value
-```
-
-We see that this runs without issue.
-
-We can use `Eval` as a mechanism to prevent to prevent stack overflows
-when working on very large data structures.
-However, we should bear in mind that trampolining is not free.
-It effectively avoids consuming stack by
-creating a chain of function calls on the heap.
+`Eval` is a useful tool to enforce stack
+when working on very large computations and data structures.
+However, we must bear in mind that trampolining is not free.
+It avoids consuming stack by creating a chain of function calls on the heap.
 There are still limits on how deeply we can nest computations,
 but they are bounded by the size of the heap rather than the stack.
 
-<div class="callout callout-danger">
-TODO: Process these and check we're covering everything important:
+### Exercise: Safer Folding using Eval
 
-- https://github.com/typelevel/cats/blob/master/core/src/main/scala/cats/Eval.scala
-- http://eed3si9n.com/herding-cats/Eval.html
-- Erik's talk from Typelevel Philly 2016 (once the video is up)
+The naive implementation of `foldRight` below is not stack safe.
+Make it so using `Eval`:
+
+```tut:book:silent
+def foldRight[A, B](values: List[A], accum: B)(func: (A, B) => B): B =
+  values match {
+    case Nil          => accum
+    case head :: tail => func(head, foldRight(tail, accum)(func))
+  }
+```
+
+<div class="solution">
+The easiest way to fix this is 
+to introduce a helper method called `foldRightEval`.
+This is essentially our original method
+with every occurrence of `B` replaced with `Eval[B]`,
+and a call to `Eval.defer` to protect the recursive call:
+
+```tut:book:silent
+import cats.Eval
+
+def foldRightEval[A, B](values: List[A], accum: Eval[B])(func: (A, Eval[B]) => Eval[B]): Eval[B] =
+  values match {
+    case Nil          => accum
+    case head :: tail => Eval.defer(func(head, foldRightEval(tail, accum)(func)))
+  }
+```
+
+We can redefine `foldRight` simply in terms of `foldRightEval`
+and the resulting method is stack safe:
+
+```tut:book:silent
+def foldRight[A, B](values: List[A], accum: B)(func: (A, B) => B): B =
+  foldRightEval(values, Eval.now(accum))((a, b) => b.map(func(a, _))).value
+```
+
+```tut:book
+foldRight((1 to 100000).toList, 0)(_ + _)
+```
 </div>

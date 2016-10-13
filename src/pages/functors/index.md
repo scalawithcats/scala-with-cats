@@ -159,21 +159,25 @@ The general type chart is shown in [@fig:functor:functor-type-chart].
 
 ![Type chart: generalised functor map](src/pages/functors/generic-map.pdf+svg){#fig:functor:functor-type-chart}
 
-Intuitively, a functor `F[A]` represents some data (the `A` type) in a context (the `F` type).
-The `map` operation modifies the data within but retains the structure of the surrounding context. 
+Intuitively, a functor `F[A]` represents 
+some data (the `A` type) in a context (the `F` type).
+The `map` operation modifies the data within 
+but retains the structure of the surrounding context. 
 To ensure this is the case, the following laws must hold:
 
-- `map` preserves identity:
+*Identity*: calling `map` with the identity function 
+is the same as doing nothing:
 
-  ```
-  fa.map(a => a) == fa
-  ```
+```scala
+fa.map(a => a) == fa
+```
 
-- `map` respects function composition:
+*Composition*: `mapping` with two functions `f` and `g` is 
+the same as `mapping` with `f` and then `mapping` with `g`:
 
-  ```
-  fa.map(g(f(_))) == fa.map(f).map(g)
-  ```
+```scala
+fa.map(g(f(_))) == fa.map(f).map(g)
+```
 
 If we consider the laws
 in the context of the functors we've discussed above,

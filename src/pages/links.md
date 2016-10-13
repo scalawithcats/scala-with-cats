@@ -16,11 +16,13 @@
 [cats.data.ListT]: http://typelevel.org/cats/api/#cats.data.ListT
 [cats.data.NonEmptyList]: http://typelevel.org/cats/api/#cats.data.NonEmptyList
 [cats.data.OptionT]: http://typelevel.org/cats/api/#cats.data.OptionT
+[cats.data.package]: http://typelevel.org/cats/api/#cats.data.package
 [cats.data.Reader]: http://typelevel.org/cats/api/#cats.data.Reader
 [cats.data.ReaderT]: http://typelevel.org/cats/api/#cats.data.ReaderT
 [cats.data.ReaderWriterStateT]: http://typelevel.org/cats/api/#cats.data.ReaderWriterStateT
 [cats.data.State]: http://typelevel.org/cats/api/#cats.data.State
 [cats.data.StateT]: http://typelevel.org/cats/api/#cats.data.StateT
+[cats.data.Validated]: http://typelevel.org/cats/api/#cats.data.Validated
 [cats.data.Writer]: http://typelevel.org/cats/api/#cats.data.Writer
 [cats.data.WriterT]: http://typelevel.org/cats/api/#cats.data.WriterT
 [cats.data.Xor]: http://typelevel.org/cats/api/#cats.data.Xor
@@ -45,6 +47,7 @@
 [cats.syntax.option]: http://typelevel.org/cats/api/#cats.syntax.package$$option$
 [cats.syntax.semigroup]: http://typelevel.org/cats/api/#cats.syntax.package$$semigroup$
 [cats.syntax.show]: http://typelevel.org/cats/api/#cats.syntax.package$$show$
+[cats.syntax.writer]: http://typelevel.org/cats/api/#cats.syntax.package$$writer$
 [cats.syntax.xor]: http://typelevel.org/cats/api/#cats.syntax.package$$xor$
 
 [scalaz.\/]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.$bslash$div

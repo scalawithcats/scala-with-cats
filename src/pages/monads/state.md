@@ -4,8 +4,8 @@
 allows us to pass additional state around as part of a computation.
 We define `State` instances representing atomic operations on the state,
 and thread them together using `map` and `flatMap`.
-In this way we can model "mutable" state
-in a purely functional way without using mutation.
+In this way we can model mutable state in a purely functional way,
+without using mutation.
 
 ### Creating and Unpacking State
 
@@ -30,7 +30,10 @@ In other words, an instance of `State` is a combination of two things:
 
 We can "run" our monad by supplying an initial state.
 `State` provides three methods---`run`, `runS`, and `runA`---that return
-different combinations of state and result as follows:
+different combinations of state and result.
+Each method actually returns an instance of `Eval`,
+which `State` uses to maintain stack safety.
+We call the `value` method as usual to extract the actual result:
 
 ```tut:book
 // Get the state and the result:
@@ -80,24 +83,27 @@ is to represent each step of a computation as an instance of `State`,
 and compose the steps using the standard monad operators.
 Cats provides several convenience constructors for creating primitive steps:
 
- - `get` extracts the state as the result;
- - `set` updates the state and returns unit as the result;
- - `pure` ignores the state and returns a supplied result;
- - `inspect` extracts the state via a transformation function;
- - `modify` updates the state using an update function.
+  - `get` extracts the state as the result;
+  - `set` updates the state and returns unit as the result;
+  - `pure` ignores the state and returns a supplied result;
+  - `inspect` extracts the state via a transformation function;
+  - `modify` updates the state using an update function.
 
 ```tut:book
-val step1 = State.get[Int]
-val step2 = State.set[Int](30)
-val step3 = State.pure[Int, String]("Result")
-val step4 = State.inspect[Int, String](_ + "!")
-val step5 = State.modify[Int](_ + 1)
+val getDemo = State.get[Int]
+getDemo.run(10).value
 
-val (state, result) = step1.run(10).value
-val (state, result) = step2.run(10).value
-val (state, result) = step3.run(10).value
-val (state, result) = step4.run(10).value
-val (state, result) = step5.run(10).value
+val setDemo = State.set[Int](30)
+setDemo.run(10).value
+
+val pureDemo = State.pure[Int, String]("Result")
+pureDemo.run(10).value
+
+val inspectDemo = State.inspect[Int, String](_ + "!")
+inspectDemo.run(10).value
+
+val modifyDemo = State.modify[Int](_ + 1)
+modifyDemo.run(10).value
 ```
 
 We can assemble these building blocks into useful computations.
@@ -130,8 +136,9 @@ We can see a simple example of this by implementing
 a calculator for post-order integer arithmetic expressions.
 
 In case you haven't heard of post-order expressions before
-(I wouldn't be surprised if you haven't),
-they are a notation where we write the operator *after* its operands.
+(don't worry if you haven't),
+they are a mathematical notation 
+where we write the operator *after* its operands.
 So, for example, instead of writing `1 + 2` we would write:
 
 ```scala
@@ -169,7 +176,8 @@ to produce an interpreter for any sequence of symbols.
 
 Let's do this now.
 Start by writing a function `evalOne` that parses a single symbol
-into an instance of `State`. Use the code below as a template.
+into an instance of `State`. 
+Use the code below as a template.
 Don't worry about error handling for now---if
 the stack is in the wrong configuration,
 it's ok to throw an exception and fail.

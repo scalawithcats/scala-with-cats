@@ -6,12 +6,14 @@ As usual we'll look at the type class, instances, and syntax.
 ### The *Monad* Type Class {#monad-type-class}
 
 The monad type class is [`cats.Monad`][cats.Monad].
-`Monad` extends two other type classes: `FlatMap`,
-which provides the `flatMap` method, and `Applicative`,
-which extends `Functor`.
+`Monad` extends two other type classes: 
+`FlatMap`, which provides the `flatMap` method, 
+and `Applicative`, which provides `pure`.
+`Applicative` also extends `Functor` 
+so every `Monad` also has a `map` method.
 We'll discuss `Applicatives` in a later chapter.
 
-The main methods on `Monad` are `pure` and `flatMap`:
+Here are some examples using `pure` and `flatMap`, and `map` directly:
 
 ```tut:book:silent
 import cats.Monad
@@ -22,33 +24,16 @@ import cats.instances.list._
 ```tut:book
 val opt1 = Monad[Option].pure(3)
 val opt2 = Monad[Option].flatMap(opt1)(a => Some(a + 2))
+val opt3 = Monad[Option].map(opt2)(a => 100 * a)
 
 val list1 = Monad[List].pure(3)
-val list2 = List(1, 2, 3)
-val list3 = Monad[List].flatMap(list2)(x => List(x, x*10))
+val list2 = Monad[List].flatMap(List(1, 2, 3))(x => List(x, x*10))
+val list3 = Monad[List].map(list2)(_ + 123)
 ```
 
-`Monad` provides all of the methods from `Functor`,
-including `map` and `lift`, and adds plenty of new methods as well.
-Here are a couple of examples:
-
-The `tupleN` methods convert a tuple of monads into a monad of tuples:
-
-```tut:book
-val tupled: Option[(Int, String, Double)] =
-  Monad[Option].tuple3(Option(1), Option("hi"), Option(3.0))
-```
-
-The `sequence` method converts a type like `F[G[A]]` to `G[F[A]]`.
-For example, we can convert a `List[Option[Int]]` to a `Option[List[Int]]`:
-
-```tut:book
-val sequence: Option[List[Int]] =
-  Monad[Option].sequence(List(Option(1), Option(2), Option(3)))
-```
-
-`sequence` requires an instance of [`cats.Traversable`][cats.Traversable]
-to be in scope.
+`Monad` provides many other methods as well,
+including all of the methods from `Functor`.
+See the [scaladoc][cats.Monad] for more information.
 
 ### Default Instances
 
@@ -79,56 +64,42 @@ import cats.instances.vector._
 Monad[Vector].flatMap(Vector(1, 2, 3))(x => Vector(x, x*10))
 ```
 
-There are also some Cats-specific monad instances
-that we'll see later on.
-
-### Defining Custom Instances
-
-We can define a `Monad` for a custom type
-by providing implementations of thee methods:
-`flatMap`, `pure`, and a new method called `tailRecM`:
-
-Here is an implementation of `Monad` for `Option` as an example:
+The `Monad` for `Future` doesn't accept 
+implicit `ExecutionContext` parameters to `pure` and `flatMap`
+like `Future` itself does
+(it can't because the parameters aren't in the definitions in the `Monad` trait).
+To work around this,
+Cats requires us to have an `ExecutionContext` in scope
+when we summon the `Monad` for `Future`:
 
 ```tut:book:silent
-import cats.RecursiveTailRecM
-import cats.data.Xor
-import scala.annotation.tailrec
-
-val optionMonad = new Monad[Option] with RecursiveTailRecM[Option] {
-  def flatMap[A, B](value: Option[A])(func: A => Option[B]): Option[B] =
-    value flatMap func
-
-  def pure[A](value: A): Option[A] =
-    Some(value)
-
-  @tailrec
-  def tailRecM[A, B](a: A)(f: A => Option[Either[A, B]]): Option[B] =
-    f(a) match {
-      case None           => None
-      case Some(Left(a1)) => tailRecM(a1)(f)
-      case Some(Right(b)) => Some(b)
-    }
-}
+import cats.instances.future._
+import scala.concurrent._
+import scala.concurrent.duration._
 ```
 
-`tailRecM` is an internal optimisation that limits
-the amount of stack space used by nested calls to `flatMap`.
-The technique comes from a [2015 paper][link-phil-freeman-tailrecm]
-by PureScript creator Phil Freeman.
-The method should recursively call itself
-as long as the result of `f` returns a `Right`.
-If we can make `tailRecM` tail recursive,
-we should do so and inherit from `RecursiveTailRecM`
-to allow Cats to perform additional internal optimisations.
+```tut:book:fail
+val fm = Monad[Future]
+```
 
-<div class="callout callout-danger">
-  TODO: Remove this? Or move it after the discussion of `Xor`?
+```tut:book:silent
+import scala.concurrent.ExecutionContext.Implicits.global
+```
 
-  The `tailRecM` stuff (new in Cats 0.7) seems
-  a little heavyweight for discussion here,
-  and defining custom instances is arguably not that important.
-</div>
+```tut:book
+val fm = Monad[Future]
+```
+
+The `Monad` instances uses the captured `ExecutionContext`
+for subsequent calls to `pure` and `flatMap`:
+
+```tut:book
+Await.result(fm.flatMap(fm.pure(1))(x => fm.pure(x + 2)), Duration.Inf)
+```
+
+In addition to the above,
+Cats provides a host of new monads that we don't have in the standard library.
+We'll familiarise ourselves with the most important of these in a moment.
 
 ### *Monad* Syntax
 
@@ -142,32 +113,43 @@ In practice it's often easier to import everything in one go
 from [`cats.implicits`][cats.implicits].
 However, we'll use the individual imports here for clarity.
 
-It's difficult to demonstrate the `flatMap` and `map`
+We can use `pure` to construct instances of a monad.
+We'll often need to specify the type parameter to disambiguate the particlar instance we want.
+
+```tut:book:silent
+import cats.syntax.applicative._
+import cats.instances.option._
+import cats.instances.list._
+```
+
+```tut:book
+1.pure[Option]
+1.pure[List]
+```
+
+It's difficult to demonstrate the `flatMap` and `map` methods
 directly on Scala monads like `Option` and `List`,
 because they define their own explicit versions of those methods.
-Instead we'll write a contrived generic function that
-returns `3*3 + 4*4` wrapped in a monad of the user's choice:
+Instead we'll write a generic function that
+performs a calculation on parameters 
+that come wrapped in a monad of the user's choice:
 
 ```tut:book:silent
 import scala.language.higherKinds
 import cats.Monad
 import cats.syntax.functor._
 import cats.syntax.flatMap._
-import cats.syntax.applicative._
 
-def sumSquare[A[_] : Monad](a: Int, b: Int): A[Int] = {
-  val x = a.pure[A]
-  val y = a.pure[A]
-  x flatMap (x => y map (y => x*x + y*y))
-}
+def sumSquare[M[_] : Monad](a: M[Int], b: M[Int]): M[Int] =
+  a.flatMap(x => b.map(y => x*x + y*y))
 
 import cats.instances.option._
 import cats.instances.list._
 ```
 
 ```tut:book
-sumSquare[Option](3, 4)
-sumSquare[List](3, 4)
+sumSquare(Option(3), Option(4))
+sumSquare(List(1, 2, 3), List(4, 5))
 ```
 
 We can rewrite this code using for comprehensions.
@@ -176,118 +158,17 @@ rewriting our comprehension in terms of `flatMap` and `map`
 and inserting the correct implicit conversions to use our `Monad`:
 
 ```tut:book:silent
-def sumSquare[A[_] : Monad](a: Int, b: Int): A[Int] = {
+def sumSquare[M[_] : Monad](a: M[Int], b: M[Int]): M[Int] =
   for {
-    x <- a.pure[A]
-    y <- b.pure[A]
+    x <- a
+    y <- b
   } yield x*x + y*y
-}
 ```
 
 ```tut:book
-sumSquare[Option](3, 4)
-sumSquare[List](3, 4)
+sumSquare(Option(3), Option(4))
+sumSquare(List(1, 2, 3), List(4, 5))
 ```
 
-### Exercise: Branching out Further with Monads
-
-Let's write a `Monad` for our `Tree` data type from last chapter.
-Here's the type again, together with the smart constructors we used
-to simplify type class instance selection:
-
-```tut:book:silent
-sealed trait Tree[+A]
-final case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
-final case class Leaf[A](value: A) extends Tree[A]
-
-def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
-  Branch(left, right)
-
-def leaf[A](value: A): Tree[A] =
-  Leaf(value)
-```
-
-Verify that the code works on instances of `Branch` and `Leaf`,
-and that the `Monad` provides `Functor`-like behaviour for free.
-
-Verify that having a `Monad` in scope allows us to use for comprehensions,
-despite the fact that we haven't directly implemented `flatMap` or `map` on `Tree`.
-
-<div class="solution">
-The code for `flatMap` is simple. It's similar to the code for `map`.
-Again, we recurse down the structure
-and use the results from `func` to build a new `Tree`.
-
-The code for `tailRecM` is less simple.
-In fact, it's fairly complex!
-However, if we follow the types the solution falls out.
-Note that we can't make `tailRecM` recursive in this case
-because of the double-left case.
-We implement the `tailRecM` method,
-but don't extend `RecursiveTailRecM`
-and we don't use the `tailrec` annotation:
-
-```tut:book:silent
-import cats.{Monad, RecursiveTailRecM}
-
-implicit val treeMonad = new Monad[Tree] {
-  def pure[A](value: A): Tree[A] =
-    Leaf(value)
-
-  def flatMap[A, B](tree: Tree[A])(func: A => Tree[B]): Tree[B] =
-    tree match {
-      case Branch(l, r) => Branch(flatMap(l)(func), flatMap(r)(func))
-      case Leaf(value)  => func(value)
-    }
-
-  def tailRecM[A, B](arg: A)(func: A => Tree[Either[A, B]]): Tree[B] =
-    func(arg) match {
-      case Branch(l: Tree[Either[A, B]], r: Tree[Either[A, B]]) =>
-        Branch(
-          flatMap(l) {
-            case Left(l)  => tailRecM(l)(func)
-            case Right(l) => pure(l)
-          },
-          flatMap(r) {
-            case Left(r)  => tailRecM(r)(func)
-            case Right(r) => pure(r)
-          }
-        )
-
-      case Leaf(Left(value)) =>
-        tailRecM(value)(func)
-
-      case Leaf(Right(value)) =>
-        Leaf(value)
-    }
-}
-```
-
-Now we can use our `Monad` to `flatMap` and `map`:
-
-```tut:book:silent
-import cats.syntax.functor._
-import cats.syntax.flatMap._
-```
-
-```tut:book
-branch(leaf(100), leaf(200)) flatMap (x => branch(leaf(x - 1), leaf(x + 1)))
-```
-
-We can also transform `Trees` using for comprehensions:
-
-```tut:book
-for {
-  a <- branch(leaf(100), leaf(200))
-  b <- branch(leaf(a - 10), leaf(a + 10))
-  c <- branch(leaf(b - 1), leaf(b + 1))
-} yield c
-```
-
-The monad for `Option` provides fail-fast semantics.
-The monad for `List` provides concatenation semantics.
-What are the semantics of `flatMap` for a binary tree?
-Every node in the tree has the potential to be replaced with a whole subtree,
-producing a kind of "growing" or "feathering" behaviour,
-reminiscent of list concatenation along two axes.
-</div>
+That's more or less everything we need to know about the generalities of monads in Cats.
+Now let's take a look at some useful monad instances.

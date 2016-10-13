@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1721px" height="360px" viewBox="0 0 1721 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40.2 (33826) - http://www.bohemiancoding.com/sketch -->
+    <title>future-flatmap</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <ellipse id="path-1" cx="80" cy="80" rx="80" ry="80"></ellipse>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="160" height="160" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <ellipse id="path-3" cx="740" cy="143" rx="80" ry="80"></ellipse>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="160" height="160" fill="white">
+            <use xlink:href="#path-3"></use>
+        </mask>
+        <polygon id="path-5" points="135.595086 157 82.6944138 184.811529 92.7975432 125.905765 50 84.1884705 109.14475 75.5942353 135.595086 22 162.045423 75.5942353 221.190173 84.1884705 178.39263 125.905765 188.495759 184.811529"></polygon>
+        <mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="171.190173" height="162.811529" fill="white">
+            <use xlink:href="#path-5"></use>
+        </mask>
+        <polygon id="path-7" points="85.5950865 135 32.6944138 162.811529 42.7975432 103.905765 5.32907052e-14 62.1884705 59.1447501 53.5942353 85.5950865 0 112.045423 53.5942353 171.190173 62.1884705 128.39263 103.905765 138.495759 162.811529"></polygon>
+        <mask id="mask-8" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="171.190173" height="162.811529" fill="white">
+            <use xlink:href="#path-7"></use>
+        </mask>
+        <polygon id="path-9" points="858 123 898 123 898 103 938 142.497767 898 183 898 163 858 163"></polygon>
+        <mask id="mask-10" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="80" height="80" fill="white">
+            <use xlink:href="#path-9"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="future-flatmap">
+            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1721" height="360"></rect>
+            <g id="Group-12" transform="translate(57.000000, 29.000000)" stroke="#000000">
+                <path d="M233.315361,181.467721 C255.006169,170.992471 266,154.961214 266,132.8 C266,106.750232 250.809583,89.170359 220.910889,79.1281896 C224.907288,72.0781043 227.132924,64.2472515 227.132924,56 C227.132924,25.072054 195.8334,0 157.223482,0 C138.174233,0 120.904488,6.10306285 108.295299,16.00136 C103.887872,14.9548756 99.2817714,14.4 94.5421687,14.4 C62.682658,14.4 36.8554217,39.472054 36.8554217,70.4 C36.8554217,74.9092002 37.4044248,79.2939231 38.4410831,83.4946147 C13.680009,93.9523732 0,110.184167 0,132.8 C0,168.248626 33.6093449,188.012808 90.8198022,194.441594 C103.787678,212.035696 129.294061,224 158.638554,224 C194.740936,224 225.033857,205.890521 233.31536,181.467725 Z" id="Combined-Shape" stroke-width="4"></path>
+                <g id="Group-2" transform="translate(57.000000, 31.000000)" stroke-width="8" fill="#FFFFFF">
+                    <use id="Oval-1" mask="url(#mask-2)" xlink:href="#path-1"></use>
+                </g>
+            </g>
+            <use id="Oval-1" stroke="#000000" mask="url(#mask-4)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-3"></use>
+            <g id="Group-13" transform="translate(979.000000, 40.000000)" stroke="#000000">
+                <path d="M233.315361,181.467721 C255.006169,170.992471 266,154.961214 266,132.8 C266,106.750232 250.809583,89.170359 220.910889,79.1281896 C224.907288,72.0781043 227.132924,64.2472515 227.132924,56 C227.132924,25.072054 195.8334,0 157.223482,0 C138.174233,0 120.904488,6.10306285 108.295299,16.00136 C103.887872,14.9548756 99.2817714,14.4 94.5421687,14.4 C62.682658,14.4 36.8554217,39.472054 36.8554217,70.4 C36.8554217,74.9092002 37.4044248,79.2939231 38.4410831,83.4946147 C13.680009,93.9523732 0,110.184167 0,132.8 C0,168.248626 33.6093449,188.012808 90.8198022,194.441594 C103.787678,212.035696 129.294061,224 158.638554,224 C194.740936,224 225.033857,205.890521 233.31536,181.467725 Z" id="Combined-Shape" stroke-width="4"></path>
+                <use id="Star-1" mask="url(#mask-6)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-5"></use>
+            </g>
+            <g id="Group-14" transform="translate(1402.000000, 38.000000)" stroke="#000000">
+                <path d="M233.315361,181.467721 C255.006169,170.992471 266,154.961214 266,132.8 C266,106.750232 250.809583,89.170359 220.910889,79.1281896 C224.907288,72.0781043 227.132924,64.2472515 227.132924,56 C227.132924,25.072054 195.8334,0 157.223482,0 C138.174233,0 120.904488,6.10306285 108.295299,16.00136 C103.887872,14.9548756 99.2817714,14.4 94.5421687,14.4 C62.682658,14.4 36.8554217,39.472054 36.8554217,70.4 C36.8554217,74.9092002 37.4044248,79.2939231 38.4410831,83.4946147 C13.680009,93.9523732 0,110.184167 0,132.8 C0,168.248626 33.6093449,188.012808 90.8198022,194.441594 C103.787678,212.035696 129.294061,224 158.638554,224 C194.740936,224 225.033857,205.890521 233.31536,181.467725 Z" id="Combined-Shape" stroke-width="4"></path>
+                <g id="Group" transform="translate(48.000000, 22.000000)" stroke-width="8" fill="#FFFFFF">
+                    <use id="Star-1" mask="url(#mask-8)" xlink:href="#path-7"></use>
+                </g>
+            </g>
+            <use id="Path-1" stroke="#000000" mask="url(#mask-10)" stroke-width="8" fill="#000000" xlink:href="#path-9"></use>
+            <polygon id="Path-1" fill="#F6A623" points="1288 123 1328 123 1328 103 1368 142.497767 1328 183 1328 163 1288 163"></polygon>
+            <text id="Future[A]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="87.6" y="317">Future[A]</tspan>
+            </text>
+            <text id="Future[B]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="1411.6" y="317">Future[B]</tspan>
+            </text>
+            <text id="A-=&gt;-Future[B]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="775.6" y="317">A =&gt; Future[B]</tspan>
+            </text>
+            <text id="flatMap" font-family="FiraMono-Bold, Fira Mono" font-size="64" font-weight="bold" fill="#F6A623">
+                <tspan x="353.2" y="158">flatMap</tspan>
+            </text>
+        </g>
+    </g>
+</svg>
