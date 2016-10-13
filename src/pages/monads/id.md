@@ -8,7 +8,6 @@ import scala.language.higherKinds
 import cats.Monad
 import cats.syntax.functor._
 import cats.syntax.flatMap._
-import cats.syntax.applicative._
 
 def sumSquare[M[_] : Monad](a: M[Int], b: M[Int]): M[Int] =
   for {

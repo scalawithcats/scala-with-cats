@@ -159,8 +159,10 @@ The general type chart is shown in [@fig:functor:functor-type-chart].
 
 ![Type chart: generalised functor map](src/pages/functors/generic-map.pdf+svg){#fig:functor:functor-type-chart}
 
-Intuitively, a functor `F[A]` represents some data (the `A` type) in a context (the `F` type).
-The `map` operation modifies the data within but retains the structure of the surrounding context. 
+Intuitively, a functor `F[A]` represents 
+some data (the `A` type) in a context (the `F` type).
+The `map` operation modifies the data within 
+but retains the structure of the surrounding context. 
 To ensure this is the case, the following laws must hold:
 
 *Identity*: calling `map` with the identity function 

@@ -7,8 +7,8 @@ We typically hear of two such models: *eager* and *lazy*.
 *memoized* and *unmemoized* to create three models of evaluation:
 
  - *now*---evaluated once immediately (equivalent to `val`);
- - *later*---evaluated once when value is needed (equivalent to `lazy val`);
- - *always*---evaluated every time value is needed (equivalent to `def`).
+ - *later*---evaluated once when the value is first needed (equivalent to `lazy val`);
+ - *always*---evaluated every time the value is needed (equivalent to `def`).
 
 ### Eager, lazy, memoized, oh my!
 
@@ -48,7 +48,7 @@ y // first access
 y // second access
 ```
 
-Last but not least, `lazy vals` are eager and memoized.
+Last but not least, `lazy vals` are lazy and memoized.
 The code to compute `z` below
 is not run until we access it for the first time (lazy).
 The result is then cached and re-used on subsequent accesses (memoized):
@@ -128,13 +128,13 @@ z.value // second access
 
 The three behaviours are summarized below:
 
-+------------------+-------------------------+--------------------------+
++------------------|-------------------------|--------------------------+
 |                  | Eager                   | Lazy                     |
 +==================+=========================+==========================+
 | Memoized         | `val`, `Eval.now`       | `lazy val`, `Eval.later` |
-+------------------+-------------------------+--------------------------+
++------------------|-------------------------|--------------------------+
 | Not memoized     | <span>-</span>          | `def`, `Eval.always`     |
-+------------------+-------------------------+--------------------------+
++------------------|-------------------------|--------------------------+
 
 ### Eval as a Monad
 
