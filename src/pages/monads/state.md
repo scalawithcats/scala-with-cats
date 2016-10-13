@@ -176,7 +176,8 @@ to produce an interpreter for any sequence of symbols.
 
 Let's do this now.
 Start by writing a function `evalOne` that parses a single symbol
-into an instance of `State`. Use the code below as a template.
+into an instance of `State`. 
+Use the code below as a template.
 Don't worry about error handling for now---if
 the stack is in the wrong configuration,
 it's ok to throw an exception and fail.
