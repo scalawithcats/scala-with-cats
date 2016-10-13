@@ -6,6 +6,8 @@ but special cases of functors such as
 **monads** and **applicative functors**
 are some of the most commonly used abstractions in Cats.
 
+## Examples of Functors
+
 Informally, a functor is anything with a `map` method.
 You probably know lots of types that have this:
 `Option`, `List`, `Either`, and `Future`, to name a few.
@@ -20,38 +22,95 @@ The `map` method is perhaps the most commonly used method on `List`.
 If we have a `List[A]` and a function `A => B`, `map` will create a `List[B]`.
 
 ```tut:book
-List(1, 2, 3) map { x => (x % 2) == 0 }
+List(1, 2, 3).map(x => (x % 2) == 0)
 ```
 
-There are some properties of `map` that we rely without even thinking about them.
-For example, we expect the two code fragments below to produce the same output.
+There are some properties of `map` that we rely on without even thinking about them. For example, we expect the two snippets below to produce the same output:
 
 ```tut:book
-List(1, 2, 3) map { x => x * 2 } map { x => x + 4 }
+List(1, 2, 3).map(_ * 2).map(_ + 4)
 
-List(1, 2, 3) map { x => (x * 2) + 4 }
+List(1, 2, 3).map(x => (x * 2) + 4)
 ```
+
+In general, the `map` method for a `List` works like this:
+We start with a `List[A]` of length `n`,
+we supply a function from `A` to `B`,
+and we end up with a `List[B]` of length `n`.
+The elements are changed
+but the ordering and length of the list are preserved.
+This is illustrated in [@fig:functor:list-type-chart].
+
+![Type chart: mapping over a List](src/pages/functors/list-map.pdf+svg){#fig:functor:list-type-chart}
 
 **Options**
 
 We can do the same thing with an `Option`.
-If we have a `Option[A]` and a function `A => B`, `map` will create a `Option[B]`:
+If we have a `Option[A]` and a function `A => B`,
+`map` will create a `Option[B]`:
 
 ```tut:book
-Option(1) map (_.toString)
+Option(1).map(_.toString)
 ```
 
-We expect `map` on  `Option` to behave in the same way as `List`.
+We expect `map` on  `Option` to behave in the same way as `List`:
 
 ```tut:book
-Option(123) map { x => x * 2 } map { x => x + 4 }
+Option(123).map(_ * 4).map(_ + 4)
 
-Option(123) map { x => (x * 2) + 4 }
+Option(123).map(x => (x * 2) + 4)
 ```
+
+In general, the `map` method for an `Option` works
+similarly to that for a `List`.
+We start with an `Option[A]`
+that is either a `Some[A]` or a `None`,
+we supply a function from `A` to `B`,
+and the result is either a `Some[B]` or a `None`.
+Again, the structure is preserved:
+if we start with a `Some` we end up with a `Some`, and a `None` always maps to a `None`.
+This is shown in [@fig:functor:option-type-chart].
+
+![Type chart: mapping over an Option](src/pages/functors/option-map.pdf+svg){#fig:functor:option-type-chart}
+
+## More Examples of Functors
+
+Let's expand how we think about `map`
+by taking some other examples into account:
+
+**Futures**
+
+`Future` is also a functor
+with a `map` method[^future-error-handling].
+If we start with a `Future[A]`
+and call map supplying a function `A => B`,
+we end up with a `Future[B]`:
+
+[^future-error-handling]: Some functional purists disagree with this
+because the exception handling in Scala futures breaks the functor laws.
+We're going to ignore this detail
+because *real* functional programs don't do exceptions.
+
+```tut:book:silent
+import scala.concurrent.{Future, Await}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+```
+
+```tut:book
+val future1 = Future("Hello world!")
+val future2 = future1.map(_.length)
+
+Await.result(future1, Duration.Inf)
+Await.result(future2, Duration.Inf)
+```
+
+The general pattern looks like [@fig:functor:future-type-chart]. Seem familiar?
+
+![Type chart: mapping over a Future](src/pages/functors/future-map.pdf+svg){#fig:functor:future-type-chart}
 
 **Functions (?!)**
 
-Now let's expand how we think about `map`.
 Can we map over functions of a single argument?
 What would this mean?
 
@@ -61,40 +120,63 @@ All our examples above have had the following general shape:
  - supply a function `A => B`;
  - get back `F[B]`.
 
-A function with a single argument has two types: the parameter type and the result type.
-To get them to the same shape we can fix the parameter type and let the result type vary:
+A function with a single argument has two types:
+the parameter type and the result type.
+To get them to the same shape we can
+fix the parameter type and let the result type vary:
 
- - start with `R => A`;
+ - start with `X => A`;
  - supply a function `A => B`;
- - get back `R => B`.
+ - get back `X => B`.
 
-In other words, "mapping" over a `Function1` is just function composition:
+We can see this with our trusty type chart in [@fig:functor:function-type-chart].
 
-```tut:book
+![Type chart: mapping over a Function1](src/pages/functors/function-map.pdf+svg){#fig:functor:function-type-chart}
+
+In other words, "mapping" over a `Function1`
+is just function composition:
+
+```tut:book:silent
 import cats.instances.function._
 import cats.syntax.functor._
+```
 
-val func1 = (x: Int) => x.toDouble
+```tut:book
+val func1 = (x: Int)    => x.toDouble
 val func2 = (y: Double) => y * 2
-val func3 = func1 map func2
+val func3 = func1.map(func2)
 
-// Function composition by calling map
-func3(1)
+func3(1) // function composition by calling map
 
-// Function composition written out by hand
-func2(func1(1))
+func2(func1(1)) // function composition written out by hand
 ```
 
 ## Definition of a Functor
 
-Formally, a functor is a type `F[A]` with an operation `map` with type `(A => B) => F[B]`.
+Formally, a functor is a type `F[A]`
+with an operation `map` with type `(A => B) => F[B]`.
+The general type chart is shown in [@fig:functor:functor-type-chart].
 
-The following laws must hold:
+![Type chart: generalised functor map](src/pages/functors/generic-map.pdf+svg){#fig:functor:functor-type-chart}
 
-- `map` preserves identity, meaning `fa map (a => a)` is equal to `fa`.
-- `map` respects composition, meaning `fa map (g(f(_)))` is equal to `(fa map f) map g`.
+Intuitively, a functor `F[A]` represents some data (the `A` type) in a context (the `F` type).
+The `map` operation modifies the data within but retains the structure of the surrounding context. 
+To ensure this is the case, the following laws must hold:
 
-If we consider the laws in the context of the functors we've discussed above,
+- `map` preserves identity:
+
+  ```
+  fa.map(a => a) == fa
+  ```
+
+- `map` respects function composition:
+
+  ```
+  fa.map(g(f(_))) == fa.map(f).map(g)
+  ```
+
+If we consider the laws
+in the context of the functors we've discussed above,
 we can see they make sense and are true.
 We've seen some examples of the second law already.
 
