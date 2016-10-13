@@ -113,7 +113,21 @@ In practice it's often easier to import everything in one go
 from [`cats.implicits`][cats.implicits].
 However, we'll use the individual imports here for clarity.
 
-It's difficult to demonstrate the `flatMap` and `map`
+We can use `pure` to construct instances of a monad.
+We'll often need to specify the type parameter to disambiguate the particlar instance we want.
+
+```tut:book:silent
+import cats.syntax.applicative._
+import cats.instances.option._
+import cats.instances.list._
+```
+
+```tut:book
+1.pure[Option]
+1.pure[List]
+```
+
+It's difficult to demonstrate the `flatMap` and `map` methods
 directly on Scala monads like `Option` and `List`,
 because they define their own explicit versions of those methods.
 Instead we'll write a generic function that
@@ -125,7 +139,6 @@ import scala.language.higherKinds
 import cats.Monad
 import cats.syntax.functor._
 import cats.syntax.flatMap._
-import cats.syntax.applicative._
 
 def sumSquare[M[_] : Monad](a: M[Int], b: M[Int]): M[Int] =
   a.flatMap(x => b.map(y => x*x + y*y))
