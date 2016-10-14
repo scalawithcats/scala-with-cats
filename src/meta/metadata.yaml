@@ -57,9 +57,9 @@ pages:
 
   - applicatives/index.md
   - applicatives/cartesian.md
-  - applicatives/builder.md
-  - applicatives/applicative.md
+  - applicatives/examples.md
   - applicatives/validated.md
+  - applicatives/applicative.md
   # - applicatives/cats.md
   - applicatives/summary.md
 

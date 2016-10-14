@@ -1,21 +1,20 @@
 ## *Apply* and *Applicative*
 
-You won't see cartesians mentioned frequently
+Cartesians aren't mentioned frequently
 in the wider functional programming literature.
-However, you will see references to
-a closely related concept called an *applicative functor*
-(*applicative* for short).
-Cartesian and applicative are alternative encodings
+They provide a subset of the functionality of a related type class
+called an *applicative functor* ("applicative" for short).
+Cartesian and applicative effectively provide alternative encodings
 of the notion of "zipping" values.
-Applicative also provides with a `pure` operation
-that we've seen in earlier chapters.
+Applicative also provides the `pure` operation
+that we've seen when discussing monads.
 
 Cats models `Applicatives` using two type classes.
-The first, `Apply` extends `Cartesian` and `Functor`,
-adding an `ap` method that applies a parameter
+The first, `Apply`, extends `Cartesian` and `Functor` 
+and adds an `ap` method that applies a parameter
 to a function within a context.
 The second, `Applicative` extends `Apply`,
-adding the `pure` method.
+adds the `pure` method.
 Here is a simplified definition in code:
 
 ```scala
@@ -33,8 +32,8 @@ trait Applicative[F[_]] extends Apply[F] {
 
 Don't worry too much about the implementation of `product`---it's
 complicated and difficult to read
-and the details aren't particuarly important for our discussion.
-However, do notice that it is defined in terms of `ap` and `map`.
+and the details aren't particuarly important.
+However, do notice that `product` is defined in terms of `ap` and `map`.
 There is an equivalence between these three methods that
 allows any one of them to be defined in terms of the other two.
 The intuitive reading of this definition of `product` is as follows:
@@ -130,35 +129,3 @@ applicatives and cartesians impose no such restriction.
 This puts them in another sweet spot in the hierarchy.
 We can use them to represent classes parallel / independent computations
 that monads cannot.
-
-### Why *Xor* Doesn't Accumulate Errors
-
-`Xor` is a `Monad`, and as we have seen,
-`Monads` define `product` in terms of `flatMap` and `pure`:
-
-```tut:book:silent
-import cats.Monad
-import cats.data.Xor
-
-type ErrorOr[A] = String Xor A
-
-def product[A, B](fa: ErrorOr[A], fb: ErrorOr[B]): ErrorOr[(A, B)] =
-  Monad[ErrorOr].flatMap(fa) { a =>
-    Monad[ErrorOr].map(fb) { b =>
-      (a, b)
-    }
-  }
-```
-
-If `fa` is a failure, we cannot run the function from `A` to `Xor[(A, B)]`
-to determine the success/failure status of `fb`.
-This means we can never accumulate errors using a monad.
-To do this we need an applicative data type
-with a definition of `product` that *isn't* based on `flatMap`.
-
-Fortunately, Cats provides another data type called `Validated`
-with exactly this behaviour.
-`Validated` is an applicative but not a monad,
-allowing it to have a definition of product that preserves errors
-from the `fa` and `fb` parameters.
-We'll discuss this data type in the next section.

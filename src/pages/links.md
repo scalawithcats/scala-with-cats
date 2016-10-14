@@ -16,6 +16,7 @@
 [cats.data.ListT]: http://typelevel.org/cats/api/#cats.data.ListT
 [cats.data.Kleisli]: http://typelevel.org/cats/api/#cats.data.Kleisli
 [cats.data.NonEmptyList]: http://typelevel.org/cats/api/#cats.data.NonEmptyList
+[cats.data.NonEmptyVector]: http://typelevel.org/cats/api/#cats.data.NonEmptyVector
 [cats.data.OptionT]: http://typelevel.org/cats/api/#cats.data.OptionT
 [cats.data.package]: http://typelevel.org/cats/api/#cats.data.package
 [cats.data.Reader]: http://typelevel.org/cats/api/#cats.data.Reader
@@ -42,6 +43,7 @@
 [cats.kernel.Semigroup]: http://typelevel.org/cats/api/#cats.kernel.Semigroup
 [cats.syntax]: http://typelevel.org/cats/api/#cats.syntax.package
 [cats.syntax.applicative]: http://typelevel.org/cats/api/#cats.syntax.package$$applicative$
+[cats.syntax.cartesian]: http://typelevel.org/cats/api/#cats.syntax.package$$cartesian$
 [cats.syntax.eq]: http://typelevel.org/cats/api/#cats.syntax.package$$eq$
 [cats.syntax.flatMap]: http://typelevel.org/cats/api/#cats.syntax.package$$flatMap$
 [cats.syntax.functor]: http://typelevel.org/cats/api/#cats.syntax.package$$functor$
