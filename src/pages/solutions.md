@@ -1,4 +1,4 @@
-\appendix
+\part{Solutions to Exercises}
 
 # Solutions to Exercises {#solutions}
 

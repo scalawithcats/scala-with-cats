@@ -20,6 +20,8 @@ pages:
   - intro/conventions.md
   - intro/acknowledgements.md
 
+  - parts/part1.md
+
   - type-classes/index.md
   - type-classes/anatomy.md
   - type-classes/cats.md
@@ -66,9 +68,11 @@ pages:
   - foldable-traverse/foldable-cats.md
   - foldable-traverse/traverse.md
   - foldable-traverse/traverse-cats.md
-  - foldable-traverse/traverse-laws.md
+  # - foldable-traverse/traverse-laws.md
   - foldable-traverse/unapply.md
   - foldable-traverse/summary.md
+
+  - parts/part2.md
 
   - case-studies/mapreduce/index.md
 

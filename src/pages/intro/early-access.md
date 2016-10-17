@@ -27,27 +27,18 @@ Starting from the March 2016 release, here are the major changes to the book:
 
 - Added sections on `Cartesian` to the applicatives chapter.
 
+- Added sections on `Foldable` and `Traverse`.
+
+- Added type chart diagrams for `Functor` and `Monad`.
+
 ### Omissions {-}
 
 Here are the major things missing from the book:
 
-1. We need to add a chapter/section on `Kleisli`.
-
-2. Many chapters are missing introductory narrative
-   to introduce general concepts before we get into technical detail.
-
-3. We've had great experience in the classroom
-   using graphical notation to describe the various sequencing type classes.
-   We will add these diagrams (and corresponding narrative)
-   to the chapters on functors, monads, cartesians, and applicatives.
-
-4. We are missing a few summary chapters.
-   These include a condensed discussion of the concepts covered in the book.
-
-5. We are missing some of the case studies
+1. We are missing some of the case studies
    that make up the last third of the book.
    These are in various states of completion
    so we have chosen to hold them back
    until we have a better idea of what they will look like.
 
-6. Some case studies are still written using Scalaz.
+2. Some case studies are still written using Scalaz.
