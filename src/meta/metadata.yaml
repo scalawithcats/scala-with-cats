@@ -98,6 +98,8 @@ pages:
   # - case-studies/parser/transforms.md
   # - case-studies/parser/applicative.md
 
+  - parts/part3.md
+
   - solutions.md
   - links.md
 previewPages:
