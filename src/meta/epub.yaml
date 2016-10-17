@@ -1,2 +1,7 @@
 ---
+solutions:
+  headingText: "Solutions to Exercises"
+  headingLevel: 1
+  chapterHeadingLevel: 2
+  exerciseHeadingLevel: 3
 ...
