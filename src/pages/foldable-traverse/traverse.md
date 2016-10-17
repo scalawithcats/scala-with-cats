@@ -1,15 +1,20 @@
 ## *Traverse*
 
-`foldLeft` and `foldRight` are very flexible iteration methods,
-but they require us to do a lot of work to define accumulators and combinator functions.
-The `Traverse` type class is a higher level tool that leverages `Applicatives`
-to provide a much more convenient, more lawful, pattern for iteration.
+`foldLeft` and `foldRight` are flexible iteration methods
+but they require us to do a lot of work 
+to define accumulators and combinator functions.
+The `Traverse` type class is a higher level tool 
+that leverages `Applicatives` to provide 
+a more convenient, more lawful, pattern for iteration.
+For those who are interested, `Traverse` comes from 
+[this 2006 paper][link-gibbons-oliviera-iterator-pattern] 
+by Jeremy Gibbons and Bruno Oliviera.
 
 ### Traversing with Futures
 
 We can demonstrate `Traverse` using
 the `Future.traverse` and `Future.sequence` methods in the Scala standard library.
-These methods provide `Future`-specific implementations of the `Traverse` type class.
+These methods provide `Future`-specific implementations of the traverse pattern.
 As an example, suppose we have a list of server hostnames
 and a method to poll a host for its uptime:
 
@@ -81,19 +86,19 @@ object Future {
 This is essentially the same as our example code above.
 `Future.traverse` takes away the pain of folding
 and defining accumulators and combination functions,
-and gives us a clean, high-level, interface to do what we want:
+and gives us a clean high-level interface to do what we want:
 
 - start with a `List[A]`;
 - provide a function `A => Future[B]`;
 - end up with a `Future[List[B]]`.
 
 The standard library also provides another method, `Future.sequence`,
-that assumes we're starting with a `Future[List[B]]`
+that assumes we're starting with a `List[Future[B]]`
 and don't need to provide an identity function:
 
 ```scala
 object Future {
-  def sequence[B](futures: List[B]): Future[List[B]] =
+  def sequence[B](futures: List[Future[B]]): Future[List[B]] =
     traverse(futures)(identity)
 
   // etc...
@@ -105,43 +110,45 @@ In this case the intuitive understanding is even simpler:
 - start with a `List[Future[A]]`;
 - end up with a `Future[List[A]]`.
 
-`Future.traverse` and `Future.sequence` solve a very specific problem:
-they allow us to iterate over a sequence and accumulate a result,
-ignoring the fact that the code we're writing is asynchronous.
+`Future.traverse` and `Future.sequence` 
+solve a very specific problem:
+they allow us to iterate over a sequence of `Futures`
+and accumulate a result.
 The simplified examples above only work with `Lists`,
 but the real `Future.traverse` and `Future.sequence`
 work with any standard Scala collection.
 
 Cats' `Traverse` type class generalises the `traverse` and `sequence` patterns
-to work with any type of sequence type and any type of "effect",
+to work with any type of "effect",
 including `Future`, `Option`, `Validated`, and so on.
 We'll approach `Traverse` in the next sections in two steps:
 first we'll generalise over the effect type,
 then we'll generalise over the sequence type.
-We'll end up with an extremely valauable tool that trivialises
+We'll end up with an extremely valuable tool that trivialises
 many operations involving sequences and other data types.
 
 ### Traversing with Applicatives
 
 If we squint, we'll see that we can rewrite the `traverse` method in terms of an `Applicative`.
-Our accumulator is equivalent to `Applicative.pure`:
+Our accumulator, which was the following for `Future`:
+
+```tut:book:silent
+val oldAccum = Future(List[Int]())
+```
+
+is equivalent to `Applicative.pure`:
 
 ```tut:book:silent
 import cats.Applicative
 import cats.instances.future._
 import cats.syntax.applicative._
 
-// Creating an accumulator manually:
-val oldAccum = Future(List[Int]())
-
-// Creating an accumulator using an Applicative:
 val newAccum = List[Int]().pure[Future]
 ```
 
-and our combinator is equivalent to `Cartesian.combine`:
+Our combinator, which used to be this:
 
 ```tut:book:silent
-// Combining an accumulator and a hostname manually:
 def oldCombine(uptimes: Future[List[Int]], host: String): Future[List[Int]] = {
   val uptime = getUptime(host)
   for {
@@ -149,7 +156,11 @@ def oldCombine(uptimes: Future[List[Int]], host: String): Future[List[Int]] = {
     uptime  <- uptime
   } yield uptimes :+ uptime
 }
+```
 
+is now equivalent to `Cartesian.combine`:
+
+```tut:book:silent
 import cats.syntax.cartesian._
 
 // Combining an accumulator and a hostname using an Applicative:
@@ -185,7 +196,9 @@ as shown in the following exercises.
 
 What is the result of the following?
 
-```scala
+```tut:book:silent
+import cats.instances.vector._
+
 listSequence(List(Vector(1, 2), Vector(3, 4)))
 ```
 
@@ -199,10 +212,6 @@ so its cartesian `combine` function is based on `flatMap`.
 We'll end up with a `Vector` of `Lists`
 of all the possible combinations of `List(1, 2)` and `List(3, 4)`:
 
-```tut:book:silent
-import cats.instances.vector._
-```
-
 ```tut:book
 listSequence(List(Vector(1, 2), Vector(3, 4)))
 ```
@@ -210,7 +219,7 @@ listSequence(List(Vector(1, 2), Vector(3, 4)))
 
 What about a list of three parameters?
 
-```scala
+```tut:book:silent
 listSequence(List(Vector(1, 2), Vector(3, 4), Vector(5, 6)))
 ```
 
@@ -236,7 +245,7 @@ def process(inputs: List[Int]) =
 
 What is the return type of this method? What does it produce for the following inputs?
 
-```scala
+```tut:book:silent
 process(List(2, 4, 6))
 process(List(1, 2, 3))
 ```
@@ -276,9 +285,9 @@ def process(inputs: List[Int]): ErrorOr[List[Int]] =
   }
 ```
 
-What is the return type of this method? What does it produce for the following inputs?
+What does this method produce for the following inputs?
 
-```scala
+```tut:book:silent
 process(List(2, 4, 6))
 process(List(1, 2, 3))
 ```

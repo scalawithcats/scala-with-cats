@@ -101,7 +101,7 @@ List(1, 2, 3).foldLeft(List.empty[Int])(_ :: _)
 ```
 </div>
 
-#### Exercise: Scaf-fold-ing other methods
+### Exercise: Scaf-fold-ing other methods
 
 `foldLeft` and `foldRight` are very general methods.
 We can use them to implement many of the other 
