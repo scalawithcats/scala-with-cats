@@ -4,8 +4,11 @@ Cartesians aren't mentioned frequently
 in the wider functional programming literature.
 They provide a subset of the functionality of a related type class
 called an *applicative functor* ("applicative" for short).
-Cartesian and applicative effectively provide alternative encodings
+Cartesians and applicatives effectively provide alternative encodings
 of the notion of "zipping" values.
+Both encodings are introduced in 
+the [same 2008 paper][link-applicative-programming]
+by Conor McBride and Ross Paterson.
 Applicative also provides the `pure` operation
 that we've seen when discussing monads.
 
@@ -31,21 +34,10 @@ trait Applicative[F[_]] extends Apply[F] {
 ```
 
 Don't worry too much about the implementation of `product`---it's
-complicated and difficult to read
-and the details aren't particuarly important.
+difficult to read and the details aren't particuarly important.
 However, do notice that `product` is defined in terms of `ap` and `map`.
 There is an equivalence between these three methods that
 allows any one of them to be defined in terms of the other two.
-The intuitive reading of this definition of `product` is as follows:
-
-- `map` over `F[A]` to produce a value of type `F[B => (A, B)]`;
-- apply `F[B]` as a parameter to `F[B => (A, B)]`
-  to get a result of type `F[(A, B)]`.
-
-By defining one of these three methods in terms of the other two,
-we ensure that the definitions are consistent
-for all implementations of `Apply`.
-This is a pattern that we will see a lot in this section.
 
 `Applicative` introduces the `pure` method.
 This is the same `pure` we saw in `Monad`.
@@ -58,8 +50,6 @@ as `Monoid` is related to `Semigroup`.
 With the introduction of `Apply` and `Applicative`,
 we can zoom out and see a a whole family of type classes
 that concern themselves with sequencing computations in different ways.
-We saw above that `Apply` is related to `Functor`;
-`Applicative` forms the basis of `Monad`.
 Here is a diagram showing the complete family:
 
 ![Monad type class hierarchy](src/pages/applicatives/hierarchy.png)
@@ -70,25 +60,12 @@ and defines all of the functionality from its supertypes in terms of them.
 Every monad is an applicative, every applicative a cartesian, and so on.
 
 Because of the lawful nature of the relationships between the type classes,
-the inheritance relationships are constant across all instances of a particular type class.
-For example, `Monad` defines `product`, `ap`, and `map`, in terms of `pure` and `flatMap`:
+the inheritance relationships are constant across all instances of a type class.
+`Apply` defines `product` in terms of `ap` and `map`, 
+`Monad` defines `product`, `ap`, and `map`, in terms of `pure` and `flatMap`,
+and so on.
 
-```scala
-trait Monad[F[_]] extends FlatMap[F] with Applicative[F] {
-  def product[A, B](fa: F[A], fb: F[B]): F[(A, B)] =
-    flatMap(fa)(a => map(fb)(b => (a, b)))
-
-  def ap[A, B](ff: F[A => B])(fa: F[A]): F[B] =
-    flatMap(ff)(f => map(fa)(f))
-
-  def map[A, B](fa: F[A])(f: A => B): F[B] =
-    flatMap(a => pure(f(a)))
-}
-```
-
-We saw a similar pattern above where `Apply` defines `product` in terms of `ap`.
-This consistency gives us the ability to reason about data types in an abstract way.
-To illustrate, let's consider two hypothetical data types:
+To illustrate this let's consider two hypothetical data types:
 
 - `Foo` is a monad.
   It has an instance of the `Monad` type class
@@ -101,7 +78,7 @@ To illustrate, let's consider two hypothetical data types:
   and inherits standard definitions of `product` and `map`.
 
 What can we say about these two data types
-without knowing more about their implementations?
+without knowing more about their implementation?
 
 We know strictly more about `Foo` than `Bar`,
 `Monad` is a subtype of `Applicative`,

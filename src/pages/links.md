@@ -85,6 +85,7 @@
 [scalaz]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.package
 
 [link-algebird]: https://github.com/twitter/algebird
+[link-applicative-programming]: http://www.staff.city.ac.uk/~ross/papers/Applicative.html
 [link-bloom-filter]: http://en.wikipedia.org/wiki/Bloom_filter
 [link-bnf]: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_Form
 [link-cats]: http://typelevel.org/cats
@@ -94,6 +95,7 @@
 [link-essential-scala]: http://underscore.io/training/courses/essential-scala/
 [link-hadoop]: http://hadoop.apache.org/
 [link-hyperloglog]: http://en.wikipedia.org/wiki/HyperLogLog
+[link-iterator-pattern]: https://www.cs.ox.ac.uk/jeremy.gibbons/publications/iterator.pdf
 [link-json]: http://json.org/
 [link-kind-projector]: https://github.com/non/kind-projector
 [link-mapreduce-monoid]: http://arxiv.org/abs/1304.7544
