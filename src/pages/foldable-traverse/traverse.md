@@ -6,9 +6,6 @@ to define accumulators and combinator functions.
 The `Traverse` type class is a higher level tool 
 that leverages `Applicatives` to provide 
 a more convenient, more lawful, pattern for iteration.
-For those who are interested, `Traverse` comes from 
-[this 2006 paper][link-gibbons-oliviera-iterator-pattern] 
-by Jeremy Gibbons and Bruno Oliviera.
 
 ### Traversing with Futures
 
