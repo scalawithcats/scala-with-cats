@@ -14,7 +14,8 @@ which you can obtain from [underscore.io](http://underscore.io):
 
  - Monads
  - Monad Transformers
- - Applicatives
+ - Cartesians and Applicatives
+ - Foldable and Traverse
  - Case Studies
 
 Hyperlinked cross-references to chapters in the full version of the book
