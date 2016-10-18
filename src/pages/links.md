@@ -14,6 +14,7 @@
 [cats.Traverse]: http://typelevel.org/cats/api/#cats.Traverse
 [cats.data.IdT]: http://typelevel.org/cats/api/#cats.data.IdT
 [cats.data.ListT]: http://typelevel.org/cats/api/#cats.data.ListT
+[cats.data.Kleisli]: http://typelevel.org/cats/api/#cats.data.Kleisli
 [cats.data.NonEmptyList]: http://typelevel.org/cats/api/#cats.data.NonEmptyList
 [cats.data.OptionT]: http://typelevel.org/cats/api/#cats.data.OptionT
 [cats.data.package]: http://typelevel.org/cats/api/#cats.data.package

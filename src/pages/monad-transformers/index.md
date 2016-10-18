@@ -12,7 +12,7 @@ We want to look up a user record.
 The user may or may not be present, so we return an `Option[User]`.
 Our communication with the database could fail for many reasons
 (network issues, authentication problems, database problems, and so on),
-so this result is wrapped up in a disjunction (`Xor`),
+so this result is wrapped up in an `Xor`,
 giving us a final result of `Xor[Error, Option[User]]`.
 
 To use this value we must nest `flatMap` calls
@@ -23,7 +23,7 @@ import cats.data.Xor
 
 type Error = String
 
-case class User(id: Long, name: String)
+final case class User(id: Long, name: String)
 
 def lookupUser(id: Long): Xor[Error, Option[User]] = ???
 ```
@@ -68,9 +68,7 @@ def compose[M1[_] : Monad, M2[_] : Monad] = {
 ```
 
 We can't compose monads in general.
-This is not greatly surprising
-because we use monads to model effects and effects don't in general compose.
-However, some monads can be made to compose with monad-specific glue code.
+However, some monad instances can be made to compose with instance-specific glue code.
 For these special cases we can use *monad transformers* to compose them.
 
 Monad transformers allow us to squash together monads,
@@ -84,7 +82,9 @@ Cats provides a library of such transformers:
 `OptionT` for composing `Option`,
 and so on.
 Here's an example that uses `OptionT`
-to squash `List` and `Option` into a single monad:
+to squash `List` and `Option` into a single monad.
+Where we might use `List[Option[A]]` we can use `ListOption[A]`
+to avoid nested `flatMap` calls.
 
 ```tut:book:silent
 import cats.data.OptionT
@@ -111,7 +111,7 @@ import cats.syntax.applicative._
 val result: ListOption[Int] = 42.pure[ListOption]
 ```
 
-The `map` and `flatMap` methods of `Result` combine
+The `map` and `flatMap` methods of `ListOption` combine
 the corresponding methods of `List` and `Option`
 into single operations:
 
@@ -134,7 +134,7 @@ and repack values at each stage in the computation.
 Now let's look at the API in more depth.
 
 <div class="callout callout-warning">
-*The complexity of imports*
+*Complexity of imports*
 
 Note the imports in the code samples above---they
 hint at how everything bolts together.
@@ -203,6 +203,21 @@ the monad implied by the transformer.
 The remaining type parameters are the types
 we're used to from the corresponding monads.
 
+<div class="callout callout-info">
+  *Kleisli Arrows*
+
+  Last chapter, in the section on the `Reader` monad,
+  we mentioned that `Reader` was a specialisation 
+  of a more general concept called a "kleisli arrow"
+  (aka [`cats.data.Kleisli`][cats.data.Kleisli]).
+
+  We can now reveal that `Kleisli` and `ReaderT`
+  are, in fact, the same thing!
+  `ReaderT` is actually a type alias for `Kleisli`.
+  Hence why we were creating `Readers` last chapter
+  and seeing `Kleislis` on the console.
+</div>
+
 ### Building Monad Stacks
 
 Building monad stacks is a little confusing until you know the patterns.
@@ -253,11 +268,12 @@ However, we can't define this in one line
 because `XorT` has three type parameters:
 
 ```tut:book:silent
+import scala.concurrent.Future
 import cats.data.XorT
 ```
 
 ```tut:book:fail
-type FutureXorOption[A] = OptionT[XorT[Future, E, _], A]
+type FutureXorOption[A] = OptionT[XorT, A]
 ```
 
 As before, we solve the problem by
@@ -278,7 +294,6 @@ Our mammoth stack composes not two but *three* monads.
 Our `map` and `flatMap` methods cut through three layers of abstraction:
 
 ```tut:book:silent
-// We need an ExecutionContext to summon monad instances involving futures:
 import scala.concurrent.ExecutionContext.Implicits.global
 import cats.instances.future._
 ```
@@ -291,11 +306,25 @@ val answer: FutureXorOption[Int] =
   } yield a + b
 ```
 
-<div class="callout callout-info">
-The general pattern for constructing a monad stack is as follows:
+<div class="callout callout-warning">
+*Kind Projector*
 
-- build from the inside out;
-- define type aliases with single type parameters for each intermediate layer.
+If you frequently find yourself 
+defining multiple type aliases when building monad stacks,
+you may want to try the [Kind Projector][link-kind-projector] compiler plugin.
+Kind Projector enhances Scala's type syntax 
+to make it easier to define partial types.
+For example:
+
+```tut:book
+import cats.instances.option._
+
+123.pure[XorT[Option, String, ?]]
+```
+
+Kind Projector can't simplify all type declarations down to a single line,
+but it can reduce the number of intermediate type definitions we need
+to keep our code readable.
 </div>
 
 ### Constructing and Unpacking Instances
@@ -312,31 +341,30 @@ type ErrorOrOption[A] = OptionT[ErrorOr, A]
 
 ```tut:book
 // Create using pure:
-val monad1: ErrorOrOption[Int] =
-  123.pure[ErrorOrOption]
+val stack1 = 123.pure[ErrorOrOption]
 
 // Create using apply:
-val monad2: ErrorOrOption[Int] =
-  OptionT[ErrorOr, Int](Xor.right[String, Option[Int]](Some(123)))
+val stack2 = OptionT[ErrorOr, Int](Xor.right[String, Option[Int]](Some(123)))
 ```
 
-Once we've used a monad transformer,
+Once we've finished with a monad transformer stack,
 we can unpack it using its `value` method.
 This returns the untransformed stack.
 We can then manipulate the individual monads in the usual way:
 
 ```tut:book
-monad1.value
-monad2.value
+stack1.value
+stack2.value
 ```
 
 Each call to `value` unpacks a single monad transformer,
 so we may need more than one call to completely unpack a large stack:
 
 ```tut:book:silent
+import cats.instances.vector._
 import cats.data.{Writer, XorT, OptionT}
 
-type Logged[A] = Writer[List[String], A]
+type Logged[A] = Writer[Vector[String], A]
 type LoggedFallable[A] = XorT[Logged, String, A]
 type LoggedFallableOption[A] = OptionT[LoggedFallable, A]
 ```
@@ -390,7 +418,7 @@ def addNumbers(a: String, b: String, c: String): Logged[Option[Int]] = {
 ```
 
 ```tut:book
-// OptionT isn't forced on user code:
+// This approach doesn't force OptionT on other users' code:
 val result1 = addNumbers("1", "2", "3")
 val result2 = addNumbers("1", "a", "3")
 ```
@@ -404,7 +432,7 @@ and transformers are identical.
 `Reader`, `Writer`, and `State` are all defined in this way:
 
 ```scala
-type Reader[E, A] = ReaderT[Id, E, A]
+type Reader[E, A] = ReaderT[Id, E, A] // = Kleisli[Id, E, A]
 type Writer[W, A] = WriterT[Id, W, A]
 type State[S, A]  = StateT[Id, S, A]
 ```
@@ -416,11 +444,35 @@ the methods of the transformer tend to mirror the methods on the monad.
 For example, `OptionT` defines `getOrElse`,
 and `XorT` defines `fold`, `bimap`, `swap`, and other useful methods.
 
-## Exercise: Using Monad Transformers
+## Exercise: Monads: Transform and Roll Out
 
-Let's use monad transformers to model a classic combination of `Future` and `Xor`.
-Start by defining appropriate type aliases to wrap `Xor` in `Future`,
-using `String` as the error type. Call the transformer stack `FutureXor`.
+The Autobots, well known robots in disguise,
+frequently send messages during battle 
+requesting the power levels of their team mates.
+This helps them coordinate strategies and launch devastating attacks.
+The message sending method looks like this:
+
+```scala
+def getPowerLevel(autobot: String): Response[Int] =
+  ???
+```
+
+Transmissions take time in Earth's viscous atmosphere,
+and messages are occasionally lost 
+due to malfunctioning satellites or Decepticon interception.
+`Responses` are therefore represented as a stack of monads:
+
+```tut:book
+type Response[A] = Future[Xor[String, A]]
+```
+
+[^transformers]: It is a well known fact
+that autobot neural nets are implemented in Scala.
+Decepticon brains are dynamically typed.
+
+Optimus Prime is getting tired of 
+the nested for comprehensions in his neural matrix.
+Help him by rewriting `Response` using a monad transformer.
 
 <div class="solution">
 This is a relatively simple combination.
@@ -431,36 +483,25 @@ so we build from the inside out using an `XorT` of `Future`:
 import cats.data.XorT
 import scala.concurrent.Future
 
-type FutureXor[A] = XorT[Future, String, A]
+type Response[A] = XorT[Future, String, A]
 ```
 </div>
 
-Now let's define a simple analytics system to
-collate load averages from a set of imaginary servers.
+Now test the code by implementing `getPowerLevel`
+to retrieve data from a set of imaginary allies.
 Here's the data we'll use:
 
 ```tut:book:silent
-val loadAverages = Map(
-  "a.example.com" -> 0.1,
-  "b.example.com" -> 0.5,
-  "c.example.com" -> 0.2
+val powerLevels = Map(
+  "Jazz"      -> 6,
+  "Bumblebee" -> 8,
+  "Hot Rod"   -> 10
 )
 ```
 
-We'll pretend these are real servers that
-we have to contact asynchronously.
-Let's define a `getLoad` function that
-accepts a hostname as a parameter and
-returns its load average:
-
-```tut:book:silent
-def getLoad(hostname: String): FutureXor[Double] =
-  ???
-```
-
-If `hostname` isn't in the `loadAverages` map,
+If an Autobot isn't in the `powerLevels` map,
 return an error message reporting that the host was unreachable.
-Include `hostname` in the message for good effect.
+Include the name` in the message for good effect.
 
 <div class="solution">
 ```tut:book:silent
@@ -468,95 +509,115 @@ import cats.instances.future._
 import cats.syntax.flatMap._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-type FutureXor2[E, A] = XorT[Future, E, A]
+type Response[A] = XorT[Future, String, A]
 
-def getLoad(hostname: String): FutureXor[Double] = {
-  loadAverages.get(hostname) match {
+def getPowerLevel(ally: String): Response[Int] = {
+  powerLevels.get(ally) match {
     case Some(avg) => XorT.right(Future.successful(avg))
-    case None      => XorT.left(Future.successful(s"Host unreachable: $hostname"))
+    case None      => XorT.left(Future.successful(s"$ally is unreachable."))
   }
 }
 ```
 </div>
 
-Write another method, `getMeanLoad`,
-which accepts a list of hostnames as a parameter
-and returns the mean load average across all of them.
-If any hosts are unreachable, fail with an appropriate error message.
+Two autobots can perform a special move
+if their combined power level is greater than 15.
+Write a second method, `canSpecialMove`,
+that accepts the names of two allies 
+and checks whether a special move is possible.
+If either ally is unavailable, 
+fail with an appropriate error message:
 
 ```tut:book:silent
-def getMeanLoad(hostnames: List[String]): FutureXor[Double] =
+def canSpecialMove(ally1: String, ally2: String): Response[Boolean] =
   ???
 ```
 
 <div class="solution">
-We `map` over the list of hostnames
-collecting load averages from each server
-and use `sequence` to combine the results.
-
-The `map`, `flatMap`, and `sequence` methods
-cut through both layers in our monad stack,
-allowing us to combine the results without hassle:
+We request the power level from each ally
+and use `map` and `flatMap` to combine the results:
 
 ```tut:book:silent
-import cats.instances.list._  // for Applicative[List]
-import cats.syntax.traverse._ // for foo.sequence
+def canSpecialMove(ally1: String, ally2: String): Response[Boolean] =
+  for {
+    power1 <- getPowerLevel(ally1)
+    power2 <- getPowerLevel(ally2)
+  } yield (power1 + power2) > 15
+```
+</div>
 
-def getMeanLoad(hostnames: List[String]): FutureXor[Double] =
-  hostnames.length match {
-    case 0 => XorT.left(Future.successful(s"No hosts to contact"))
-    case n => hostnames.map(getLoad).sequence.map(_.sum / n)
+Finally, write a method `tacticalReport` that
+takes two ally names and prints a message 
+saying whether they can perform a special move:
+
+```tut:book:silent
+def tacticalReport(ally1: String, ally2: String): String =
+  ???
+```
+
+<div class="solution">
+We use the `value` method to unpack the monad stack
+and `Await` and `fold` to unpack the `Future` and `Xor`:
+
+```tut:book:silent
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+
+def tacticalReport(ally1: String, ally2: String): String =
+  Await.result(canSpecialMove(ally1, ally2).value, Duration.Inf) match {
+    case Xor.Left(msg)    => s"Communications error: $msg"
+    case Xor.Right(true)  => s"$ally1 and $ally2 are ready to roll out!"
+    case Xor.Right(false) => s"$ally1 and $ally2 need a recharge."
   }
 ```
 </div>
 
-Finally, write a method `report` that
-takes a `FutureXor` and prints the value inside
-with an appropriate prefix based on
-whether the operation was a success or failure.
-
-```tut:book:silent
-def report[A](input: FutureXor[A]): Unit =
-  ???
-```
-
-You should be able to use `report` and `getMeanLoad`
-to query sets of hosts as follows:
-
-```scala
-report(getMeanLoad(List("a.example.com", "b.example.com")))
-report(getMeanLoad(List("a.example.com", "c.example.com")))
-report(getMeanLoad(List("a.example.com", "d.example.com")))
-```
-
-<div class="solution">
-This is a simple exercise of peeling back layers
-until we have access to the disjunction at the bottom of our stack.
-We use `value` to unpack the monad transformer,
-`Await.result` to block on the `Future`,
-and `fold` to handle the disjunction:
-
-```tut:book:silent
-import scala.concurrent.Await
-import scala.concurrent.duration._
-
-def report[A](input: FutureXor[A]): Unit =
-  Await.result(input.value, 2.seconds).fold(
-    msg => println("[FAIL] " + msg),
-    ans => println("[DONE] " + ans)
-  )
-```
+You should be able to use `report` as follows:
 
 ```tut:book
-report(getMeanLoad(List("a.example.com", "b.example.com")))
-report(getMeanLoad(List("a.example.com", "c.example.com")))
-report(getMeanLoad(List("a.example.com", "d.example.com")))
+tacticalReport("Jazz", "Bumblebee")
+tacticalReport("Bumblebee", "Hot Rod")
+tacticalReport("Jazz", "Ironhide")
 ```
-</div>
+
+<!--
 
 ## Exercise: *ReaderWriterState*
 
-<div class="callout callout-danger">
-  TODO: Scalaz provides a ReaderWriterState monad. Cats doesn't.
-  Implement it using `ReaderT`, `WriterT`, and `StateT`.
+Scalaz provides a ReaderWriterState monad. Cats does not.
+Implement it using `ReaderT`, `WriterT`, and `StateT`!
+
+Note: This is a hard exercise!
+
+<div class="solution">
+We build `ReaderWriterState` from the inside out
+using `StateT`, `WriterT`, and `Reader`:
+
+```
+import cats.Applicative
+import cats.instances.all._
+import cats.data.{Reader, WriterT, StateT}
+
+type ReaderWriterStateBuilder[I, O, S] = {
+  type R[X]   = Reader[I, X]
+  type RW[X]  = WriterT[R, O, X]
+  type RWS[X] = StateT[RW, S, X]
+}
+
+type ReaderWriterState[I, O, S, A] = ReaderWriterStateBuilder[I, O, S]#RWS[A]
+
+type Config  = String
+type Log     = List[String]
+type Counter = Int
+type Test[A] = ReaderWriterState[Config, Log, Counter, A]
+
+implicitly[Applicative[ReaderWriterStateBuilder[Config, Log, Counter]#R]]
+implicitly[Applicative[ReaderWriterStateBuilder[Config, Log, Counter]#RW]]
+implicitly[Applicative[ReaderWriterStateBuilder[Config, Log, Counter]#RWS]]
+
+123.pure[Test]
+```
 </div>
+
+-->

@@ -19,9 +19,9 @@ scalacOptions ++= Seq(
 
 resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"))
 
-libraryDependencies ++= Seq(
-  "org.typelevel" %% "cats" % "0.7.2"
-)
+libraryDependencies ++= Seq("org.typelevel" %% "cats" % "0.7.2")
+
+addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.0")
 
 lazy val pdf  = taskKey[Unit]("Build the PDF version of the book")
 lazy val html = taskKey[Unit]("Build the HTML version of the book")
