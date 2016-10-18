@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="2200px" height="800px" viewBox="0 0 2200 800" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40.3 (33839) - http://www.bohemiancoding.com/sketch -->
+    <title>fold</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="foldright-sum" transform="translate(1307.000000, 0.000000)">
+            <ellipse id="Oval-1" fill="#000000" cx="131.646259" cy="22.3129252" rx="22.3129252" ry="22.3129252"></ellipse>
+            <text id="1" font-family="FiraMono-Regular, Fira Mono" font-size="46.8571429" font-weight="normal" fill="#000000">
+                <tspan x="6.0244898" y="148.870748">1</tspan>
+            </text>
+            <text id="1" font-family="FiraMono-Regular, Fira Mono" font-size="46.8571429" font-weight="normal" fill="#000000">
+                <tspan x="7.14013605" y="693.306122">1</tspan>
+            </text>
+            <path d="M153.959184,44.6258503 L220.897959,111.564626" id="Line" stroke="#F6A623" stroke-width="4" stroke-linecap="square"></path>
+            <path d="M109.333333,44.6258503 L42.3945578,111.564626" id="Line" stroke="#F6A623" stroke-width="4" stroke-linecap="square"></path>
+            <ellipse id="Oval-1" fill="#000000" cx="239.863946" cy="133.877551" rx="22.3129252" ry="22.3129252"></ellipse>
+            <path d="M262.176871,156.190476 L329.115646,223.129252" id="Line" stroke="#F6A623" stroke-width="4" stroke-linecap="square"></path>
+            <path d="M217.55102,156.190476 L150.612245,223.129252" id="Line" stroke="#F6A623" stroke-width="4" stroke-linecap="square"></path>
+            <circle id="Oval-1" fill="#000000" cx="355.891156" cy="245.442177" r="22.3129252"></circle>
+            <path d="M378.204082,267.755102 L435.112978,324.663999" id="Line" stroke="#F6A623" stroke-width="4" stroke-linecap="square"></path>
+            <path d="M333.578231,267.755102 L266.639456,334.693878" id="Line" stroke="#F6A623" stroke-width="4" stroke-linecap="square"></path>
+            <path d="M488.653061,334.693878 L444.027211,379.319728" id="Line" stroke="#000000" stroke-width="10"></path>
+            <path d="M488.653061,334.693878 L444.027211,379.319728" id="Line" stroke="#000000" stroke-width="10" transform="translate(466.340136, 357.006803) rotate(90.000000) translate(-466.340136, -357.006803) "></path>
+            <path d="M224.244898,490.884354 C224.244898,503.528786 234.304438,514.041271 246.557823,514.04127 C258.811209,514.041269 324.277006,514.041269 335.809524,514.041269 C347.342042,514.041269 358.122449,523.83408 358.122449,535.510203" id="Path-25" stroke="#4990E2" stroke-width="4"></path>
+            <path d="M358.122449,490.884354 C358.122449,503.528786 368.181989,514.041271 380.435374,514.04127 C392.68876,514.041269 458.154557,514.041269 469.687075,514.041269 C481.219593,514.041269 492,523.83408 492,535.510203" id="Path-25" stroke="#4990E2" stroke-width="4" transform="translate(425.061224, 513.197278) scale(-1, 1) translate(-425.061224, -513.197278) "></path>
+            <path d="M224.244898,490.884354 C224.244898,503.528786 234.304438,514.041271 246.557823,514.04127 C258.811209,514.041269 324.277006,514.041269 335.809524,514.041269 C347.342042,514.041269 358.122449,523.83408 358.122449,535.510203" id="Path-25" stroke="#4990E2" stroke-width="4"></path>
+            <path d="M358.122449,490.884354 C358.122449,503.528786 368.181989,514.041271 380.435374,514.04127 C392.68876,514.041269 458.154557,514.041269 469.687075,514.041269 C481.219593,514.041269 492,523.83408 492,535.510203" id="Path-25" stroke="#4990E2" stroke-width="4" transform="translate(425.061224, 513.197278) scale(-1, 1) translate(-425.061224, -513.197278) "></path>
+            <path d="M111.564626,590.176871 C111.564626,602.821303 121.624166,613.333788 133.877551,613.333787 C146.130936,613.333786 211.596733,613.333786 223.129252,613.333786 C234.66177,613.333786 245.442177,623.126597 245.442177,634.80272" id="Path-25" stroke="#4990E2" stroke-width="4"></path>
+            <path d="M245.442177,590.176871 C245.442177,602.821303 255.501717,613.333788 267.755102,613.333787 C280.008487,613.333786 345.474284,613.333786 357.006803,613.333786 C368.539321,613.333786 379.319728,623.126597 379.319728,634.80272" id="Path-25" stroke="#4990E2" stroke-width="4" transform="translate(312.380952, 612.489795) scale(-1, 1) translate(-312.380952, -612.489795) "></path>
+            <path d="M0,698.394558 C-2.60961562e-11,711.03899 10.0595398,721.551475 22.3129252,721.551474 C34.5663106,721.551473 100.032108,721.551473 111.564626,721.551473 C123.097144,721.551473 133.877551,731.344284 133.877551,743.020407" id="Path-25" stroke="#4990E2" stroke-width="4"></path>
+            <path d="M133.877551,698.394558 C133.877551,711.03899 143.937091,721.551475 156.190476,721.551474 C168.443862,721.551473 233.909659,721.551473 245.442177,721.551473 C256.974695,721.551473 267.755102,731.344284 267.755102,743.020407" id="Path-25" stroke="#4990E2" stroke-width="4" transform="translate(200.816327, 720.707483) scale(-1, 1) translate(-200.816327, -720.707483) "></path>
+            <path d="M251.020408,389.918367 L251.020408,437.891156" id="Line" stroke="#4990E2" stroke-width="4" stroke-linecap="square" stroke-dasharray="10,10,10,10"></path>
+            <path d="M131.646259,279.469388 L131.646259,526.587553" id="Line" stroke="#4990E2" stroke-width="4" stroke-linecap="square" stroke-dasharray="10,10,10,10"></path>
+            <path d="M21.1972789,165.673469 L21.1972789,637.035341" id="Line" stroke="#4990E2" stroke-width="4" stroke-linecap="square" stroke-dasharray="10,10,10,10"></path>
+            <text id="2" font-family="FiraMono-Regular, Fira Mono" font-size="46.8571429" font-weight="normal" fill="#000000">
+                <tspan x="118.704762" y="264.897959">2</tspan>
+            </text>
+            <text id="2" font-family="FiraMono-Regular, Fira Mono" font-size="46.8571429" font-weight="normal" fill="#000000">
+                <tspan x="117.589116" y="580.62585">2</tspan>
+            </text>
+            <text id="3" font-family="FiraMono-Regular, Fira Mono" font-size="46.8571429" font-weight="normal" fill="#000000">
+                <tspan x="236.963265" y="378.693878">3</tspan>
+            </text>
+            <text id="3" font-family="FiraMono-Regular, Fira Mono" font-size="46.8571429" font-weight="normal" fill="#000000">
+                <tspan x="236.963265" y="486.911565">3</tspan>
+            </text>
+            <text id="0" font-family="FiraMono-Regular, Fira Mono" font-size="46.8571429" font-weight="normal" fill="#000000">
+                <tspan x="452.282993" y="486.911565">0</tspan>
+            </text>
+            <text id="3" font-family="FiraMono-Regular, Fira Mono" font-size="46.8571429" font-weight="normal" fill="#000000">
+                <tspan x="345.180952" y="580.62585">3</tspan>
+            </text>
+            <text id="5" font-family="FiraMono-Regular, Fira Mono" font-size="46.8571429" font-weight="normal" fill="#000000">
+                <tspan x="232.50068" y="689.959184">5</tspan>
+            </text>
+            <text id="6" font-family="FiraMono-Regular, Fira Mono" font-size="46.8571429" font-weight="normal" fill="#000000">
+                <tspan x="119.820408" y="788.136054">6</tspan>
+            </text>
+            <text id="+" font-family="FiraMono-Regular, Fira Mono" font-size="46.8571429" font-weight="normal" fill="#4990E2">
+                <tspan x="342.94966" y="491.37415">+</tspan>
+            </text>
+            <text id="+" font-family="FiraMono-Regular, Fira Mono" font-size="46.8571429" font-weight="normal" fill="#4990E2">
+                <tspan x="230.269388" y="580.62585">+</tspan>
+            </text>
+            <text id="+" font-family="FiraMono-Regular, Fira Mono" font-size="46.8571429" font-weight="normal" fill="#4990E2">
+                <tspan x="118.704762" y="692.190476">+</tspan>
+            </text>
+        </g>
+        <g id="foldleft-sum" transform="translate(299.000000, 0.000000)">
+            <ellipse id="Oval-1" fill="#000000" cx="387.5" cy="24.2057489" rx="24.21875" ry="24.2057489"></ellipse>
+            <path d="M411.71875,48.4114977 L484.375,121.028744" id="Line" stroke="#F6A623" stroke-width="4" stroke-linecap="square"></path>
+            <path d="M363.28125,48.4114977 L290.625,121.028744" id="Line" stroke="#F6A623" stroke-width="4" stroke-linecap="square"></path>
+            <ellipse id="Oval-1" fill="#000000" cx="504.960938" cy="145.234493" rx="24.21875" ry="24.2057489"></ellipse>
+            <path d="M529.179688,169.440242 L601.835938,242.057489" id="Line" stroke="#F6A623" stroke-width="4" stroke-linecap="square"></path>
+            <path d="M480.742187,169.440242 L408.085938,242.057489" id="Line" stroke="#F6A623" stroke-width="4" stroke-linecap="square"></path>
+            <ellipse id="Oval-1" fill="#000000" cx="630.898438" cy="266.263238" rx="24.21875" ry="24.2057489"></ellipse>
+            <path d="M655.117188,290.468986 L716.886872,352.205511" id="Line" stroke="#F6A623" stroke-width="4" stroke-linecap="square"></path>
+            <path d="M606.679688,290.468986 L534.023438,363.086233" id="Line" stroke="#F6A623" stroke-width="4" stroke-linecap="square"></path>
+            <path d="M775,363.086233 L726.5625,411.497731" id="Line" stroke="#000000" stroke-width="10"></path>
+            <path d="M775,363.086233 L726.5625,411.497731" id="Line" stroke="#000000" stroke-width="10" transform="translate(750.781250, 387.291982) rotate(90.000000) translate(-750.781250, -387.291982) "></path>
+            <path d="M242.1875,689.863843 C242.1875,703.580912 253.10626,714.98518 266.40625,714.985179 C279.70624,714.985178 350.763699,714.985178 363.28125,714.985178 C375.798801,714.985178 387.5,725.608721 387.5,738.275339" id="Path-25" stroke="#4990E2" stroke-width="4"></path>
+            <path d="M387.5,689.863843 C387.5,703.580912 398.41876,714.98518 411.71875,714.985179 C425.01874,714.985178 496.076199,714.985178 508.59375,714.985178 C521.111301,714.985178 532.8125,725.608721 532.8125,738.275339" id="Path-25" stroke="#4990E2" stroke-width="4" transform="translate(460.156250, 714.069591) scale(-1, 1) translate(-460.156250, -714.069591) "></path>
+            <path d="M242.1875,689.863843 C242.1875,703.580912 253.10626,714.98518 266.40625,714.985179 C279.70624,714.985178 350.763699,714.985178 363.28125,714.985178 C375.798801,714.985178 387.5,725.608721 387.5,738.275339" id="Path-25" stroke="#4990E2" stroke-width="4"></path>
+            <path d="M387.5,689.863843 C387.5,703.580912 398.41876,714.98518 411.71875,714.985179 C425.01874,714.985178 496.076199,714.985178 508.59375,714.985178 C521.111301,714.985178 532.8125,725.608721 532.8125,738.275339" id="Path-25" stroke="#4990E2" stroke-width="4" transform="translate(460.156250, 714.069591) scale(-1, 1) translate(-460.156250, -714.069591) "></path>
+            <path d="M121.09375,576.096823 C121.09375,589.813893 132.01251,601.21816 145.3125,601.218159 C158.61249,601.218158 229.669949,601.218158 242.1875,601.218158 C254.705051,601.218158 266.40625,611.841701 266.40625,624.50832" id="Path-25" stroke="#4990E2" stroke-width="4"></path>
+            <path d="M266.40625,576.096823 C266.40625,589.813893 277.32501,601.21816 290.625,601.218159 C303.92499,601.218158 374.982449,601.218158 387.5,601.218158 C400.017551,601.218158 411.71875,611.841701 411.71875,624.50832" id="Path-25" stroke="#4990E2" stroke-width="4" transform="translate(339.062500, 600.302571) scale(-1, 1) translate(-339.062500, -600.302571) "></path>
+            <path d="M0,463.540091 C-2.832512e-11,477.25716 10.9187602,488.661428 24.21875,488.661427 C37.5187398,488.661426 108.576199,488.661426 121.09375,488.661426 C133.611301,488.661426 145.3125,499.284969 145.3125,511.951588" id="Path-25" stroke="#4990E2" stroke-width="4"></path>
+            <path d="M145.3125,463.540091 C145.3125,477.25716 156.23126,488.661428 169.53125,488.661427 C182.83124,488.661426 253.888699,488.661426 266.40625,488.661426 C278.923801,488.661426 290.625,499.284969 290.625,511.951588" id="Path-25" stroke="#4990E2" stroke-width="4" transform="translate(217.968750, 487.745839) scale(-1, 1) translate(-217.968750, -487.745839) "></path>
+            <path d="M508.59375,422.995461 L508.59375,623.429614" id="Line" stroke="#4990E2" stroke-width="4" stroke-linecap="square" stroke-dasharray="10,10,10,10"></path>
+            <path d="M387.5,303.177005 L387.5,508.377846" id="Line" stroke="#4990E2" stroke-width="4" stroke-linecap="square" stroke-dasharray="10,10,10,10"></path>
+            <path d="M267.617188,179.727685 L267.617188,400.605144" id="Line" stroke="#4990E2" stroke-width="4" stroke-linecap="square" stroke-dasharray="10,10,10,10"></path>
+            <text id="1" font-family="FiraMono-Regular, Fira Mono" font-size="50.8320726" font-weight="normal" fill="#000000">
+                <tspan x="251.156628" y="161.76702">1</tspan>
+            </text>
+            <text id="2" font-family="FiraMono-Regular, Fira Mono" font-size="50.8320726" font-weight="normal" fill="#000000">
+                <tspan x="372.250378" y="286.426626">2</tspan>
+            </text>
+            <text id="3" font-family="FiraMono-Regular, Fira Mono" font-size="50.8320726" font-weight="normal" fill="#000000">
+                <tspan x="493.344128" y="406.245083">3</tspan>
+            </text>
+            <text id="1" font-family="FiraMono-Regular, Fira Mono" font-size="50.8320726" font-weight="normal" fill="#000000">
+                <tspan x="251.156628" y="453.446293">1</tspan>
+            </text>
+            <text id="2" font-family="FiraMono-Regular, Fira Mono" font-size="50.8320726" font-weight="normal" fill="#000000">
+                <tspan x="372.250378" y="559.951589">2</tspan>
+            </text>
+            <text id="3" font-family="FiraMono-Regular, Fira Mono" font-size="50.8320726" font-weight="normal" fill="#000000">
+                <tspan x="493.344128" y="679.770045">3</tspan>
+            </text>
+            <text id="0" font-family="FiraMono-Regular, Fira Mono" font-size="50.8320726" font-weight="normal" fill="#000000">
+                <tspan x="8.96912821" y="453.446293">0</tspan>
+            </text>
+            <text id="1" font-family="FiraMono-Regular, Fira Mono" font-size="50.8320726" font-weight="normal" fill="#000000">
+                <tspan x="130.062878" y="559.951589">1</tspan>
+            </text>
+            <text id="3" font-family="FiraMono-Regular, Fira Mono" font-size="50.8320726" font-weight="normal" fill="#000000">
+                <tspan x="251.156628" y="679.770045">3</tspan>
+            </text>
+            <text id="+" font-family="FiraMono-Regular, Fira Mono" font-size="50.8320726" font-weight="normal" fill="#4990E2">
+                <tspan x="130.062878" y="453.446293">+</tspan>
+            </text>
+            <text id="+" font-family="FiraMono-Regular, Fira Mono" font-size="50.8320726" font-weight="normal" fill="#4990E2">
+                <tspan x="251.156628" y="559.951589">+</tspan>
+            </text>
+            <text id="+" font-family="FiraMono-Regular, Fira Mono" font-size="50.8320726" font-weight="normal" fill="#4990E2">
+                <tspan x="372.250378" y="679.770045">+</tspan>
+            </text>
+            <text id="6" font-family="FiraMono-Regular, Fira Mono" font-size="50.8320726" font-weight="normal" fill="#000000">
+                <tspan x="372.250378" y="787.485628">6</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

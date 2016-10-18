@@ -75,7 +75,7 @@ We know the semantics well:
 
 At each step, `flatMap` chooses whether to call our function,
 and our function generates the next computation in the sequence.
-This is shown in [@fig:monads:option-type-chart].
+This is shown in Figure [@fig:monads:option-type-chart].
 
 ![Type chart: flatMap for Option](src/pages/monads/option-flatmap.pdf+svg){#fig:monads:option-type-chart}
 
@@ -140,7 +140,7 @@ This means there are six possible values of the overall expression.
 `flatMap` is generating these combinations from our code, 
 which simply says "get x from here and y from over there".
 
-The type chart in [@fig:monads:list-type-chart] illustrates this behaviour:
+The type chart in Figure [@fig:monads:list-type-chart] illustrates this behaviour:
 although the result of `flatMap` (`List[B]`) 
 is the same type as the result of the user-supplied function,
 the end result is actually a larger list
@@ -194,8 +194,8 @@ Each `Future` in our sequence is created
 by a function that receives the result from a previous `Future`.
 In other words, each step in our computation can only start
 once the previous step is finished.
-This is born out by the type chart for `flatMap`,
-[@fig:monads:future-type-chart],
+This is born out by the type chart for `flatMap`
+in Figure [@fig:monads:future-type-chart],
 which shows the function parameter of type `A => Future[B]`:
 
 ![Type chart: flatMap for Future](src/pages/monads/future-flatmap.pdf+svg){#fig:monads:future-type-chart}

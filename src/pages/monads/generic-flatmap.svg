@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="1722px" height="360px" viewBox="0 0 1722 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 40.2 (33826) - http://www.bohemiancoding.com/sketch -->
+<svg width="1921px" height="360px" viewBox="0 0 1921 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40.3 (33839) - http://www.bohemiancoding.com/sketch -->
     <title>generic-flatmap</title>
     <desc>Created with Sketch.</desc>
     <defs>
-        <ellipse id="path-1" cx="785" cy="140" rx="80" ry="80"></ellipse>
+        <ellipse id="path-1" cx="885" cy="140" rx="80" ry="80"></ellipse>
         <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="160" height="160" fill="white">
             <use xlink:href="#path-1"></use>
         </mask>
@@ -24,7 +24,7 @@
         <mask id="mask-10" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="200" height="200" fill="white">
             <use xlink:href="#path-9"></use>
         </mask>
-        <polygon id="path-11" points="894 120 934 120 934 100 974 139.497767 934 180 934 160 894 160"></polygon>
+        <polygon id="path-11" points="994 120 1034 120 1034 100 1074 139.497767 1034 180 1034 160 994 160"></polygon>
         <mask id="mask-12" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="80" height="80" fill="white">
             <use xlink:href="#path-11"></use>
         </mask>
@@ -39,33 +39,33 @@
     </defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="generic-flatmap">
-            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1722" height="360"></rect>
+            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1921" height="360"></rect>
             <use id="Oval-1" stroke="#000000" mask="url(#mask-2)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-1"></use>
-            <g id="Group" transform="translate(1359.000000, 37.000000)" stroke="#000000" stroke-width="8">
+            <g id="Group" transform="translate(1459.000000, 37.000000)" stroke="#000000" stroke-width="8">
                 <use id="Star-1" mask="url(#mask-4)" fill="#FFFFFF" xlink:href="#path-3"></use>
                 <use id="Rectangle-1" mask="url(#mask-6)" xlink:href="#path-5"></use>
             </g>
-            <g id="Group" transform="translate(999.000000, 39.000000)" stroke="#000000" stroke-width="8">
+            <g id="Group" transform="translate(1099.000000, 39.000000)" stroke="#000000" stroke-width="8">
                 <use id="Star-1" mask="url(#mask-8)" fill="#FFFFFF" xlink:href="#path-7"></use>
                 <use id="Rectangle-1" mask="url(#mask-10)" xlink:href="#path-9"></use>
             </g>
             <use id="Path-1" stroke="#000000" mask="url(#mask-12)" stroke-width="8" fill="#000000" xlink:href="#path-11"></use>
-            <polygon id="Path-1" fill="#F6A623" points="1239 120 1279 120 1279 100 1319 139.497767 1279 180 1279 160 1239 160"></polygon>
+            <polygon id="Path-1" fill="#F6A623" points="1339 120 1379 120 1379 100 1419 139.497767 1379 180 1379 160 1339 160"></polygon>
             <text id="F[A]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
-                <tspan x="200.1" y="314">F[A]</tspan>
+                <tspan x="300.1" y="314">F[A]</tspan>
             </text>
             <text id="F[B]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
-                <tspan x="1412.6" y="314">F[B]</tspan>
+                <tspan x="1512.6" y="314">F[B]</tspan>
             </text>
             <text id="A-=&gt;-F[B]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
-                <tspan x="845.6" y="314">A =&gt; F[B]</tspan>
+                <tspan x="945.6" y="314">A =&gt; F[B]</tspan>
             </text>
-            <g id="Group-11" transform="translate(155.000000, 38.000000)" stroke="#000000" stroke-width="8">
+            <g id="Group-11" transform="translate(255.000000, 38.000000)" stroke="#000000" stroke-width="8">
                 <use id="Oval-1" mask="url(#mask-14)" fill="#FFFFFF" xlink:href="#path-13"></use>
                 <use id="Rectangle-1" mask="url(#mask-16)" xlink:href="#path-15"></use>
             </g>
             <text id="flatMap" font-family="FiraMono-Bold, Fira Mono" font-size="64" font-weight="bold" fill="#F6A623">
-                <tspan x="396.2" y="155">flatMap</tspan>
+                <tspan x="496.2" y="155">flatMap</tspan>
             </text>
         </g>
     </g>
