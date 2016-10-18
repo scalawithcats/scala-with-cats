@@ -3,7 +3,7 @@
 title: "Advanced Scala"
 subtitle: "with Cats"
 author: Noel Welsh and Dave Gurnell
-date: "Early Access, Feburary 2016"
+date: "Early Access, October 2016"
 # Used by Pandoc to generate the PDF cover...
 # see src/css/book.css for HTML/ePub covers:
 coverColor: "D62A7C"
