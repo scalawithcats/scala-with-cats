@@ -23,7 +23,7 @@ import cats.data.Xor
 
 type Error = String
 
-case class User(id: Long, name: String)
+final case class User(id: Long, name: String)
 
 def lookupUser(id: Long): Xor[Error, Option[User]] = ???
 ```
@@ -68,7 +68,7 @@ def compose[M1[_] : Monad, M2[_] : Monad] = {
 ```
 
 We can't compose monads in general.
-However, some monads can be made to compose with monad-specific glue code.
+However, some monad instances can be made to compose with instance-specific glue code.
 For these special cases we can use *monad transformers* to compose them.
 
 Monad transformers allow us to squash together monads,
@@ -82,7 +82,9 @@ Cats provides a library of such transformers:
 `OptionT` for composing `Option`,
 and so on.
 Here's an example that uses `OptionT`
-to squash `List` and `Option` into a single monad:
+to squash `List` and `Option` into a single monad.
+Where we might use `List[Option[A]]` we can use `ListOption[A]`
+to avoid nested `flatMap` calls.
 
 ```tut:book:silent
 import cats.data.OptionT
@@ -109,7 +111,7 @@ import cats.syntax.applicative._
 val result: ListOption[Int] = 42.pure[ListOption]
 ```
 
-The `map` and `flatMap` methods of `Result` combine
+The `map` and `flatMap` methods of `ListOption` combine
 the corresponding methods of `List` and `Option`
 into single operations:
 
@@ -470,7 +472,7 @@ Decepticon brains are dynamically typed.
 
 Optimus Prime is getting tired of 
 the nested for comprehensions in his neural matrix.
-Help him be rewriting `Response` using a monad transformer.
+Help him by rewriting `Response` using a monad transformer.
 
 <div class="solution">
 This is a relatively simple combination.
