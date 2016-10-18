@@ -3,7 +3,7 @@
 title: "Advanced Scala"
 subtitle: "with Cats"
 author: Noel Welsh and Dave Gurnell
-date: "Early Access, Feburary 2016"
+date: "Early Access, October 2016"
 # Used by Pandoc to generate the PDF cover...
 # see src/css/book.css for HTML/ePub covers:
 coverColor: "D62A7C"
@@ -19,6 +19,8 @@ pages:
   - intro/early-access.md
   - intro/conventions.md
   - intro/acknowledgements.md
+
+  - parts/part1.md
 
   - type-classes/index.md
   - type-classes/anatomy.md
@@ -66,9 +68,11 @@ pages:
   - foldable-traverse/foldable-cats.md
   - foldable-traverse/traverse.md
   - foldable-traverse/traverse-cats.md
-  - foldable-traverse/traverse-laws.md
+  # - foldable-traverse/traverse-laws.md
   - foldable-traverse/unapply.md
   - foldable-traverse/summary.md
+
+  - parts/part2.md
 
   - case-studies/mapreduce/index.md
 
@@ -93,6 +97,8 @@ pages:
   # - case-studies/parser/error-handling.md
   # - case-studies/parser/transforms.md
   # - case-studies/parser/applicative.md
+
+  - parts/part3.md
 
   - solutions.md
   - links.md

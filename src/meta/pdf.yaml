@@ -1,4 +1,9 @@
 ---
 papersize: "a4paper"
 geometry: "margin=.75in"
+solutions:
+  chapterHeadingTemplate: "Solutions for: $title"
+  chapterHeadingLevel: 1
+  solutionHeadingTemplate: "$title $part"
+  solutionHeadingLevel: 2
 ...
