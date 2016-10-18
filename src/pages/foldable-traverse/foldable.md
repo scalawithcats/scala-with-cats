@@ -1,4 +1,4 @@
-## *Foldable*
+## *Foldable* {#sec:foldable}
 
 The `Foldable` type class captures the `foldLeft` and `foldRight` methods
 we're used to in sequences like `Lists`, `Vectors`, and `Streams`.

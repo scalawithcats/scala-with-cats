@@ -85,7 +85,7 @@ We can do exactly the same with other types of sequence,
 using concatenation as as the binary operator
 and the empty sequence as our identity.
 
-## Definition of a Monoid
+## Definition of a Monoid {#sec:monoid-laws}
 
 We've seen a number of "addition" scenarios above
 each with an associative binary addition

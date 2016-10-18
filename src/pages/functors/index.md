@@ -1,4 +1,4 @@
-# Functors
+# Functors {#sec:functors}
 
 In this chapter we will investigate **functors**.
 Functors on their own aren't so useful,
