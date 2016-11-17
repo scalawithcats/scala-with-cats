@@ -93,7 +93,7 @@ Cats refers to this as *"syntax"* for the type class:
 
 [^pimping]: You may occasionally see extension methods
 referred to as "type enrichment" or "pimping".
-These are older term that we don't use anymore.
+These are older terms that we don't use anymore.
 
 ```tut:book:silent
 object JsonSyntax {
