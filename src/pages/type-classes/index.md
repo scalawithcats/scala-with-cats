@@ -2,7 +2,7 @@
 
 Cats contains a wide variety of functional programming tools
 and allows developers to pick and choose the ones we want to use.
-A large proportion of the code is delivered in the form of *type classes*
+The majority of these tools are delivered in the form of *type classes*
 that we can apply to existing Scala types.
 
 Type classes are a programming pattern originating in Haskell.
