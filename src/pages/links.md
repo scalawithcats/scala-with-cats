@@ -16,6 +16,7 @@
 [cats.data.ListT]: http://typelevel.org/cats/api/#cats.data.ListT
 [cats.data.Kleisli]: http://typelevel.org/cats/api/#cats.data.Kleisli
 [cats.data.NonEmptyList]: http://typelevel.org/cats/api/#cats.data.NonEmptyList
+[cats.data.NonEmptyVector]: http://typelevel.org/cats/api/#cats.data.NonEmptyVector
 [cats.data.OptionT]: http://typelevel.org/cats/api/#cats.data.OptionT
 [cats.data.package]: http://typelevel.org/cats/api/#cats.data.package
 [cats.data.Reader]: http://typelevel.org/cats/api/#cats.data.Reader
@@ -42,6 +43,7 @@
 [cats.kernel.Semigroup]: http://typelevel.org/cats/api/#cats.kernel.Semigroup
 [cats.syntax]: http://typelevel.org/cats/api/#cats.syntax.package
 [cats.syntax.applicative]: http://typelevel.org/cats/api/#cats.syntax.package$$applicative$
+[cats.syntax.cartesian]: http://typelevel.org/cats/api/#cats.syntax.package$$cartesian$
 [cats.syntax.eq]: http://typelevel.org/cats/api/#cats.syntax.package$$eq$
 [cats.syntax.flatMap]: http://typelevel.org/cats/api/#cats.syntax.package$$flatMap$
 [cats.syntax.functor]: http://typelevel.org/cats/api/#cats.syntax.package$$functor$
@@ -83,6 +85,7 @@
 [scalaz]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.package
 
 [link-algebird]: https://github.com/twitter/algebird
+[link-applicative-programming]: http://www.staff.city.ac.uk/~ross/papers/Applicative.html
 [link-bloom-filter]: http://en.wikipedia.org/wiki/Bloom_filter
 [link-bnf]: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_Form
 [link-cats]: http://typelevel.org/cats
@@ -92,6 +95,7 @@
 [link-essential-scala]: http://underscore.io/training/courses/essential-scala/
 [link-hadoop]: http://hadoop.apache.org/
 [link-hyperloglog]: http://en.wikipedia.org/wiki/HyperLogLog
+[link-iterator-pattern]: https://www.cs.ox.ac.uk/jeremy.gibbons/publications/iterator.pdf
 [link-json]: http://json.org/
 [link-kind-projector]: https://github.com/non/kind-projector
 [link-mapreduce-monoid]: http://arxiv.org/abs/1304.7544

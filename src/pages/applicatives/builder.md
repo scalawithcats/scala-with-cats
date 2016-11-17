@@ -1,6 +1,6 @@
 ## Cartesian Builder Syntax
 
-The `product` method has two main drawbacks:
+`Cartesian's` `product` method has two main drawbacks:
 it only accepts two parameters,
 and it can only combine them to create a pair.
 Fortunately, Cats provides syntax
@@ -22,7 +22,7 @@ import cats.syntax.cartesian._
 ```
 
 The `|@|` operator, better known as a "tie fighter",
-creates an intermediate "builder" object that provides
+creates a temporary "builder" object that provides
 several methods for combining the parameters
 to create useful data types.
 
@@ -51,7 +51,7 @@ val builder5 = builder3 |@| Option(0.5) |@| Option('x')
 builder5.tupled
 ```
 
-The idiomatic way of using builder syntax is
+The idiomatic way of writing builder syntax is
 to combine `|@|` and `tupled` in a single expression,
 going from single values to a tuple in one step:
 
@@ -93,7 +93,7 @@ case class Cat(name: String, born: Int, color: String)
 ```
 
 If we supply a function that accepts the wrong number or types of parameters,
-we get a compile-time error:
+we get a compile error:
 
 ```tut:book
 val add: (Int, Int) => Int = (a, b) => a + b
@@ -115,26 +115,38 @@ In addition to the `tupled` and `map` methods,
 each builder also sports `contramap` and `imap` methods
 that accept implicit instances of `Contravariant` and `Invariant`.
 
-For example, `Option` is a regular covariant functor,
-so we can use it with `map`, `imap`, and `tupled` but not `contramap`:
+For example, `Monoids` and `Semigroups` have instances of `Invariant`
+so we can combine them as follows:
 
 ```tut:book:silent
-import cats.instances.option._
+import cats.Monoid
+import cats.instances.boolean._
+import cats.instances.int._
+import cats.instances.string._
 import cats.syntax.cartesian._
+
+case class Cat(name: String, yearOfBirth: Int, favoriteFood: String)
+
+implicit val catMonoid = (
+  Monoid[String] |@|
+  Monoid[Int] |@|
+  Monoid[String]
+).imap(Cat.apply)((cat: Cat) => (cat.name, cat.yearOfBirth, cat.favoriteFood))
 ```
 
 ```tut:book
-(Option(1) |@| Option(2)).map(_ + _)
-
-(Option(1) |@| Option(2)).tupled
-
-(Option(1) |@| Option(2)).imap((a, b) => List(a, b))(list => (list(0), list(1)))
+Monoid[Cat].empty
 ```
 
-```tut:book:fail
-(Option(1) |@| Option(2)).contramap[List[Int]](list => (list(0), list(1)))
+```tut:book:silent
+import cats.syntax.monoid._
 ```
 
+```tut:book
+Cat("Garfield", 1978, "Lasagne") |+| Cat("Heathcliff", 1988, "Junk Food")
+```
+
+<!--
 Note that, surprisingly, the call to `imap` compiles and runs,
 even though `Option` has an instance of `Functor` and not `Invariant`.
 This is because the `Functor` and `Contravariant` type classes both *extend* `Invariant`.
@@ -147,3 +159,4 @@ Although we skipped this detail earlier,
 `tupled` actually accepts an implicit `Invariant` parameter,
 allowing us to use it with any type of functor:
 invariant, covariant, or contravariant.
+-->

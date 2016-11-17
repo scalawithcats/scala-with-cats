@@ -1,13 +1,14 @@
 # Cartesians and Applicatives {#applicatives}
 
-In previous chapters we saw how functors and monads let us transform values within a context.
+In previous chapters we saw 
+how functors and monads let us transform values within a context.
 While these are both immensely useful abstractions,
 there are types of transformation
 that are inconvenient to represent with `map` and `flatMap`.
 
 One such example is form validation.
 When we validate a form we want to return *all* the errors to the user,
-not just stop on the first error we encounter.
+not simply stop on the first error we encounter.
 If we model this with a monad like `Xor`, we fail fast and lose errors.
 For example, the code below fails on the first call to `parseInt`
 and doesn't go any further:
@@ -60,8 +61,20 @@ val timestamps = for {
 Await.result(timestamps, Duration.Inf)
 ```
 
-To achieve the desired semantics in either of these cases,
-we need a way to combine computations *in parallel*.
+`map` and `flatMap` aren't quitecapable of capturing what we want here
+because they make the assumption 
+that each computation in our program is *dependent* on the previous one:
+
+```scala
+// context2 is dependent on value1:
+context1.flatMap(value1 => context2)
+```
+
+The calls to `parseInt` and `Future.apply` above
+are *independent* of one another, 
+but `map` and `flatMap` can't exploit this.
+We need a weaker construct---one that doesn't guarantee sequencing---to
+achieve the result we want.
 In this chapter we will look at two type classes that support this pattern:
 
 - *Cartesians* encompass the notion of "zipping" pairs of contexts.
@@ -69,9 +82,12 @@ In this chapter we will look at two type classes that support this pattern:
   combines `Cartesians` and `Functors` to allow users
   to join values within a context using arbitrary functions.
 
-- *Applicative functors*, also known simply as *applicatives*,
-  extend cartesian with functor (`map`)
-  and a constructor (`pure`).
+- *Applicative functors*, also known as `Applicatives`,
+  extend `Cartesian` and `Functor` and provide 
+  a way of applying functions to parameters within a context.
+  `Applicative` is also the source 
+  of the `pure` method that we have been using 
+  in our discussion of monads.
 
 Applicatives are often formulated in terms of function application,
 instead of the cartesian formulation that is emphasised in Cats.
