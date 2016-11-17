@@ -20,37 +20,25 @@ trait Traverse[F[_]] {
 
 Cats provides instances for `List`, `Vector`, `Stream`, `Option`, `Xor`,
 and a variety of other types.
-We can summon instances as usual using `Traverse.apply` as usual:
-
-```tut:book:silent
-import cats.Traverse
-import cats.instances.list._
-```
-
-```tut:book
-Traverse[List]
-```
-
-The `traverse` and `sequence` methods
-work exactly as described in the previous section:
+We can summon instances as usual using `Traverse.apply` as usual
+and use the `traverse` and `sequence` methods
+as described in the previous section:
 
 ```tut:book:invisible
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
-import cats.instances.future._
 
 val hostnames = List("alpha.example.com", "beta.example.com", "gamma.demo.com")
 
 def getUptime(hostname: String): Future[Int] =
-  Future(hostname.length * 60) // just for demonstration
+  Future(hostname.length * 60)
 ```
 
 ```tut:book:silent
-import scala.concurrent._
-import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
+import cats.Traverse
 import cats.instances.future._
+import cats.instances.list._
 ```
 
 ```tut:book
@@ -66,7 +54,7 @@ Await.result(Traverse[List].sequence(numbers), Duration.Inf)
 ```
 
 There are also syntax versions of the methods,
-imported via [`cats.syntax.traverse`]:
+imported via [`cats.syntax.traverse`][cats.syntax.traverse]:
 
 ```tut:book:silent
 import cats.syntax.traverse._
@@ -78,4 +66,4 @@ Await.result(numbers.sequence, Duration.Inf)
 ```
 
 As you can see, this is much more compact and readable
-than the `foldLeft` we started with earlier this chapter!
+than the `foldLeft` code we started with earlier this chapter!

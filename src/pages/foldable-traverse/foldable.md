@@ -9,24 +9,7 @@ We can also invent new sequences and plug them into our code.
 ### Folds and Folding
 
 Let's start with a quick recap on the general concept of folding.
-In general, a `fold` function allows users to transform one algebraic data type to another.
-For example, the `fold` method on `Option` can return any algebraic data type
-by providing handlers for the `Some` and `None` cases:
-
-```tut:book:silent
-def show[A](option: Option[A]): String =
-  option.fold("it's none")(v => s"it's some with value $v")
-```
-
-```tut:book
-show(None)
-
-show(Some(10))
-```
-
-`Foldable` is a type class for folding over sequences,
-which we can model as a sum type consisting of a
-pair and a terminator, similar to a regular `List`.
+`Foldable` is a type class for folding over sequences.
 We supply an *accumulator* value and a *binary function*
 to combine it with an item in the sequence:
 
@@ -50,23 +33,24 @@ The typical use case is to accumulate a value as we traverse.
 
 Depending on the operation we're performing,
 the order in which we visit the items may be important.
-Because of this, we normally define two variants of fold:
+Because of this there are two standard variants of fold:
 
 - `foldLeft` traverses the sequence from "left" to "right" (start to finish);
 - `foldRight` traverses the sequence from "right" to "left" (finish to start).
 
-We can sum a `List[Int]` by folding in either direction,
-using `0` as our accumulator and `+` as our binary operation:
+Figure [@fig:foldable-traverse:fold] illustrates each direction.
+
+![Illustration of foldLeft and foldRight](src/pages/foldable-traverse/fold.pdf+svg){#fig:foldable-traverse:fold}
+
+`foldLeft` and `foldRight` are equivalent
+if our binary operation is commutative.
+For example, we can sum a `List[Int]` by folding in either direction,
+using `0` as our accumulator and `+` as our operation:
 
 ```tut:book
 List(1, 2, 3).foldLeft(0)(_ + _)
 List(1, 2, 3).foldRight(0)(_ + _)
 ```
-
-The process of folding is illustrated in the figure below.
-The result is the same regardless of which direction we fold because `+` is commutative:
-
-![Illustration of foldLeft and foldRight](src/pages/foldable-traverse/fold.png)
 
 If provide a non-commutative operator
 the order of evaluation makes a difference.
@@ -87,17 +71,13 @@ and `::` as the binary operator. What results do you get in each case?
 Folding from left to right reverses the list:
 
 ```tut:book
-List(1, 2, 3).foldLeft(List.empty[Int]) { (accum, item) =>
-  item :: accum
-}
+List(1, 2, 3).foldLeft(List.empty[Int])((accum, item) => item :: accum)
 ```
 
 Folding right to left copies the list, leaving the order intact:
 
 ```tut:book
-List(1, 2, 3).foldRight(List.empty[Int]) { (item, accum) =>
-  item :: accum
-}
+List(1, 2, 3).foldRight(List.empty[Int])((item, accum) => item :: accum)
 ```
 
 Note that, in order to avoid a type error,
@@ -121,13 +101,13 @@ List(1, 2, 3).foldLeft(List.empty[Int])(_ :: _)
 ```
 </div>
 
-#### Exercise: Scaf-fold-ing other methods
+### Exercise: Scaf-fold-ing other methods
 
-`foldLeft` and `foldRight` are very general transformations---they
-let us transform sequences into any other algebraic data type.
-We can use folds to implement all of the other high-level sequence operations we know.
-Prove this to yourself by
-implementing substitutes for `List's` `map`, `flatMap`, `filter`, and `sum` methods
+`foldLeft` and `foldRight` are very general methods.
+We can use them to implement many of the other 
+high-level sequence operations we know.
+Prove this to yourself by implementing substitutes 
+for `List's` `map`, `flatMap`, `filter`, and `sum` methods
 in terms of `foldRight`.
 
 <div class="solution">

@@ -1,4 +1,4 @@
-### Operations and Laws
+### *Traverse* Laws
 
 <div class="callout callout-danger">
 - Main operations (traverse and sequence)

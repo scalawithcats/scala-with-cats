@@ -28,9 +28,9 @@ case study later in the book.
 The first of our type classes, the *contravariant functor*,
 provides an operation called `contramap`
 that represents "prepending" a transformation to a chain. 
-This is illustrated in [@fig:functors:contramap-type-chart].
+This is illustrated in Figure [@fig:functors:contramap-type-chart].
 
-![Type chart: the contramap method](src/pages/functors/generic-contramap.pdf+svg){#fig:functor:contramap-type-chart}
+![Type chart: the contramap method](src/pages/functors/generic-contramap.pdf+svg){#fig:functors:contramap-type-chart}
 
 We'll talk about `contramap` itself directly for now,
 bringing in the type class in a moment.
@@ -177,7 +177,7 @@ def decode[A](value: String)(implicit codec: Codec[A]): Option[A] =
   codec.decode(value)
 ```
 
-The type chart for `imap` is showin in [@fig:functors:imap-type-chart].
+The type chart for `imap` is showin in Figure [@fig:functors:imap-type-chart].
 
 ![Type chart: the imap method](src/pages/functors/generic-imap.pdf+svg){#fig:functors:imap-type-chart}
 

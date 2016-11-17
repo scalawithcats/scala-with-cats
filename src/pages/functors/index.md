@@ -39,9 +39,9 @@ we supply a function from `A` to `B`,
 and we end up with a `List[B]` of length `n`.
 The elements are changed
 but the ordering and length of the list are preserved.
-This is illustrated in [@fig:functor:list-type-chart].
+This is illustrated in Figure [@fig:functors:list-type-chart].
 
-![Type chart: mapping over a List](src/pages/functors/list-map.pdf+svg){#fig:functor:list-type-chart}
+![Type chart: mapping over a List](src/pages/functors/list-map.pdf+svg){#fig:functors:list-type-chart}
 
 **Options**
 
@@ -69,9 +69,9 @@ we supply a function from `A` to `B`,
 and the result is either a `Some[B]` or a `None`.
 Again, the structure is preserved:
 if we start with a `Some` we end up with a `Some`, and a `None` always maps to a `None`.
-This is shown in [@fig:functor:option-type-chart].
+This is shown in Figure [@fig:functors:option-type-chart].
 
-![Type chart: mapping over an Option](src/pages/functors/option-map.pdf+svg){#fig:functor:option-type-chart}
+![Type chart: mapping over an Option](src/pages/functors/option-map.pdf+svg){#fig:functors:option-type-chart}
 
 ## More Examples of Functors
 
@@ -105,9 +105,9 @@ Await.result(future1, Duration.Inf)
 Await.result(future2, Duration.Inf)
 ```
 
-The general pattern looks like [@fig:functor:future-type-chart]. Seem familiar?
+The general pattern looks like Figure [@fig:functors:future-type-chart]. Seem familiar?
 
-![Type chart: mapping over a Future](src/pages/functors/future-map.pdf+svg){#fig:functor:future-type-chart}
+![Type chart: mapping over a Future](src/pages/functors/future-map.pdf+svg){#fig:functors:future-type-chart}
 
 **Functions (?!)**
 
@@ -129,9 +129,9 @@ fix the parameter type and let the result type vary:
  - supply a function `A => B`;
  - get back `X => B`.
 
-We can see this with our trusty type chart in [@fig:functor:function-type-chart].
+We can see this with our trusty type chart in Figure [@fig:functors:function-type-chart].
 
-![Type chart: mapping over a Function1](src/pages/functors/function-map.pdf+svg){#fig:functor:function-type-chart}
+![Type chart: mapping over a Function1](src/pages/functors/function-map.pdf+svg){#fig:functors:function-type-chart}
 
 In other words, "mapping" over a `Function1`
 is just function composition:
@@ -155,9 +155,9 @@ func2(func1(1)) // function composition written out by hand
 
 Formally, a functor is a type `F[A]`
 with an operation `map` with type `(A => B) => F[B]`.
-The general type chart is shown in [@fig:functor:functor-type-chart].
+The general type chart is shown in Figure [@fig:functors:functor-type-chart].
 
-![Type chart: generalised functor map](src/pages/functors/generic-map.pdf+svg){#fig:functor:functor-type-chart}
+![Type chart: generalised functor map](src/pages/functors/generic-map.pdf+svg){#fig:functors:functor-type-chart}
 
 Intuitively, a functor `F[A]` represents 
 some data (the `A` type) in a context (the `F` type).

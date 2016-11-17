@@ -23,22 +23,26 @@ val ints = List(1, 2, 3)
 Foldable[List].foldLeft(ints, 0)(_ + _)
 ```
 
-And here is an example using `Option`:
+Other sequences like `Vector` and `Stream` work in the same way.
+
+Here is an example using `Option`, 
+which is treated like a sequence of 0 or 1 elements:
 
 ```tut:book:silent
 import cats.instances.option._
 
-val maybeInt = Option(1)
+val maybeInt = Option(123)
 ```
 
 ```tut:book
-Foldable[Option].foldLeft(maybeInt, "")(_ + _)
+Foldable[Option].foldLeft(maybeInt, 10)(_ * _)
 ```
 
-The `Foldable` instance for `Map` allows us to
-fold over its values (as opposed to its keys).
+Finally, here is an example for `Map`.
+The `Foldable` instance folds over the values in the map
+(as opposed to its keys).
 Because `Map` has two type parameters,
-we have to fix one of them to summon the `Foldable`:
+we have to fix the key parameter to summon the `Foldable`:
 
 ```tut:book:silent
 import cats.instances.map._
@@ -63,9 +67,7 @@ def foldRight[A, B](fa: F[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B]
 
 Using `Eval` means folding with `Foldable` is always *stack safe*,
 even when the collection's default definition of `foldRight` is not.
-
-For example, the default implementation for `Stream` is not stack safe.
-We can see the stack depth changing as we iterate across the stream.
+For example, the default implementation of `foldRight` for `Stream` is not stack safe.
 The longer the stream, the larger the stack requirements for the fold.
 A sufficiently large stream will trigger a `StackOverflowException`:
 
@@ -73,20 +75,17 @@ A sufficiently large stream will trigger a `StackOverflowException`:
 import cats.Eval
 import cats.Foldable
 
-def stackDepth: Int =
-  Thread.currentThread.getStackTrace.length
+def bigStream = (1 to 100000).toStream
 ```
 
-```tut:book
-(1 to 5).toStream.foldRight(0) { (item, accum) =>
-  println(stackDepth)
-  item + accum
-}
+```scala
+bigStream.foldRight(0)(_ + _)
+// java.lang.StackOverflowError
+//   at ...
 ```
 
-As we saw in the [monads chapter](#eval), however,
-`Eval's` `map` and `flatMap` are trampolined:
-`Foldable's` `foldRight` maintains the same stack depth throughout:
+Using `Foldable` forces us to use stack safe operations,
+which fixes the overflow exception:
 
 ```tut:book:silent
 import cats.instances.stream._
@@ -95,49 +94,37 @@ val foldable = Foldable[Stream]
 ```
 
 ```tut:book
-val accum: Eval[Int] = // the accumulator is an Eval
-  Eval.now(0)
+val eval = foldable.foldRight(bigStream, Eval.now(0)) { (num, eval) => 
+  eval.map(_ + num)
+}
 
-val result: Eval[Int] = // and the result is an Eval
-  foldable.foldRight((1 to 5).toStream, accum) {
-    (item: Int, accum: Eval[Int]) =>
-      println(stackDepth)
-      accum.map(_ + item)
-  }
-
-result.value // we call `value` to start the actual calculation
+eval.value
 ```
 
 <div class="callout callout-info">
-*What is stack safety?*
+*Stack Safety in the Standard Library*
 
-A *stack safe* algorithm always consumes the same number of stack frames,
-regardless of the size of the data structure on which it is operating.
-They are "safe" because they can never cause `StackOverflowExceptions`.
+Stack safety isn't typically an issue when using the standard library.
+Most collection types, such as `List` and `Vector`,
+provide stack safe implementations of `foldRight`:
 
-Many sequences such as `Lists` and `Streams` are left-associative.
-We can write stack safe implementations of `foldLeft`
-for these types using tail recursion.
-However, implementations of `foldRight`
-have to work against the direction of associativity.
-We can either resort to regular recursion,
-using the stack to combine values on the way back up,
-or use a technique called "trampolining"
-to rewrite the computation as a (heap allocated) list of functions.
-Regular recursion is not stack safe.
-Trampolining, on the other hand, is.
+```tut:book
+(1 to 100000).toList.foldRight(0)(_ + _)
+(1 to 100000).toVector.foldRight(0)(_ + _)
+```
 
-A discussion of trampolining is beyond the scope of this book,
-suffice to say that `Eval` uses this technique
-to ensure that all our `foldRights` are stack safe by default.
+We've called out the `foldRight` method on `Stream`
+because it is an exception to this rule.
+However, whatever data type you're using, 
+it's useful to know that `Eval` has your back.
 </div>
 
 #### Folding with Monoids
 
-Cats' `Foldable` provides us with
+`Foldable` provides us with
 a host of useful methods defined on top of `foldLeft`.
-Many of these are facimiles of familiar methods from the standard library,
-including `find`, `exists`, `forall`, `toList`, `isEmpty`, and `nonEmpty`:
+Many of these are facimiles of familiar methods from the standard library:
+`find`, `exists`, `forall`, `toList`, `isEmpty`, `nonEmpty`, and so on:
 
 ```tut:book
 Foldable[Option].nonEmpty(Option(42))
@@ -157,7 +144,7 @@ Cats provides two methods that make use of `Monoids`:
 For example, we can use `combineAll` to sum over a `List[Int]`:
 
 ```tut:book:silent
-import cats.instances.int._ // Monoid of Int
+import cats.instances.int._ // Monoid for Int
 ```
 
 ```tut:book
@@ -168,14 +155,15 @@ Alternatively, we can use `foldMap`
 to convert each `Int` to a `String` and concatenate them:
 
 ```tut:book:silent
-import cats.instances.string._ // Monoid of String
+import cats.instances.string._ // Monoid for String
 ```
 
 ```tut:book
 Foldable[List].foldMap(List(1, 2, 3))(_.toString)
 ```
 
-Finally, we can compose `Foldables` to support deep traversal of nested sequences:
+Finally, we can compose `Foldables` 
+to support deep traversal of nested sequences:
 
 ```tut:book:silent
 import cats.instances.vector._ // Monoid of Vector
@@ -184,15 +172,15 @@ val ints = List(Vector(1, 2, 3), Vector(4, 5, 6))
 ```
 
 ```tut:book
-Foldable[List].compose(Foldable[Vector]).combineAll(ints)
+(Foldable[List] compose Foldable[Vector]).combineAll(ints)
 ```
 
 #### Syntax for Foldable
 
-Every method in `Foldable` is available
-in syntax form via `cats.syntax.foldable`.
+Every method in `Foldable` is available in syntax form 
+via [`cats.syntax.foldable`][cats.syntax.foldable].
 In each case, the first argument to the method on `Foldable`
-becomes the method receiver:
+becomes the receiver of the method call:
 
 ```tut:book:silent
 import cats.syntax.foldable._
@@ -227,7 +215,7 @@ def sum[F[_]: Foldable](values: F[Int]): Int =
   values.foldLeft(0)(_ + _)
 ```
 
-In practice, we typically don't need to worry about this distinction. It's a feature!
+We typically don't need to worry about this distinction. It's a feature!
 We call the method we want and the compiler uses a `Foldable` when needed
 to ensure our code works as expected.
 </div>

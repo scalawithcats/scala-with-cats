@@ -46,6 +46,7 @@
 [cats.syntax.cartesian]: http://typelevel.org/cats/api/#cats.syntax.package$$cartesian$
 [cats.syntax.eq]: http://typelevel.org/cats/api/#cats.syntax.package$$eq$
 [cats.syntax.flatMap]: http://typelevel.org/cats/api/#cats.syntax.package$$flatMap$
+[cats.syntax.foldable]: http://typelevel.org/cats/api/#cats.syntax.package$$foldable$
 [cats.syntax.functor]: http://typelevel.org/cats/api/#cats.syntax.package$$functor$
 [cats.syntax.option]: http://typelevel.org/cats/api/#cats.syntax.package$$option$
 [cats.syntax.semigroup]: http://typelevel.org/cats/api/#cats.syntax.package$$semigroup$
@@ -81,6 +82,7 @@
 [scalaz.instances]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.instances.package
 [scalaz.syntax.equal]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.Syntaxes$equal$
 [scalaz.syntax.show]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.Syntaxes$show$
+[scalaz.syntax.traverse]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.Syntaxes$traverse$
 [scalaz.syntax]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.syntax.package
 [scalaz]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.package
 
@@ -112,3 +114,4 @@
 [link-topk]: http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.114.9563
 [link-typelevel-scala]: https://github.com/typelevel/scala
 [link-value-classes]: http://docs.scala-lang.org/overviews/core/value-classes.html
+[link-gibbons-oliviera-iterator-pattern]: https://www.cs.ox.ac.uk/jeremy.gibbons/publications/iterator.pdf
