@@ -11,315 +11,199 @@ trait Cartesian[F[_]] {
 }
 ```
 
-Note that the parameters `fa` and `fb` are independent of one another.
-This contrasts with `flatMap`,
-in which `fb` is evaluated strictly after `fa`:
+As we discussed above,
+the parameters `fa` and `fb` are independent of one another.
+This gives us a lot more flexibility when 
+defining instances of `Cartesian` than we do when defining `Monads`.
 
-```scala
-trait FlatMap[F[_]] {
-  def flatMap[A, B](fa: F[A])(fb: A => F[B]): F[B]
-}
-```
+The relationship between `Cartesian` and `Monad` is subtle---more on that later.
+For now let's see how to use `Cartesian`.
 
+### Joining Two Contexts
 
-### Combining *Options*
-
-Let's see `Cartesian` in action.
-The code below summons a type class instance for `Option`
-and uses it to zip two values:
+Whereas `Semigroups` allow us to join values,
+`Monoids` allow us to join contexts.
+Let's join some `Options` as an example:
 
 ```tut:book:silent
 import cats.Cartesian
-import cats.instances.option._
+import cats.instances.option._ // Cartesian for Option
 ```
 
 ```tut:book
 Cartesian[Option].product(Some(123), Some("abc"))
 ```
 
-If either argument evaluates to `None`, the entire result is `None`:
+If both parameters are instances of `Some`, 
+we end up with a tuple of the values within.
+If either parameter evaluates to `None`, 
+the entire result is `None`:
 
 ```tut:book
 Cartesian[Option].product(None, Some("abc"))
 Cartesian[Option].product(Some(123), None)
 ```
 
-Given that `Option` is also a monad
-can you implement the `product` method for `Option`
-purely in terms of operations on `Monad` (i.e. `flatMap`, `map`, and `pure`)?
-Your method should have the signature
+### Joining Three or More Contexts
+
+The companion object for `Cartesian` defines 
+a set of methods on top of `product`. 
+For example, the methods `tuple2` through `tuple22`
+generalise `product` to different arities:
 
 ```tut:book:silent
-def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
-  ???
-```
-
-<div class="solution">
-We can implement `product` in terms of `map` and `flatMap` like so:
-
-```tut:book:silent
-def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
-  fa.flatMap { a => fb.map { b => (a, b) } }
+import cats.instances.option._ // Cartesian for Option
 ```
 
 ```tut:book
-product(Some(123), Some("abc"))
+Cartesian.tuple3(Option(1), Option(2), Option(3))
+Cartesian.tuple3(Option(1), Option(2), Option.empty[Int])
 ```
 
-You might recognise the `flatMap` / `map` combination
-as being equivalent to a for comprehension,
-so we can alternatively write `product` as
-
-```tut:book:silent
-def product[A,B](fa: Option[A], fb: Option[B]): Option[(A,B)] =
-  for {
-    a <- fa
-    b <- fb
-  } yield (a, b)
-```
+The methods `map2` through `map22`
+apply a user-specified function 
+to the values inside 2 to 22 contexts:
 
 ```tut:book
-product(Some(123), Some("abc"))
-```
-</div>
+Cartesian.map3(Option(1), Option(2), Option(3))(_ + _ + _)
 
-It appears we can implement `product` in terms of the monad operations.
-Why bother with the `Cartesian` type class then?
-Using `product` (and in particular the `CartesianBuilder` we'll see in the next section)
-can be more convenient than writing out the for comprehension.
-We'll also see some types for which we can define `product` but not a monad instance.
-
-
-### Combining *Lists*
-
-There is also a `Cartesian` instance for `List`. What do you think the following expression will evaluate to?
-
-```scala
-Cartesian[List].product(List(1, 2), List(3, 4))
+Cartesian.map3(Option(1), Option(2), Option.empty[Int])(_ + _ + _)
 ```
 
-<div class="solution">
-There are at least two reasonable answers here.
-The first is that `product` *zips* the lists, giving `List((1, 3), (2, 4))`.
-The second is that `product` computes the *cartesian product*,
-giving `List((1, 3), (1, 4), (2, 3), (2, 4))`.
-The name `Cartesian` is a bit of a hint as to which answer we'll get,
-but let's run it too see for sure.
+There are also methods `contramap2` through `contramap22`
+and `imap2` through `imap22`, 
+that require instances of `Contravariant` and `Invariant` respectively.
 
-```tut:book:silent
-import cats.instances.list._
-```
+<!--
+### *Cartesian* Laws
 
-```tut:book
-Cartesian[List].product(List(1, 2), List(3, 4))
-```
-
-We see that we get the cartesian product,
-which is also the same answer we get
-if we generalise the monadic implementation of `product`
-that we developed for `Option`.
-
-```tut:book
-for {
-  a <- List(1, 2)
-  b <- List(3, 4)
-} yield (a, b)
-```
-</div>
-
-This raises two questions:
-
-- why do we get the cartesian product, not `zip`; and
-- what does "cartesian product" mean?
-
-The reason we get the cartesian product is
-to have consistent behavior for all monad instances.
-We can define `product` for any `Monad` as
-
-```tut:book:silent
-import cats.Monad
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-import scala.language.higherKinds
-
-def product[F[_]: Monad, A, B](fa: F[A], fb: F[B]): F[(A,B)] =
-  for {
-   a <- fa
-   b <- fb
-  } yield (a, b)
-```
-
-Making this choice makes it easier
-to reason about uses of `product` for a specific monad instance---we
-only have to remember the semantics of `flatMap`
-to understand how `product` will work.
-
-As for the term "cartesian product",
-you may recall the *Cartesian coordinate system*,
-otherwise known as the standard xy plane we plot graphs on.
-In mathematics terminology this is the product of the x and y axes,
-and includes all possible combinations of x and y.
-The cartesian product is a generalisation of this idea.
-For lists it means we get all possible combinations of the elements in the two lists.
-
-
-### Combining *Futures*
-
-The semantics of `product` are, of course, different for every data type.
-For example, the `Cartesian` for `Future`
-zips the results of asynchronous computations:
-
-```tut:book:silent
-import scala.concurrent._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.Duration
-
-import cats.instances.future._
-
-val future = Cartesian[Future].product(Future(123), Future("abc"))
-```
-
-```tut:book
-Await.result(future, Duration.Inf)
-```
-
-The example above illustrates nicely what we mean
-by combining the results of *independent* compuatations.
-The two `Futures`, `Future(123)` and `Future("abc")`,
-are started independently of one another and execute in parallel.
-This is in contrast to the following monadic combination,
-which executes them in sequence:
-
-```tut:book
-val future = for {
-  a <- Future(1)
-  b <- Future(2)
-} yield (a, b)
-```
-
-As we saw above, for consistency Cats implements the `product` method
-for all monadic data types in the same way in terms of `flatMap`:
-
-```scala
-def product[F[_]: Monad, A, B](fa: F[A], fb: F[B]): F[(A,B)] =
-  for {
-   a <- fa
-   b <- fb
-  } yield (a, b)
-```
-
-This means our `product` example above is semantically identical
-to the conventional approach for combining parallel compuatations in Scala:
-create the `Futures` first and combine the results using `flatMap`:
-
-```tut:book:silent
-// Start the futures in parallel:
-val fa = Future(123)
-val fb = Future("abc")
-```
-
-```tut:book
-// Combine their results using flatMap:
-val future = for {
-  a <- fa
-  b <- fb
-} yield (a, b)
-```
-
-### Combining *Xors*
-
-When combining `Xors`, we have to use a type alias to fix the left hand side:
-
-```tut:book:silent
-import cats.data.Xor
-
-type ErrorOr[A] = List[String] Xor A
-```
-
-```tut:book
-Cartesian[ErrorOr].product(
-  Xor.right(123),
-  Xor.right("abc")
-)
-```
-
-If we try to combine successful and failed `Xors`,
-the `product` method returns the errors from the failed side:
-
-```tut:book
-Cartesian[ErrorOr].product(
-  Xor.left(List("Fail parameter 1")),
-  Xor.right("abc")
-)
-
-Cartesian[ErrorOr].product(
-  Xor.right(123),
-  Xor.left(List("Fail parameter 2"))
-)
-```
-
-Surprisingly, if *both* sides are failures, only the left-most errors are retained:
-
-```tut:book
-Cartesian[ErrorOr].product(
-  Xor.left(List("Fail parameter 1")),
-  Xor.left(List("Fail parameter 2"))
-)
-```
-
-If you think back to our examples regarding `Futures`,
-you'll see why this is the case.
-`Xor` is a monad, so Cats implements `product` in terms of `flatMap`.
-As we saw at the beginning of this chapter,
-`flatMap` implements fail-fast error handling
-so we can't use `Xor` to accumulate errors.
-
-Fortunately there is a solution to this problem.
-Cats provides another data type called `Validated` in addition to `Xor`.
-`Validated` is a `Cartesian` but it is not a `Monad`.
-This means Cats can provide an error-accumulating implementation of `product`
-without introducing inconsistent semantics.
-
-`Validated` is an important data type,
-so we will cover it separately and extensively later on this chapter.
-
-
-### Limitations of Product
-
-In the next section we will introduce the `CartesianBuilder`,
-which gives us more convenient syntax for combining elements using `product`.
-To see the problem that this solves,
-let's look at combining three or more elements using `product`.
-For simplicity we'll use `Option`, but the idea generalises to other types.
-
-If we combine three elements using `product` we get a nested tuple.
-
-```tut:book:silent
-val instance = Cartesian[Option]
-```
-
-```tut:book
-val result = instance.product(Some(1), instance.product(Some(2), Some(3)))
-```
-
-In fact there are two different results we can get, depending on the order of calls to `product`.
-
-```tut:book
-val result2 = instance.product(instance.product(Some(1), Some(2)), Some(3))
-```
-
-This difference is annoying in use
-as we need to worry about how values were constructed when we come to use them.
-
-What property would we like `product` to have, to avoid this issue?
-
-<div class="solution">
-We would like `product` to be associative, so that
+There is only one law for `Cartesian`:
+the `product` method must be associative:
 
 ```scala
 product(a, product(b, c)) == product(product(a, b), c)
 ```
-</div>
+-->
 
-The `CartesianBuilder` provides associativity
-by effectively flattening tuples when they are combined with `product`.
+## *Cartesian Builder* Syntax
+
+Cats provides a convenient syntax called *cartesian builder syntax*,
+that provides shorthand for methods like `tupleN` and `mapN`.
+We import the syntax from [`cats.syntax.cartesian`][cats.syntax.cartesian].
+Here's an example:
+
+```tut:book:silent
+import cats.instances.option._
+import cats.syntax.cartesian._
+```
+
+```tut:book
+(Option(123) |@| Option("abc")).tupled
+```
+
+The `|@|` operator, better known as a "tie fighter",
+creates a temporary "builder" object that provides
+several methods for combining the parameters
+to create useful data types.
+For example, the `tupled` zips the values into a tuple:
+
+```tut:book
+val builder2 = Option(123) |@| Option("abc")
+
+builder2.tupled
+```
+
+We can use `|@|` repeatedly to create builders for up to 22 values.
+Each arity of builder, from 2 to 22, defines a `tupled` method
+to combine the values to form a tuple of the correct size:
+
+```tut:book
+val builder3 = Option(123) |@| Option("abc") |@| Option(true)
+
+builder3.tupled
+
+val builder5 = builder3 |@| Option(0.5) |@| Option('x')
+
+builder5.tupled
+```
+
+The idiomatic way of writing builder syntax is
+to combine `|@|` and `tupled` in a single expression,
+going from single values to a tuple in one step:
+
+```tut:book
+(
+  Option(1) |@|
+  Option(2) |@|
+  Option(3)
+).tupled
+```
+
+In addition to `tupled`, every builder has a `map` method
+that accepts an implicit `Functor` 
+and a function of the correct arity to combine the values:
+
+```tut:book:silent
+case class Cat(name: String, born: Int, color: String)
+```
+
+```tut:book
+(
+  Option("Garfield") |@|
+  Option(1978)       |@|
+  Option("Orange and black")
+).map(Cat.apply)
+```
+
+If we supply a function that accepts the wrong number or types of parameters,
+we get a compile error:
+
+```tut:book
+val add: (Int, Int) => Int = (a, b) => a + b
+```
+
+```tut:book:fail
+(Option(1) |@| Option(2) |@| Option(3)).map(add)
+```
+
+```tut:book:fail
+(Option("cats") |@| Option(true)).map(add)
+```
+
+### Fancy Functors and Cartesian Builder Syntax
+
+Cartesian builders also have a `contramap` and `imap` methods
+that accept [Contravariant](#contravariant) 
+and [Invariant](#invariant) functors.
+For example, we can combine `Monoids` and `Semigroups` using `Invariant`.
+Here's an example:
+
+```tut:book:silent
+import cats.Monoid
+import cats.instances.boolean._
+import cats.instances.int._
+import cats.instances.list._
+import cats.instances.string._
+import cats.syntax.cartesian._
+
+case class Cat(name: String, yearOfBirth: Int, favoriteFoods: List[String])
+
+implicit val catMonoid = (
+  Monoid[String] |@|
+  Monoid[Int] |@|
+  Monoid[List[String]]
+).imap(Cat.apply)((cat: Cat) => (cat.name, cat.yearOfBirth, cat.favoriteFoods))
+```
+
+```tut:book
+Monoid[Cat].empty
+```
+
+```tut:book:silent
+import cats.syntax.monoid._
+```
+
+```tut:book
+Cat("Garfield", 1978, List("Lasagne")) |+| Cat("Heathcliff", 1988, List("Junk Food"))
+```
+

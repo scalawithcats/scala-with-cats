@@ -1,21 +1,23 @@
 ## *Apply* and *Applicative*
 
-You won't see cartesians mentioned frequently
+Cartesians aren't mentioned frequently
 in the wider functional programming literature.
-However, you will see references to
-a closely related concept called an *applicative functor*
-(*applicative* for short).
-Cartesian and applicative are alternative encodings
+They provide a subset of the functionality of a related type class
+called an *applicative functor* ("applicative" for short).
+Cartesians and applicatives effectively provide alternative encodings
 of the notion of "zipping" values.
-Applicative also provides with a `pure` operation
-that we've seen in earlier chapters.
+Both encodings are introduced in 
+the [same 2008 paper][link-applicative-programming]
+by Conor McBride and Ross Paterson.
+Applicative also provides the `pure` operation
+that we've seen when discussing monads.
 
 Cats models `Applicatives` using two type classes.
-The first, `Apply` extends `Cartesian` and `Functor`,
-adding an `ap` method that applies a parameter
+The first, `Apply`, extends `Cartesian` and `Functor` 
+and adds an `ap` method that applies a parameter
 to a function within a context.
 The second, `Applicative` extends `Apply`,
-adding the `pure` method.
+adds the `pure` method.
 Here is a simplified definition in code:
 
 ```scala
@@ -32,21 +34,10 @@ trait Applicative[F[_]] extends Apply[F] {
 ```
 
 Don't worry too much about the implementation of `product`---it's
-complicated and difficult to read
-and the details aren't particuarly important for our discussion.
-However, do notice that it is defined in terms of `ap` and `map`.
+difficult to read and the details aren't particuarly important.
+However, do notice that `product` is defined in terms of `ap` and `map`.
 There is an equivalence between these three methods that
 allows any one of them to be defined in terms of the other two.
-The intuitive reading of this definition of `product` is as follows:
-
-- `map` over `F[A]` to produce a value of type `F[B => (A, B)]`;
-- apply `F[B]` as a parameter to `F[B => (A, B)]`
-  to get a result of type `F[(A, B)]`.
-
-By defining one of these three methods in terms of the other two,
-we ensure that the definitions are consistent
-for all implementations of `Apply`.
-This is a pattern that we will see a lot in this section.
 
 `Applicative` introduces the `pure` method.
 This is the same `pure` we saw in `Monad`.
@@ -59,8 +50,6 @@ as `Monoid` is related to `Semigroup`.
 With the introduction of `Apply` and `Applicative`,
 we can zoom out and see a a whole family of type classes
 that concern themselves with sequencing computations in different ways.
-We saw above that `Apply` is related to `Functor`;
-`Applicative` forms the basis of `Monad`.
 Here is a diagram showing the complete family:
 
 ![Monad type class hierarchy](src/pages/applicatives/hierarchy.png)
@@ -71,25 +60,12 @@ and defines all of the functionality from its supertypes in terms of them.
 Every monad is an applicative, every applicative a cartesian, and so on.
 
 Because of the lawful nature of the relationships between the type classes,
-the inheritance relationships are constant across all instances of a particular type class.
-For example, `Monad` defines `product`, `ap`, and `map`, in terms of `pure` and `flatMap`:
+the inheritance relationships are constant across all instances of a type class.
+`Apply` defines `product` in terms of `ap` and `map`, 
+`Monad` defines `product`, `ap`, and `map`, in terms of `pure` and `flatMap`,
+and so on.
 
-```scala
-trait Monad[F[_]] extends FlatMap[F] with Applicative[F] {
-  def product[A, B](fa: F[A], fb: F[B]): F[(A, B)] =
-    flatMap(fa)(a => map(fb)(b => (a, b)))
-
-  def ap[A, B](ff: F[A => B])(fa: F[A]): F[B] =
-    flatMap(ff)(f => map(fa)(f))
-
-  def map[A, B](fa: F[A])(f: A => B): F[B] =
-    flatMap(a => pure(f(a)))
-}
-```
-
-We saw a similar pattern above where `Apply` defines `product` in terms of `ap`.
-This consistency gives us the ability to reason about data types in an abstract way.
-To illustrate, let's consider two hypothetical data types:
+To illustrate this let's consider two hypothetical data types:
 
 - `Foo` is a monad.
   It has an instance of the `Monad` type class
@@ -102,7 +78,7 @@ To illustrate, let's consider two hypothetical data types:
   and inherits standard definitions of `product` and `map`.
 
 What can we say about these two data types
-without knowing more about their implementations?
+without knowing more about their implementation?
 
 We know strictly more about `Foo` than `Bar`,
 `Monad` is a subtype of `Applicative`,
@@ -130,35 +106,3 @@ applicatives and cartesians impose no such restriction.
 This puts them in another sweet spot in the hierarchy.
 We can use them to represent classes parallel / independent computations
 that monads cannot.
-
-### Why *Xor* Doesn't Accumulate Errors
-
-`Xor` is a `Monad`, and as we have seen,
-`Monads` define `product` in terms of `flatMap` and `pure`:
-
-```tut:book:silent
-import cats.Monad
-import cats.data.Xor
-
-type ErrorOr[A] = String Xor A
-
-def product[A, B](fa: ErrorOr[A], fb: ErrorOr[B]): ErrorOr[(A, B)] =
-  Monad[ErrorOr].flatMap(fa) { a =>
-    Monad[ErrorOr].map(fb) { b =>
-      (a, b)
-    }
-  }
-```
-
-If `fa` is a failure, we cannot run the function from `A` to `Xor[(A, B)]`
-to determine the success/failure status of `fb`.
-This means we can never accumulate errors using a monad.
-To do this we need an applicative data type
-with a definition of `product` that *isn't* based on `flatMap`.
-
-Fortunately, Cats provides another data type called `Validated`
-with exactly this behaviour.
-`Validated` is an applicative but not a monad,
-allowing it to have a definition of product that preserves errors
-from the `fa` and `fb` parameters.
-We'll discuss this data type in the next section.
