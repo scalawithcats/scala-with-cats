@@ -29,11 +29,11 @@ trait JsonWriter[A] {
 ### Type Class Instances
 
 The *instances* of a type class
-provide implementations of the type class for the types we care about,
+provide implementations for the types we care about,
 including types from the Scala standard library
 and types from our domain model.
 
-In Scala define instances by creating
+In Scala we define instances by creating
 concrete implementations of the type class
 and tagging them with the `implicit` keyword:
 
