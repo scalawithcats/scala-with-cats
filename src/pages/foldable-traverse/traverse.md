@@ -20,7 +20,11 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-val hostnames = List("alpha.example.com", "beta.example.com", "gamma.demo.com")
+val hostnames = List(
+  "alpha.example.com",
+  "beta.example.com",
+  "gamma.demo.com"
+)
 
 def getUptime(hostname: String): Future[Int] =
   Future(hostname.length * 60) // just for demonstration
@@ -36,12 +40,13 @@ Let's start by doing this manually using a fold:
 
 ```tut:book:silent
 val allUptimes: Future[List[Int]] =
-  hostnames.foldLeft(Future(List.empty[Int])) { (uptimes, host) =>
-    val uptime = getUptime(host)
-    for {
-      uptimes <- uptimes
-      uptime  <- uptime
-    } yield uptimes :+ uptime
+  hostnames.foldLeft(Future(List.empty[Int])) {
+    (accum, host) =>
+      val uptime = getUptime(host)
+      for {
+        accum  <- accum
+        uptime <- uptime
+      } yield accum :+ uptime
   }
 ```
 
@@ -71,8 +76,9 @@ the implementation of `Future.traverse` in the standard library looks like this:
 
 ```scala
 object Future {
-  def traverse[A, B](futures: List[A])(func: A => Future[B]): Future[List[B]] =
-    hostnames.foldLeft(Future(List[A]())) { (accum, host) =>
+  def traverse[A, B](values: List[A])
+      (func: A => Future[B]): Future[List[B]] =
+    values.foldLeft(Future(List.empty[A])) { (accum, host) =>
       val item = func(host)
       for {
         accum <- accum
@@ -149,12 +155,15 @@ List.empty[Int].pure[Future]
 Our combinator, which used to be this:
 
 ```tut:book:silent
-def oldCombine(uptimes: Future[List[Int]], host: String): Future[List[Int]] = {
+def oldCombine(
+  accum : Future[List[Int]],
+  host  : String
+): Future[List[Int]] = {
   val uptime = getUptime(host)
   for {
-    uptimes <- uptimes
-    uptime  <- uptime
-  } yield uptimes :+ uptime
+    accum  <- accum
+    uptime <- uptime
+  } yield accum :+ uptime
 }
 ```
 
@@ -164,7 +173,10 @@ is now equivalent to `Cartesian.combine`:
 import cats.syntax.cartesian._
 
 // Combining an accumulator and a hostname using an Applicative:
-def newCombine(accum: Future[List[Int]], host: String): Future[List[Int]] =
+def newCombine(
+  accum: Future[List[Int]],
+  host: String
+): Future[List[Int]] =
   (accum |@| getUptime(host)).map(_ :+ _)
 ```
 
@@ -174,19 +186,24 @@ we can generalise it to to work with any `Applicative`:
 ```tut:book:silent
 import scala.language.higherKinds
 
-def listTraverse[F[_] : Applicative, A, B](inputs: List[A])(func: A => F[B]): F[List[B]] =
-  inputs.foldLeft(List.empty[B].pure[F]) { (accum, item) =>
+def listTraverse[F[_] : Applicative, A, B]
+    (list: List[A])(func: A => F[B]): F[List[B]] =
+  list.foldLeft(List.empty[B].pure[F]) { (accum, item) =>
     (accum |@| func(item)).map(_ :+ _)
   }
 
-def listSequence[F[_] : Applicative, B](inputs: List[F[B]]): F[List[B]] =
-  listTraverse(inputs)(identity)
+def listSequence[F[_] : Applicative, B]
+    (list: List[F[B]]): F[List[B]] =
+  listTraverse(list)(identity)
 ```
 
 We can use this new `listTraverse` to re-implement our uptime example:
 
 ```tut:book
-Await.result(listTraverse(hostnames)(getUptime), Duration.Inf)
+Await.result(
+  listTraverse(hostnames)(getUptime),
+  Duration.Inf
+)
 ```
 
 or we can use it with with other `Applicative` data types

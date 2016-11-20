@@ -6,16 +6,16 @@ We can use it to record messages, errors,
 or additional data about a computation,
 and extract the log with the final result.
 
-One common use for `Writers` is 
+One common use for `Writers` is
 recording sequences of steps in multi-threaded computations,
-where standard imperative logging techniques 
+where standard imperative logging techniques
 can result in interleaved messages from different contexts.
 With `Writer` the log for the computation is tied to the result,
 so we can run concurrent computations without mixing logs.
 
 ### Creating and Unpacking Writers
 
-A `Writer[W, A]` carries two values: 
+A `Writer[W, A]` carries two values:
 a *log* of type `W` and a *result* of type `A`.
 We can create a `Writer` from values of each type as follows:
 
@@ -25,10 +25,13 @@ import cats.instances.vector._
 ```
 
 ```tut:book
-Writer(Vector("It was the best of times", "It was the worst of times"), 123)
+Writer(Vector(
+  "It was the best of times",
+  "It was the worst of times"
+), 123)
 ```
 
-We've used a `Vector` as the log in this example 
+We've used a `Vector` as the log in this example
 as it is a sequence structure with an efficient append operation.
 
 Notice that the type of the writer reported on the console
@@ -50,7 +53,7 @@ type Writer[W, A] = WriterT[Id, W, A]
 For convenience, Cats provides a way of creating `Writers`
 specifying only the log or the result.
 If we only have a result we can use the standard `pure` syntax.
-To do this we must have a `Monoid[W]` in scope 
+To do this we must have a `Monoid[W]` in scope
 so Cats knows how to produce an empty log:
 
 ```tut:book:silent
@@ -76,8 +79,8 @@ Vector("msg1", "msg2", "msg3").tell
 ```
 
 If we have both a result and a log,
-in addition to using `Writer.apply` as we did above 
-we can use the `writer` syntax 
+in addition to using `Writer.apply` as we did above
+we can use the `writer` syntax
 from [`cats.syntax.writer`][cats.syntax.writer]:
 
 ```tut:book:silent
@@ -107,7 +110,7 @@ val (log, result) = b.run
 ### Composing and Transforming Writers
 
 The log in a `Writer` is preserved when we `map` or `flatMap` over it.
-`flatMap` actually appends the logs 
+`flatMap` actually appends the logs
 from the source `Writer` and the result of the user's sequencing function.
 For this reason it's good practice to use a log type
 that has an efficient append and concatenate operations,
@@ -174,7 +177,7 @@ Let's confirm this by computing (and logging) some factorials.
 The `factorial` function below computes a factorial,
 printing out the intermediate steps in the calculation as it runs.
 The `slowly` helper function ensures this takes a while to run,
-even on the very small examples we need in this book 
+even on the very small examples we need in this book
 to fit the output on the page:
 
 ```tut:book:silent
@@ -183,9 +186,7 @@ def slowly[A](body: => A) =
 
 def factorial(n: Int): Int = {
   val ans = slowly(if(n == 0) 1 else n * factorial(n - 1))
-
   println(s"fact $n $ans")
-
   ans
 }
 ```
@@ -198,7 +199,7 @@ factorial(5)
 
 If we start several factorials in parallel,
 the log messages can become interleaved on standard out.
-This makes it difficult to see 
+This makes it difficult to see
 which messages come from which computation.
 
 ```tut:book:silent

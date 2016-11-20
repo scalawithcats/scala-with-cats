@@ -113,10 +113,12 @@ For all values `x`, `y`, and `z`, in `A`,
 `empty` must be an identity element:
 
 ```tut:book:silent
-def associativeLaw[A](x: A, y: A, z: A)(implicit m: Monoid[A]): Boolean =
+def associativeLaw[A](x: A, y: A, z: A)
+    (implicit m: Monoid[A]): Boolean =
   m.combine(x, m.combine(y, z)) == m.combine(m.combine(x, y), z)
 
-def identityLaw[A](x: A)(implicit m: Monoid[A]): Boolean = {
+def identityLaw[A](x: A)
+    (implicit m: Monoid[A]): Boolean = {
   (m.combine(x, m.empty) == x) &&
   (m.combine(m.empty, x) == x)
 }
@@ -228,12 +230,13 @@ Finally, we have *exclusive nor* (the negation of exclusive or)
 with identity `true`:
 
 ```tut:book:silent
-implicit val booleanXnorMonoid: Monoid[Boolean] = new Monoid[Boolean] {
-  def combine(a: Boolean, b: Boolean) =
-    (!a || b) && (a || !b)
+implicit val booleanXnorMonoid: Monoid[Boolean] =
+  new Monoid[Boolean] {
+    def combine(a: Boolean, b: Boolean) =
+      (!a || b) && (a || !b)
 
-  def empty = true
-}
+    def empty = true
+  }
 ```
 
 Showing that the identity law holds in each case is straightforward.

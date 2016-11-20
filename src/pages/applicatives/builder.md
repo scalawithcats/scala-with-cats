@@ -125,13 +125,20 @@ import cats.instances.int._
 import cats.instances.string._
 import cats.syntax.cartesian._
 
-case class Cat(name: String, yearOfBirth: Int, favoriteFood: String)
+case class Cat(
+  name: String,
+  yearOfBirth: Int,
+  favoriteFood: String
+)
+
+def catToTuple(cat: Cat) =
+  (cat.name, cat.yearOfBirth, cat.favoriteFood)
 
 implicit val catMonoid = (
   Monoid[String] |@|
   Monoid[Int] |@|
   Monoid[String]
-).imap(Cat.apply)((cat: Cat) => (cat.name, cat.yearOfBirth, cat.favoriteFood))
+).imap(Cat.apply)(catToTuple)
 ```
 
 ```tut:book

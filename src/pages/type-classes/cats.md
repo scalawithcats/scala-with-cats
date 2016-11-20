@@ -15,8 +15,8 @@ producing developer-friendly console output without using `toString`.
 
 `Show` defines one method of interest:
 
-```scala
-def show(value: A): String
+```tut:book
+def show[A](value: A): String = ???
 ```
 
 ### Importing Type Classes
@@ -60,9 +60,10 @@ Import                                           Parameter types
 
 [`cats.instances.map`][cats.instances.map]       `Map` and subtypes
 
-[`cats.instances.all`][cats.instances.all]       All instances for the whole standard library
+[`cats.instances.all`][cats.instances.all]       All instances
 
-and so on...                                     See the [`cats.instances`][cats.instances] package for more
+and so on...                                     See the [`cats.instances`][cats.instances]
+                                                 package for more
 ------------------------------------------------------------------------------
 
 <div class="callout callout-info">
@@ -121,15 +122,15 @@ We will introduce these as we encounter them in later sections and chapters.
 
 ### Defining Custom Instances {#defining-custom-instances}
 
-There are two methods on the companion object of `Show`
+There are two constructor methods on the companion object of `Show`
 that we can use to define instances for our own types:
 
-```scala
+```tut:book:silent
 // Convert a function to a `Show` instance:
-def show[A](f: A => String): Show[A]
+def show[A](f: A => String): Show[A] = ???
 
 // Create a `Show` instance from a `toString` method:
-def fromToString[A]: Show[A]
+def fromToString[A]: Show[A] = ???
 ```
 
 These allows us to quickly construct instances of `Show`.
@@ -138,12 +139,12 @@ These allows us to quickly construct instances of `Show`.
 import java.util.Date
 
 implicit val dateShow: Show[Date] =
-  Show.show(date => s"It's been ${date.getTime}ms since the epoch.")
+  Show.show(date => s"${date.getTime}ms since the epoch.")
 ```
 
-These definition helpers exist for `Show`
+These constructors exist for `Show`
 but don't make sense for all Cats type classes.
-We will introduce helpers for other type classes as we come to then.
+We will introduce constructors for other type classes as we come to then.
 
 ### Exercise: Cat Show
 

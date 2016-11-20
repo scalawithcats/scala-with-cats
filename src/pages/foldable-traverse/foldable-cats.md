@@ -73,16 +73,16 @@ A sufficiently large stream will trigger a `StackOverflowException`:
 import cats.Eval
 import cats.Foldable
 
-def bigStream = (1 to 100000).toStream
+def bigData = (1 to 100000).toStream
 ```
 
 ```tut:book:fail:invisible
 // This example isn't printed... it's here to check the next code block is ok:
-bigStream.foldRight(0)(_ + _)
+bigData.foldRight(0)(_ + _)
 ```
 
 ```scala
-bigStream.foldRight(0)(_ + _)
+bigData.foldRight(0)(_ + _)
 // java.lang.StackOverflowError ...
 ```
 
@@ -91,14 +91,13 @@ which fixes the overflow exception:
 
 ```tut:book:silent
 import cats.instances.stream._
-
-val foldable = Foldable[Stream]
 ```
 
 ```tut:book
-val eval = foldable.foldRight(bigStream, Eval.now(0)) { (num, eval) =>
-  eval.map(_ + num)
-}
+val eval = Foldable[Stream].
+  foldRight(bigData, Eval.now(0)) { (num, eval) =>
+    eval.map(_ + num)
+  }
 
 eval.value
 ```

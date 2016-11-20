@@ -315,7 +315,7 @@ $endfor$
 %     \addcontentsline{toc}{part}{#1}\fi
 %   \begingroup\centering
 %   \ifnum \c@secnumdepth >-2\relax
-%        {\fontsize{24pt}{30pt} \bfseries \partname\ \thepart} 
+%        {\fontsize{24pt}{30pt} \bfseries \partname\ \thepart}
 %        \vskip 20\p@ \fi
 %        \fontsize{30pt}{36pt} \bfseries#1
 %        \vfil\@partimage\vfil
@@ -361,7 +361,7 @@ $endif$
 \end{tikzpicture}
 
 \begin{center}
-\vspace*{5cm}
+\vspace{1cm}
 
 $if(title)$
 {\fontsize{1.5cm}{1em} \textsf{$title$}}
@@ -373,7 +373,7 @@ $if(subtitle)$
 {\fontsize{1cm}{1em} \textsf{$subtitle$}}
 $endif$
 
-\vspace{1.25em}
+\vspace{1cm}
 
 $for(author)$
 {\fontsize{1cm}{1em} \textsf{$author$}}
@@ -384,18 +384,17 @@ $endfor$
 $if(date)$
 {\fontsize{.5cm}{1em} \textsf{$date$}}
 $endif$
+\end{center}
 
 \begin{bottompar}
 \begin{center}
 \includegraphics[width=5cm]{$lib-dir$/templates/images/brand.pdf}
 
 \vspace{1cm}
-
 Copyright $copyright$ $author$.
+\vspace{1cm}
 \end{center}
 \end{bottompar}
-
-\end{center}
 \end{titlepage}
 
 % $if(title)$

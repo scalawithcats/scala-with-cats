@@ -128,6 +128,7 @@ we need to determine what type we want to use to represent errors.
 We could use `Throwable` for this as follows:
 
 ```tut:book:silent
+// Using prefix notation:
 type Result[A] = Xor[Throwable, A]
 
 // Or using infix notation:
@@ -145,8 +146,15 @@ to represent the types of error that can occur:
 case class User(username: String, password: String)
 
 sealed trait LoginError
-final case class UserNotFound(username: String) extends LoginError
-final case class PasswordIncorrect(username: String) extends LoginError
+
+final case class UserNotFound(
+  username: String
+) extends LoginError
+
+final case class PasswordIncorrect(
+  username: String
+) extends LoginError
+
 case object UnexpectedError extends LoginError
 
 type LoginResult = LoginError Xor User
@@ -158,12 +166,18 @@ and a catch-all for anything else that we didn't expect.
 We also get the safety of exhaustivity checking on any pattern matching we do:
 
 ```tut:book:silent
-// Choose precise error-handling behaviour based on the error type:
-def handleError(error: LoginError): Unit = error match {
-  case UserNotFound(u)      => println(s"User not found: $u")
-  case PasswordIncorrect(u) => println(s"Password incorrect: $u")
-  case UnexpectedError      => println(s"Unexpected error")
-}
+// Choose error-handling behaviour based on type:
+def handleError(error: LoginError): Unit =
+  error match {
+    case UserNotFound(u) =>
+      println(s"User not found: $u")
+
+    case PasswordIncorrect(u) =>
+      println(s"Password incorrect: $u")
+
+    case UnexpectedError =>
+      println(s"Unexpected error")
+  }
 ```
 
 ```tut:book
