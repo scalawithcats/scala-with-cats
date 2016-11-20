@@ -24,19 +24,19 @@ show(Nil)
 show(List(1, 2, 3))
 ```
 
-Sequences are recursive, so our binary function is called
-recursively for each item in the sequence.
-The function produces another accumulator,
-which we use to process the tail of the list.
-When we reach the end, the final accumulator is our result.
-The typical use case is to accumulate a value as we traverse.
+The view provided by `Foldable` is recursive.
+Our binary function is called repeatedly
+for each item in the sequence,
+result from each call becoming the accumulator for the next.
+When we reach the end of the sequence,
+the final accumulator becomes our result.
 
 Depending on the operation we're performing,
-the order in which we visit the items may be important.
+the order in which we fold may be important.
 Because of this there are two standard variants of fold:
 
-- `foldLeft` traverses the sequence from "left" to "right" (start to finish);
-- `foldRight` traverses the sequence from "right" to "left" (finish to start).
+- `foldLeft` traverses from "left" to "right" (start to finish);
+- `foldRight` traverses from "right" to "left" (finish to start).
 
 Figure [@fig:foldable-traverse:fold] illustrates each direction.
 
@@ -80,33 +80,22 @@ Folding right to left copies the list, leaving the order intact:
 List(1, 2, 3).foldRight(List.empty[Int])((item, accum) => item :: accum)
 ```
 
-Note that, in order to avoid a type error,
-we have to use `List.empty[Int]` as the accumulator instead of `Nil`.
-The compiler type checks parameter lists on method calls from left to right.
-If we don't specify that the accumulator is a `List` of some type,
-it incorrectly infers its type as `Nil`, which is a subtype of `List`.
-This type is propagated through the rest of the method call
-and we get a compilation error because the result of `::` is not a `Nil`:
+Note that we have to carefully specify
+the type of the accumulator to avoid a type error.
+We use `List.empty[Int]` to avoid
+inferring the accumulator type as `Nil.type` or `List[Nothing]`:
 
 ```tut:book:fail
 List(1, 2, 3).foldRight(Nil)(_ :: _)
-```
-
-Also note that we can't use placeholder syntax
-for the binary function on `foldLeft`,
-because the parameters end up the wrong way around:
-
-```tut:book:fail
-List(1, 2, 3).foldLeft(List.empty[Int])(_ :: _)
 ```
 </div>
 
 ### Exercise: Scaf-fold-ing other methods
 
 `foldLeft` and `foldRight` are very general methods.
-We can use them to implement many of the other 
+We can use them to implement many of the other
 high-level sequence operations we know.
-Prove this to yourself by implementing substitutes 
+Prove this to yourself by implementing substitutes
 for `List's` `map`, `flatMap`, `filter`, and `sum` methods
 in terms of `foldRight`.
 

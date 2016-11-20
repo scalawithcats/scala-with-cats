@@ -1,13 +1,12 @@
 ### *Foldable* in Cats
 
-Cats' `Foldable` abstracts the two operations
-`foldLeft` and `foldRight` into a type class.
+Cats' `Foldable` abstracts `foldLeft` and `foldRight` into a type class.
 Instances of `Foldable` define these two methods
 and inherit a host of derived methods for free.
-
 Cats provides out-of-the-box instances of `Foldable`
 for a handful of Scala data types:
 `List`, `Vector`, `Stream`, `Option`, and `Map`.
+
 We can summon instances as usual using `Foldable.apply`
 and call their implementations of `foldLeft` directly.
 Here is an example using `List`:
@@ -24,8 +23,7 @@ Foldable[List].foldLeft(ints, 0)(_ + _)
 ```
 
 Other sequences like `Vector` and `Stream` work in the same way.
-
-Here is an example using `Option`, 
+Here is an example using `Option`,
 which is treated like a sequence of 0 or 1 elements:
 
 ```tut:book:silent
@@ -41,8 +39,8 @@ Foldable[Option].foldLeft(maybeInt, 10)(_ * _)
 Finally, here is an example for `Map`.
 The `Foldable` instance folds over the values in the map
 (as opposed to its keys).
-Because `Map` has two type parameters,
-we have to fix the key parameter to summon the `Foldable`:
+`Map` has two type parameters
+so we have to fix the key type to summon the `Foldable`:
 
 ```tut:book:silent
 import cats.instances.map._
@@ -65,7 +63,7 @@ in terms of the `Eval` monad:
 def foldRight[A, B](fa: F[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B]
 ```
 
-Using `Eval` means folding with `Foldable` is always *stack safe*,
+Using `Eval` means folding is always *stack safe*,
 even when the collection's default definition of `foldRight` is not.
 For example, the default implementation of `foldRight` for `Stream` is not stack safe.
 The longer the stream, the larger the stack requirements for the fold.
@@ -78,10 +76,14 @@ import cats.Foldable
 def bigStream = (1 to 100000).toStream
 ```
 
+```tut:book:fail:invisible
+// This example isn't printed... it's here to check the next code block is ok:
+bigStream.foldRight(0)(_ + _)
+```
+
 ```scala
 bigStream.foldRight(0)(_ + _)
-// java.lang.StackOverflowError
-//   at ...
+// java.lang.StackOverflowError ...
 ```
 
 Using `Foldable` forces us to use stack safe operations,
@@ -94,7 +96,7 @@ val foldable = Foldable[Stream]
 ```
 
 ```tut:book
-val eval = foldable.foldRight(bigStream, Eval.now(0)) { (num, eval) => 
+val eval = foldable.foldRight(bigStream, Eval.now(0)) { (num, eval) =>
   eval.map(_ + num)
 }
 
@@ -105,7 +107,7 @@ eval.value
 *Stack Safety in the Standard Library*
 
 Stack safety isn't typically an issue when using the standard library.
-Most collection types, such as `List` and `Vector`,
+The most commonly used collection types, such as `List` and `Vector`,
 provide stack safe implementations of `foldRight`:
 
 ```tut:book
@@ -113,10 +115,9 @@ provide stack safe implementations of `foldRight`:
 (1 to 100000).toVector.foldRight(0)(_ + _)
 ```
 
-We've called out the `foldRight` method on `Stream`
-because it is an exception to this rule.
-However, whatever data type you're using, 
-it's useful to know that `Eval` has your back.
+We've called out `Stream` because it is an exception to this rule.
+Whatever data type we're using, though,
+it's useful to know that `Eval` has our backs.
 </div>
 
 #### Folding with Monoids
@@ -162,7 +163,7 @@ import cats.instances.string._ // Monoid for String
 Foldable[List].foldMap(List(1, 2, 3))(_.toString)
 ```
 
-Finally, we can compose `Foldables` 
+Finally, we can compose `Foldables`
 to support deep traversal of nested sequences:
 
 ```tut:book:silent
@@ -177,7 +178,7 @@ val ints = List(Vector(1, 2, 3), Vector(4, 5, 6))
 
 #### Syntax for Foldable
 
-Every method in `Foldable` is available in syntax form 
+Every method in `Foldable` is available in syntax form
 via [`cats.syntax.foldable`][cats.syntax.foldable].
 In each case, the first argument to the method on `Foldable`
 becomes the receiver of the method call:
@@ -218,4 +219,7 @@ def sum[F[_]: Foldable](values: F[Int]): Int =
 We typically don't need to worry about this distinction. It's a feature!
 We call the method we want and the compiler uses a `Foldable` when needed
 to ensure our code works as expected.
+If we need a stack-safe implementation of `foldRight`,
+simply using `Eval` as the accumulator is enough to
+force the compiler to select the method from Cats.
 </div>

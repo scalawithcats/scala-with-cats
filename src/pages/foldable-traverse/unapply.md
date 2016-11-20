@@ -11,7 +11,7 @@ import cats.instances.list._
 import cats.syntax.traverse._
 
 val xors: List[Xor[String, Int]] = List(
-  Xor.left("poor"), 
+  Xor.left("poor"),
   Xor.right(1337)
 )
 ```
@@ -23,15 +23,14 @@ xors.sequence
 ```
 
 The reason for this failure is that
-the compiler can't find 
-an implicit value for its `Applicative` parameter.
-This isn't a problem we're causing---we 
+the compiler can't find an implicit `Applicative`.
+This isn't a problem in our code---we
 have the correct syntax and instances in scope---it's
-simply a weakness of Scala's type inference 
+simply a weakness of Scala's type inference
 that has only recently been fixed
 (more on the fix in a moment).
 
-To understand what's going on, 
+To understand what's going on,
 let's look again at the definition of `sequence`:
 
 ```scala
@@ -57,24 +56,24 @@ type G[A] = Xor[String, A]
 It's obvious to us which unification method to choose.
 However, prior to Scala 2.12,
 an infamous compiler limitation called [SI-2712][link-si2712]
-prevented the type checker making this inferrence.
+prevented this inferrence.
 
 To work around this issue
-Cats includes a type class called `Unapply`,
-whose purpose is to hint to the compiler which parameters to "fix" 
+Cats provides a utilitiy type class called `Unapply`,
+whose purpose is to tell the compiler which parameters to "fix"
 to create a unary type constructor for a given type.
-Cats provides instances of `Unapply` for all the common binary types:
+Cats provides instances of `Unapply` for the common binary types:
 `Either`, `Xor`, `Validated`, and `Function1`, and so on.
-The `Traverse` type class provides variants
-of `traverse` and `sequence`---called `traverseU` and `sequenceU`---that
-use `Unapply` to fix the problem and guide the compiler to the correct solution:
+`Traverse` provides variants of `traverse` and `sequence`---called
+`traverseU` and `sequenceU`---that
+use `Unapply` to guide the compiler to the correct solution:
 
 ```tut:book
 xors.sequenceU
 ```
 
 The inner workings of `Unapply` aren't particularly important---
-all we need to know is that this tool is available 
+all we need to know is that this tool is available
 to fix these kinds of problems.
 
 <div class="callout callout-info">
@@ -82,9 +81,9 @@ to fix these kinds of problems.
 
 [SI-2712][link-si2712] is fixed in Lightbend Scala 2.12.1
 and [Typelevel Scala][link-typelevel-scala] 2.11.8.
-The fix allows calls to `traverse` and `sequence` 
-to compile in a much wider set of situations,
-although tools like `Unapply` are still necessary 
+The fix allows calls to `traverse` and `sequence`
+to compile in a much wider set of cases,
+although tools like `Unapply` are still necessary
 in certain situations.
 
 The SI-2712 fix can be backported to Scala 2.11 and 2.10

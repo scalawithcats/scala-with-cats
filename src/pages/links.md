@@ -51,6 +51,7 @@
 [cats.syntax.option]: http://typelevel.org/cats/api/#cats.syntax.package$$option$
 [cats.syntax.semigroup]: http://typelevel.org/cats/api/#cats.syntax.package$$semigroup$
 [cats.syntax.show]: http://typelevel.org/cats/api/#cats.syntax.package$$show$
+[cats.syntax.traverse]: http://typelevel.org/cats/api/#cats.syntax.package$$traverse$
 [cats.syntax.writer]: http://typelevel.org/cats/api/#cats.syntax.package$$writer$
 [cats.syntax.xor]: http://typelevel.org/cats/api/#cats.syntax.package$$xor$
 

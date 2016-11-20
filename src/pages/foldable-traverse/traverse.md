@@ -1,10 +1,10 @@
 ## *Traverse*
 
 `foldLeft` and `foldRight` are flexible iteration methods
-but they require us to do a lot of work 
+but they require us to do a lot of work
 to define accumulators and combinator functions.
-The `Traverse` type class is a higher level tool 
-that leverages `Applicatives` to provide 
+The `Traverse` type class is a higher level tool
+that leverages `Applicatives` to provide
 a more convenient, more lawful, pattern for iteration.
 
 ### Traversing with Futures
@@ -28,13 +28,15 @@ def getUptime(hostname: String): Future[Int] =
 
 Now, suppose we want to poll all of the hosts and collect all of their uptimes.
 We can't simply `map` over `hostnames`
-because the result---a `List[Future[Int]]`---would contain more than one `Future`.
-To get something we can block on, we need to reduce the results to a single `Future`.
+because the result---a `List[Future[Int]]`---would
+contain more than one `Future`.
+We need to reduce the results to a single `Future`
+to get something we can block on.
 Let's start by doing this manually using a fold:
 
 ```tut:book:silent
 val allUptimes: Future[List[Int]] =
-  hostnames.foldLeft(Future(List[Int]())) { (uptimes, host) =>
+  hostnames.foldLeft(Future(List.empty[Int])) { (uptimes, host) =>
     val uptime = getUptime(host)
     for {
       uptimes <- uptimes
@@ -81,9 +83,9 @@ object Future {
 ```
 
 This is essentially the same as our example code above.
-`Future.traverse` takes away the pain of folding
-and defining accumulators and combination functions,
-and gives us a clean high-level interface to do what we want:
+`Future.traverse` is abstracting away the pain of folding
+and defining accumulators and combination functions.
+It gives us a clean high-level interface to do what we want:
 
 - start with a `List[A]`;
 - provide a function `A => Future[B]`;
@@ -107,7 +109,7 @@ In this case the intuitive understanding is even simpler:
 - start with a `List[Future[A]]`;
 - end up with a `Future[List[A]]`.
 
-`Future.traverse` and `Future.sequence` 
+`Future.traverse` and `Future.sequence`
 solve a very specific problem:
 they allow us to iterate over a sequence of `Futures`
 and accumulate a result.
@@ -115,9 +117,9 @@ The simplified examples above only work with `Lists`,
 but the real `Future.traverse` and `Future.sequence`
 work with any standard Scala collection.
 
-Cats' `Traverse` type class generalises the `traverse` and `sequence` patterns
-to work with any type of "effect",
-including `Future`, `Option`, `Validated`, and so on.
+Cats' `Traverse` type class generalises these patterns
+to work with any type of "effect":
+`Future`, `Option`, `Validated`, and so on.
 We'll approach `Traverse` in the next sections in two steps:
 first we'll generalise over the effect type,
 then we'll generalise over the sequence type.
@@ -126,11 +128,12 @@ many operations involving sequences and other data types.
 
 ### Traversing with Applicatives
 
-If we squint, we'll see that we can rewrite the `traverse` method in terms of an `Applicative`.
-Our accumulator, which was the following for `Future`:
+If we squint, we'll see that we can rewrite `traverse`
+in terms of an `Applicative`.
+Our accumulator from the example above:
 
 ```tut:book:silent
-val oldAccum = Future(List[Int]())
+Future(List.empty[Int])
 ```
 
 is equivalent to `Applicative.pure`:
@@ -140,7 +143,7 @@ import cats.Applicative
 import cats.instances.future._
 import cats.syntax.applicative._
 
-val newAccum = List[Int]().pure[Future]
+List.empty[Int].pure[Future]
 ```
 
 Our combinator, which used to be this:
@@ -165,7 +168,7 @@ def newCombine(accum: Future[List[Int]], host: String): Future[List[Int]] =
   (accum |@| getUptime(host)).map(_ :+ _)
 ```
 
-If we substitute these snippets back into the definition of `traverse`,
+By substituting these snippets back into the definition of `traverse`
 we can generalise it to to work with any `Applicative`:
 
 ```tut:book:silent
@@ -268,11 +271,11 @@ Finally, gere's an example that uses `Validated`:
 
 ```tut:book:silent
 import cats.data.Validated
-import cats.instances.list._ // Applicative[ErrorOr] needs a Monoid[List]
+import cats.instances.list._ // Applicative[ErrorsOr] needs a Monoid[List]
 
-type ErrorOr[A] = Validated[List[String], A]
+type ErrorsOr[A] = Validated[List[String], A]
 
-def process(inputs: List[Int]): ErrorOr[List[Int]] =
+def process(inputs: List[Int]): ErrorsOr[List[Int]] =
   listTraverse(inputs) { n =>
     if(n % 2 == 0) {
       Validated.valid(n)
@@ -290,7 +293,7 @@ process(List(1, 2, 3))
 ```
 
 <div class="solution">
-The return type here is `ErrorOr[List[Int]]`,
+The return type here is `ErrorsOr[List[Int]]`,
 which expands to `Validated[List[String], List[Int]]`.
 The semantics for cartesian `combine` on validated are accumulating error handling,
 so the result is either a list of even `Ints`,

@@ -18,7 +18,8 @@ trait Traverse[F[_]] {
 }
 ```
 
-Cats provides instances for `List`, `Vector`, `Stream`, `Option`, `Xor`,
+Cats provides instances OF `Traverse`
+for `List`, `Vector`, `Stream`, `Option`, `Xor`,
 and a variety of other types.
 We can summon instances as usual using `Traverse.apply` as usual
 and use the `traverse` and `sequence` methods
