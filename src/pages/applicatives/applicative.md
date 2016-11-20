@@ -6,19 +6,17 @@ They provide a subset of the functionality of a related type class
 called an *applicative functor* ("applicative" for short).
 Cartesians and applicatives effectively provide alternative encodings
 of the notion of "zipping" values.
-Both encodings are introduced in 
+Both encodings are introduced in
 the [same 2008 paper][link-applicative-programming]
 by Conor McBride and Ross Paterson.
-Applicative also provides the `pure` operation
-that we've seen when discussing monads.
 
 Cats models `Applicatives` using two type classes.
-The first, `Apply`, extends `Cartesian` and `Functor` 
+The first, `Apply`, extends `Cartesian` and `Functor`
 and adds an `ap` method that applies a parameter
 to a function within a context.
 The second, `Applicative` extends `Apply`,
-adds the `pure` method.
-Here is a simplified definition in code:
+adds the `pure` method introduced in Chapter [@sec:monads].
+Here's a simplified definition in code:
 
 ```scala
 trait Apply[F[_]] extends Cartesian[F] with Functor[F] {
@@ -33,13 +31,18 @@ trait Applicative[F[_]] extends Apply[F] {
 }
 ```
 
+Breaking this down, the `ap` method applies a parameter `fa`
+to a function `ff` within a context `F[_]`.
+The `product` method from `Cartesian` is defined in terms of `ap` and `map`.
+
 Don't worry too much about the implementation of `product`---it's
 difficult to read and the details aren't particuarly important.
-However, do notice that `product` is defined in terms of `ap` and `map`.
-There is an equivalence between these three methods that
-allows any one of them to be defined in terms of the other two.
+The main point is that there is a tight relationship
+between `product`, `ap`, and `map`
+that allows any one of them to be defined
+in terms of the other two.
 
-`Applicative` introduces the `pure` method.
+`Applicative` also introduces the `pure` method.
 This is the same `pure` we saw in `Monad`.
 It constructs a new applicative instance from an unwrapped value.
 In this sense, `Applicative` is related to `Apply`
@@ -50,20 +53,20 @@ as `Monoid` is related to `Semigroup`.
 With the introduction of `Apply` and `Applicative`,
 we can zoom out and see a a whole family of type classes
 that concern themselves with sequencing computations in different ways.
-Here is a diagram showing the complete family:
+Figure [@fig:applicatives:hierarchy] shows the big picture.
 
-![Monad type class hierarchy](src/pages/applicatives/hierarchy.png)
+![Monad type class hierarchy](src/pages/applicatives/hierarchy.png) {#fig:applicatives:hierarchy}
 
-Each type class represents a particular set of sequencing semantics.
+Each type class in the hierarchy
+represents a particular set of sequencing semantics.
 It introduces its characteristic methods,
 and defines all of the functionality from its supertypes in terms of them.
 Every monad is an applicative, every applicative a cartesian, and so on.
 
 Because of the lawful nature of the relationships between the type classes,
 the inheritance relationships are constant across all instances of a type class.
-`Apply` defines `product` in terms of `ap` and `map`, 
-`Monad` defines `product`, `ap`, and `map`, in terms of `pure` and `flatMap`,
-and so on.
+`Apply` defines `product` in terms of `ap` and `map`;
+`Monad` defines `product`, `ap`, and `map`, in terms of `pure` and `flatMap`.
 
 To illustrate this let's consider two hypothetical data types:
 
@@ -90,19 +93,25 @@ It has fewer laws to obey (no `flatMap`),
 so it can implement behaviours that `Foo` cannot.
 
 This demonstrates the classic trade-off of power
-(in the mathematical sense) versus constraints.
+(in the mathematical sense) versus constraint.
 The more constraints we place on a data type,
 the more guarantees we have about its behaviour,
 but the fewer behaviours we can model.
 
-Monads are hit a sweet spot in this trade-off.
+Monads happen to be a sweet spot in this trade-off.
 They are flexible enough to model a wide range of behaviours
 and restrictive enough to give strong guarantees about those behaviours.
 However, there are situations where monads aren't the right tool for the job.
-Sometimes we want thai food, and burritos just won't do the job.
+Sometimes we want thai food, and burritos just won't satisfy.
 
 Whereas monads impose a strict *sequencing* on the computations they model,
 applicatives and cartesians impose no such restriction.
 This puts them in another sweet spot in the hierarchy.
 We can use them to represent classes parallel / independent computations
 that monads cannot.
+
+We choose our semantics by choosing our data structures.
+If we choose a monad, we get strict sequencing.
+If we choose an applicative, we lose the ability to `flatMap`.
+This is the trade-off enforced by the consistency laws.
+So choose your types carefully, friend!

@@ -1,6 +1,7 @@
 ## Summary
 
-While monads and functors are the most widely used types we've covered in this book,
+While monads and functors are the most widely used
+sequencing data types we've covered in this book,
 cartesians and applicatives are the most general.
 These type classes provide a generic mechanism
 to combine values and apply functions within a context,

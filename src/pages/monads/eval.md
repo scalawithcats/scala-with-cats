@@ -128,13 +128,13 @@ z.value // second access
 
 The three behaviours are summarized below:
 
-+------------------|-------------------------|--------------------------+
-|                  | Eager                   | Lazy                     |
-+==================+=========================+==========================+
-| Memoized         | `val`, `Eval.now`       | `lazy val`, `Eval.later` |
-+------------------|-------------------------|--------------------------+
-| Not memoized     | <span>-</span>          | `def`, `Eval.always`     |
-+------------------|-------------------------|--------------------------+
+-----------------------------------------------------------------------
+                    Eager                     Lazy
+------------------ ------------------------- --------------------------
+ Memoized           `val`, `Eval.now`         `lazy val`, `Eval.later`
+------------------ ------------------------- --------------------------
+ Not memoized       <span>-</span>            `def`, `Eval.always`
+------------------ ------------------------- --------------------------
 
 ### Eval as a Monad
 
@@ -264,7 +264,7 @@ def foldRight[A, B](values: List[A], accum: B)(func: (A, B) => B): B =
 ```
 
 <div class="solution">
-The easiest way to fix this is 
+The easiest way to fix this is
 to introduce a helper method called `foldRightEval`.
 This is essentially our original method
 with every occurrence of `B` replaced with `Eval[B]`,

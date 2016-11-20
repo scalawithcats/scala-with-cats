@@ -1,4 +1,4 @@
-# Monoids and Semigroups
+# Monoids and Semigroups {#sec:monoids}
 
 In this section we explore our first type classes, **monoid** and **semigroup**.
 These allow us to add or combine values.

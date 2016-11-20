@@ -13,16 +13,13 @@ trait Cartesian[F[_]] {
 
 As we discussed above,
 the parameters `fa` and `fb` are independent of one another.
-This gives us a lot more flexibility when 
+This gives us a lot more flexibility when
 defining instances of `Cartesian` than we do when defining `Monads`.
-
-The relationship between `Cartesian` and `Monad` is subtle---more on that later.
-For now let's see how to use `Cartesian`.
 
 ### Joining Two Contexts
 
 Whereas `Semigroups` allow us to join values,
-`Monoids` allow us to join contexts.
+`Cartesians` allow us to join contexts.
 Let's join some `Options` as an example:
 
 ```tut:book:silent
@@ -34,9 +31,9 @@ import cats.instances.option._ // Cartesian for Option
 Cartesian[Option].product(Some(123), Some("abc"))
 ```
 
-If both parameters are instances of `Some`, 
+If both parameters are instances of `Some`,
 we end up with a tuple of the values within.
-If either parameter evaluates to `None`, 
+If either parameter evaluates to `None`,
 the entire result is `None`:
 
 ```tut:book
@@ -46,8 +43,8 @@ Cartesian[Option].product(Some(123), None)
 
 ### Joining Three or More Contexts
 
-The companion object for `Cartesian` defines 
-a set of methods on top of `product`. 
+The companion object for `Cartesian` defines
+a set of methods on top of `product`.
 For example, the methods `tuple2` through `tuple22`
 generalise `product` to different arities:
 
@@ -61,17 +58,25 @@ Cartesian.tuple3(Option(1), Option(2), Option.empty[Int])
 ```
 
 The methods `map2` through `map22`
-apply a user-specified function 
+apply a user-specified function
 to the values inside 2 to 22 contexts:
 
 ```tut:book
-Cartesian.map3(Option(1), Option(2), Option(3))(_ + _ + _)
+Cartesian.map3(
+  Option(1),
+  Option(2),
+  Option(3)
+)(_ + _ + _)
 
-Cartesian.map3(Option(1), Option(2), Option.empty[Int])(_ + _ + _)
+Cartesian.map3(
+  Option(1),
+  Option(2),
+  Option.empty[Int]
+)(_ + _ + _)
 ```
 
 There are also methods `contramap2` through `contramap22`
-and `imap2` through `imap22`, 
+and `imap2` through `imap22`,
 that require instances of `Contravariant` and `Invariant` respectively.
 
 <!--
@@ -105,11 +110,13 @@ The `|@|` operator, better known as a "tie fighter",
 creates a temporary "builder" object that provides
 several methods for combining the parameters
 to create useful data types.
-For example, the `tupled` zips the values into a tuple:
+For example, the `tupled` method zips the values into a tuple:
+
+```tut:book:silent
+val builder2 = Option(123) |@| Option("abc")
+```
 
 ```tut:book
-val builder2 = Option(123) |@| Option("abc")
-
 builder2.tupled
 ```
 
@@ -117,13 +124,19 @@ We can use `|@|` repeatedly to create builders for up to 22 values.
 Each arity of builder, from 2 to 22, defines a `tupled` method
 to combine the values to form a tuple of the correct size:
 
-```tut:book
+```tut:book:silent
 val builder3 = Option(123) |@| Option("abc") |@| Option(true)
+```
 
+```tut:book
 builder3.tupled
+```
 
+```tut:book:silent
 val builder5 = builder3 |@| Option(0.5) |@| Option('x')
+```
 
+```tut:book
 builder5.tupled
 ```
 
@@ -140,7 +153,7 @@ going from single values to a tuple in one step:
 ```
 
 In addition to `tupled`, every builder has a `map` method
-that accepts an implicit `Functor` 
+that accepts an implicit `Functor`
 and a function of the correct arity to combine the values:
 
 ```tut:book:silent
@@ -155,7 +168,8 @@ case class Cat(name: String, born: Int, color: String)
 ).map(Cat.apply)
 ```
 
-If we supply a function that accepts the wrong number or types of parameters,
+If we supply a function that
+accepts the wrong number or types of parameters,
 we get a compile error:
 
 ```tut:book
@@ -173,7 +187,7 @@ val add: (Int, Int) => Int = (a, b) => a + b
 ### Fancy Functors and Cartesian Builder Syntax
 
 Cartesian builders also have a `contramap` and `imap` methods
-that accept [Contravariant](#contravariant) 
+that accept [Contravariant](#contravariant)
 and [Invariant](#invariant) functors.
 For example, we can combine `Monoids` and `Semigroups` using `Invariant`.
 Here's an example:
@@ -186,13 +200,27 @@ import cats.instances.list._
 import cats.instances.string._
 import cats.syntax.cartesian._
 
-case class Cat(name: String, yearOfBirth: Int, favoriteFoods: List[String])
+case class Cat(
+  name: String,
+  yearOfBirth: Int,
+  favoriteFoods: List[String])
+
+def catToTuple(cat: Cat) =
+  (cat.name, cat.yearOfBirth, cat.favoriteFoods)
 
 implicit val catMonoid = (
   Monoid[String] |@|
   Monoid[Int] |@|
   Monoid[List[String]]
-).imap(Cat.apply)((cat: Cat) => (cat.name, cat.yearOfBirth, cat.favoriteFoods))
+).imap(Cat.apply)(catToTuple)
+```
+
+Our `Monoid` allows us to create "empty" `Cats`
+and add `Cats` together using the syntax from
+Chapter [@sec:monoids]:
+
+```tut:book:silent
+import cats.syntax.monoid._
 ```
 
 ```tut:book
@@ -200,10 +228,10 @@ Monoid[Cat].empty
 ```
 
 ```tut:book:silent
-import cats.syntax.monoid._
+val garfield   = Cat("Garfield", 1978, List("Lasagne"))
+val heathcliff = Cat("Heathcliff", 1988, List("Junk Food"))
 ```
 
 ```tut:book
-Cat("Garfield", 1978, List("Lasagne")) |+| Cat("Heathcliff", 1988, List("Junk Food"))
+garfield |+| heathcliff
 ```
-

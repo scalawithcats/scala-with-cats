@@ -30,28 +30,31 @@ Await.result(futurePair, Duration.Inf)
 
 The two `Futures` start executing the moment we create them,
 so they are already calculating results by the time we call `product`.
-Cartesian builder syntax provides a concise syntax 
-for zipping fixed numbers of parameters:
+Cartesian builder syntax provides a concise syntax
+for zipping fixed numbers of `Futures`:
 
 ```tut:book:silent
 import cats.syntax.cartesian._
 
-case class Cat(name: String, yearOfBirth: Int, favoriteFoods: List[String])
+case class Cat(
+  name: String,
+  yearOfBirth: Int,
+  favoriteFoods: List[String])
+
+val futureCat = (
+  Future("Garfield") |@|
+  Future(1978)       |@|
+  Future(List("Lasagne"))
+).map(Cat.apply)
 ```
 
 ```tut:book
-val futureCat = (
-  Future("Garfield") |@|
-  Future(1978) |@|
-  Future(List("Lasagne"))
-).map(Cat.apply)
-
 Await.result(futureCat, Duration.Inf)
 ```
 
 ### *Cartesian* Applied to *List*
 
-There is a `Cartesian` instance for `List`. 
+There is a `Cartesian` instance for `List`.
 What value do you think the following expression will produce?
 
 ```tut:book:silent
@@ -67,7 +70,7 @@ There are at least two reasonable answers:
     returning `List((1, 3), (2, 4))`;
 
  2. `product` could compute the *cartesian product*,
-    taking every element from the first list 
+    taking every element from the first list
     and combining it with every element from the second
     returning `List((1, 3), (1, 4), (2, 3), (2, 4))`.
 
@@ -78,14 +81,14 @@ but let's run the code to be sure:
 Cartesian[List].product(List(1, 2), List(3, 4))
 ```
 
-We get the cartesian product! 
-This is perhaps surprising: 
+We get the cartesian product!
+This is perhaps surprising:
 zipping lists tends to be a more common operation.
 
 ### *Cartesian* Applied to *Xor*
 
-What about `Xor`? 
-We opened this chapter with a discussion of 
+What about `Xor`?
+We opened this chapter with a discussion of
 fail-fast versus accumulating error-handling.
 Which behaviour will `product` produce?
 
@@ -110,9 +113,9 @@ despite knowing that the second parameter is also a failure.
 
 The reason for these surprising results is that,
 like `Option`, `List` and `Xor` are both monads.
-To ensure consistent semantics, 
-Cats' `Monad` (which extends `Cartesian`) 
-provides a standard definition of `product` 
+To ensure consistent semantics,
+Cats' `Monad` (which extends `Cartesian`)
+provides a standard definition of `product`
 in terms of `map` and `flatMap`.
 
 Try writing this implementation now:
@@ -121,7 +124,7 @@ Try writing this implementation now:
 import scala.language.higherKinds
 import cats.Monad
 
-def product[M[_] : Monad, A, B](fa: M[A], fb: M[B]): M[(A, B)] =
+def product[M[_]: Monad, A, B](fa: M[A], fb: M[B]): M[(A, B)] =
   ???
 ```
 
@@ -172,7 +175,7 @@ product[ErrorOr, Int, Int](
 
 Even our results for `Future` are a trick of the light.
 `flatMap` provides sequential ordering, so `product` provides the same.
-The only reason we get parallel execution 
+The only reason we get parallel execution
 is because our constituent `Futures` start running before we call `product`.
 This is equivalent to the classic create-then-flatmap pattern:
 
@@ -189,13 +192,16 @@ for {
 
 We can implement `product` in terms of the monad operations,
 and Cats enforces this implementation for all monads.
-This gives us unexpected, and some would say less useful,
-behaviour for a number of data types.
+This gives what we might think of as
+unexpected and less useful behaviour
+for a number of data types.
+The consistency of semantics is actually
+useful for higher level abstractions,
+but we don't know about those yet.
 
-
-If this is the case, why bother with `Cartesian` at all?
-The answer is that we can create useful data types that 
-have instances of `Cartesian` but not `Monad`.
+So why bother with `Cartesian` at all?
+The answer is that we can create useful data types that
+have instances of `Cartesian` (and `Applicative`) but not `Monad`.
 This frees us to implement `product` in different ways.
-Let's examing this further by looking at 
-the error handling example from the start of the chapter.
+Let's examing this further by looking at
+a new data type for error handling.
