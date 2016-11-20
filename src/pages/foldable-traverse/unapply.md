@@ -10,9 +10,9 @@ import cats.data.Xor
 import cats.instances.list._
 import cats.syntax.traverse._
 
-val xors: List[Xor[String, Int]] = List(
-  Xor.left("poor"),
-  Xor.right(1337)
+val xors: List[Xor[String, String]] = List(
+  Xor.right("Wow!"),
+  Xor.right("Such cool!")
 )
 ```
 
