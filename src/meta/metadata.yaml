@@ -85,7 +85,7 @@ pages:
 
   - case-studies/mapreduce/index.md
 
-  - case-studies/json-codec/index.md
+  # - case-studies/json-codec/index.md
 
   - case-studies/validation/index.md
   - case-studies/validation/sketch.md
