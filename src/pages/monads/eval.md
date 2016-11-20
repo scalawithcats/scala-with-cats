@@ -129,11 +129,11 @@ z.value // second access
 The three behaviours are summarized below:
 
 -----------------------------------------------------------------------
-                    Eager                     Lazy
+                   Eager                     Lazy
 ------------------ ------------------------- --------------------------
- Memoized           `val`, `Eval.now`         `lazy val`, `Eval.later`
------------------- ------------------------- --------------------------
- Not memoized       <span>-</span>            `def`, `Eval.always`
+Memoized           `val`, `Eval.now`         `lazy val`, `Eval.later`
+
+Not memoized       N/A                       `def`, `Eval.always`
 ------------------ ------------------------- --------------------------
 
 ### Eval as a Monad
@@ -236,7 +236,11 @@ so we can use it as a way to quickly make an existing operation stack safe:
 
 ```tut:book:silent
 def factorial(n: BigInt): Eval[BigInt] =
-  if(n == 1) Eval.now(n) else Eval.defer(factorial(n - 1).map(_ * n))
+  if(n == 1) {
+    Eval.now(n)
+  } else {
+    Eval.defer(factorial(n - 1).map(_ * n))
+  }
 ```
 
 ```tut:book
@@ -256,10 +260,12 @@ The naive implementation of `foldRight` below is not stack safe.
 Make it so using `Eval`:
 
 ```tut:book:silent
-def foldRight[A, B](values: List[A], accum: B)(func: (A, B) => B): B =
-  values match {
-    case Nil          => accum
-    case head :: tail => func(head, foldRight(tail, accum)(func))
+def foldRight[A, B](as: List[A], acc: B)(fn: (A, B) => B): B =
+  as match {
+    case head :: tail =>
+      fn(head, foldRight(tail, acc)(fn))
+    case Nil =>
+      acc
   }
 ```
 
@@ -273,10 +279,13 @@ and a call to `Eval.defer` to protect the recursive call:
 ```tut:book:silent
 import cats.Eval
 
-def foldRightEval[A, B](values: List[A], accum: Eval[B])(func: (A, Eval[B]) => Eval[B]): Eval[B] =
-  values match {
-    case Nil          => accum
-    case head :: tail => Eval.defer(func(head, foldRightEval(tail, accum)(func)))
+def foldRightEval[A, B](as: List[A], acc: Eval[B])
+    (fn: (A, Eval[B]) => Eval[B]): Eval[B] =
+  as match {
+    case head :: tail =>
+      Eval.defer(fn(head, foldRightEval(tail, acc)(fn)))
+    case Nil =>
+      acc
   }
 ```
 
@@ -284,8 +293,11 @@ We can redefine `foldRight` simply in terms of `foldRightEval`
 and the resulting method is stack safe:
 
 ```tut:book:silent
-def foldRight[A, B](values: List[A], accum: B)(func: (A, B) => B): B =
-  foldRightEval(values, Eval.now(accum))((a, b) => b.map(func(a, _))).value
+def foldRight[A, B](as: List[A], acc: B)
+    (fn: (A, B) => B): B =
+  foldRightEval(as, Eval.now(acc)) { (a, b) =>
+    b.map(fn(a, _))
+  }.value
 ```
 
 ```tut:book

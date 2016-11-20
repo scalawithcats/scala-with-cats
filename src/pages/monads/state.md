@@ -137,7 +137,7 @@ a calculator for post-order integer arithmetic expressions.
 
 In case you haven't heard of post-order expressions before
 (don't worry if you haven't),
-they are a mathematical notation 
+they are a mathematical notation
 where we write the operator *after* its operands.
 So, for example, instead of writing `1 + 2` we would write:
 
@@ -162,10 +162,12 @@ For example, we can evaluate `(1 + 2) * 3)` as follows:
 ```scala
 1 2 + 3 * // see 1, push onto stack
 2 + 3 *   // see 2, push onto stack
-+ 3 *     // see +, pop 1 and 2 off of stack, push (1 + 2) = 3 in their place
++ 3 *     // see +, pop 1 and 2 off of stack,
+          //        push (1 + 2) = 3 in their place
 3 3 *     // see 3, push onto stack
 3 *       // see 3, push onto stack
-*         // see *, pop 3 and 3 off of stack, push (3 * 3) = 9 in their place
+*         // see *, pop 3 and 3 off of stack,
+          //        push (3 * 3) = 9 in their place
 ```
 
 We can write a simple interpreter for these expressions using the `State` monad.
@@ -176,7 +178,7 @@ to produce an interpreter for any sequence of symbols.
 
 Let's do this now.
 Start by writing a function `evalOne` that parses a single symbol
-into an instance of `State`. 
+into an instance of `State`.
 Use the code below as a template.
 Don't worry about error handling for now---if
 the stack is in the wrong configuration,

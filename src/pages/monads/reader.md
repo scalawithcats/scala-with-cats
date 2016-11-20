@@ -9,12 +9,12 @@ One common use for `Readers` is injecting configuration.
 If we have a number of operations that all depend on some external configuration,
 we can chain them together using a `Reader`.
 The `Reader` produces one large operation that
-accepts the configuration as a parameter 
+accepts the configuration as a parameter
 and runs our program in the order we specified it.
 
 ### Creating and Unpacking Readers
 
-We can create a `Reader[A, B]` from a function `A => B` 
+We can create a `Reader[A, B]` from a function `A => B`
 using the `Reader.apply` constructor:
 
 ```tut:book:silent
@@ -28,7 +28,7 @@ val catName: Reader[Cat, String] =
   Reader(cat => cat.name)
 ```
 
-We can extract the function again 
+We can extract the function again
 using the `Reader's` `run` method
 and call it using `apply` as usual:
 
@@ -44,7 +44,7 @@ but what advantage do `Readers` give us over the raw functions?
 
 The power of `Readers` comes from their `map` and `flatMap` methods,
 which represent different kinds of function composition.
-The general pattern of usage is 
+The general pattern of usage is
 to create a set of `Readers` that accept the same type of configuration,
 combine them with `map` and `flatMap`,
 and then call `run` to inject the config at the end.
@@ -62,7 +62,7 @@ greetKitty.run(Cat("Heathcliff", "junk food"))
 ```
 
 The `flatMap` method is more interesting.
-It allows us to combine multiple readers 
+It allows us to combine multiple readers
 that depend on the same input type.
 To illustrate this, let's extend our greeting example
 to produce a login system that checks a user's password
@@ -94,10 +94,13 @@ Our configuration will consist of two databases:
 a list of valid users, and a list of their passwords:
 
 ```tut:book:silent
-case class Db(usernames: Map[Int, String], passwords: Map[String, String])
+case class Db(
+  usernames: Map[Int, String],
+  passwords: Map[String, String]
+)
 ```
 
-Start by creating a type alias `DbReader` for 
+Start by creating a type alias `DbReader` for
 a `Reader` that consumes a `Db` as input.
 This will make the rest of our code shorter:
 
@@ -119,8 +122,10 @@ The type signatures should be as follows:
 def findUsername(userId: Int): DbReader[Option[String]] =
   ???
 
-def checkPassword(username: String, password: String): DbReader[Boolean] =
-  ???
+def checkPassword(
+  username: String,
+  password: String
+): DbReader[Boolean] = ???
 ```
 
 <div class="solution">
@@ -132,23 +137,28 @@ and check it against the concrete user info we have been given:
 def findUsername(userId: Int): DbReader[Option[String]] =
   Reader(db => db.usernames.get(userId))
 
-def checkPassword(username: String, password: String): DbReader[Boolean] =
+def checkPassword(
+  username: String,
+  password: String
+): DbReader[Boolean] =
   Reader(db => db.passwords.get(username).contains(password))
 ```
 
 </div>
 
-Finally create a `checkLogin` method 
+Finally create a `checkLogin` method
 to check the password for a given user ID.
 The type signature should be as follows:
 
 ```tut:book:silent
-def checkLogin(userId: Int, password: String): DbReader[Boolean] =
-  ???
+def checkLogin(
+  userId: Int,
+  password: String
+): DbReader[Boolean] = ???
 ```
 
 <div class="solution">
-As you might expect, 
+As you might expect,
 here we use `flatMap` to chain `findUsername` and `checkPassword`.
 We use `pure` to lift a `Boolean` to a `DbReader[Boolean]`
 when the username is not found:
@@ -156,12 +166,16 @@ when the username is not found:
 ```tut:book:silent
 import cats.syntax.applicative._ // for `pure`
 
-def checkLogin(userId: Int, password: String): DbReader[Boolean] =
+def checkLogin(
+  userId: Int,
+  password: String
+): DbReader[Boolean] =
   for {
     username   <- findUsername(userId)
-    passwordOk <- username match {
-                    case Some(username) => checkPassword(username, password)
-                    case None           => false.pure[DbReader]
+    passwordOk <- username.map { username =>
+                    checkPassword(username, password)
+                  }.getOrElse {
+                    false.pure[DbReader]
                   }
   } yield passwordOk
 ```
@@ -177,8 +191,8 @@ val db = Db(
     3 -> "margo"
   ),
   Map(
-    "dade"  -> "zerocool", 
-    "kate"  -> "acidburn", 
+    "dade"  -> "zerocool",
+    "kate"  -> "acidburn",
     "margo" -> "secret"
   )
 )
@@ -202,13 +216,13 @@ to complex techniques like the cake pattern and DI frameworks.
 
 `Readers` are most useful in situations where:
 
-- we are constructing a batch program 
+- we are constructing a batch program
   that can easily be represented by a function;
 
 - we need to defer injection of a known parameter
   or set of parameters;
 
-- we want to be able to test 
+- we want to be able to test
   parts of the program in isolation.
 
 By representing the steps of our program as `Readers`
@@ -227,7 +241,7 @@ other dependency injection techniques tend to be more appropriate.
   *Kleisli arrows* provide a more general form of `Reader`
   that generalise over the type constructor of the result type.
 
-  Kleislis are beyond the scope of this book,  
+  Kleislis are beyond the scope of this book,
   but will be easy to pick up based on your newfound knowledge of `Reader`
   and the content we'll cover in the next chapter on monad transformers.
 </div>

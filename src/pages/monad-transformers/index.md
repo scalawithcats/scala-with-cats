@@ -59,7 +59,8 @@ def compose[M1[_] : Monad, M2[_] : Monad] = {
     def pure[A](a: A): Composed[A] =
       a.pure[M2].pure[M1]
 
-    def flatMap[A, B](fa: Composed[A])(f: A => Composed[B]): Composed[B] =
+    def flatMap[A, B](fa: Composed[A])
+        (f: A => Composed[B]): Composed[B] =
       // This is impossible to implement in general
       // without knowing something about M1 or M2:
       ???
@@ -207,7 +208,7 @@ we're used to from the corresponding monads.
   *Kleisli Arrows*
 
   Last chapter, in the section on the `Reader` monad,
-  we mentioned that `Reader` was a specialisation 
+  we mentioned that `Reader` was a specialisation
   of a more general concept called a "kleisli arrow"
   (aka [`cats.data.Kleisli`][cats.data.Kleisli]).
 
@@ -309,10 +310,10 @@ val answer: FutureXorOption[Int] =
 <div class="callout callout-warning">
 *Kind Projector*
 
-If you frequently find yourself 
+If you frequently find yourself
 defining multiple type aliases when building monad stacks,
 you may want to try the [Kind Projector][link-kind-projector] compiler plugin.
-Kind Projector enhances Scala's type syntax 
+Kind Projector enhances Scala's type syntax
 to make it easier to define partial types.
 For example:
 
@@ -344,7 +345,8 @@ type ErrorOrOption[A] = OptionT[ErrorOr, A]
 val stack1 = 123.pure[ErrorOrOption]
 
 // Create using apply:
-val stack2 = OptionT[ErrorOr, Int](Xor.right[String, Option[Int]](Some(123)))
+val stack2 = OptionT[ErrorOr, Int](
+  Xor.right[String, Option[Int]](Some(123)))
 ```
 
 Once we've finished with a monad transformer stack,
@@ -402,7 +404,11 @@ def parseNumber(str: String): Logged[Option[Int]] =
   }
 
 // Example combining multiple calls to parseNumber:
-def addNumbers(a: String, b: String, c: String): Logged[Option[Int]] = {
+def addNumbers(
+  a: String,
+  b: String,
+  c: String
+): Logged[Option[Int]] = {
   import cats.data.OptionT
 
   // Transform the incoming stacks to work on them:
@@ -447,7 +453,7 @@ and `XorT` defines `fold`, `bimap`, `swap`, and other useful methods.
 ## Exercise: Monads: Transform and Roll Out
 
 The Autobots, well known robots in disguise,
-frequently send messages during battle 
+frequently send messages during battle
 requesting the power levels of their team mates.
 This helps them coordinate strategies and launch devastating attacks.
 The message sending method looks like this:
@@ -458,7 +464,7 @@ def getPowerLevel(autobot: String): Response[Int] =
 ```
 
 Transmissions take time in Earth's viscous atmosphere,
-and messages are occasionally lost 
+and messages are occasionally lost
 due to malfunctioning satellites or Decepticon interception.
 `Responses` are therefore represented as a stack of monads:
 
@@ -470,7 +476,7 @@ type Response[A] = Future[Xor[String, A]]
 that autobot neural nets are implemented in Scala.
 Decepticon brains are dynamically typed.
 
-Optimus Prime is getting tired of 
+Optimus Prime is getting tired of
 the nested for comprehensions in his neural matrix.
 Help him by rewriting `Response` using a monad transformer.
 
@@ -513,8 +519,8 @@ type Response[A] = XorT[Future, String, A]
 
 def getPowerLevel(ally: String): Response[Int] = {
   powerLevels.get(ally) match {
-    case Some(avg) => XorT.right(Future.successful(avg))
-    case None      => XorT.left(Future.successful(s"$ally is unreachable."))
+    case Some(avg) => XorT.right(Future(avg))
+    case None      => XorT.left(Future(s"$ally unreachable"))
   }
 }
 ```
@@ -523,14 +529,16 @@ def getPowerLevel(ally: String): Response[Int] = {
 Two autobots can perform a special move
 if their combined power level is greater than 15.
 Write a second method, `canSpecialMove`,
-that accepts the names of two allies 
+that accepts the names of two allies
 and checks whether a special move is possible.
-If either ally is unavailable, 
+If either ally is unavailable,
 fail with an appropriate error message:
 
 ```tut:book:silent
-def canSpecialMove(ally1: String, ally2: String): Response[Boolean] =
-  ???
+def canSpecialMove(
+  ally1: String,
+  ally2: String
+): Response[Boolean] = ???
 ```
 
 <div class="solution">
@@ -538,7 +546,10 @@ We request the power level from each ally
 and use `map` and `flatMap` to combine the results:
 
 ```tut:book:silent
-def canSpecialMove(ally1: String, ally2: String): Response[Boolean] =
+def canSpecialMove(
+  ally1: String,
+  ally2: String
+): Response[Boolean] =
   for {
     power1 <- getPowerLevel(ally1)
     power2 <- getPowerLevel(ally2)
@@ -547,12 +558,14 @@ def canSpecialMove(ally1: String, ally2: String): Response[Boolean] =
 </div>
 
 Finally, write a method `tacticalReport` that
-takes two ally names and prints a message 
+takes two ally names and prints a message
 saying whether they can perform a special move:
 
 ```tut:book:silent
-def tacticalReport(ally1: String, ally2: String): String =
-  ???
+def tacticalReport(
+  ally1: String,
+  ally2: String
+): String = ???
 ```
 
 <div class="solution">
@@ -564,11 +577,20 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
-def tacticalReport(ally1: String, ally2: String): String =
-  Await.result(canSpecialMove(ally1, ally2).value, Duration.Inf) match {
-    case Xor.Left(msg)    => s"Communications error: $msg"
-    case Xor.Right(true)  => s"$ally1 and $ally2 are ready to roll out!"
-    case Xor.Right(false) => s"$ally1 and $ally2 need a recharge."
+def tacticalReport(
+  ally1: String,
+  ally2: String
+): String =
+  Await.result(
+    canSpecialMove(ally1, ally2).value,
+    Duration.Inf
+  ) match {
+    case Xor.Left(msg) =>
+      s"Comms error: $msg"
+    case Xor.Right(true)  =>
+      s"$ally1 and $ally2 are ready to roll out!"
+    case Xor.Right(false) =>
+      s"$ally1 and $ally2 need a recharge."
   }
 ```
 </div>

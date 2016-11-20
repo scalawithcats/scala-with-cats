@@ -232,7 +232,10 @@ Easy---we simply define a monoid instance for `Order`!
 ```tut:book:silent
 implicit val monoid: Monoid[Order] = new Monoid[Order] {
   def combine(o1: Order, o2: Order) =
-    Order(o1.totalCost + o2.totalCost, o1.quantity + o2.quantity)
+    Order(
+      o1.totalCost + o2.totalCost,
+      o1.quantity + o2.quantity
+    )
 
   def empty = Order(0, 0)
 }

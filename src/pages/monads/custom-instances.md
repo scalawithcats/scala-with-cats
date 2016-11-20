@@ -10,21 +10,24 @@ import cats.{Monad, RecursiveTailRecM}
 import cats.data.Xor
 import scala.annotation.tailrec
 
-val optionMonad = new Monad[Option] with RecursiveTailRecM[Option] {
-  def flatMap[A, B](value: Option[A])(func: A => Option[B]): Option[B] =
-    value flatMap func
+val optionMonad =
+  new Monad[Option] with RecursiveTailRecM[Option] {
+    def flatMap[A, B](opt: Option[A])
+        (fn: A => Option[B]): Option[B] =
+      opt flatMap fn
 
-  def pure[A](value: A): Option[A] =
-    Some(value)
+    def pure[A](opt: A): Option[A] =
+      Some(opt)
 
-  @tailrec
-  def tailRecM[A, B](a: A)(f: A => Option[Either[A, B]]): Option[B] =
-    f(a) match {
-      case None           => None
-      case Some(Left(a1)) => tailRecM(a1)(f)
-      case Some(Right(b)) => Some(b)
-    }
-}
+    @tailrec
+    def tailRecM[A, B](a: A)
+        (fn: A => Option[Either[A, B]]): Option[B] =
+      fn(a) match {
+        case None           => None
+        case Some(Left(a1)) => tailRecM(a1)(fn)
+        case Some(Right(b)) => Some(b)
+      }
+  }
 ```
 
 `tailRecM` is an optimisation in Cats that limits
@@ -82,15 +85,19 @@ implicit val treeMonad = new Monad[Tree] {
   def pure[A](value: A): Tree[A] =
     Leaf(value)
 
-  def flatMap[A, B](tree: Tree[A])(func: A => Tree[B]): Tree[B] =
+  def flatMap[A, B](tree: Tree[A])
+      (func: A => Tree[B]): Tree[B] =
     tree match {
-      case Branch(l, r) => Branch(flatMap(l)(func), flatMap(r)(func))
-      case Leaf(value)  => func(value)
+      case Branch(l, r) =>
+        Branch(flatMap(l)(func), flatMap(r)(func))
+      case Leaf(value)  =>
+        func(value)
     }
 
-  def tailRecM[A, B](arg: A)(func: A => Tree[Either[A, B]]): Tree[B] =
+  def tailRecM[A, B](arg: A)
+      (func: A => Tree[Either[A, B]]): Tree[B] =
     func(arg) match {
-      case Branch(l: Tree[Either[A, B]], r: Tree[Either[A, B]]) =>
+      case Branch(l, r) =>
         Branch(
           flatMap(l) {
             case Left(l)  => tailRecM(l)(func)
@@ -119,7 +126,8 @@ import cats.syntax.flatMap._
 ```
 
 ```tut:book
-branch(leaf(100), leaf(200)) flatMap (x => branch(leaf(x - 1), leaf(x + 1)))
+branch(leaf(100), leaf(200)).
+  flatMap(x => branch(leaf(x - 1), leaf(x + 1)))
 ```
 
 We can also transform `Trees` using for comprehensions:

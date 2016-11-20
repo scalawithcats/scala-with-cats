@@ -17,14 +17,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import cats.Cartesian
 import cats.instances.future._
+
+val futurePair = Cartesian[Future].
+  product(Future("Hello"), Future(123))
 ```
 
 ```tut:book
-val futurePair = Cartesian[Future].product(
-  Future("Hello"),
-  Future(123)
-)
-
 Await.result(futurePair, Duration.Inf)
 ```
 
@@ -39,7 +37,8 @@ import cats.syntax.cartesian._
 case class Cat(
   name: String,
   yearOfBirth: Int,
-  favoriteFoods: List[String])
+  favoriteFoods: List[String]
+)
 
 val futureCat = (
   Future("Garfield") |@|
@@ -124,8 +123,10 @@ Try writing this implementation now:
 import scala.language.higherKinds
 import cats.Monad
 
-def product[M[_]: Monad, A, B](fa: M[A], fb: M[B]): M[(A, B)] =
-  ???
+def product[M[_]: Monad, A, B](
+  fa: M[A],
+  fb: M[B]
+): M[(A, B)] = ???
 ```
 
 <div class="solution">
@@ -142,7 +143,10 @@ def product[M[_] : Monad, A, B](fa: M[A], fb: M[B]): M[(A, B)] =
 Unsurprisingly, this code is equivalent to a for comprehension:
 
 ```tut:book:silent
-def product[M[_] : Monad, A, B](fa: M[A], fb: M[B]): M[(A, B)] =
+def product[M[_] : Monad, A, B](
+  fa: M[A],
+  fb: M[B]
+): M[(A, B)] =
   for {
     a <- fa
     b <- fb

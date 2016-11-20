@@ -312,10 +312,12 @@ consume the `NumberFormatException` from `toInt`,
 and we use `leftMap` to turn it into a nice error message.
 
 ```tut:book:silent
+type NumFmtExn = NumberFormatException
+
 def parseInt(name: String)
     (data: String): List[String] Xor Int =
   Xor.right(data).
-    flatMap(str => Xor.catchOnly[NumberFormatException](str.toInt)).
+    flatMap(s => Xor.catchOnly[NumFmtExn](s.toInt)).
     leftMap(_ => List(s"$name must be an integer"))
 ```
 
@@ -372,11 +374,15 @@ to create `readName` and `readAge`:
 We use `flatMap` to combine the rules sequentially:
 
 ```tut:book:silent
-def readName(data: Map[String, String]): List[String] Xor String =
+def readName(
+  data: Map[String, String]
+): List[String] Xor String =
   getValue("name")(data).
     flatMap(nonBlank("name"))
 
-def readAge(data: Map[String, String]): List[String] Xor Int =
+def readAge(
+  data: Map[String, String]
+): List[String] Xor Int =
   getValue("age")(data).
     flatMap(nonBlank("age")).
     flatMap(parseInt("age")).

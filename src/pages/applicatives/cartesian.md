@@ -203,7 +203,8 @@ import cats.syntax.cartesian._
 case class Cat(
   name: String,
   yearOfBirth: Int,
-  favoriteFoods: List[String])
+  favoriteFoods: List[String]
+)
 
 def catToTuple(cat: Cat) =
   (cat.name, cat.yearOfBirth, cat.favoriteFoods)

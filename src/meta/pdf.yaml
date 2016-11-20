@@ -1,5 +1,5 @@
 ---
-papersize: "a4paper"
+papersize: "a5paper"
 geometry: "margin=.75in"
 solutions:
   chapterHeadingTemplate: "Solutions for: $title"

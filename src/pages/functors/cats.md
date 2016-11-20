@@ -91,10 +91,11 @@ so we have to account for the dependency when we create the instance:
 ```tut:book:silent
 import scala.concurrent.{Future, ExecutionContext}
 
-implicit def futureFunctor(implicit ec: ExecutionContext) = new Functor[Future] {
-  def map[A, B](value: Future[A])(func: A => B): Future[B] =
-    value.map(func)
-}
+implicit def futureFunctor(implicit ec: ExecutionContext) =
+  new Functor[Future] {
+    def map[A, B](value: Future[A])(func: A => B): Future[B] =
+      value.map(func)
+  }
 ```
 
 ### Exercise: Branching out with Functors
@@ -121,8 +122,10 @@ import cats.syntax.functor._
 implicit val treeFunctor = new Functor[Tree] {
   def map[A, B](tree: Tree[A])(func: A => B): Tree[B] =
     tree match {
-      case Branch(left, right) => Branch(map(left)(func), map(right)(func))
-      case Leaf(value)         => Leaf(func(value))
+      case Branch(left, right) =>
+        Branch(map(left)(func), map(right)(func))
+      case Leaf(value) =>
+        Leaf(func(value))
     }
 }
 ```

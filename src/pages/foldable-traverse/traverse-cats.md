@@ -30,7 +30,11 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-val hostnames = List("alpha.example.com", "beta.example.com", "gamma.demo.com")
+val hostnames = List(
+  "alpha.example.com",
+  "beta.example.com",
+  "gamma.demo.com"
+)
 
 def getUptime(hostname: String): Future[Int] =
   Future(hostname.length * 60)
@@ -43,7 +47,10 @@ import cats.instances.list._
 ```
 
 ```tut:book
-Await.result(Traverse[List].traverse(hostnames)(getUptime), Duration.Inf)
+Await.result(
+  Traverse[List].traverse(hostnames)(getUptime),
+  Duration.Inf
+)
 ```
 
 ```tut:book:silent
@@ -51,7 +58,10 @@ val numbers = List(Future(1), Future(2), Future(3))
 ```
 
 ```tut:book
-Await.result(Traverse[List].sequence(numbers), Duration.Inf)
+Await.result(
+  Traverse[List].sequence(numbers),
+  Duration.Inf
+)
 ```
 
 There are also syntax versions of the methods,

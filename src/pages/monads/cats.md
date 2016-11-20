@@ -6,10 +6,10 @@ As usual we'll look at the type class, instances, and syntax.
 ### The *Monad* Type Class {#monad-type-class}
 
 The monad type class is [`cats.Monad`][cats.Monad].
-`Monad` extends two other type classes: 
-`FlatMap`, which provides the `flatMap` method, 
+`Monad` extends two other type classes:
+`FlatMap`, which provides the `flatMap` method,
 and `Applicative`, which provides `pure`.
-`Applicative` also extends `Functor` 
+`Applicative` also extends `Functor`
 so every `Monad` also has a `map` method.
 We'll discuss `Applicatives` in a later chapter.
 
@@ -27,7 +27,8 @@ val opt2 = Monad[Option].flatMap(opt1)(a => Some(a + 2))
 val opt3 = Monad[Option].map(opt2)(a => 100 * a)
 
 val list1 = Monad[List].pure(3)
-val list2 = Monad[List].flatMap(List(1, 2, 3))(x => List(x, x*10))
+val list2 = Monad[List].
+  flatMap(List(1, 2, 3))(x => List(x, x*10))
 val list3 = Monad[List].map(list2)(_ + 123)
 ```
 
@@ -64,7 +65,7 @@ import cats.instances.vector._
 Monad[Vector].flatMap(Vector(1, 2, 3))(x => Vector(x, x*10))
 ```
 
-The `Monad` for `Future` doesn't accept 
+The `Monad` for `Future` doesn't accept
 implicit `ExecutionContext` parameters to `pure` and `flatMap`
 like `Future` itself does
 (it can't because the parameters aren't in the definitions in the `Monad` trait).
@@ -94,7 +95,12 @@ The `Monad` instances uses the captured `ExecutionContext`
 for subsequent calls to `pure` and `flatMap`:
 
 ```tut:book
-Await.result(fm.flatMap(fm.pure(1))(x => fm.pure(x + 2)), Duration.Inf)
+Await.result(
+  fm.flatMap(fm.pure(1)) { x =>
+    fm.pure(x + 2)
+  },
+  Duration.Inf
+)
 ```
 
 In addition to the above,
@@ -131,7 +137,7 @@ It's difficult to demonstrate the `flatMap` and `map` methods
 directly on Scala monads like `Option` and `List`,
 because they define their own explicit versions of those methods.
 Instead we'll write a generic function that
-performs a calculation on parameters 
+performs a calculation on parameters
 that come wrapped in a monad of the user's choice:
 
 ```tut:book:silent

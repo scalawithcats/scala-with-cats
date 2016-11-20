@@ -47,7 +47,10 @@ object JsonWriterInstances {
   }
   implicit val personJsonWriter = new JsonWriter[Person] {
     def write(value: Person): Json =
-      JsObject(Map("name" -> JsString(value.name), "email" -> JsString(value.email)))
+      JsObject(Map(
+        "name" -> JsString(value.name),
+        "email" -> JsString(value.email)
+      ))
   }
   // etc...
 }
@@ -69,8 +72,8 @@ is to place methods in a singleton object:
 
 ```tut:book:silent
 object Json {
-  def toJson[A](value: A)(implicit writer: JsonWriter[A]): Json =
-    writer.write(value)
+  def toJson[A](value: A)(implicit w: JsonWriter[A]): Json =
+    w.write(value)
 }
 ```
 
@@ -98,8 +101,8 @@ These are older terms that we don't use anymore.
 ```tut:book:silent
 object JsonSyntax {
   implicit class JsonWriterOps[A](value: A) {
-    def toJson(implicit writer: JsonWriter[A]): Json =
-      writer.write(value)
+    def toJson(implicit w: JsonWriter[A]): Json =
+      w.write(value)
   }
 }
 ```
@@ -171,13 +174,11 @@ Finally we define an *interface* object, `Printable`:
 
 ```tut:book:silent
 object Printable {
-  def format[A](input: A)(implicit printer: Printable[A]): String = {
-    printer.format(input)
-  }
+  def format[A](input: A)(implicit p: Printable[A]): String =
+    p.format(input)
 
-  def print[A](input: A)(implicit printer: Printable[A]): Unit = {
+  def print[A](input: A)(implicit p: Printable[A]): Unit =
     println(format(input))
-  }
 }
 ```
 </div>
@@ -191,7 +192,11 @@ Let's define an "application" now that uses the library:
  1. Define a data type `Cat`:
 
     ```scala
-    final case class Cat(name: String, age: Int, color: String)
+    final case class Cat(
+      name: String,
+      age: Int,
+      color: String
+    )
     ```
 
  2. Create an implementation of `Printable` for `Cat`
@@ -277,11 +282,11 @@ First we define an `implicit class` containing our extension methods:
 ```tut:book:silent
 object PrintSyntax {
   implicit class PrintOps[A](value: A) {
-    def format(implicit printable: Printable[A]): String =
-      printable.format(value)
+    def format(implicit p: Printable[A]): String =
+      p.format(value)
 
-    def print(implicit printable: Printable[A]): Unit =
-      println(printable.format(value))
+    def print(implicit p: Printable[A]): Unit =
+      println(p.format(value))
   }
 }
 ```
@@ -300,6 +305,10 @@ Cat("Garfield", 35, "ginger and black").print
 
 We get a compile error if we haven't defined an instance of `Printable`
 for the relevant type:
+
+```tut:book:silent
+import java.util.Date
+```
 
 ```tut:book:fail
 new Date().print

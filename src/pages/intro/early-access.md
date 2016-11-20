@@ -19,26 +19,26 @@ and Noel Welsh ( [noel@underscore.io](mailto:noel@underscore.io) ).
 
 Starting from the March 2016 release, here are the major changes to the book:
 
-- Moved the theoretical chapters from Scalaz to Cats (currently version `0.7.0-SNAPSHOT`).
-
+- Moved the theoretical chapters from Scalaz to Cats (currently version `0.7.2`).
 - Added sections on the `Reader`, `Writer`, `State`, and `Eval` monads.
-
 - Added a chapter on monad transformers.
-
 - Added sections on `Cartesian` to the applicatives chapter.
-
 - Added sections on `Foldable` and `Traverse`.
-
 - Added type chart diagrams for `Functor` and `Monad`.
 
 ### Omissions {-}
 
 Here are the major things missing from the book:
 
-1. We are missing some of the case studies
-   that make up the last third of the book.
-   These are in various states of completion
-   so we have chosen to hold them back
-   until we have a better idea of what they will look like.
+ 1. We are missing some of the case studies
+    that make up the last third of the book.
+    These are in various states of completion
+    so we have chosen to hold them back
+    until we have a better idea of what they will look like.
 
-2. Some case studies are still written using Scalaz.
+ 2. Some case studies are still written using Scalaz.
+
+ 3. Upgrade to Cats 1.0:
+
+      - Remove `Xor` and replace with `Either`
+      - And anything else that arises

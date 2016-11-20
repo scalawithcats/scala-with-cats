@@ -27,7 +27,7 @@ case study later in the book.
 
 The first of our type classes, the *contravariant functor*,
 provides an operation called `contramap`
-that represents "prepending" a transformation to a chain. 
+that represents "prepending" a transformation to a chain.
 This is illustrated in Figure [@fig:functors:contramap-type-chart].
 
 ![Type chart: the contramap method](src/pages/functors/generic-contramap.pdf+svg){#fig:functors:contramap-type-chart}
@@ -63,8 +63,8 @@ trait Printable[A] {
     ???
 }
 
-def format[A](value: A)(implicit printable: Printable[A]): String =
-  printable.format(value)
+def format[A](value: A)(implicit p: Printable[A]): String =
+  p.format(value)
 ```
 
 This says that if `A` is `Printable`, and we can transform `B` into `A`, then `B` is also `Printable`.
@@ -89,8 +89,8 @@ trait Printable[A] {
   }
 }
 
-def format[A](value: A)(implicit printable: Printable[A]): String =
-  printable.format(value)
+def format[A](value: A)(implicit p: Printable[A]): String =
+  p.format(value)
 ```
 </div>
 
@@ -134,8 +134,8 @@ To make the instance generic across all types of `Box`,
 we base it on the `Printable` for the type inside the `Box`:
 
 ```tut:book:silent
-implicit def boxPrintable[A](implicit aPrintable: Printable[A]) =
-  aPrintable.contramap[Box[A]](_.value)
+implicit def boxPrintable[A](implicit p: Printable[A]) =
+  p.contramap[Box[A]](_.value)
 ```
 </div>
 
@@ -170,11 +170,11 @@ trait Codec[A] {
     ???
 }
 
-def encode[A](value: A)(implicit codec: Codec[A]): String =
-  codec.encode(value)
+def encode[A](value: A)(implicit c: Codec[A]): String =
+  c.encode(value)
 
-def decode[A](value: String)(implicit codec: Codec[A]): Option[A] =
-  codec.decode(value)
+def decode[A](value: String)(implicit c: Codec[A]): Option[A] =
+  c.decode(value)
 ```
 
 The type chart for `imap` is showin in Figure [@fig:functors:imap-type-chart].
@@ -205,11 +205,11 @@ trait Codec[A] {
   }
 }
 
-def encode[A](value: A)(implicit codec: Codec[A]): String =
-  codec.encode(value)
+def encode[A](value: A)(implicit c: Codec[A]): String =
+  c.encode(value)
 
-def decode[A](value: String)(implicit codec: Codec[A]): Option[A] =
-  codec.decode(value)
+def decode[A](value: String)(implicit c: Codec[A]): Option[A] =
+  c.decode(value)
 ```
 </div>
 
@@ -237,8 +237,8 @@ case class Box[A](value: A)
 
 <div class="solution">
 ```tut:book:silent
-implicit def boxCodec[A](implicit codec: Codec[A]): Codec[Box[A]] =
-  codec.imap[Box[A]](Box(_), _.value)
+implicit def boxCodec[A](implicit c: Codec[A]): Codec[Box[A]] =
+  c.imap[Box[A]](Box(_), _.value)
 ```
 </div>
 
@@ -254,14 +254,14 @@ decode[Box[Int]]("123")
 What's the relationship between contravariance, invariance, and covariance as we usually understand them in Scala,
 and the names for the functors above?
 
-The usual meaning of these terms in Scala relates to subtypes. 
+The usual meaning of these terms in Scala relates to subtypes.
 We say that `B` is a subtype of `A` if we can use `B` anywhere we want an `A`.
 Put another way, we can convert `A` into `B` and our program keeps on working.
 
 Co- and contravariance usually arises in Scala when working with type constructors like `List` and `Option`.
-If we declare a type constructor `F`, 
+If we declare a type constructor `F`,
 and we want `F[B]` to be a subtype of `F[A]` when `B` is a subtype of `A`,
-we declare the type parameter to be covariant. 
+we declare the type parameter to be covariant.
 
 ```tut:silent
 trait F[+A] // A is covariant
@@ -275,7 +275,7 @@ then we declare `F` to have a contravariant type parameter.
 trait F[-A] // A is contravariant
 ```
 
-Co- and contravariant functors capture the same principle without the limitations of subtyping. 
+Co- and contravariant functors capture the same principle without the limitations of subtyping.
 As we said above subtyping can be viewed as a conversion.
 `B` is a subtype of `A` if we can convert `A` to `B`.
 In other words there exists a function `A => B`.

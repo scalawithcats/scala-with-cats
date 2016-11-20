@@ -62,7 +62,7 @@ List(1, 2, 3).foldLeft(0)(_ - _)
 List(1, 2, 3).foldRight(0)(_ - _)
 ```
 
-### Exercise: Reflecting on folds
+### Exercise: Reflecting on Folds
 
 Try using `foldLeft` and `foldRight` with an empty list as the accumulator
 and `::` as the binary operator. What results do you get in each case?
@@ -71,13 +71,13 @@ and `::` as the binary operator. What results do you get in each case?
 Folding from left to right reverses the list:
 
 ```tut:book
-List(1, 2, 3).foldLeft(List.empty[Int])((accum, item) => item :: accum)
+List(1, 2, 3).foldLeft(List.empty[Int])((a, i) => i :: a)
 ```
 
 Folding right to left copies the list, leaving the order intact:
 
 ```tut:book
-List(1, 2, 3).foldRight(List.empty[Int])((item, accum) => item :: accum)
+List(1, 2, 3).foldRight(List.empty[Int])((i, a) => i :: a)
 ```
 
 Note that we have to carefully specify
@@ -142,7 +142,8 @@ one using `scala.math.Numeric`
 ```tut:book:silent
 import scala.math.Numeric
 
-def sumWithNumeric[A](list: List[A])(implicit numeric: Numeric[A]): A =
+def sumWithNumeric[A](list: List[A])
+    (implicit numeric: Numeric[A]): A =
   list.foldRight(numeric.zero)(numeric.plus)
 ```
 
@@ -156,7 +157,8 @@ and one using `cats.Monoid`
 ```tut:book:silent
 import cats.Monoid
 
-def sumWithMonoid[A](list: List[A])(implicit monoid: Monoid[A]): A =
+def sumWithMonoid[A](list: List[A])
+    (implicit monoid: Monoid[A]): A =
   list.foldRight(monoid.empty)(monoid.combine)
 
 import cats.instances.int._
