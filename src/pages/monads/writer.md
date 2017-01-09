@@ -88,7 +88,7 @@ import cats.syntax.writer._
 ```
 
 ```tut:book
-val a = Writer(123, Vector("msg1", "msg2", "msg3"))
+val a = Writer(Vector("msg1", "msg2", "msg3"), 123)
 val b = 123.writer(Vector("msg1", "msg2", "msg3"))
 ```
 
