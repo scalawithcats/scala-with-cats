@@ -266,16 +266,15 @@ import cats.instances.vector._
 With these in scope, the definition of `factorial` becomes:
 
 ```tut:book:silent
-def factorial(n: Int): Logged[Int] = {
-  if(n == 0) {
-    1.pure[Logged]
-  } else {
-    for {
-      a <- slowly(factorial(n - 1))
-      _ <- Vector(s"fact $n ${a*n}").tell
-    } yield a * n
-  }
-}
+def factorial(n: Int): Logged[Int] =
+  for {
+    ans <- if(n == 0) {
+             1.pure[Logged]
+           } else {
+             slowly(factorial(n - 1).map(_ * n))
+           }
+    _   <- Vector(s"fact $n $ans").tell
+  } yield ans
 ```
 
 Now, when we call `factorial`, we have to `run` the result
