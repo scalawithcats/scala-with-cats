@@ -95,11 +95,6 @@ val stringAsString: String =
   showString.show("abc")
 ```
 
-Notice that the output for `String`
-is wrapped in double quotes like a Scala string literal.
-This hints at `Show's` intended purpose---to
-provide useful debugging output for developers.
-
 ### Importing Interface Syntax
 
 We can make `Show` easier to use by
