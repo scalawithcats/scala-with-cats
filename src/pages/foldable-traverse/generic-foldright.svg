@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="2400px" height="360px" viewBox="0 0 2400 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>generic-foldright</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <ellipse id="path-1" cx="125" cy="118" rx="80" ry="80"></ellipse>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="160" height="160" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <ellipse id="path-3" cx="103" cy="98" rx="80" ry="80"></ellipse>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="160" height="160" fill="white">
+            <use xlink:href="#path-3"></use>
+        </mask>
+        <ellipse id="path-5" cx="80" cy="80" rx="80" ry="80"></ellipse>
+        <mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="160" height="160" fill="white">
+            <use xlink:href="#path-5"></use>
+        </mask>
+        <ellipse id="path-7" cx="1185" cy="139" rx="80" ry="80"></ellipse>
+        <mask id="mask-8" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="160" height="160" fill="white">
+            <use xlink:href="#path-7"></use>
+        </mask>
+        <polygon id="path-9" points="2064.59509 192 2011.69441 219.811529 2021.79754 160.905765 1979 119.188471 2038.14475 110.594235 2064.59509 57 2091.04542 110.594235 2150.19017 119.188471 2107.39263 160.905765 2117.49576 219.811529"></polygon>
+        <mask id="mask-10" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="171.190173" height="162.811529" fill="white">
+            <use xlink:href="#path-9"></use>
+        </mask>
+        <polygon id="path-11" points="1388.59509 195 1335.69441 222.811529 1345.79754 163.905765 1303 122.188471 1362.14475 113.594235 1388.59509 60 1415.04542 113.594235 1474.19017 122.188471 1431.39263 163.905765 1441.49576 222.811529"></polygon>
+        <mask id="mask-12" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="171.190173" height="162.811529" fill="white">
+            <use xlink:href="#path-11"></use>
+        </mask>
+        <polygon id="path-13" points="1709.59509 195 1656.69441 222.811529 1666.79754 163.905765 1624 122.188471 1683.14475 113.594235 1709.59509 60 1736.04542 113.594235 1795.19017 122.188471 1752.39263 163.905765 1762.49576 222.811529"></polygon>
+        <mask id="mask-14" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="171.190173" height="162.811529" fill="white">
+            <use xlink:href="#path-13"></use>
+        </mask>
+        <polygon id="path-15" points="943.595086 194 890.694414 221.811529 900.797543 162.905765 858 121.188471 917.14475 112.594235 943.595086 59 970.045423 112.594235 1029.19017 121.188471 986.39263 162.905765 996.495759 221.811529"></polygon>
+        <mask id="mask-16" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="171.190173" height="162.811529" fill="white">
+            <use xlink:href="#path-15"></use>
+        </mask>
+        <polygon id="path-17" points="1515 120 1555 120 1555 100 1595 139.497767 1555 180 1555 160 1515 160"></polygon>
+        <mask id="mask-18" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="80" height="80" fill="white">
+            <use xlink:href="#path-17"></use>
+        </mask>
+        <rect id="path-19" x="842" y="39" width="200" height="200" rx="8"></rect>
+        <mask id="mask-20" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="200" height="200" fill="white">
+            <use xlink:href="#path-19"></use>
+        </mask>
+        <rect id="path-21" x="1289" y="40" width="200" height="200" rx="8"></rect>
+        <mask id="mask-22" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="200" height="200" fill="white">
+            <use xlink:href="#path-21"></use>
+        </mask>
+        <rect id="path-23" x="1608" y="39" width="200" height="200" rx="8"></rect>
+        <mask id="mask-24" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="200" height="200" fill="white">
+            <use xlink:href="#path-23"></use>
+        </mask>
+        <rect id="path-25" x="1962" y="39" width="200" height="200" rx="8"></rect>
+        <mask id="mask-26" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="200" height="200" fill="white">
+            <use xlink:href="#path-25"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="generic-foldright">
+            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="2400" height="360"></rect>
+            <g id="Group" transform="translate(235.000000, 41.000000)" stroke="#000000" stroke-width="8" fill="#FFFFFF">
+                <use id="Oval-1" mask="url(#mask-2)" xlink:href="#path-1"></use>
+                <use id="Oval-1" mask="url(#mask-4)" xlink:href="#path-3"></use>
+                <use id="Oval-1" mask="url(#mask-6)" xlink:href="#path-5"></use>
+            </g>
+            <use id="Oval-1" stroke="#000000" mask="url(#mask-8)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-7"></use>
+            <use id="Star-1" stroke="#000000" mask="url(#mask-10)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-9"></use>
+            <use id="Star-1" stroke="#000000" mask="url(#mask-12)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-11"></use>
+            <use id="Star-1" stroke="#000000" mask="url(#mask-14)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-13"></use>
+            <use id="Star-1" stroke="#000000" mask="url(#mask-16)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-15"></use>
+            <use id="Path-1" stroke="#000000" mask="url(#mask-18)" stroke-width="8" fill="#000000" xlink:href="#path-17"></use>
+            <polygon id="Path-1" fill="#F6A623" points="1843 120 1883 120 1883 100 1923 139.497767 1883 180 1883 160 1843 160"></polygon>
+            <text id="F[A]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="285.1" y="314">F[A]</tspan>
+            </text>
+            <text id="Eval[B]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="1977.8" y="314">Eval[B]</tspan>
+            </text>
+            <text id="(A,-Eval[B])-=&gt;-Eval" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="1169.2" y="314">(A, Eval[B]) =&gt; Eval[B]</tspan>
+            </text>
+            <text id="Eval[B]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="858.8" y="314">Eval[B]</tspan>
+            </text>
+            <use id="Rectangle-1" stroke="#000000" mask="url(#mask-20)" stroke-width="8" xlink:href="#path-19"></use>
+            <use id="Rectangle-1" stroke="#000000" mask="url(#mask-22)" stroke-width="8" xlink:href="#path-21"></use>
+            <use id="Rectangle-1" stroke="#000000" mask="url(#mask-24)" stroke-width="8" xlink:href="#path-23"></use>
+            <use id="Rectangle-1" stroke="#000000" mask="url(#mask-26)" stroke-width="8" xlink:href="#path-25"></use>
+            <text id="foldRight" font-family="FiraMono-Bold, Fira Mono" font-size="64" font-weight="bold" fill="#F6A623">
+                <tspan x="470.4" y="155">foldRight</tspan>
+            </text>
+            <text id="," font-family="FiraMono-Bold, Fira Mono" font-size="64" font-weight="bold" fill="#F6A623">
+                <tspan x="1054.6" y="151">,</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

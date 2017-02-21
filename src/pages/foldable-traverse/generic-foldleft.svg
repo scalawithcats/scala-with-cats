@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="2400px" height="360px" viewBox="0 0 2400 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>generic-foldleft</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <ellipse id="path-1" cx="1373" cy="140" rx="80" ry="80"></ellipse>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="160" height="160" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <polygon id="path-3" points="2047.59509 192 1994.69441 219.811529 2004.79754 160.905765 1962 119.188471 2021.14475 110.594235 2047.59509 57 2074.04542 110.594235 2133.19017 119.188471 2090.39263 160.905765 2100.49576 219.811529"></polygon>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="171.190173" height="162.811529" fill="white">
+            <use xlink:href="#path-3"></use>
+        </mask>
+        <polygon id="path-5" points="1179.59509 194 1126.69441 221.811529 1136.79754 162.905765 1094 121.188471 1153.14475 112.594235 1179.59509 59 1206.04542 112.594235 1265.19017 121.188471 1222.39263 162.905765 1232.49576 221.811529"></polygon>
+        <mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="171.190173" height="162.811529" fill="white">
+            <use xlink:href="#path-5"></use>
+        </mask>
+        <polygon id="path-7" points="1692.59509 195 1639.69441 222.811529 1649.79754 163.905765 1607 122.188471 1666.14475 113.594235 1692.59509 60 1719.04542 113.594235 1778.19017 122.188471 1735.39263 163.905765 1745.49576 222.811529"></polygon>
+        <mask id="mask-8" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="171.190173" height="162.811529" fill="white">
+            <use xlink:href="#path-7"></use>
+        </mask>
+        <polygon id="path-9" points="926.595086 194 873.694414 221.811529 883.797543 162.905765 841 121.188471 900.14475 112.594235 926.595086 59 953.045423 112.594235 1012.19017 121.188471 969.39263 162.905765 979.495759 221.811529"></polygon>
+        <mask id="mask-10" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="171.190173" height="162.811529" fill="white">
+            <use xlink:href="#path-9"></use>
+        </mask>
+        <polygon id="path-11" points="1498 120 1538 120 1538 100 1578 139.497767 1538 180 1538 160 1498 160"></polygon>
+        <mask id="mask-12" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="80" height="80" fill="white">
+            <use xlink:href="#path-11"></use>
+        </mask>
+        <ellipse id="path-13" cx="125" cy="118" rx="80" ry="80"></ellipse>
+        <mask id="mask-14" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="160" height="160" fill="white">
+            <use xlink:href="#path-13"></use>
+        </mask>
+        <ellipse id="path-15" cx="103" cy="98" rx="80" ry="80"></ellipse>
+        <mask id="mask-16" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="160" height="160" fill="white">
+            <use xlink:href="#path-15"></use>
+        </mask>
+        <ellipse id="path-17" cx="80" cy="80" rx="80" ry="80"></ellipse>
+        <mask id="mask-18" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="160" height="160" fill="white">
+            <use xlink:href="#path-17"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="generic-foldleft">
+            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="2400" height="360"></rect>
+            <use id="Oval-1" stroke="#000000" mask="url(#mask-2)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-1"></use>
+            <use id="Star-1" stroke="#000000" mask="url(#mask-4)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-3"></use>
+            <use id="Star-1" stroke="#000000" mask="url(#mask-6)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-5"></use>
+            <use id="Star-1" stroke="#000000" mask="url(#mask-8)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-7"></use>
+            <use id="Star-1" stroke="#000000" mask="url(#mask-10)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-9"></use>
+            <use id="Path-1" stroke="#000000" mask="url(#mask-12)" stroke-width="8" fill="#000000" xlink:href="#path-11"></use>
+            <polygon id="Path-1" fill="#F6A623" points="1826 120 1866 120 1866 100 1906 139.497767 1866 180 1866 160 1826 160"></polygon>
+            <text id="F[A]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="310.1" y="314">F[A]</tspan>
+            </text>
+            <text id="B" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="2036.4" y="314">B</tspan>
+            </text>
+            <text id="(B,-A)-=&gt;-B" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="1303.4" y="314">(B, A) =&gt; B</tspan>
+            </text>
+            <text id="B" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="917.4" y="314">B</tspan>
+            </text>
+            <g id="Group" transform="translate(261.000000, 40.000000)" stroke="#000000" stroke-width="8" fill="#FFFFFF">
+                <use id="Oval-1" mask="url(#mask-14)" xlink:href="#path-13"></use>
+                <use id="Oval-1" mask="url(#mask-16)" xlink:href="#path-15"></use>
+                <use id="Oval-1" mask="url(#mask-18)" xlink:href="#path-17"></use>
+            </g>
+            <text id="foldLeft" font-family="FiraMono-Bold, Fira Mono" font-size="64" font-weight="bold" fill="#F6A623">
+                <tspan x="500.8" y="155">foldLeft</tspan>
+            </text>
+            <text id="," font-family="FiraMono-Bold, Fira Mono" font-size="64" font-weight="bold" fill="#F6A623">
+                <tspan x="1032.6" y="151">,</tspan>
+            </text>
+        </g>
+    </g>
+</svg>
