@@ -9,88 +9,114 @@ you will have heard of [MapReduce][link-mapreduce],
 which is a programming model for doing parallel data processing
 across tens or hundreds of machines.
 As the name suggests, the model is built around a *map* phase,
-which is the same `map` function we know from Scala and the `Functor` type class,
+which is the same `map` function we know
+from Scala and the `Functor` type class,
 and a *reduce* phase, which we usually call `fold`[^hadoop-shuffle] in Scala.
 
-[^hadoop-shuffle]: In Hadoop there is also a shuffle phase that we will ignore here.
+[^hadoop-shuffle]: In Hadoop there is also a shuffle phase
+that we will ignore here.
 
 ## Parallelizing *map* and *fold*
 
 Recall the general signature for `map` is
-to apply a function `A => B` to a `F[A]`, returning a `F[B]`.
-For a sequence of elements `map` transform each individual element independently.
-Since there are no dependencies between the transformations applied to different elements
-(and the type signature of the function `A => B` shows us this,
-assuming we don't use side-effects not reflected in the types)
-we can parallelize `map` with ease.
+to apply a function `A => B` to a `F[A]`, returning a `F[B]`:
+
+![Type chart: functor map](src/pages/functors/generic-map.pdf+svg){#fig:mapreduce:functor-type-chart}
+
+`map` transforms each individual element in a sequence independently.
+We can easily parallelize `map` because
+there are no dependencies between
+the transformations applied to different elements
+(the type signature of the function `A => B` shows us this,
+assuming we don't use side-effects not reflected in the types).
 
 What about `fold`?
-This is not a method we can implement for all functors,
-but those where we can the signature takes
-an `F[A]`, a seed `B`, and an iterator function `(A, B) => B`,
-and produces a `B`.
-There is a dependency between processing steps in `fold`,
-indicated by the argument of type `B` that the iterator function accepts.
-We can't parallelize `fold` in general,
-but we can if we restrict the type of reduction functions we allow.
+We can implement this step with an instance of `Foldable`.
+Not every functor also has an instance of foldable,
+but we can implement a map reduce system
+on top of any data type that has both of these type classes.
+Our reduction step becomes a `fold`
+over the results of the distributed `map`.
 
-What kind of restrictions should we apply to `fold`?
-If the iterator function is *associative*, meaning
+![Type chart: fold](src/pages/foldable-traverse/generic-foldleft.pdf+svg){#fig:mapreduce:foldleft-type-chart}
+
+If you remember from our discussion of `Foldable`,
+then depending on the reduction operation we use,
+the order of combination can have effect on the final result.
+To remain correct we need to ensure
+our reduction operation is *associative*:
 
 ```scala
-A op (B op C) == (A op B) op C
+reduce(a1, reduce(a2, a3)) == reduce(reduce(a1, a2), a3)
 ```
 
-for a function `op`, the we can arbitrarily distribute work
+If we have associativity,
+we can arbitrarily distribute work
 amongst threads or machines
-so long as we preserve the ordering on the sequence of elements we're processing.
+provided we preserve the ordering
+on the sequence of elements we're processing.
 
-`Fold` requires we seed the computation with an element of type `B`.
-Since our parallel `fold` maybe split into an arbitrary numbers of parallel steps,
-this seed should not effect the result of the computation.
-A natural requirement is that the seed is the *identity* element.
+Our fold operation requires us to seed the computation
+with an element of type `B`.
+Since our fold may be split
+into an arbitrary number of parallel steps,
+the seed should not effect the result of the computation.
+This naturally requires the seed to be an *identity* element:
 
-In summary, for our parallel fold to yield the correct results
-we require the iterator function be associative,
-and the seed must be the identity of this function.
-If this sounds like a monoid, that's because it *is* a monoid.
-We are not the first to recognise this.
-The [monoid design pattern for MapReduce jobs][link-mapreduce-monoid]
+```scala
+reduce(seed, a1) == reduce(a1, seed) == a1
+```
+
+In summary, our parallel fold will yield the correct results if:
+
+- we require the reducer function to be associative;
+- we seed the computation with the identity of this function.
+
+What does this pattern sound like?
+That's right, we've come full circle back to `Monoid`,
+the first type class we discussed in this book.
+We are not the first to recognise the importance of monoids.
+The [monoid design pattern for map-reduce jobs][link-mapreduce-monoid]
 is at the core of recent big data systems
 such as Twitter's [Summingbird][link-summingbird].
 
-In this project we're going to implement a very simple single-machine MapReduce.
+In this project we're going to implement
+a very simple single-machine map-reduce.
 We'll start by implementing a method called `foldMap`
 to model the data-flow we need.
 We'll then parallelize `foldMap`
 and see how we can introduce error handling
-using monads, applicative functors, and a new tool called natural transformations.
-Finally we'll ground this case study
+using monads, applicative functors,
+and a new tool called natural transformations.
+Finally we'll ground our discussion
 by looking at some of more interesting monoids
 that are applicable for processing large data sets.
 
 ## Implementing *foldMap*
 
-Let's implement a method `foldMap` that:
+Start by implementing a method called `foldMap` that:
 
  - accepts a sequence parameter of type `Iterable[A]`
    and a function of type `A => B`,
-   where there is a monoid for `B`;
+   where there is a `Monoid` for `B`;
  - maps the function over the sequence;
- - reduces the results using the monoid for `B`.
+ - reduces the results using the monoid.
 
 Here's a basic type signature.
 You will have to add implicit parameters or context bounds
 to complete the type signature:
 
 ```tut:book:silent
+/** Single-threaded map reduce function.
+  * Maps `func` over `values` and reduces using a `Monoid[B]`.
+  */
 def foldMap[A, B](values: Iterable[A])(func: A => B): B =
   ???
 ```
 
 Here's some sample output:
 
-```tut:book:silent
+```tut:book:invisible
 import cats.Monoid
 import cats.syntax.semigroup._
 
@@ -103,7 +129,6 @@ import cats.instances.int._
 ```
 
 ```tut:book
-// The monoid in use here is integer addition:
 foldMap(List(1, 2, 3))(identity)
 
 ```tut:book:silent
