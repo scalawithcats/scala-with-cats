@@ -136,7 +136,7 @@ Let's define a `Printable` type class to work around these problems:
  2. Create an object `PrintableInstances`
     containing instances of `Printable` for `String` and `Int`.
 
- 3. Define an object `PrintSyntax` with two generic interface methods:
+ 3. Define an object `Printable` with two generic interface methods:
 
     - `format` accepts a value of type `A`
       and a `Printable` of the corresponding type.
@@ -260,9 +260,9 @@ Printable.print(cat)
 Let's make our printing library easier to use
 by defining some extension methods to provide better syntax:
 
- 1. Create an object called `PrintSyntax`.
+ 1. Create an object called `PrintableSyntax`.
 
- 2. Inside `PrintSyntax` define an `implicit class PrintOps[A]`
+ 2. Inside `PrintableSyntax` define an `implicit class PrintOps[A]`
     to wrap up a value of type `A`.
 
  3. In `PrintOps` define the following methods:
@@ -280,7 +280,7 @@ by defining some extension methods to provide better syntax:
 First we define an `implicit class` containing our extension methods:
 
 ```tut:book:silent
-object PrintSyntax {
+object PrintableSyntax {
   implicit class PrintOps[A](value: A) {
     def format(implicit p: Printable[A]): String =
       p.format(value)
@@ -296,7 +296,7 @@ we can call the imaginary `print` and `format` methods
 on any value for which Scala can locate an implicit instance of `Printable`:
 
 ```tut:book:silent
-import PrintSyntax._
+import PrintableSyntax._
 ```
 
 ```tut:book
