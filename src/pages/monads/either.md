@@ -86,7 +86,7 @@ for {
 ```
 
 <div class="callout callout-info">
-*Smart constructors and avoiding over-narrowing*
+*Smart Constructors and Avoiding Over-Narrowing*
 
 The `asLeft` and `asRight` methods
 have advantages over `Left.apply` and `Right.apply`
@@ -99,7 +99,7 @@ def countPositive(nums: List[Int]) =
     if(num > 0) {
       accumulator.map(_ + 1)
     } else {
-      Left("Negative number encountered. stopping.")
+      Left("Negative. Stopping!")
     }
   }
 ```
@@ -125,7 +125,7 @@ def countPositive(nums: List[Int]) =
     if(num > 0) {
       accumulator.map(_ + 1)
     } else {
-      Left("Negative number encountered. stopping.")
+      Left("Negative. Stopping!")
     }
   }
 ```
@@ -134,6 +134,7 @@ def countPositive(nums: List[Int]) =
 countPositive(List(1, 2, 3))
 countPositive(List(1, -2, 3))
 ```
+</div>
 
 In addition to `asLeft` and `asRight`,
 `cats.syntax.either` also adds
