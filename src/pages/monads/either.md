@@ -1,4 +1,4 @@
-## *Either* and *Either*
+## *Either*
 
 Let's look at another useful monadic data type.
 The Scala standard library has a type `Either`.
