@@ -182,15 +182,16 @@ and then we'll see a more generally useful method.
 <div class="solution">
 It's the same implementation strategy as before with one wrinkle:
 `Validated` doesn't have a `flatMap` method.
-To implement `flatMap` we must momentarily switch to `Xor`
+To implement `flatMap` we must momentarily switch to `Either`
 and then switch back to `Validated`.
-The `withXor` method on `Validated` does exactly this.
+The `withEither` method on `Validated` does exactly this.
 From here we can just follow the types to implement `apply`.
 
 ```tut:book:silent
 object check {
   import cats.Semigroup
   import cats.data.Validated
+  import cats.syntax.either._
 
   import predicate._
 
@@ -213,7 +214,7 @@ object check {
   }
   final case class FlatMap[E,A,B,C](check: Check[E,A,B], f: B => Check[E,A,C]) extends Check[E,A,C] {
     def apply(in: A)(implicit s: Semigroup[E]): Validated[E,C] =
-      check(in).withXor { _.flatMap (a => f(a)(in).toXor) }
+      check(in).withEither { _.flatMap (a => f(a)(in).toEither) }
   }
 }
 ```
@@ -298,6 +299,7 @@ object predicate {
 object check {
   import cats.Semigroup
   import cats.data.Validated
+  import cats.syntax.either._
 
   import predicate._
 
@@ -322,11 +324,11 @@ object check {
     }
     final case class FlatMap[E,A,B,C](check: Check[E,A,B], f: B => Check[E,A,C]) extends Check[E,A,C] {
       def apply(in: A)(implicit s: Semigroup[E]): Validated[E,C] =
-        check(in).withXor { _.flatMap (b => f(b)(in).toXor) }
+        check(in).withEither { _.flatMap (b => f(b)(in).toEither) }
     }
     final case class AndThen[E,A,B,C](check: Check[E,A,B], next: Check[E,B,C]) extends Check[E,A,C] {
       def apply(in: A)(implicit s: Semigroup[E]): Validated[E,C] =
-        check(in).withXor { _.flatMap (b => next(b).toXor) }
+        check(in).withEither { _.flatMap (b => next(b).toEither) }
     }
     final case class Pure[E,A,B](f: A => Validated[E,B]) extends Check[E,A,B] {
       def apply(in: A)(implicit s: Semigroup[E]): Validated[E,B] =

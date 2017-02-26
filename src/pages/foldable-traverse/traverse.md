@@ -51,7 +51,7 @@ val allUptimes: Future[List[Int]] =
 ```
 
 ```tut:book
-Await.result(allUptimes, Duration.Inf)
+Await.result(allUptimes, 1.second)
 ```
 
 Intuitively, we iterate over `hostnames`, call `func` for each item,
@@ -67,7 +67,7 @@ val allUptimes: Future[List[Int]] =
 ```
 
 ```tut:book
-Await.result(allUptimes, Duration.Inf)
+Await.result(allUptimes, 1.second)
 ```
 
 This is much clearer and more concise---let's see how it works.
@@ -202,7 +202,7 @@ We can use this new `listTraverse` to re-implement our uptime example:
 ```tut:book
 Await.result(
   listTraverse(hostnames)(getUptime),
-  Duration.Inf
+  1.second
 )
 ```
 

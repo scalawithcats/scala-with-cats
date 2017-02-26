@@ -1,16 +1,22 @@
 ## *Validated*
 
-By now we are familiar with the fail-fast error handling behaviour of `Xor`.
-Furthermore, because `Xor` is a monad,
-we know that the semantics of `product` are the same as those for `flatMap`.
-In fact, it is impossible for us to design a monadic data type
+By now we are familiar with
+the fail-fast error handling behaviour of `Either`.
+Furthermore, because `Either` is a monad,
+we know that the semantics of `product`
+are the same as those for `flatMap`.
+In fact, it is impossible for us
+to design a monadic data type
 that implements error accumulating semantics
 without breaking the consistency rules
 between these two methods.
 
-Fortunately, Cats provides another data type called `Validated`
-that has an instance of `Cartesian` but *no* instace of `Monad`.
-The implementation of `product` is therefore free to accumulate errors:
+Fortunately, Cats provides
+a data type called `Validated`
+that has an instance of `Cartesian`
+but *no* instace of `Monad`.
+The implementation of `product`
+is therefore free to accumulate errors:
 
 ```tut:book:silent
 import cats.Cartesian
@@ -27,7 +33,7 @@ Cartesian[AllErrorsOr].product(
 )
 ```
 
-`Validated` complements `Xor` nicely.
+`Validated` complements `Either` nicely.
 Between the two we have support for
 both of the common types of error handling:
 fail-fast and accumulating.
@@ -36,8 +42,9 @@ fail-fast and accumulating.
 
 `Validated` has two subtypes,
 `Validated.Valid` and `Validated.Invalid`,
-that correspond loosely to `Xor.Right` and `Xor.Left`.
-We can create instances directly using their `apply` methods:
+that correspond loosely to `Right` and `Left`.
+We can create instances directly
+using their `apply` methods:
 
 ```tut:book
 val v = Validated.Valid(123)
@@ -53,8 +60,8 @@ val v = Validated.valid[String, Int](123)
 val i = Validated.invalid[String, Int]("Badness")
 ```
 
-As a third option
-we can import the `valid` and `invalid` extension methods
+As a third option we can import
+the `valid` and `invalid` extension methods
 from `cats.syntax.validated`:
 
 ```tut:book:silent
@@ -68,29 +75,18 @@ import cats.syntax.validated._
 
 Finally, there are a variety of methods on `Validated`
 to create instances from different sources.
-We can create them from `Exceptions`:
+We can create them from `Exceptions`,
+as well as instances of `Try`, `Either`, and `Option`:
 
 ```tut:book
 Validated.catchOnly[NumberFormatException]("foo".toInt)
 
 Validated.catchNonFatal(sys.error("Badness"))
-```
 
-from instances of `Try`:
-
-```tut:book
 Validated.fromTry(scala.util.Try("foo".toInt))
-```
 
-from instances of `Either`:
-
-```tut:book
 Validated.fromEither[String, Int](Left("Badness"))
-```
 
-and from instances of `Option`:
-
-```tut:book
 Validated.fromOption[String, Int](None, "Badness")
 ```
 
@@ -98,16 +94,17 @@ Validated.fromOption[String, Int](None, "Badness")
 
 We can combine instances of `Validated`
 using any of the methods described above:
-`product`, `map2..22`, cartesian builder syntax, and so on.
+`product`, `map2..22`, cartesian builder syntax,
+and so on.
 
 All of these techniques require
 an appropriate `Cartesian` to be in scope.
-As with `Xor`, we need to fix the error type
+As with `Either`, we need to fix the error type
 to create a type constructor with the correct
 number of parameters for `Cartesian`:
 
 ```tut:book:silent
-type ErrorsOr[A] = Validated[String, A]
+type AllErrorsOr[A] = Validated[String, A]
 ```
 
 `Validated` accumulates errors using a `Semigroup`,
@@ -116,7 +113,7 @@ If we don't have one we get
 an annoyingly unhelpful compilation error:
 
 ```tut:book:fail
-Cartesian[ErrorsOr]
+Cartesian[AllErrorsOr]
 ```
 
 Once we import a `Semigroup[String]`,
@@ -127,7 +124,7 @@ import cats.instances.string._
 ```
 
 ```tut:book
-Cartesian[ErrorsOr]
+Cartesian[AllErrorsOr]
 ```
 
 As long as the compiler has all the implicits in scope
@@ -181,7 +178,8 @@ import cats.data.NonEmptyVector
 ### Methods of *Validated*
 
 `Validated` comes with a suite of methods
-that closely resemble those on `Xor`.
+that closely resemble those available for `Either`,
+including the methods from [`cats.syntax.either`].
 We can use `map`, `leftMap`, and `bimap`
 to transform the values inside
 the valid and invalid sides:
@@ -197,24 +195,30 @@ the valid and invalid sides:
 ```
 
 We can't `flatMap` because `Validated` isn't a monad.
-However, we can convert back and forth between `Validated` and `Xor`
-using the `toXor` and `toValidated` methods.
-This allows us to switch error-handling semantics on the fly:
+However, we can convert back and forth
+between `Validated` and `Either`
+using the `toEither` and `toValidated` methods.
+This allows us to switch error-handling semantics on the fly.
+Note that `toValidated` comes from [`cats.syntax.either`]:
 
 ```tut:book
+import cats.syntax.either._ // toValidated method
+
 "Badness".invalid[Int]
-"Badness".invalid[Int].toXor
-"Badness".invalid[Int].toXor.toValidated
+"Badness".invalid[Int].toEither
+"Badness".invalid[Int].toEither.toValidated
 ```
 
-As with `Xor`, we can use the `ensure` method
-to fail with a specified error if a predicate does not hold:
+As with `Either`, we can use the `ensure` method
+to fail with a specified error
+if a predicate does not hold:
 
 ```tut:book
 // 123.valid[String].ensure("Negative!")(_ > 0)
 ```
 
-Finally, we can call `getOrElse` or `fold` to extract the values:
+Finally, we can call `getOrElse` or `fold`
+to extract values from the `Valid` and `Invalid` cases:
 
 ```tut:book
 "fail".invalid[Int].getOrElse(0)
@@ -226,7 +230,8 @@ Finally, we can call `getOrElse` or `fold` to extract the values:
 
 Let's get used to `Validated` by implementing
 a simple HTML registration form.
-We receive request data from the client in a `Map[String, String]`
+We receive request data from the client
+in a `Map[String, String]`
 and we want to parse it to create a `User` object:
 
 ```tut:book:silent
@@ -240,49 +245,60 @@ parses the incoming data enforcing the following rules:
  - the name must not be blank;
  - the the age must be a valid non-negative integer.
 
-If all the rules pass, our parser we should return a `User`.
-If any rules fail, we should return a `List` of the error messages.
+If all the rules pass,
+our parser we should return a `User`.
+If any rules fail,
+we should return a `List`
+of the error messages.
 
 To implement this complete example
-we'll need to combine rules in sequence and in parallel
-We'll use `Xor` to combine computations in sequence using fail-fast semantics,
-and `Validated` to combine them in parallel using accumulating semantics.
+we'll need to combine rules
+in sequence and in parallel
+We'll use `Either` to combine computations
+in sequence using fail-fast semantics,
+and `Validated` to combine them
+in parallel using accumulating semantics.
 
 Let's start with some sequential combination.
-We'll define two methods to read the `"name"` and `"age"` fields:
+We'll define two methods to
+read the `"name"` and `"age"` fields:
 
 - `readName` will take a `Map[String, String]` parameter,
   extract the `"name"` field,
   check the relevant validation rules,
-  and return a `Xor[List[String, String]`;
+  and return a `Either[List[String, String]`;
 
 - `readAge` will take a `Map[String, String]` parameter,
   extract the `"age"` field,
   check the relevant validation rules,
-  and return a `Xor[List[String, Int]`.
+  and return a `Either[List[String, Int]`.
 
 We'll build these methods up from smaller building blocks.
 Start by defining a method `getValue` that
 reads a `String` from the `Map` given a field name.
 
 <div class="solution">
-We'll be using `Xor` and `Validated`
+We'll be using `Either` and `Validated`
 so we'll start with some imports:
 
 ```tut:book:silent
-import cats.data.{Xor, Validated}
+import cats.data.Validated
+
+type FormData = Map[String, String]
+type ErrorsOr[A] = Either[List[String], A]
+type AllErrorsOr[A] = Validated[List[String], A]
 ```
 
-The `getValue` rule extracts a `String` from the form data.
-We'll be using it in sequence with rules for parsing `Ints`
-and checking values, so we'll define it to return an `Xor`:
+The `getValue` rule
+extracts a `String` from the form data.
+We'll be using it in sequence
+with rules for parsing `Ints` and checking values,
+so we'll define it to return an `Either`:
 
 ```tut:book:silent
-def getValue(name: String)
-    (data: Map[String, String]): List[String] Xor String =
-  Xor.fromOption(
-    data.get(name),
-    List(s"$name field not specified"))
+def getValue(name: String)(data: FormData): ErrorsOr[String] =
+  data.get(name).
+    toRight(List(s"$name field not specified"))
 ```
 
 We can create and use an instance of `getValue` as follows:
@@ -306,18 +322,18 @@ Next define a method `parseInt` that
 consumes an `Int` and parses it as a `String`.
 
 <div class="solution">
-We'll use `Xor` again here.
-We use `Xor.catchOnly` to
+We'll use `Either` again here.
+We use `Either.catchOnly` to
 consume the `NumberFormatException` from `toInt`,
-and we use `leftMap` to turn it into a nice error message.
+and we use `leftMap` to
+turn it into an error message:
 
 ```tut:book:silent
 type NumFmtExn = NumberFormatException
 
-def parseInt(name: String)
-    (data: String): List[String] Xor Int =
-  Xor.right(data).
-    flatMap(s => Xor.catchOnly[NumFmtExn](s.toInt)).
+def parseInt(name: String)(data: String): ErrorsOr[Int] =
+  Right(data).
+    flatMap(s => Either.catchOnly[NumFmtExn](s.toInt)).
     leftMap(_ => List(s"$name must be an integer"))
 ```
 
@@ -326,34 +342,35 @@ to name the field we're parsing.
 This is useful for creating better error messages,
 but it's fine if you leave it out in your code.
 
-If we provide valid input, `parseInt` converts it to an `Int`:
+If we provide valid input,
+`parseInt` converts it to an `Int`:
 
 ```tut:book
 parseInt("age")("11")
 ```
 
-If we provide erroneous input, we get a useful error message:
+If we provide erroneous input,
+we get a useful error message:
 
 ```tut:book
 parseInt("age")("foo")
 ```
 </div>
 
-Next implement the validation checks,
-`nonBlank` to check `Strings` and `nonNegative` to check `Ints`.
+Next implement the validation checks:
+`nonBlank` to check `Strings`,
+and `nonNegative` to check `Ints`.
 
 <div class="solution">
 These definitions use the same patterns as above:
 
 ```tut:book:silent
-def nonBlank(name: String)
-    (data: String): List[String] Xor String =
-  Xor.right(data).
+def nonBlank(name: String)(data: String): ErrorsOr[String] =
+  Right(data).
     ensure(List(s"$name cannot be blank"))(_.nonEmpty)
 
-def nonNegative(name: String)
-    (data: Int): List[String] Xor Int =
-  Xor.right(data).
+def nonNegative(name: String)(data: Int): ErrorsOr[Int] =
+  Right(data).
     ensure(List(s"$name must be non-negative"))(_ >= 0)
 ```
 
@@ -367,22 +384,19 @@ nonNegative("age")(-1)
 ```
 </div>
 
-Now combine `getValue`, `parseInt`, `nonBlank` and `nonNegative`
+Now combine `getValue`, `parseInt`,
+`nonBlank` and `nonNegative`
 to create `readName` and `readAge`:
 
 <div class="solution">
 We use `flatMap` to combine the rules sequentially:
 
 ```tut:book:silent
-def readName(
-  data: Map[String, String]
-): List[String] Xor String =
+def readName(data: FormData): ErrorsOr[String] =
   getValue("name")(data).
     flatMap(nonBlank("name"))
 
-def readAge(
-  data: Map[String, String]
-): List[String] Xor Int =
+def readAge(data: FormData): ErrorsOr[Int] =
   getValue("age")(data).
     flatMap(nonBlank("age")).
     flatMap(parseInt("age")).
@@ -403,30 +417,29 @@ readAge(Map())
 
 Finally, use a `Cartesian` to combine the results
 of `readName` and `readAge` to produce a `User`.
-Make sure you switch from `Xor` to `Validated`
+Make sure you switch from `Either` to `Validated`
 to accumulate errors.
 
 <div class="solution">
 There are a couple of ways to do this,
-each involving switching from `Xor` to `Validated`.
+each involving switching from `Either` to `Validated`.
 One option is to use `product` and `map`:
 
 ```tut:book:silent
-type ErrorsOr[A] = Validated[List[String], A]
-
-def readUser(data: Map[String, String]): ErrorsOr[User] =
-  Cartesian[ErrorsOr].product(
+def readUser(data: FormData): AllErrorsOr[User] =
+  Cartesian[AllErrorsOr].product(
     readName(data).toValidated,
     readAge(data).toValidated
   ).map(User.tupled)
 ```
 
-A more idiomatic solution is to use cartesian builder syntax:
+A more idiomatic solution is to
+use cartesian builder syntax:
 
 ```tut:book:silent
 import cats.syntax.cartesian._
 
-def readUser(data: Map[String, String]): ErrorsOr[User] =
+def readUser(data: FormData): AllErrorsOr[User] =
   (
     readName(data).toValidated |@|
     readAge(data).toValidated
@@ -441,12 +454,13 @@ readUser(Map("age" -> "-1"))
 ```
 
 The need to switch back and forth
-between `Xor` and `Validated` is annoying.
-The choice of whether to use `Xor` or `Validated`
+between `Either` and `Validated` is annoying.
+The choice of whether to use `Either` or `Validated`
 as a default is determined by context.
 In application code, we typically find
 areas that favour accumulating semantics
 and areas that favour fail-fast semantics.
 We pick the data type that best suits our need
-and switch to the other as necessary in specific situations.
+and switch to the other
+as necessary in specific situations.
 </div>

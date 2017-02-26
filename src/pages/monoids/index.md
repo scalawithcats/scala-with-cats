@@ -217,7 +217,7 @@ implicit val booleanOrMonoid: Monoid[Boolean] =
 Third, we have *exclusive or* with identity `false`:
 
 ```tut:book:silent
-implicit val booleanXorMonoid: Monoid[Boolean] =
+implicit val booleanEitherMonoid: Monoid[Boolean] =
   new Monoid[Boolean] {
     def combine(a: Boolean, b: Boolean) =
       (a && !b) || (!a && b)

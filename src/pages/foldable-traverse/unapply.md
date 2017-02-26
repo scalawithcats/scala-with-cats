@@ -3,16 +3,15 @@
 One frequent problem people encounter when using `Traverse`
 is that it doesn't play well with effects
 with two or more type parameters.
-For example, suppose we have a `List` of `Xors`:
+For example, suppose we have a `List` of `Eithers`:
 
 ```tut:book:silent
-import cats.data.Xor
 import cats.instances.list._
 import cats.syntax.traverse._
 
-val xors: List[Xor[String, String]] = List(
-  Xor.right("Wow!"),
-  Xor.right("Such cool!")
+val xors: List[Either[String, String]] = List(
+  Right("Wow!"),
+  Right("Such cool!")
 )
 ```
 
@@ -41,16 +40,19 @@ trait Traverse[F[_]]
 ```
 
 To compile a call like `xors.sequence`,
-the compiler has to find values for the type parameters `G` and `B`.
-The types it is attempting to unify them with are `Xor[String, Int]` and `Int`,
-so it has to make a decision about which parameter on `Xor` to fix
+the compiler has to find values
+for the type parameters `G` and `B`.
+The types it is attempting to unify them with are
+`Either[String, Int]` and `Int`,
+so it has to make a decision about
+which parameter on `Either` to fix
 to create a type constructor of the correct shape.
 
 There are two possible solutions as you can see below:
 
 ```tut:book:silent
-type G[A] = Xor[A, Int]
-type G[A] = Xor[String, A]
+type G[A] = Either[A, Int]
+type G[A] = Either[String, A]
 ```
 
 It's obvious to us which unification method to choose.
@@ -60,19 +62,27 @@ prevented this inferrence.
 
 To work around this issue
 Cats provides a utilitiy type class called `Unapply`,
-whose purpose is to tell the compiler which parameters to "fix"
-to create a unary type constructor for a given type.
-Cats provides instances of `Unapply` for the common binary types:
-`Either`, `Xor`, `Validated`, and `Function1`, and so on.
-`Traverse` provides variants of `traverse` and `sequence`---called
-`traverseU` and `sequenceU`---that
-use `Unapply` to guide the compiler to the correct solution:
+whose purpose is to tell the compiler
+which parameters to "fix" to create
+a unary type constructor for a given type.
+Cats provides instances of `Unapply`
+for the common binary types:
+`Either`, `Either`, `Validated`, and `Function1`, and so on.
+`Traverse` provides variants of `traverse` and `sequence`
+called `traverseU` and `sequenceU`
+that use `Unapply` to guide the compiler
+to the correct solution:
+
+```tut:book:silent
+import cats.instances.either._
+```
 
 ```tut:book
 xors.sequenceU
 ```
 
-The inner workings of `Unapply` aren't particularly important---
+The inner workings of `Unapply`
+aren't particularly important---
 all we need to know is that this tool is available
 to fix these kinds of problems.
 

@@ -52,7 +52,7 @@ pages:
   - monads/index.md
   - monads/cats.md
   - monads/id.md
-  - monads/xor.md
+  - monads/either.md
   - monads/eval.md
   # - monads/error-recovery.md
   - monads/writer.md

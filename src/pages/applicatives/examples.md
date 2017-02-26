@@ -23,7 +23,7 @@ val futurePair = Cartesian[Future].
 ```
 
 ```tut:book
-Await.result(futurePair, Duration.Inf)
+Await.result(futurePair, 1.second)
 ```
 
 The two `Futures` start executing the moment we create them,
@@ -48,7 +48,7 @@ val futureCat = (
 ```
 
 ```tut:book
-Await.result(futureCat, Duration.Inf)
+Await.result(futureCat, 1.second)
 ```
 
 ### *Cartesian* Applied to *List*
@@ -84,23 +84,23 @@ We get the cartesian product!
 This is perhaps surprising:
 zipping lists tends to be a more common operation.
 
-### *Cartesian* Applied to *Xor*
+### *Cartesian* Applied to *Either*
 
-What about `Xor`?
+What about `Either`?
 We opened this chapter with a discussion of
 fail-fast versus accumulating error-handling.
 Which behaviour will `product` produce?
 
 ```tut:book:silent
-import cats.data.Xor
+import cats.instances.either._
 
-type ErrorOr[A] = Vector[String] Xor A
+type ErrorOr[A] = Either[Vector[String], A]
 ```
 
 ```tut:book
 Cartesian[ErrorOr].product(
-  Xor.left(Vector("Error 1")),
-  Xor.left(Vector("Error 2"))
+  Left(Vector("Error 1")),
+  Left(Vector("Error 2"))
 )
 ```
 
@@ -111,7 +111,7 @@ despite knowing that the second parameter is also a failure.
 ### *Cartesian* Applied to Monads
 
 The reason for these surprising results is that,
-like `Option`, `List` and `Xor` are both monads.
+like `Option`, `List` and `Either` are both monads.
 To ensure consistent semantics,
 Cats' `Monad` (which extends `Cartesian`)
 provides a standard definition of `product`
@@ -154,7 +154,7 @@ def product[M[_] : Monad, A, B](
 ```
 
 The semantics of `flatMap` are what give rise
-to the behaviour for `List` and `Xor`:
+to the behaviour for `List` and `Either`:
 
 ```tut:book:silent
 import cats.instances.list._
@@ -165,15 +165,13 @@ product(List(1, 2), List(3, 4))
 ```
 
 ```tut:book:silent
-import cats.data.Xor
-
-type ErrorOr[A] = Vector[String] Xor A
+type ErrorOr[A] = Either[Vector[String], A]
 ```
 
 ```tut:book
 product[ErrorOr, Int, Int](
-  Xor.left(Vector("Error 1")),
-  Xor.left(Vector("Error 2"))
+  Left(Vector("Error 1")),
+  Left(Vector("Error 2"))
 )
 ```
 

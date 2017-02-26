@@ -50,10 +50,10 @@ We can simplify this structure by converting all predicates into a normal form.
 For example, if we use disjunctive normal form
 the structure of the predicate will always be
 a disjunction (logical or) of conjunctions (logical and).
-By doing so we could errors as a `List[List[Xor[E, E]]]`,
+By doing so we could errors as a `List[List[Either[E, E]]]`,
 with the outer list representing disjunction,
 the inner list representing conjunction,
-and the `Xor` representing negation.
+and the `Either` representing negation.
 
 Finally, we made several design choices
 that reasonable people could disagree with.

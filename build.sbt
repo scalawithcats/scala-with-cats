@@ -1,11 +1,16 @@
-lazy val root = project.in(file("."))
-  .settings(tutSettings)
+name              in ThisBuild := "advanced-scala"
+organization      in ThisBuild := "io.underscore"
+version           in ThisBuild := "0.0.1"
+
+scalaOrganization in ThisBuild := "org.typelevel"
+scalaVersion      in ThisBuild := "2.12.1"
+
+logLevel          in Global    := Level.Warn
+
+tutSettings
 
 tutSourceDirectory := sourceDirectory.value / "pages"
-
-tutTargetDirectory := target.value / "pages"
-
-scalaVersion := "2.11.8"
+tutTargetDirectory := target.value          / "pages"
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -14,14 +19,15 @@ scalacOptions ++= Seq(
   "-feature",
   "-Ywarn-dead-code",
   "-Xlint",
-  "-Xfatal-warnings"
+  "-Xfatal-warnings",
+  "-Ydelambdafy:inline" // workaround for future deadlock on the 2.12.1 REPL
 )
 
-resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"))
+// resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"))
 
-libraryDependencies ++= Seq("org.typelevel" %% "cats" % "0.7.2")
+libraryDependencies ++= Seq("org.typelevel" %% "cats" % "0.9.0")
 
-addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.0")
+addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
 
 lazy val pdf  = taskKey[Unit]("Build the PDF version of the book")
 lazy val html = taskKey[Unit]("Build the HTML version of the book")
@@ -31,4 +37,4 @@ lazy val all  = taskKey[Unit]("Build all versions of the book")
 pdf  := { tutQuick.value ; "grunt pdf"  ! }
 html := { tutQuick.value ; "grunt html" ! }
 epub := { tutQuick.value ; "grunt epub" ! }
-all  := { pdf ; html ; epub }
+all  := { pdf.value ; html.value ; epub.value }

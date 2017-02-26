@@ -23,7 +23,7 @@ but we can't call it passing in plain values:
 sumSquare(3, 4)
 ```
 
-This would be incredibly useful because 
+This would be incredibly useful because
 it would allow us to abstract over monadic and non-monadic code.
 Fortunately, Cats provides the `Id` type to bridge this gap:
 
@@ -48,7 +48,7 @@ package cats
 type Id[A] = A
 ```
 
-`Id` is actually a type alias 
+`Id` is actually a type alias
 that turns an atomic type into a single-parameter type constructor.
 We can cast any value of any type to a corresponding `Id`:
 
@@ -81,7 +81,7 @@ for {
 
 The main use for `Id` is to write generic methods like `sumSquare`
 that operate on monadic and non-monadic data types.
-For example, 
+For example,
 we can run code asynchronously in production using `Future`
 and synchronously in test using `Id`:
 
@@ -94,7 +94,7 @@ import cats.instances.future._
 
 ```tut:book
 // In production:
-Await.result(sumSquare(Future(3), Future(4)), Duration.Inf)
+Await.result(sumSquare(Future(3), Future(4)), 1.second)
 
 // In test:
 sumSquare(a, b)
@@ -122,7 +122,7 @@ def flatMap[A, B](initial: Id[A])(func: A => Id[B]): Id[B] =
 ```
 
 Now let's look at each method in turn.
-The `pure` operation is a constructor---it 
+The `pure` operation is a constructor---it
 creates an `Id[A]` from an initial value of type `A`.
 But `A` and `Id[A]` are the same type!
 All we have to do is return the initial value:
@@ -163,14 +163,14 @@ def flatMap[A, B](initial: Id[A])(func: A => Id[B]): Id[B] =
 flatMap(123)(_ * 2)
 ```
 
-Notice that we haven't had to add any casts 
+Notice that we haven't had to add any casts
 to any of the examples in this solution.
-Scala is able to interpret values of type `A` as `Id[A]` and vice versa, 
+Scala is able to interpret values of type `A` as `Id[A]` and vice versa,
 simply by the context in which they are used.
 
 The only restriction to this is that Scala cannot unify
 different shapes of type constructor when searching for implicits.
-Hence our need to cast to `Id[A]` 
+Hence our need to cast to `Id[A]`
 in the call to `sumSquare` at the opening of this section:
 
 ```tut:book:silent

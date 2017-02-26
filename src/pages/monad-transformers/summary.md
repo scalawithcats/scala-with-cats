@@ -4,13 +4,11 @@ In this chapter we introduced monad transformers,
 which eliminate the need for nested for comprehensions and pattern matching
 when working with "stacks" of nested monads such as below:
 
-```tut:book:silent
-import cats.data.Xor
-```
-
 ```tut:book
-val a = Option(Xor.right[String, Int](1))
-val b = Option(Xor.right[String, Int](1))
+import cats.syntax.either._
+
+val a = Option(1.asRight[String])
+val b = Option(1.asRight[String])
 
 val result = for {
   x <- a
@@ -23,19 +21,19 @@ val result = for {
 }
 ```
 
-Each monad transformer, such as `FutureT`, `OptionT` or `XorT`,
+Each monad transformer, such as `FutureT`, `OptionT` or `EitherT`,
 provides the code needed to merge its related monad with other monads.
 The transformer is a data structure that wraps a monad stack,
-equipping it with `map` and `flatMap` methods 
+equipping it with `map` and `flatMap` methods
 that unpack and repack the whole stack:
 
 ```tut:book:silent
-import cats.data.XorT
+import cats.data.EitherT
 ```
 
 ```tut:book
-val wrappedA = XorT(a)
-val wrappedB = XorT(b)
+val wrappedA = EitherT(a)
+val wrappedB = EitherT(b)
 ```
 
 ```tut:book:silent
@@ -52,7 +50,7 @@ val result = wrappedResult.value
 ```
 
 The type signatures of monad transformers are written from the inside out,
-so an `XorT[Option, String, A]` is a wrapper for an `Option[Xor[String, A]]`.
+so an `EitherT[Option, String, A]` is a wrapper for an `Option[Either[String, A]]`.
 It is often useful to use type aliases
 when writing transformer types for deeply nested monads.
 

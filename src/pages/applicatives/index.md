@@ -1,23 +1,29 @@
-# Cartesians and Applicatives {#applicatives}
+# Cartesians and Applicatives {#sec:applicatives}
 
 In previous chapters we saw
-how functors and monads let us transform values using `map` and `flatMap`.
-While functors and monads are both immensely useful abstractions,
+how functors and monads let us
+transform values using `map` and `flatMap`.
+While functors and monads are
+both immensely useful abstractions,
 there are types of transformation
-that are inconvenient to represent with these methods.
+that are inconvenient to represent
+with these methods.
 
 One such example is form validation.
-When we validate a form we want to return *all* the errors to the user,
+When we validate a form we want to
+return *all* the errors to the user,
 not simply stop on the first error we encounter.
-If we model this with a monad like `Xor`, we fail fast and lose errors.
-For example, the code below fails on the first call to `parseInt`
+If we model this with a monad like `Either`,
+we fail fast and lose errors.
+For example, the code below
+fails on the first call to `parseInt`
 and doesn't go any further:
 
 ```tut:book:silent
-import cats.data.Xor
+import cats.syntax.either._
 
-def parseInt(str: String): String Xor Int =
-  Xor.catchOnly[NumberFormatException](str.toInt).
+def parseInt(str: String): Either[String, Int] =
+  Either.catchOnly[NumberFormatException](str.toInt).
     leftMap(_ => s"Couldn't read $str")
 ```
 
@@ -32,12 +38,13 @@ for {
 Another example is the concurrent evaluation of `Futures`.
 If we have several long-running independent tasks,
 it makes sense to execute them concurrently.
-However, monadic comprehension only allows us to run them in sequence.
+However, monadic comprehension
+only allows us to run them in sequence.
 Even on a multicore CPU,
-the code below runs in sequence as you can see from the timestamps:
+the code below runs in sequence
+as you can see from the timestamps:
 
 ```tut:book:silent
-import cats.data.Xor
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -46,7 +53,7 @@ lazy val timestamp0 = System.currentTimeMillis
 
 def getTimestamp: Long = {
   val timestamp = System.currentTimeMillis - timestamp0
-  Thread.sleep(1000)
+  Thread.sleep(100)
   timestamp
 }
 
@@ -58,7 +65,7 @@ val timestamps = for {
 ```
 
 ```tut:book
-Await.result(timestamps, Duration.Inf)
+Await.result(timestamps, 1.second)
 ```
 
 `map` and `flatMap` aren't quite capable
@@ -74,9 +81,11 @@ context1.flatMap(value1 => context2)
 The calls to `parseInt` and `Future.apply` above
 are *independent* of one another,
 but `map` and `flatMap` can't exploit this.
-We need a weaker construct---one that doesn't guarantee sequencing---to
+We need a weaker construct---one
+that doesn't guarantee sequencing---to
 achieve the result we want.
-In this chapter we will look at two type classes that support this pattern:
+In this chapter we will look at two type classes
+that support this pattern:
 
   - *Cartesians* encompass the notion of "zipping" pairs of contexts.
     Cats provides a `CartesianBuilder` syntax that

@@ -5,9 +5,7 @@ which we said was a function from a value to a value in a context.
 As soon as you see this description you should think of something like
 
 ```tut:book:silent
-import cats.data.Xor
-
-type Check[A] = A => String Xor A
+type Check[A] = A => Either[String, A]
 ```
 
 Here we've represented the error message as a `String`.
@@ -23,7 +21,7 @@ The way to do this is with a type parameter.
 Then the user can plug in whatever type they desire.
 
 ```tut:book:silent
-type Check[E,A] = A => E Xor A
+type Check[E, A] = A => Either[E, A]
 ```
 
 We could just run with the declaration above,
@@ -98,26 +96,23 @@ I've called this one `CheckF`.
 
 ```tut:book:silent
 import cats.Semigroup
-import cats.data.Xor
-import cats.syntax.xor._       // foo.left foo.right
-import cats.syntax.semigroup._ // |+|
+import cats.syntax.either._
+import cats.syntax.semigroup._
 
-final case class CheckF[E,A](f: A => E Xor A) {
-  import cats.data.Xor._       // Left and Right
-
-  def and(that: CheckF[E,A])(implicit s: Semigroup[E]): CheckF[E,A] = {
+final case class CheckF[E, A](f: A => Either[E, A]) {
+  def and(that: CheckF[E, A])(implicit s: Semigroup[E]): CheckF[E,A] = {
     val self = this
     CheckF(a =>
       (self(a), that(a)) match {
-        case (Left(e1),  Left(e2))  => (e1 |+| e2).left
-        case (Left(e),   Right(a))  => e.left
-        case (Right(a),  Left(e))   => e.left
-        case (Right(a1), Right(a2)) => a.right
+        case (Left(e1),  Left(e2))  => (e1 |+| e2).asLeft
+        case (Left(e),   Right(a))  => e.asLeft
+        case (Right(a),  Left(e))   => e.asLeft
+        case (Right(a1), Right(a2)) => a.asRight
       }
     )
   }
 
-  def apply(a: A): E Xor A =
+  def apply(a: A): Either[E, A] =
     f(a)
 }
 ```
@@ -133,16 +128,16 @@ import cats.instances.string._ // Semigroup for String
 ```tut:book
 val check1 = CheckF[List[String], Int]{ v =>
   if(v > 2)
-    v.right
+    v.asRight
   else
-    List("Value must be greater than 2").left
+    List("Value must be greater than 2").asLeft
 }
 
 val check2 = CheckF[List[String], Int]{ v =>
   if(v < -2)
-    v.right
+    v.asRight
   else
-    List("Value must be less than -2").left
+    List("Value must be less than -2").asLeft
 }
 
 val check = check1 and check2
@@ -153,43 +148,43 @@ Now run the check with some data.
 ```tut:book
 val result = check(0)
 
-val expected = List("Value must be greater than 2", "Value must be less than -2")
+val expected = List(
+  "Value must be greater than 2",
+  "Value must be less than -2"
+)
 ```
 
 Finally check we got the expected output.
 
 ```tut:book
-assert(result == expected.left)
+assert(result == expected.asLeft)
 ```
 
 Now let's see the other implementation strategy.
 
 ```tut:book:silent
 import cats.Semigroup
-import cats.data.Xor
 import cats.syntax.semigroup._ // |+|
 
 object check {
   sealed trait Check[E,A] {
-    import cats.data.Xor._     // Left and Right
-
     def and(that: Check[E,A]): Check[E,A] =
       And(this, that)
 
-    def apply(a: A)(implicit s: Semigroup[E]): E Xor A =
+    def apply(a: A)(implicit s: Semigroup[E]): Either[E, A] =
       this match {
         case Pure(f) => f(a)
         case And(l, r) =>
           (l(a), r(a)) match {
-            case (Left(e1),  Left(e2))  => (e1 |+| e2).left
-            case (Left(e),   Right(a))  => e.left
-            case (Right(a),  Left(e))   => e.left
-            case (Right(a1), Right(a2)) => a.right
+            case (Left(e1),  Left(e2))  => (e1 |+| e2).asLeft
+            case (Left(e),   Right(a))  => e.asLeft
+            case (Right(a),  Left(e))   => e.asLeft
+            case (Right(a1), Right(a2)) => a.asRight
           }
       }
   }
   final case class And[E,A](left: Check[E,A], right: Check[E,A]) extends Check[E,A]
-  final case class Pure[E,A](f: A => E Xor A) extends Check[E,A]
+  final case class Pure[E,A](f: A => Either[E, A]) extends Check[E,A]
 }
 ```
 
@@ -204,7 +199,7 @@ with the process that gives meaning to that computation
 We will use this implementation for the rest of this case study.
 </div>
 
-Using `E Xor A` for the output of our check is the wrong abstraction.
+Using `Either[E, A]` for the output of our check is the wrong abstraction.
 Why is this the case,
 and what kind of abstraction should we be using?
 Change your implementation accordingly.
@@ -212,7 +207,7 @@ Change your implementation accordingly.
 <div class="solution">
 The implementation of `apply` for `And`
 is using the pattern for applicative functors.
-`Xor` has an `Applicative` instance,
+`Either` has an `Applicative` instance,
 but it doesn't have the semantics we want.
 Namely, it does not accumulate errors but fails on the first error encountered.
 If we want to accumulate errors,

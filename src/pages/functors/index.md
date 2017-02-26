@@ -101,8 +101,8 @@ import scala.concurrent.duration._
 val future1 = Future("Hello world!")
 val future2 = future1.map(_.length)
 
-Await.result(future1, Duration.Inf)
-Await.result(future2, Duration.Inf)
+Await.result(future1, 1.second)
+Await.result(future2, 1.second)
 ```
 
 The general pattern looks like Figure [@fig:functors:future-type-chart]. Seem familiar?
@@ -159,20 +159,20 @@ The general type chart is shown in Figure [@fig:functors:functor-type-chart].
 
 ![Type chart: generalised functor map](src/pages/functors/generic-map.pdf+svg){#fig:functors:functor-type-chart}
 
-Intuitively, a functor `F[A]` represents 
+Intuitively, a functor `F[A]` represents
 some data (the `A` type) in a context (the `F` type).
-The `map` operation modifies the data within 
-but retains the structure of the surrounding context. 
+The `map` operation modifies the data within
+but retains the structure of the surrounding context.
 To ensure this is the case, the following laws must hold:
 
-*Identity*: calling `map` with the identity function 
+*Identity*: calling `map` with the identity function
 is the same as doing nothing:
 
 ```scala
 fa.map(a => a) == fa
 ```
 
-*Composition*: `mapping` with two functions `f` and `g` is 
+*Composition*: `mapping` with two functions `f` and `g` is
 the same as `mapping` with `f` and then `mapping` with `g`:
 
 ```scala

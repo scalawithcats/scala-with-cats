@@ -2,7 +2,7 @@
 
 In the previous section we looked at
 modelling fail fast error handling using monads,
-and the `Xor` monad in particular.
+and the `Either` monad in particular.
 
 In this section we're going to look at approaches for recovering from errors
 
@@ -127,7 +127,8 @@ def recover[A, M[_] : MonadPlus, B : Monoid](f: A => M[B]): (A => M[B]) = {
 ### Abstracting Over Optional Values
 
 Cats provides another abstraction, `Optional`,
-that abstracts over ... err ... abstractions that may or may not hold a value.
-(Think `Option`, `Either`, and `Xor`).
+that abstracts over ... err ... abstractions
+that may or may not hold a value.
+(Think `Option` and `Either`).
 This is more restrictive than `MonadPlus`
 but does allow more intricate error handling.

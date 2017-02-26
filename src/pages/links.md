@@ -27,8 +27,7 @@
 [cats.data.Validated]: http://typelevel.org/cats/api/cats/data/Validated.html
 [cats.data.Writer]: http://typelevel.org/cats/api/cats/data/#Writer[S,A]=cats.data.WriterT[cats.Eval,S,A]
 [cats.data.WriterT]: http://typelevel.org/cats/api/cats/data/WriterT.html
-[cats.data.Xor]: http://typelevel.org/cats/api/cats/data/Xor.html
-[cats.data.XorT]: http://typelevel.org/cats/api/cats/data/XorT.html
+[cats.data.EitherT]: http://typelevel.org/cats/api/cats/data/EitherT.html
 [cats.implicits]: http://typelevel.org/cats/api/cats/implicits$.html
 [cats.instances]: http://typelevel.org/cats/api/cats/instances/
 [cats.instances.all]: http://typelevel.org/cats/api/cats/instances/package$$all$
@@ -45,6 +44,7 @@
 [cats.syntax.applicative]: http://typelevel.org/cats/api/cats/syntax/package$$applicative$
 [cats.syntax.cartesian]: http://typelevel.org/cats/api/cats/syntax/package$$cartesian$
 [cats.syntax.contravariant]: http://typelevel.org/cats/api/cats/syntax/package$$contravariant$
+[cats.syntax.either]: http://typelevel.org/cats/api/cats/syntax/package$$either$
 [cats.syntax.eq]: http://typelevel.org/cats/api/cats/syntax/package$$eq$
 [cats.syntax.flatMap]: http://typelevel.org/cats/api/cats/syntax/package$$flatMap$
 [cats.syntax.foldable]: http://typelevel.org/cats/api/cats/syntax/package$$foldable$
@@ -54,7 +54,6 @@
 [cats.syntax.show]: http://typelevel.org/cats/api/cats/syntax/package$$show$
 [cats.syntax.traverse]: http://typelevel.org/cats/api/cats/syntax/package$$traverse$
 [cats.syntax.writer]: http://typelevel.org/cats/api/cats/syntax/package$$writer$
-[cats.syntax.xor]: http://typelevel.org/cats/api/cats/syntax/package$$xor$
 
 [scalaz.\/]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.$bslash$div
 [scalaz.Applicative]: http://docs.typelevel.org/api/scalaz/stable/7.0.4/doc/#scalaz.Applicative

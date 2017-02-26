@@ -38,7 +38,4 @@ Here are the major things missing from the book:
 
  2. Some case studies are still written using Scalaz.
 
- 3. Upgrade to Cats 1.0:
-
-      - Remove `Xor` and replace with `Either`
-      - And anything else that arises
+ 3. Upgrade to Cats 1.0!

@@ -4,11 +4,16 @@
 abstract over different *models of evaluation*.
 We typically hear of two such models: *eager* and *lazy*.
 `Eval` throws in a further distinction of
-*memoized* and *unmemoized* to create three models of evaluation:
+*memoized* and *unmemoized*
+to create three models of evaluation:
 
- - *now*---evaluated once immediately (equivalent to `val`);
- - *later*---evaluated once when the value is first needed (equivalent to `lazy val`);
- - *always*---evaluated every time the value is needed (equivalent to `def`).
+ - *now*---evaluated once immediately
+   (equivalent to `val`);
+ - *later*---evaluated once
+   when the value is first needed
+   (equivalent to `lazy val`);
+ - *always*---evaluated every time the value is needed
+   (equivalent to `def`).
 
 ### Eager, lazy, memoized, oh my!
 
@@ -48,10 +53,13 @@ y // first access
 y // second access
 ```
 
-Last but not least, `lazy vals` are lazy and memoized.
+Last but not least,
+`lazy vals` are lazy and memoized.
 The code to compute `z` below
-is not run until we access it for the first time (lazy).
-The result is then cached and re-used on subsequent accesses (memoized):
+is not run until we access it
+for the first time (lazy).
+The result is then cached
+and re-used on subsequent accesses (memoized):
 
 ```tut:book
 lazy val z = {
@@ -65,9 +73,11 @@ z // second access
 
 ### Eval's models of evaluation
 
-`Eval` has three subtypes: `Eval.Now`, `Eval.Later`, and `Eval.Always`.
+`Eval` has three subtypes:
+`Eval.Now`, `Eval.Later`, and `Eval.Always`.
 We construct these with three constructor methods,
-which create instances of the three classes and return them typed as `Eval`:
+which create instances of the three classes
+and return them typed as `Eval`:
 
 ```tut:book
 import cats.Eval
@@ -77,7 +87,8 @@ val later  = Eval.later(3 + 4)
 val always = Eval.always(5 + 6)
 ```
 
-We can extract the result of an `Eval` using its `value` method:
+We can extract the result of an `Eval`
+using its `value` method:
 
 ```tut:book
 now.value
@@ -113,8 +124,8 @@ y.value // first access
 y.value // second access
 ```
 
-Finally, `Eval.later` captures a lazy computation and memoizes the result,
-similar to a `lazy val`:
+Finally, `Eval.later` captures a lazy computation
+and memoizes the result, similar to a `lazy val`:
 
 ```tut:book
 val z = Eval.later {

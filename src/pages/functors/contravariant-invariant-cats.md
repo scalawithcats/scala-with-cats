@@ -38,7 +38,7 @@ that work with any of the three types of functor[^tupled].
 
 [^tupled]: One example is the `tupled` method
 provided by the cartesian builder syntax
-discussed in [Chapter 6](#applicatives).
+discussed in Chapter [@sec:applicatives].
 
 ### *Contravariant* in Cats
 

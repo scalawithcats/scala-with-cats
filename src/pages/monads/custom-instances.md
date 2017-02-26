@@ -6,12 +6,11 @@ by providing implementations of thee methods:
 Here is an implementation of `Monad` for `Option` as an example:
 
 ```tut:book:silent
-import cats.{Monad, RecursiveTailRecM}
-import cats.data.Xor
+import cats.Monad
 import scala.annotation.tailrec
 
 val optionMonad =
-  new Monad[Option] with RecursiveTailRecM[Option] {
+  new Monad[Option] {
     def flatMap[A, B](opt: Option[A])
         (fn: A => Option[B]): Option[B] =
       opt flatMap fn
@@ -37,8 +36,8 @@ by PureScript creator Phil Freeman.
 The method should recursively call itself
 as long as the result of `f` returns a `Right`.
 If we can make `tailRecM` tail recursive,
-we should do so and inherit from `RecursiveTailRecM`
-to allow Cats to perform additional internal optimisations.
+we should do so to allow Cats to perform
+additional internal optimisations.
 
 ### Exercise: Branching out Further with Monads
 
@@ -75,11 +74,10 @@ However, if we follow the types the solution falls out.
 Note that we can't make `tailRecM` tail recursive in this case
 because we have to recurse twice when processing a `Branch`.
 We implement the `tailRecM` method,
-but don't extend `RecursiveTailRecM`
 and we don't use the `tailrec` annotation:
 
 ```tut:book:silent
-import cats.{Monad, RecursiveTailRecM}
+import cats.Monad
 
 implicit val treeMonad = new Monad[Tree] {
   def pure[A](value: A): Tree[A] =

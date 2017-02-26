@@ -19,7 +19,7 @@ trait Traverse[F[_]] {
 ```
 
 Cats provides instances OF `Traverse`
-for `List`, `Vector`, `Stream`, `Option`, `Xor`,
+for `List`, `Vector`, `Stream`, `Option`, `Either`,
 and a variety of other types.
 We can summon instances as usual using `Traverse.apply` as usual
 and use the `traverse` and `sequence` methods
@@ -49,7 +49,7 @@ import cats.instances.list._
 ```tut:book
 Await.result(
   Traverse[List].traverse(hostnames)(getUptime),
-  Duration.Inf
+  1.second
 )
 ```
 
@@ -60,7 +60,7 @@ val numbers = List(Future(1), Future(2), Future(3))
 ```tut:book
 Await.result(
   Traverse[List].sequence(numbers),
-  Duration.Inf
+  1.second
 )
 ```
 
@@ -72,8 +72,8 @@ import cats.syntax.traverse._
 ```
 
 ```tut:book
-Await.result(hostnames.traverse(getUptime), Duration.Inf)
-Await.result(numbers.sequence, Duration.Inf)
+Await.result(hostnames.traverse(getUptime), 1.second)
+Await.result(numbers.sequence, 1.second)
 ```
 
 As you can see, this is much more compact and readable

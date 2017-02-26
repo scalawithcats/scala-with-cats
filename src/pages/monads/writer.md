@@ -13,6 +13,20 @@ can result in interleaved messages from different contexts.
 With `Writer` the log for the computation is tied to the result,
 so we can run concurrent computations without mixing logs.
 
+<div class="callout callout-info">
+*Cats data types*
+
+`Writer` is the first data type we've seen
+from the [`cats.data`] package.
+This package provides numerous data types:
+instances of various type classes
+that produce useful semantics.
+Other examples from `cats.data` include
+the monad transformers that we will see in the next chapter,
+and the [`Validated`][cats.data.Validated] type
+that we will see in Chapter [@sec:applicatives].
+</div>
+
 ### Creating and Unpacking Writers
 
 A `Writer[W, A]` carries two values:
@@ -206,11 +220,13 @@ which messages come from which computation.
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+```
 
+```scala
 Await.result(Future.sequence(Vector(
   Future(factorial(3)),
   Future(factorial(3))
-)), Duration.Inf)
+)), 5.seconds)
 // fact 0 1
 // fact 0 1
 // fact 1 1
@@ -219,17 +235,24 @@ Await.result(Future.sequence(Vector(
 // fact 2 2
 // fact 3 6
 // fact 3 6
-// res14: scala.collection.immutable.Vector[Int] = Vector(120, 120)
+// res14: scala.collection.immutable.Vector[Int] =
+//   Vector(120, 120)
 ```
 
-<!-- HACK: tut isn't capturing stdout from the threads above, so i gone done hacked it. -->
+<!--
+HACK: tut isn't capturing stdout from the threads above,
+so i gone done hacked it.
+-->
 
-Rewrite `factorial` so it captures the log messages in a `Writer`.
+Rewrite `factorial` so it captures
+the log messages in a `Writer`.
 Demonstrate that this allows us to
-reliably separate the logs for concurrent computations.
+reliably separate the logs
+for concurrent computations.
 
 <div class="solution">
-We'll start by defining a type alias for `Writer` so we can use it with `pure` syntax:
+We'll start by defining a type alias for `Writer`
+so we can use it with `pure` syntax:
 
 ```tut:book:silent
 import cats.data.Writer
@@ -252,7 +275,8 @@ import cats.syntax.writer._
 Vector("Message").tell
 ```
 
-Finally, we'll import the `Semigroup` instance for `Vector`.
+Finally, we'll import
+the `Semigroup` instance for `Vector`.
 We need this to `map` and `flatMap` over `Logged`:
 
 ```tut:book:silent
@@ -277,7 +301,8 @@ def factorial(n: Int): Logged[Int] =
   } yield ans
 ```
 
-Now, when we call `factorial`, we have to `run` the result
+Now, when we call `factorial`,
+we have to `run` the result
 to extract the log and our factorial:
 
 ```tut:book
@@ -285,13 +310,14 @@ val (log, result) = factorial(5).run
 ```
 
 We can run several `factorials` in parallel as follows,
-capturing their logs independently without fear of interleaving:
+capturing their logs independently
+without fear of interleaving:
 
 ```tut:book
 val Vector((logA, ansA), (logB, ansB)) =
   Await.result(Future.sequence(Vector(
     Future(factorial(5).run),
     Future(factorial(5).run)
-  )), Duration.Inf)
+  )), 5.seconds)
 ```
 </div>

@@ -82,10 +82,11 @@ We must be able to convert a `Predicate` to a function,
 as `Klesii` only works with functions.
 Somewhat more subtly,
 when we convert a `Predicate` to a function,
-it should have type `A => Xor[E,A]` rather than `A => Validated[E,A]`.
+it should have type `A => Either[E, A]`
+rather than `A => Validated[E,A]`.
 Why is this?
 Remember that in the implementation of `andThen`
-we converted the `Validated` to an `Xor`
+we converted the `Validated` to an `Either`
 so we could call its `flatMap` method.
 It's exactly the same in the `Kleisli`---it
 must be able to `flatMap` on the function's return type
@@ -93,7 +94,7 @@ so it can implement sequencing.
 
 In this design `Predicate` uses `Validated` internally---where
 it is joining together predicates using `and` and `or`---but
-exposes `Xor` externally so results can be sequenced.
+exposes `Either` externally so results can be sequenced.
 
 Implement this.
 
@@ -107,24 +108,24 @@ Here's the complete code.
 ```tut:book:silent
 object predicate {
   import cats.Semigroup
-  import cats.data.{Validated,Xor}
+  import cats.data.Validated
   import cats.syntax.semigroup._ // For |+|
   import cats.syntax.cartesian._ // For |@|
 
-  sealed trait Predicate[E,A] {
+  sealed trait Predicate[E, A] {
     import Predicate._
     import cats.data.Validated._ // For Valid and Invalid
 
-    def and(that: Predicate[E,A]): Predicate[E,A] =
+    def and(that: Predicate[E, A]): Predicate[E, A] =
       And(this, that)
 
-    def or(that: Predicate[E,A]): Predicate[E,A] =
+    def or(that: Predicate[E, A]): Predicate[E, A] =
       Or(this, that)
 
-    def run(implicit s: Semigroup[E]): A => Xor[E,A] =
-      (a: A) => this.apply(a).toXor
+    def run(implicit s: Semigroup[E]): A => Either[E, A] =
+      (a: A) => this.apply(a).toEither
 
-    def apply(a: A)(implicit s: Semigroup[E]): Validated[E,A] =
+    def apply(a: A)(implicit s: Semigroup[E]): Validated[E, A] =
       this match {
         case Pure(f) => f(a)
         case And(l, r) =>
@@ -157,23 +158,23 @@ Do this now. A few tips:
   allowed me to write code with fewer type declarations.
 
 ```scala
-type Result[A] = Xor[Error,A]
-type Check[A,B] = Kleisli[Result,A,B]
+type Result[A] = Either[Error, A]
+type Check[A, B] = Kleisli[Result, A, B]
 // This constructor helps with type inference
-def Check[A,B](f: A => Result[B]): Check[A,B] =
+def Check[A, B](f: A => Result[B]): Check[A, B] =
   Kleisli(f)
 ```
 
 <div class="solution">
 Working around limitations of type inference
 was annoying when writing this code,
-and remembering to convert between `Validated` and `Xor`
+and remembering to convert between `Validated` and `Either`
 was also a bit less mechanical than I'd like.
 I'm unhappy with the line
 
 ```scala
 ((longerThan(0).run.apply(name)).toValidated |@|
-   (longerThan(3) and contains('.')).run.apply(domain).toValidated).tupled.toXor
+   (longerThan(3) and contains('.')).run.apply(domain).toValidated).tupled.toEither
 ```
 
 This is more complex than it should be.
@@ -182,7 +183,7 @@ For now, here's the working code.
 
 ```tut:book:silent
 object example {
-  import cats.data.{Kleisli,NonEmptyList,OneAnd,Validated,Xor}
+  import cats.data.{Kleisli,NonEmptyList,OneAnd,Validated}
   import cats.instances.list._
   import cats.instances.function._
   import cats.syntax.cartesian._
@@ -193,10 +194,11 @@ object example {
   def error(s: String): NonEmptyList[String] =
     OneAnd(s, Nil)
 
-  type Result[A] = Xor[Error,A]
-  type Check[A,B] = Kleisli[Result,A,B]
-  // This constructor helps with type inference, which fails miserably in many cases below
-  def Check[A,B](f: A => Result[B]): Check[A,B] =
+  type Result[A] = Either[Error, A]
+  type Check[A,B] = Kleisli[Result, A, B]
+  // This constructor helps with type inference,
+  // which fails miserably in many cases below
+  def Check[A, B](f: A => Result[B]): Check[A, B] =
     Kleisli(f)
 
   // Utilities. We could implement all the checks using regular expressions but
@@ -226,18 +228,18 @@ object example {
   val checkEmailAddress: Check[String,String] =
     Check { (string: String) =>
       string split '@' match {
-        case Array(name, domain) => (name, domain).validNel[String].toXor
-        case other => "Must contain a single @ character".invalidNel[(String,String)].toXor
+        case Array(name, domain) => (name, domain).validNel[String].toEither
+        case other => "Must contain a single @ character".invalidNel[(String,String)].toEither
       }
     } andThen Check[(String,String),(String,String)] { case (name, domain) =>
         ((longerThan(0).run.apply(name)).toValidated |@|
-           (longerThan(3) and contains('.')).run.apply(domain).toValidated).tupled.toXor
+           (longerThan(3) and contains('.')).run.apply(domain).toValidated).tupled.toEither
     } map {
       case (name, domain) => s"${name}@${domain}"
     }
 
   final case class User(name: String, email: String)
-  def makeUser(name: String, email: String): Xor[Error,User] =
+  def makeUser(name: String, email: String): Either[Error, User] =
     (checkUsername.run(name) |@| checkEmailAddress.run(email)) map (User.apply _)
 
   def go() = {
@@ -280,7 +282,7 @@ Here's the complete code.
 ```tut:book:silent
 object predicate {
   import cats.{Monoidal,Semigroup}
-  import cats.data.{Validated,Xor}
+  import cats.data.Validated
   import cats.syntax.semigroup._ // For |+|
   import cats.syntax.cartesian._ // For |@|
 
@@ -296,8 +298,8 @@ object predicate {
     def zip[B](that: Predicate[E,B]): Predicate[E,(A,B)] =
       Zip(this, that)
 
-    def run(implicit s: Semigroup[E]): A => Xor[E,A] =
-      (a: A) => this.apply(a).toXor
+    def run(implicit s: Semigroup[E]): A => Either[E,A] =
+      (a: A) => this.apply(a).toEither
 
     def apply(a: A)(implicit s: Semigroup[E]): Validated[E,A]
   }
@@ -349,7 +351,7 @@ With this we implement the example quite clearly.
 
 ```tut:book:silent
 object example {
-  import cats.data.{Kleisli,NonEmptyList,OneAnd,Validated,Xor}
+  import cats.data.{Kleisli,NonEmptyList,OneAnd,Validated}
   import cats.instances.list._
   import cats.instances.function._
   import cats.syntax.cartesian._
@@ -360,7 +362,7 @@ object example {
   def error(s: String): NonEmptyList[String] =
     OneAnd(s, Nil)
 
-  type Result[A] = Xor[Error,A]
+  type Result[A] = Either[Error,A]
   type Check[A,B] = Kleisli[Result,A,B]
   // This constructor helps with type inference, which fails miserably in many cases below
   def Check[A,B](f: A => Result[B]): Check[A,B] =
@@ -393,8 +395,8 @@ object example {
   val checkEmailAddress: Check[String,String] =
     Check { (string: String) =>
       string split '@' match {
-        case Array(name, domain) => (name, domain).validNel[String].toXor
-        case other => "Must contain a single @ character".invalidNel[(String,String)].toXor
+        case Array(name, domain) => (name, domain).validNel[String].toEither
+        case other => "Must contain a single @ character".invalidNel[(String,String)].toEither
       }
     } andThen Check[(String,String),(String,String)] {
         (longerThan(0) zip (longerThan(3) and contains('.'))).run
@@ -403,7 +405,7 @@ object example {
     }
 
   final case class User(name: String, email: String)
-  def makeUser(name: String, email: String): Xor[Error,User] =
+  def makeUser(name: String, email: String): Either[Error,User] =
     (checkUsername.run(name) |@| checkEmailAddress.run(email)) map (User.apply _)
 
   def go() = {

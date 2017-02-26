@@ -105,12 +105,10 @@ an error handling monad and a suitable error type.
 Here's an example:
 
 ```tut:book:silent
-import cats.data.Xor
-
 case class JsonParserError(message: String)
 
 object Json {
-  def parse(json: String): JsonParserError Xor JsonValue =
+  def parse(json: String): Either[JsonParserError, JsonValue] =
     ???
 
   def stringify(value: JsonValue): String =
@@ -152,7 +150,8 @@ to model these processes.
 Each type class has a single method
 representing the corresponding operation.
 The `decode` operation can fail so
-we model the failure using `Xor` and a custom error type.
+we model the failure using `Either`
+and a custom error type.
 
 ```tut:book:silent
 case class JsonDecoderError(message: String)
@@ -162,7 +161,7 @@ trait JsonEncoder[A] {
 }
 
 trait JsonDecoder[A] {
-  def decode(value: JsonValue): JsonDecoderError Xor A
+  def decode(value: JsonValue): Either[JsonDecoderError, A]
 }
 ```
 
@@ -242,14 +241,15 @@ We define two helper methods here:
 and `fail` to make it easier to create `JsonDecoderErrors`:
 
 ```tut:book:silent
+import cats.instances.either._
 import cats.instances.list._
 import cats.syntax.traverse._
-import cats.syntax.xor._
+import cats.syntax.either._
 
 trait JsonDecoderInstances {
-  def pure[A](func: JsonValue => JsonDecoderError Xor A): JsonDecoder[A] =
+  def pure[A](func: JsonValue => Either[JsonDecoderError, A]): JsonDecoder[A] =
     new JsonDecoder[A] {
-      def decode(value: JsonValue): JsonDecoderError Xor A =
+      def decode(value: JsonValue): Either[JsonDecoderError, A] =
         func(value)
     }
 
@@ -259,44 +259,44 @@ trait JsonDecoderInstances {
   implicit val string: JsonDecoder[String] =
     pure {
       case JsonString(value) =>
-        value.right
+        value.asRight
 
       case other =>
-        fail(s"Could not decode $other").left
+        fail(s"Could not decode $other").asLeft
     }
 
   implicit val double: JsonDecoder[Double] =
     pure {
       case JsonNumber(value) =>
-        value.right
+        value.asRight
 
       case other =>
-        fail(s"Could not decode $other").left
+        fail(s"Could not decode $other").asLeft
     }
 
   implicit val int: JsonDecoder[Int] =
     pure {
       case JsonNumber(value) if math.abs(value - math.floor(value)) < 0.001 =>
-        value.toInt.right
+        value.toInt.asRight
 
       case other =>
-        fail(s"Expected an integer, received $other").left
+        fail(s"Expected an integer, received $other").asLeft
     }
 
   implicit val boolean: JsonDecoder[Boolean] =
     pure {
-      case JsonBoolean(value) => value.right
-      case other              => fail(s"Could not decode $other").left
+      case JsonBoolean(value) => value.asRight
+      case other              => fail(s"Could not decode $other").asLeft
     }
 
   implicit def option[A](implicit aDecoder: JsonDecoder[A]): JsonDecoder[Option[A]] =
     pure { json =>
       aDecoder.decode(json).fold(
         error => json match {
-                   case JsonNull => None.right
-                   case other    => fail(s"Could not decode $other").left
+                   case JsonNull => None.asRight
+                   case other    => fail(s"Could not decode $other").asLeft
                  },
-        value => Some(value).right
+        value => Some(value).asRight
       )
     }
 
@@ -306,7 +306,7 @@ trait JsonDecoderInstances {
         values.map(aDecoder.decode).sequenceU
 
       case other =>
-        fail(s"Could not decode $other").left
+        fail(s"Could not decode $other").asLeft
     }
 
   implicit def map[A](implicit aDecoder: JsonDecoder[A]): JsonDecoder[Map[String, A]] =
@@ -318,7 +318,7 @@ trait JsonDecoderInstances {
         }.map(_.toMap)
 
       case other =>
-        fail(s"Could not decode $other").left
+        fail(s"Could not decode $other").asLeft
     }
 }
 ```

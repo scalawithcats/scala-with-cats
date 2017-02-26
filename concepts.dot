@@ -29,7 +29,7 @@ digraph G {
   FlatMap -> Monad;
 
   Monad -> Id;
-  Monad -> Xor;
+  Monad -> Either;
   Monad -> Reader;
   Monad -> Writer;
   Monad -> State;

@@ -99,7 +99,7 @@ Await.result(
   fm.flatMap(fm.pure(1)) { x =>
     fm.pure(x + 2)
   },
-  Duration.Inf
+  1.second
 )
 ```
 
@@ -111,9 +111,12 @@ We'll familiarise ourselves with the most important of these in a moment.
 
 The syntax for monads comes from three places:
 
- - [`cats.syntax.flatMap`][cats.syntax.flatMap] provides syntax for `flatMap`;
- - [`cats.syntax.functor`][cats.syntax.functor] provides syntax for `map`;
- - [`cats.syntax.applicative`][cats.syntax.applicative] provides syntax for `pure`.
+ - [`cats.syntax.flatMap`][cats.syntax.flatMap]
+   provides syntax for `flatMap`;
+ - [`cats.syntax.functor`][cats.syntax.functor]
+   provides syntax for `map`;
+ - [`cats.syntax.applicative`][cats.syntax.applicative]
+   provides syntax for `pure`.
 
 In practice it's often easier to import everything in one go
 from [`cats.implicits`][cats.implicits].

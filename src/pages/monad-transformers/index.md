@@ -12,26 +12,22 @@ We want to look up a user record.
 The user may or may not be present, so we return an `Option[User]`.
 Our communication with the database could fail for many reasons
 (network issues, authentication problems, database problems, and so on),
-so this result is wrapped up in an `Xor`,
-giving us a final result of `Xor[Error, Option[User]]`.
+so this result is wrapped up in an `Either`,
+giving us a final result of `Either[Error, Option[User]]`.
 
 To use this value we must nest `flatMap` calls
 (or equivalently, for-comprehensions):
 
 ```tut:invisible
-import cats.data.Xor
-
 type Error = String
 
 final case class User(id: Long, name: String)
 
-def lookupUser(id: Long): Xor[Error, Option[User]] = ???
+def lookupUser(id: Long): Either[Error, Option[User]] = ???
 ```
 
 ```tut:book:silent
-import cats.data.Xor
-
-def lookupUserName(id: Long): Xor[Error, Option[String]] =
+def lookupUserName(id: Long): Either[Error, Option[String]] =
   for {
     optUser <- lookupUser(id)
   } yield {
@@ -79,7 +75,7 @@ With this transformed monad we can avoid nested calls to `flatMap`.
 ## A Transformative Example
 
 Cats provides a library of such transformers:
-`XorT` for composing `Xor` with other monads,
+`EitherT` for composing `Either` with other monads,
 `OptionT` for composing `Option`,
 and so on.
 Here's an example that uses `OptionT`
@@ -192,7 +188,7 @@ by combining a monad transformer with the `Id` monad.
 Concretely, some of the available instances are:
 
 - [`cats.data.OptionT`][cats.data.OptionT] for `Option`;
-- [`cats.data.XorT`][cats.data.XorT] for [`Xor`][cats.data.Xor];
+- [`cats.data.EitherT`][cats.data.EitherT] for `Either`;
 - [`cats.data.ReaderT`][cats.data.ReaderT],
   [`cats.data.WriterT`][cats.data.WriterT], and
   [`cats.data.StateT`][cats.data.StateT];
@@ -232,20 +228,22 @@ In other words, we build monad stacks from the inside out.
 
 Many monads and all transformers have at least two type parameters,
 so we often have to define type aliases for intermediate stages.
-For example, suppose we want to wrap `Xor` around `Option`.
+For example, suppose we want to wrap `Either` around `Option`.
 `Option` is the innermost type
 so we want to use the `OptionT` monad transformer.
-We need to use `Xor` as the first type parameter.
-However, `Xor` itself has two type parameters
+We need to use `Either` as the first type parameter.
+However, `Either` itself has two type parameters
 and monads only have one.
 We need a *type alias* to make everything the correct shape:
 
 ```tut:book:silent
+import cats.instances.either._
+
 type Error = String
 
-// Create a type alias, ErrorOr, to convert Xor to
+// Create a type alias, ErrorOr, to convert Either to
 // a type constructor with a single parameter:
-type ErrorOr[A] = Error Xor A
+type ErrorOr[A] = Either[Error, A]
 
 // Use ErrorOr as a type parameter to OptionT:
 type ErrorOptionOr[A] = OptionT[ErrorOr, A]
@@ -262,33 +260,33 @@ val result2 = result1.flatMap(x => (x + 1).pure[ErrorOptionOr])
 ```
 
 Now let's add another monad into our stack.
-Let's create a `Future` of an `Xor` of `Option`.
+Let's create a `Future` of an `Either` of `Option`.
 Once again we build this from the inside out
-with an `OptionT` of a `XorT` of `Future`.
+with an `OptionT` of a `EitherT` of `Future`.
 However, we can't define this in one line
-because `XorT` has three type parameters:
+because `EitherT` has three type parameters:
 
 ```tut:book:silent
 import scala.concurrent.Future
-import cats.data.XorT
+import cats.data.EitherT
 ```
 
 ```tut:book:fail
-type FutureXorOption[A] = OptionT[XorT, A]
+type FutureEitherOption[A] = OptionT[EitherT, A]
 ```
 
 As before, we solve the problem by
 creating a type alias with a single parameter.
-This time we create an alias for `XorT` that
+This time we create an alias for `EitherT` that
 fixes `Future` and `Error` and allows `A` to vary:
 
 ```tut:book:silent
 import scala.concurrent.Future
-import cats.data.{XorT, OptionT}
+import cats.data.{EitherT, OptionT}
 
 type Error = String
-type FutureXor[A] = XorT[Future, String, A]
-type FutureXorOption[A] = OptionT[FutureXor, A]
+type FutureEither[A] = EitherT[Future, String, A]
+type FutureEitherOption[A] = OptionT[FutureEither, A]
 ```
 
 Our mammoth stack composes not two but *three* monads.
@@ -300,10 +298,10 @@ import cats.instances.future._
 ```
 
 ```tut:book
-val answer: FutureXorOption[Int] =
+val answer: FutureEitherOption[Int] =
   for {
-    a <- 10.pure[FutureXorOption]
-    b <- 32.pure[FutureXorOption]
+    a <- 10.pure[FutureEitherOption]
+    b <- 32.pure[FutureEitherOption]
   } yield a + b
 ```
 
@@ -320,7 +318,7 @@ For example:
 ```tut:book
 import cats.instances.option._
 
-123.pure[XorT[Option, String, ?]]
+123.pure[EitherT[Option, String, ?]]
 ```
 
 Kind Projector can't simplify all type declarations down to a single line,
@@ -336,7 +334,10 @@ We can also create instances from untransformed stacks
 using the monad transformer's `apply` method:
 
 ```tut:book:silent
-type ErrorOr[A] = Xor[String, A]
+import cats.syntax.either._ // for foo.asRight
+import cats.syntax.option._ // for foo.some
+
+type ErrorOr[A]       = Either[String, A]
 type ErrorOrOption[A] = OptionT[ErrorOr, A]
 ```
 
@@ -346,7 +347,8 @@ val stack1 = 123.pure[ErrorOrOption]
 
 // Create using apply:
 val stack2 = OptionT[ErrorOr, Int](
-  Xor.right[String, Option[Int]](Some(123)))
+  123.some.asRight[String]
+)
 ```
 
 Once we've finished with a monad transformer stack,
@@ -364,10 +366,10 @@ so we may need more than one call to completely unpack a large stack:
 
 ```tut:book:silent
 import cats.instances.vector._
-import cats.data.{Writer, XorT, OptionT}
+import cats.data.{Writer, EitherT, OptionT}
 
 type Logged[A] = Writer[Vector[String], A]
-type LoggedFallable[A] = XorT[Logged, String, A]
+type LoggedFallable[A] = EitherT[Logged, String, A]
 type LoggedFallableOption[A] = OptionT[LoggedFallable, A]
 ```
 
@@ -379,13 +381,15 @@ val completelyUnpacked = partiallyPacked.value
 
 ### Usage Patterns
 
-Widespread use of monad tranformers sometimes causes inconvenience
+Widespread use of monad tranformers is sometimes difficult
 because they fuse monads together in predefined ways.
 Without careful thought,
 we can end up having to unpack and repack monads
-in different configurations to operate on them in different contexts.
+in different configurations
+to operate on them in different contexts.
 
-One way of avoiding this is to use monad transformers as local "glue code".
+One way of avoiding this is
+to use monad transformers as local "glue code".
 Expose untransformed stacks at module boundaries,
 transform them to operate on them locally,
 and untransform them before passing them on.
@@ -432,10 +436,13 @@ val result2 = addNumbers("1", "a", "3")
 ### Default Instances
 
 Many monads in Cats are defined
-using the corresponding transformer and the `Id` monad.
-This is reassuring as it confirms that the APIs for these monads
+using the corresponding transformer
+and the `Id` monad.
+This is reassuring as it confirms
+that the APIs for these monads
 and transformers are identical.
-`Reader`, `Writer`, and `State` are all defined in this way:
+`Reader`, `Writer`, and `State`
+are all defined in this way:
 
 ```scala
 type Reader[E, A] = ReaderT[Id, E, A] // = Kleisli[Id, E, A]
@@ -444,18 +451,22 @@ type State[S, A]  = StateT[Id, S, A]
 ```
 
 In other cases monad transformers
-have separate definitions to their corresponding monads.
+have separate definitions
+to their corresponding monads.
 In these cases,
-the methods of the transformer tend to mirror the methods on the monad.
+the methods of the transformer tend
+to mirror the methods on the monad.
 For example, `OptionT` defines `getOrElse`,
-and `XorT` defines `fold`, `bimap`, `swap`, and other useful methods.
+and `EitherT` defines `fold`, `bimap`, `swap`,
+and other useful methods.
 
 ## Exercise: Monads: Transform and Roll Out
 
 The Autobots, well known robots in disguise,
 frequently send messages during battle
 requesting the power levels of their team mates.
-This helps them coordinate strategies and launch devastating attacks.
+This helps them coordinate strategies
+and launch devastating attacks.
 The message sending method looks like this:
 
 ```scala
@@ -469,7 +480,7 @@ due to malfunctioning satellites or Decepticon interception.
 `Responses` are therefore represented as a stack of monads:
 
 ```tut:book
-type Response[A] = Future[Xor[String, A]]
+type Response[A] = Future[Either[String, A]]
 ```
 
 [^transformers]: It is a well known fact
@@ -482,14 +493,16 @@ Help him by rewriting `Response` using a monad transformer.
 
 <div class="solution">
 This is a relatively simple combination.
-We want `Future` on the outside and `Xor` on the inside,
-so we build from the inside out using an `XorT` of `Future`:
+We want `Future` on the outside
+and `Either` on the inside,
+so we build from the inside out
+using an `EitherT` of `Future`:
 
 ```tut:book:silent
-import cats.data.XorT
+import cats.data.EitherT
 import scala.concurrent.Future
 
-type Response[A] = XorT[Future, String, A]
+type Response[A] = EitherT[Future, String, A]
 ```
 </div>
 
@@ -506,8 +519,9 @@ val powerLevels = Map(
 ```
 
 If an Autobot isn't in the `powerLevels` map,
-return an error message reporting that the host was unreachable.
-Include the name` in the message for good effect.
+return an error message reporting
+that they were unreachable.
+Include the `name` in the message for good effect.
 
 <div class="solution">
 ```tut:book:silent
@@ -515,12 +529,12 @@ import cats.instances.future._
 import cats.syntax.flatMap._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-type Response[A] = XorT[Future, String, A]
+type Response[A] = EitherT[Future, String, A]
 
 def getPowerLevel(ally: String): Response[Int] = {
   powerLevels.get(ally) match {
-    case Some(avg) => XorT.right(Future(avg))
-    case None      => XorT.left(Future(s"$ally unreachable"))
+    case Some(avg) => EitherT.right(Future(avg))
+    case None      => EitherT.left(Future(s"$ally unreachable"))
   }
 }
 ```
@@ -570,7 +584,7 @@ def tacticalReport(
 
 <div class="solution">
 We use the `value` method to unpack the monad stack
-and `Await` and `fold` to unpack the `Future` and `Xor`:
+and `Await` and `fold` to unpack the `Future` and `Either`:
 
 ```tut:book:silent
 import scala.concurrent.Await
@@ -583,13 +597,13 @@ def tacticalReport(
 ): String =
   Await.result(
     canSpecialMove(ally1, ally2).value,
-    Duration.Inf
+    1.second
   ) match {
-    case Xor.Left(msg) =>
+    case Left(msg) =>
       s"Comms error: $msg"
-    case Xor.Right(true)  =>
+    case Right(true)  =>
       s"$ally1 and $ally2 are ready to roll out!"
-    case Xor.Right(false) =>
+    case Right(false) =>
       s"$ally1 and $ally2 need a recharge."
   }
 ```
