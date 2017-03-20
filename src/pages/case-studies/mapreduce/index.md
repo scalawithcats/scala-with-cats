@@ -106,7 +106,7 @@ Here's a basic type signature.
 You will have to add implicit parameters or context bounds
 to complete the type signature:
 
-```todotut:book:silent
+```tut:book:silent
 /** Single-threaded map reduce function.
   * Maps `func` over `values`
   * and reduces using a `Monoid[B]`.
@@ -117,7 +117,7 @@ def foldMap[A, B](values: Iterable[A])(func: A => B): B =
 
 Here's some sample output:
 
-```todotut:book:invisible
+```tut:book:invisible
 import cats.Monoid
 import cats.syntax.semigroup._
 
@@ -125,18 +125,18 @@ def foldMap[A, B: Monoid](values: Iterable[A])(func: A => B): B =
   values.foldLeft(Monoid[B].empty)(_ |+| func(_))
 ```
 
-```todotut:book:silent
+```tut:book:silent
 import cats.instances.int._
 ```
 
-```todotut:book
+```tut:book
 foldMap(List(1, 2, 3))(identity)
 
-```todotut:book:silent
+```tut:book:silent
 import cats.instances.string._
 ```
 
-```todotut:book
+```tut:book
 // Mapping to a String uses the concatenation monoid:
 foldMap(List(1, 2, 3))(_.toString + "! ")
 
@@ -149,7 +149,7 @@ We have to modify the type signature to accept a `Monoid` for `B`.
 With that change we can use
 the `Monoid` `empty` and `|+|` syntax [described in the monoids chapter](#monoid-syntax):
 
-```todotut:book:silent
+```tut:book:silent
 import cats.Monoid
 import cats.instances.int._
 import cats.instances.string._
@@ -161,7 +161,7 @@ def foldMap[A, B : Monoid](values: Iterable[A])(func: A => B = (a: A) => a): B =
 
 We can make a slight alteration to this code to do everything in one step:
 
-```todotut:book:silent
+```tut:book:silent
 def foldMap[A, B : Monoid](values: Iterable[A])(func: A => B = (a: A) => a): B =
   values.foldLeft(Monoid[B].empty)(_ |+| func(_))
 ```
@@ -190,12 +190,12 @@ Before we begin we need to introduce some new building blocks:
 
 To execute an operation in parallel we can construct a `Future` as follows:
 
-```todotut:book:silent
+```tut:book:silent
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 ```
 
-```todotut:book
+```tut:book
 val future: Future[String] =
   Future { "Construct this string in parallel!" }
 ```
@@ -207,7 +207,7 @@ but we can use any choice in practice.
 
 We operate on the value in a `Future` using the familiar `map` and `flatMap` methods:
 
-```todotut:book
+```tut:book
 val future2 = future.map(_.length)
 
 val future3 =
@@ -217,38 +217,38 @@ val future3 =
 If we have a `List[Future[A]]` we can convert it
 to a `Future[List[A]]` using the method `Future.sequence`:
 
-```todotut:book
+```tut:book
 Future.sequence(List(Future(1), Future(2), Future(3)))
 ```
 
 or an instance of `Traverse`:
 
-```todotut:book:silent
+```tut:book:silent
 import cats.instances.future._ // Applicative for Future
 import cats.instances.list._   // Traverse for List
 import cats.syntax.traverse._  // foo.sequence syntax
 ```
 
-```todotut:book
+```tut:book
 List(Future(1), Future(2), Future(3)).sequence
 ```
 
 Finally, we can use `Await.result`
 to block on a `Future` till a result is available.
 
-```todotut:book:silent
+```tut:book:silent
 import scala.concurrent._
 import scala.concurrent.duration._
 ```
 
-```todotut:book
+```tut:book
 Await.result(Future(1), 1.second) // wait forever until a result arrives
 ```
 
 There are also `Monad` and `Monoid` implementations for `Future`
 available from `cats.instances.future`:
 
-```todotut:book:silent
+```tut:book:silent
 import cats.instances.future._
 ```
 
@@ -259,14 +259,14 @@ We can partition a sequence
 using the `grouped` method.
 We'll use this to split off chunks of work for each CPU:
 
-```todotut:book
+```tut:book
 List(1, 2, 3, 4).grouped(2).toList
 ```
 
 We can query the number of available CPUs on our machine
 using this API call to the Java standard library:
 
-```todotut:book
+```tut:book
 Runtime.getRuntime.availableProcessors
 ```
 
@@ -275,7 +275,7 @@ Runtime.getRuntime.availableProcessors
 Implement a parallel version of `foldMap` called `foldMapP`
 using the tools described above:
 
-```todotut:book:silent
+```tut:book:silent
 def foldMapP[A, B : Monoid]
     (values: Iterable[A])
     (func: A => B = (a: A) => a): Future[B] = ???
@@ -288,7 +288,7 @@ and then `foldMap` cross the futures.
 <div class="solution">
 The annotated solution is below:
 
-```todotut:book:silent
+```tut:book:silent
 import scala.concurrent.duration.Duration
 
 def foldMapP[A, B: Monoid]
@@ -317,7 +317,7 @@ def foldMapP[A, B: Monoid]
 }
 ```
 
-```todotut:book
+```tut:book
 Await.result(foldMapP(1 to 1000000)(), 1.second)
 ```
 </div>
@@ -334,14 +334,14 @@ called `foldMapM` that allows this.
 Here's the basic type signature---add
 implicit parameters and context bounds as necessary to make your code compile:
 
-```todotut:book:silent
+```tut:book:silent
 import scala.language.higherKinds
 
 def foldMapM[A, M[_], B](iter: Iterable[A])(f: A => M[B]): M[B] =
   ???
 ```
 
-```todotut:book:invisible
+```tut:book:invisible
 import cats.Monad
 import cats.syntax.applicative._
 import cats.syntax.flatMap._
@@ -360,7 +360,7 @@ The focus here is on the monadic component
 so base your code on `foldMap` for simplicity.
 Here are some examples of use:
 
-```todotut:book:silent
+```tut:book:silent
 import cats.instances.int._
 import cats.instances.option._
 import cats.instances.list._
@@ -368,7 +368,7 @@ import cats.instances.list._
 val seq = List(1, 2, 3)
 ```
 
-```todotut:book
+```tut:book
 foldMapM(seq)(a => Option(a))
 
 foldMapM(seq)(a => List(a))
@@ -384,7 +384,7 @@ and bring in the `Monoid` for `M`.
 Then we tweak the method implementation
 to `flatMap` over the monad and call `|+|`:
 
-```todotut:book:silent
+```tut:book:silent
 import cats.Monad
 import cats.syntax.applicative._
 import cats.syntax.flatMap._
@@ -415,7 +415,7 @@ foldMapM(seq)
 We have `Monad[B]` in scope in our method header,
 so all we need to do is use the `point` syntax:
 
-```todotut:book:silent
+```tut:book:silent
 import cats.Id
 import cats.syntax.flatMap._
 import cats.syntax.functor._
@@ -435,7 +435,7 @@ def foldMapM[A, M[_] : Monad, B: Monoid]
 It also allows us to implement `foldMap` in terms of `foldMapM`. Try it!
 
 <div class="solution">
-```todotut:book:silent
+```tut:book:silent
 def foldMap[A, B : Monoid](iter: Iterable[A])(f: A => B = (a: A) => a): B =
   foldMapM[A, Id, B](iter) { a => f(a).pure[Id] }
 ```
@@ -451,12 +451,12 @@ to a type constructor with one parameter.
 We'll use `Either.catchOnly` to read input,
 so define your alias using an appropriate error type:
 
-```todotut:book:silent
+```tut:book:silent
 import cats.instances.either._
 import cats.syntax.either._
 ```
 
-```todotut:book
+```tut:book
 Either.catchOnly[NumberFormatException]("Cat".toInt)
 
 Either.catchOnly[NumberFormatException]("1".toInt)
@@ -470,7 +470,7 @@ see what results you get:
 The `catchOnly` approach gives us a `Either[NumberFormatException, Int]`
 so we'll go with `NumberFormatException` as our error type:
 
-```todotut:book:silent
+```tut:book:silent
 type ParseResult[A] = Either[NumberFormatException, A]
 ```
 
@@ -481,7 +481,7 @@ until a `NumberFormatException` is encountered.
 At that point the `Monad` for `Either` fails fast,
 returning the failure without processing the rest of the list:
 
-```todotut:book
+```tut:book
 foldMapM[String, ParseResult, Int](List("1", "2", "3")) { str =>
   Either.catchOnly[NumberFormatException](str.toInt)
 }
