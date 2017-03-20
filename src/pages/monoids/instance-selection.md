@@ -111,7 +111,7 @@ For example, how do we select the monoid for integer multiplication
 instead of the monoid for integer addition?
 
 Cats currently has no mechanism for selecting alternative instances,
-though this is may change in the future.
+though this may change in the future.
 
 We can always define or import a type class instance into the local scope.
 This will take precedence

@@ -198,7 +198,7 @@ All of these monad transformers follow the same convention:
 the first type parameter specifies the monad that is wrapped around
 the monad implied by the transformer.
 The remaining type parameters are the types
-we're used to from the corresponding monads.
+we've used to form the corresponding monads.
 
 <div class="callout callout-info">
   *Kleisli Arrows*
@@ -262,7 +262,7 @@ val result2 = result1.flatMap(x => (x + 1).pure[ErrorOptionOr])
 Now let's add another monad into our stack.
 Let's create a `Future` of an `Either` of `Option`.
 Once again we build this from the inside out
-with an `OptionT` of a `EitherT` of `Future`.
+with an `OptionT` of an `EitherT` of `Future`.
 However, we can't define this in one line
 because `EitherT` has three type parameters:
 

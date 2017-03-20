@@ -1,7 +1,7 @@
 ## Applications of Monoids
 
-We now know what a moniod is---an abstraction of the concept of adding or combining---but where is it useful? 
-Here a few big ideas where monoids play a major role. 
+We now know what a moniod is---an abstraction of the concept of adding or combining---but where is it useful?
+Here are a few big ideas where monoids play a major role.
 These are explored in more detail in case studies later in the book.
 
 ### Big Data
@@ -31,7 +31,7 @@ We explore this idea further in the Map-Reduce case study.
 ### Distributed Systems
 
 In a distributed system,
-different machines may end up with a different views of data.
+different machines may end up with different views of data.
 For example,
 one machine may receive an update that other machines did not receive.
 We would like to reconcile these different views,
@@ -40,7 +40,7 @@ This is called *eventual consistency*.
 
 A particular class of data types support this reconciliation.
 These data types are called commutative replicated data types (CRDTs).
-The key operation is the ability to merge two data instances, 
+The key operation is the ability to merge two data instances,
 with a result that captures all the information in both instances.
 This operation relies on having a monoid instance.
 We explore this idea further in the CRDT case study.

@@ -55,7 +55,7 @@ we can zoom out and see a a whole family of type classes
 that concern themselves with sequencing computations in different ways.
 Figure [@fig:applicatives:hierarchy] shows the big picture.
 
-![Monad type class hierarchy](src/pages/applicatives/hierarchy.png) {#fig:applicatives:hierarchy}
+![Monad type class hierarchy](src/pages/applicatives/hierarchy.png){#fig:applicatives:hierarchy}
 
 Each type class in the hierarchy
 represents a particular set of sequencing semantics.
@@ -107,7 +107,7 @@ Sometimes we want thai food, and burritos just won't satisfy.
 Whereas monads impose a strict *sequencing* on the computations they model,
 applicatives and cartesians impose no such restriction.
 This puts them in another sweet spot in the hierarchy.
-We can use them to represent classes parallel / independent computations
+We can use them to represent classes of parallel / independent computations
 that monads cannot.
 
 We choose our semantics by choosing our data structures.

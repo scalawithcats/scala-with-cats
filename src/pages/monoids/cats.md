@@ -35,7 +35,7 @@ The Cats Kernel type classes covered in this book are
 and [`Monoid`][cats.kernel.Monoid].
 All the other type classes we cover
 are part of the main Cats project and
-are defined directly the [`cats`][cats.package] package.
+are defined directly in the [`cats`][cats.package] package.
 </div>
 
 ### Obtaining Instances

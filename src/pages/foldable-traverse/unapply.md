@@ -9,7 +9,7 @@ For example, suppose we have a `List` of `Eithers`:
 import cats.instances.list._
 import cats.syntax.traverse._
 
-val xors: List[Either[String, String]] = List(
+val eithers: List[Either[String, String]] = List(
   Right("Wow!"),
   Right("Such cool!")
 )
@@ -18,7 +18,7 @@ val xors: List[Either[String, String]] = List(
 When we call `sequence` we get a compile error:
 
 ```tut:book:fail
-xors.sequence
+eithers.sequence
 ```
 
 The reason for this failure is that
@@ -39,7 +39,7 @@ trait Traverse[F[_]]
 }
 ```
 
-To compile a call like `xors.sequence`,
+To compile a call like `eithers.sequence`,
 the compiler has to find values
 for the type parameters `G` and `B`.
 The types it is attempting to unify them with are
@@ -78,7 +78,7 @@ import cats.instances.either._
 ```
 
 ```tut:book
-xors.sequenceU
+eithers.sequenceU
 ```
 
 The inner workings of `Unapply`

@@ -23,9 +23,10 @@ but we can't call it passing in plain values:
 sumSquare(3, 4)
 ```
 
-This would be incredibly useful because
-it would allow us to abstract over monadic and non-monadic code.
-Fortunately, Cats provides the `Id` type to bridge this gap:
+It would be incredibly useful if we could use `sumSquare`
+with a combination of monadic and non-monadic parameters.
+This would allow us to abstract over monadic and non-monadic code.
+Fortunately, Cats provides the `Id` type to bridge the gap:
 
 ```tut:book:silent
 import cats.Id
