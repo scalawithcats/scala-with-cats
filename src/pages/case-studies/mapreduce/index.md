@@ -1,5 +1,34 @@
 # Case Study: Pygmy Hadoop {#map-reduce}
 
+TODO:
+
+- talk about map-reduce -- it's just foldMap
+- introduce/reimplement foldMap
+- implement parallelFoldMap to mimic map-reduce
+  - mention that we're specifically imitating multi-machine
+    map-reduce where we need to split data between machines
+    in large blocks
+  - implement in terms of our foldMap first
+  - then implement in terms of Cats' foldMap
+  - mention that futures are a dumb monad
+    - reimplement parallelFoldMap as a direct call to Cats' foldMapM
+- talk about traverse
+- summary
+  - real-world map-reduce has communication costs
+  - multi-cpu map-reduce doesn't have communication costs
+  - parallelFoldMap mimics multi-machine
+  - our final version of parallelFoldMap (based on traverse) is far simpler
+  - talk about substitution and the things it doesn't model:
+    - performance
+    - parallelism
+    - side-effects (future starts immediately)
+    - etc...
+
+TODO:
+
+- drop the current foldMapM stuff
+- maybe move it elsewhere
+
 In this case study we're going to implement
 a simple-but-powerful parallel processing framework
 using `Monoids`, `Functors`, and a host of other goodies.
@@ -94,6 +123,10 @@ that are applicable for processing large data sets.
 
 ## Implementing *foldMap*
 
+TODO: We need to "re-introduce" foldMap here:
+"We saw foldMap in X but we didn't look in detail.
+Let's reimplement it for funs..."
+
 Start by implementing a method called `foldMap` that:
 
  - accepts a sequence parameter of type `Iterable[A]`
@@ -168,6 +201,10 @@ def foldMap[A, B : Monoid](values: Iterable[A])(func: A => B = (a: A) => a): B =
 </div>
 
 ## Parallelising *foldMap*
+
+TODO: Rename "foldMapP" to "parallelFoldMap"...
+make sure we say the implementation is designed
+to mirror the way multi-CPU map-reduce works.
 
 To run the fold in parallel we need to change our implementation strategy.
 A simple strategy is to allocate as many threads as we have CPUs
@@ -323,6 +360,9 @@ Await.result(foldMapP(1 to 1000000)(), 1.second)
 </div>
 
 ## Monadic *foldMap*
+
+TODO: Emphasise the change-of-tack slightly.
+We're going from parallel back to non-parallel here.
 
 It's useful to allow the user of `foldMap`
 to perform monadic actions within their mapping function.
