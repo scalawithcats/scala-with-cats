@@ -1,4 +1,4 @@
-## *Traverse*
+## *Traverse* {#sec:traverse}
 
 `foldLeft` and `foldRight` are flexible iteration methods
 but they require us to do a lot of work

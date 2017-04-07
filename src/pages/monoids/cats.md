@@ -109,7 +109,7 @@ Monoid[Option[Int]].combine(a, b)
 Refer back to [Chapter 1](#importing-default-instances)
 for a more comprehensive list of imports.
 
-### *Monoid* Syntax {#monoid-syntax}
+### *Monoid* Syntax {#sec:monoid-syntax}
 
 Cats provides syntax for the `combine` method
 in the form of the `|+|` operator.
