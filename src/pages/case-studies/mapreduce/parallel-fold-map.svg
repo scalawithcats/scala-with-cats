@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="1388px" height="1508px" viewBox="0 0 1388 1508" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="1420px" height="1640px" viewBox="0 0 1420 1640" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
-    <title>map-reduce</title>
+    <title>parallel-fold-map</title>
     <desc>Created with Sketch.</desc>
     <defs>
         <rect id="path-1" x="0" y="0" width="100" height="100"></rect>
@@ -457,8 +457,9 @@
         </mask>
     </defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="map-reduce" transform="translate(4.000000, -9.000000)">
-            <g id="final-B" transform="translate(640.000000, 1304.000000)">
+        <g id="parallel-fold-map">
+            <rect id="Rectangle-3" fill="#FFFFFF" x="0" y="0" width="1420" height="1640"></rect>
+            <g id="final-B" transform="translate(660.000000, 1360.000000)">
                 <g id="Rectangle-Copy-4">
                     <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
                     <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
@@ -466,7 +467,7 @@
                 </g>
                 <use id="Star-1-Copy-14" stroke="#000000" mask="url(#mask-4)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-3"></use>
             </g>
-            <g id="reduced-batches-of-B" transform="translate(100.000000, 1004.000000)">
+            <g id="reduced-batches-of-B" transform="translate(120.000000, 1060.000000)">
                 <g id="Rectangle">
                     <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-5"></use>
                     <use fill="black" fill-opacity="1" filter="url(#filter-6)" xlink:href="#path-5"></use>
@@ -492,7 +493,7 @@
                 <use id="Star-1-Copy-15" stroke="#000000" mask="url(#mask-18)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-17"></use>
                 <use id="Star-1-Copy-16" stroke="#000000" mask="url(#mask-20)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-19"></use>
             </g>
-            <g id="batches-of-B" transform="translate(0.000000, 704.000000)">
+            <g id="batches-of-B" transform="translate(20.000000, 760.000000)">
                 <g id="Group-3">
                     <g id="Rectangle">
                         <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-21"></use>
@@ -572,7 +573,7 @@
                 <use id="Star-1-Copy-9" stroke="#000000" mask="url(#mask-66)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-65"></use>
                 <use id="Star-1-Copy-12" stroke="#000000" mask="url(#mask-68)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-67"></use>
             </g>
-            <g id="batches-of-A" transform="translate(0.000000, 404.000000)">
+            <g id="batches-of-A" transform="translate(20.000000, 460.000000)">
                 <g id="Group-2">
                     <g id="Rectangle">
                         <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-69"></use>
@@ -652,7 +653,7 @@
                 <use id="Oval-1-Copy-9" stroke="#000000" mask="url(#mask-114)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-113"></use>
                 <use id="Oval-1-Copy-10" stroke="#000000" mask="url(#mask-116)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-115"></use>
             </g>
-            <g id="initial-A" transform="translate(90.000000, 104.000000)">
+            <g id="initial-A" transform="translate(110.000000, 160.000000)">
                 <g id="Rectangle">
                     <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-117"></use>
                     <use fill="black" fill-opacity="1" filter="url(#filter-118)" xlink:href="#path-117"></use>
@@ -731,9 +732,9 @@
                 <use id="Oval-1-Copy-7" stroke="#000000" mask="url(#mask-164)" stroke-width="8" fill="#FFFFFF" xlink:href="#path-163"></use>
             </g>
             <text id="result-label" font-family="Helvetica" font-size="36" font-weight="normal" fill="#000000">
-                <tspan x="582.456055" y="1516">6. Final result</tspan>
+                <tspan x="602.456055" y="1572">6. Final result</tspan>
             </text>
-            <g id="reduce-all-label" transform="translate(251.000000, 1155.000000)">
+            <g id="reduce-all-label" transform="translate(271.000000, 1211.000000)">
                 <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(56.568542, 56.568542) rotate(-315.000000) translate(-56.568542, -56.568542) " points="16.5685425 36.5685425 56.5685425 36.5685425 56.5685425 16.5685425 96.5685425 56.0663096 56.5685425 96.5685425 56.5685425 76.5685425 16.5685425 76.5685425"></polygon>
                 <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(349.449439, 57.449439) rotate(-293.000000) translate(-349.449439, -57.449439) " points="309.449439 37.4494393 349.449439 37.4494393 349.449439 17.4494393 389.449439 56.9472064 349.449439 97.4494393 349.449439 77.4494393 309.449439 77.4494393"></polygon>
                 <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(553.449439, 57.449439) rotate(-247.000000) translate(-553.449439, -57.449439) " points="513.449439 37.4494393 553.449439 37.4494393 553.449439 17.4494393 593.449439 56.9472064 553.449439 97.4494393 553.449439 77.4494393 513.449439 77.4494393"></polygon>
@@ -742,7 +743,7 @@
                     <tspan x="259.376953" y="61">5. Reduce the batches</tspan>
                 </text>
             </g>
-            <g id="reduce-batches-label" transform="translate(110.000000, 872.000000)">
+            <g id="reduce-batches-label" transform="translate(130.000000, 928.000000)">
                 <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(40.071618, 40.000000) rotate(-270.000000) translate(-40.071618, -40.000000) " points="0.0716179193 20 40.0716179 20 40.0716179 3.55271368e-15 80.0716179 39.4977671 40.0716179 80 40.0716179 60 0.0716179193 60"></polygon>
                 <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(401.177647, 40.106029) rotate(-270.000000) translate(-401.177647, -40.106029) " points="361.177647 20.1060289 401.177647 20.1060289 401.177647 0.106028869 441.177647 39.603796 401.177647 80.1060289 401.177647 60.1060289 361.177647 60.1060289"></polygon>
                 <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(761.177647, 40.106029) rotate(-270.000000) translate(-761.177647, -40.106029) " points="721.177647 20.1060289 761.177647 20.1060289 761.177647 0.106028869 801.177647 39.603796 761.177647 80.1060289 761.177647 60.1060289 721.177647 60.1060289"></polygon>
@@ -751,7 +752,7 @@
                     <tspan x="323.332031" y="44">4. Reduce each batch in parallel</tspan>
                 </text>
             </g>
-            <g id="map-label" transform="translate(110.000000, 574.000000)">
+            <g id="map-label" transform="translate(130.000000, 630.000000)">
                 <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(40.000000, 40.000000) rotate(-270.000000) translate(-40.000000, -40.000000) " points="0 20 40 20 40 3.55271368e-15 80 39.4977671 40 80 40 60 0 60"></polygon>
                 <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(401.000000, 40.000000) rotate(-270.000000) translate(-401.000000, -40.000000) " points="361 20 401 20 401 3.55271368e-15 441 39.4977671 401 80 401 60 361 60"></polygon>
                 <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(761.000000, 40.000000) rotate(-270.000000) translate(-761.000000, -40.000000) " points="721 20 761 20 761 3.55271368e-15 801 39.4977671 761 80 761 60 721 60"></polygon>
@@ -760,7 +761,7 @@
                     <tspan x="305.34082" y="42">3. Map over the batches in parallel</tspan>
                 </text>
             </g>
-            <g id="divide-label" transform="translate(136.000000, 260.000000)">
+            <g id="divide-label" transform="translate(156.000000, 316.000000)">
                 <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(52.071618, 52.071618) rotate(-248.000000) translate(-52.071618, -52.071618) " points="12.0716179 32.0716179 52.0716179 32.0716179 52.0716179 12.0716179 92.0716179 51.569385 52.0716179 92.0716179 52.0716179 72.0716179 12.0716179 72.0716179"></polygon>
                 <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(388.000000, 52.000000) rotate(-262.000000) translate(-388.000000, -52.000000) " points="348 32 388 32 388 12 428 51.4977671 388 92 388 72 348 72"></polygon>
                 <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(720.000000, 52.000000) rotate(-278.000000) translate(-720.000000, -52.000000) " points="680 32 720 32 720 12 760 51.4977671 720 92 720 72 680 72"></polygon>
@@ -770,7 +771,7 @@
                 </text>
             </g>
             <text id="initial-label" font-family="Helvetica" font-size="36" font-weight="normal" fill="#000000">
-                <tspan x="505.367188" y="35">1. Initial data sequence</tspan>
+                <tspan x="525.367188" y="91">1. Initial data sequence</tspan>
             </text>
         </g>
     </g>
