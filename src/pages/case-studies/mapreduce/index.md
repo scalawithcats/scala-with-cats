@@ -552,20 +552,16 @@ to gain efficient parallel processing of a list.
 We can simply map:
 
 ```tut:book:silent
-val future1 = (1 to 1000).toVector.
-  traverse(item => Future(item + 1))
-```
-
-```tut:book
-Await.result(future1, 1.second)
+val future1: Future[Vector[Int]] =
+  (1 to 1000).toVector.
+    traverse(item => Future(item + 1))
 ```
 
 and reduce using a `Monoid`:
 
 ```tut:book:silent
-val future2 = (1 to 1000).toVector.
-  traverse(item => Future(item + 1)).
-  map(_.combineAll)
+val future2: Future[Int] =
+  future1.map(_.combineAll)
 ```
 
 ```tut:book
