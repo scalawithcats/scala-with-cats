@@ -1,5 +1,6 @@
 # Case Study: Pygmy Hadoop {#map-reduce}
 
+<!--
 TODO:
 
 - DONE - talk about map-reduce -- it's just foldMap
@@ -26,6 +27,7 @@ TODO:
 
 - DONE - drop the current foldMapM stuff
 - DONE - maybe move it elsewhere
+-->
 
 In this case study we're going to implement
 a simple-but-powerful parallel processing framework
