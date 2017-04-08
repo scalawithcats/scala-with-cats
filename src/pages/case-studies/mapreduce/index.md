@@ -454,7 +454,7 @@ Await.result(parallelFoldMap((1 to 1000000).toVector)(identity), 1.second)
 ```
 </div>
 
-### Implementing *parallelFoldMap* on top of Cats
+### *parallelFoldMap* with more Cats
 
 Although we implemented `foldMap` ourselves above,
 the method is also available as part of the `Foldable`
@@ -471,6 +471,7 @@ import cats.Monoid
 import cats.Foldable
 import cats.Traverse
 
+import cats.instances.int._    // for Monoid
 import cats.instances.future._ // for Applicative and Monad
 import cats.instances.vector._ // for Foldable and Traverse
 
@@ -479,6 +480,7 @@ import cats.syntax.foldable._ // for combineAll and foldMap
 import cats.syntax.traverse._ // for traverse
 
 import scala.concurrent._
+import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 ```
 
@@ -498,6 +500,15 @@ def parallelFoldMap[A, B: Monoid]
     .traverse(group => Future(group.toVector.foldMap(func)))
     .map(_.combineAll)
 }
+```
+
+```tut:book:silent
+val future: Future[Int] =
+  parallelFoldMap((1 to 1000).toVector)(_ * 1000)
+```
+
+```tut:book
+Await.result(future, 1.second)
 ```
 
 The call to `vector.grouped` returns an `Iterable[Iterator[Int]]`.
@@ -539,8 +550,8 @@ to gain efficient parallel processing of a list.
 We can simply map:
 
 ```tut:book:silent
-val future1 = (1 to 1000).toVector
-  .traverse(item => Future(item + 1))
+val future1 = (1 to 1000).toVector.
+  traverse(item => Future(item + 1))
 ```
 
 ```tut:book
@@ -550,9 +561,9 @@ Await.result(future1, 1.second)
 and reduce using a `Monoid`:
 
 ```tut:book:silent
-val future2 = (1 to 1000).toVector
-  .traverse(item => Future(item + 1))
-  .map(_.combineAll)
+val future2 = (1 to 1000).toVector.
+  traverse(item => Future(item + 1)).
+  map(_.combineAll)
 ```
 
 ```tut:book
