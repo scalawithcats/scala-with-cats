@@ -12,10 +12,10 @@ TODO:
   - DONE - then implement in terms of Cats' foldMap
   - DONE - talk about traverse
 - summary
-  - real-world map-reduce has communication costs
-  - multi-cpu map-reduce doesn't have communication costs
-  - parallelFoldMap mimics multi-machine
-  - our final version of parallelFoldMap (based on traverse) is far simpler
+  - DONE - real-world map-reduce has communication costs
+  - DONE - multi-cpu map-reduce doesn't have communication costs
+  - DONE - parallelFoldMap mimics multi-machine
+  - DONE - our final version of parallelFoldMap (based on traverse) is far simpler
   - talk about substitution and the things it doesn't model:
     - performance
     - parallelism
@@ -24,8 +24,8 @@ TODO:
 
 TODO:
 
-- drop the current foldMapM stuff
-- maybe move it elsewhere
+- DONE - drop the current foldMapM stuff
+- DONE - maybe move it elsewhere
 
 In this case study we're going to implement
 a simple-but-powerful parallel processing framework
@@ -34,7 +34,7 @@ using `Monoids`, `Functors`, and a host of other goodies.
 If you have used Hadoop or otherwise worked in "big data"
 you will have heard of [MapReduce][link-mapreduce],
 which is a programming model for doing parallel data processing
-across tens or hundreds of machines.
+across clusters tens or hundreds of machines (aka "nodes").
 As the name suggests, the model is built around a *map* phase,
 which is the same `map` function we know
 from Scala and the `Functor` type class, and a *reduce* phase,
@@ -80,8 +80,7 @@ reduce(a1, reduce(a2, a3)) == reduce(reduce(a1, a2), a3)
 
 If we have associativity,
 we can arbitrarily distribute work
-amongst threads or machines
-provided we preserve the ordering
+between our nodes provided we preserve the ordering
 on the sequence of elements we're processing.
 
 Our fold operation requires us to seed the computation
@@ -378,8 +377,8 @@ def parallelFoldMap[A, B : Monoid]
     (func: A => B): Future[B] = ???
 ```
 
-Use the techniques described above to split the work into batches,
-one batch per CPU in your machine.
+Use the techniques described above to
+split the work into batches, one batch per CPU.
 Process each batch in a parallel thread.
 Refer back to Figure [@fig:map-reduce:parallel-fold-map]
 if you need to review the overall algorithm.
@@ -510,26 +509,70 @@ The call to `map` then combines the `match` using
 the `combineAll` method from `Foldable`.
 </div>
 
-## Summary: *foldMap* in the Real World
+## Summary
 
-TODO: FINISH THIS
+In this case study we implemented
+a system that imitates map-reduce
+as performed on a cluster.
+Our algorithm followed three steps:
 
-We've implemented a sequence processing abstraction, `foldMap`,
-based on monoidal addition of elements.
-We've seen that we can extend this to more flexible situations,
-particularly user-specified error handling,
-by combining monads, applicative functors, and natural transformations.
-The result is a powerful and general framework
-for sequential and parallel processing.
-Is it useful, however?
+1. batch the data and send one batch to each "node";
+2. perform a local map-reduce on each batch;
+3. combine the results using monoidal addition.
 
-It turns out that yes, this concept is very useful.
-As we mentioned previously
-the core idea of monoidal addition underlies [Summingbird][link-summingbird],
-Twitter's framework that powers all their internal data processing jobs.
+### Batching Strategies in the Real World
 
-Monoids are not restricted to simple tasks like addition and string concatenation.
-Most of the tasks data scientists perform in their day-to-day analyses can be cast as monoids.
+The main bottleneck in real map-reduce
+is network communication between the nodes.
+To counter this, systems like Hadoop
+provide mechanisms for pre-batching data
+to limit the communication required
+to distribute work.
+
+Our toy system is designed to emulate
+this real-world batching behaviour.
+However, in reality we are
+running all of our work on a single machine
+where communcation between nodes is negligable.
+We don't actually need to pre-batch data
+to gain efficient parallel processing of a list.
+We can simply map:
+
+```tut:book:silent
+val future1 = (1 to 1000).toVector
+  .traverse(item => Future(item + 1))
+```
+
+```tut:book
+Await.result(future1, 1.second)
+```
+
+and reduce using a `Monoid`:
+
+```tut:book:silent
+val future2 = (1 to 1000).toVector
+  .traverse(item => Future(item + 1))
+  .map(_.combineAll)
+```
+
+```tut:book
+Await.result(future2, 1.second)
+```
+
+### Reduction using *Monoids*
+
+Regardless of the batching strategy,
+mapping and reducing with `Monoids`
+is a powerful and general framework.
+The core idea of monoidal addition
+underlies [Summingbird][link-summingbird],
+Twitter's framework that powers
+all their internal data processing jobs.
+
+Monoids are not restricted to simple tasks
+like addition and string concatenation.
+Most of the tasks data scientists perform
+in their day-to-day analyses can be cast as monoids.
 There are monoids for all the following:
 
 - approximate sets such as the Bloom filter;
