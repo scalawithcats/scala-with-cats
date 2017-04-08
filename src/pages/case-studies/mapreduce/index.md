@@ -576,8 +576,10 @@ in their day-to-day analyses can be cast as monoids.
 There are monoids for all the following:
 
 - approximate sets such as the Bloom filter;
-- set cardinality estimators, such as the HyperLogLog algorithm;
-- vectors and hence vector operations like stochastic gradient descent;
+- set cardinality estimators,
+  such as the HyperLogLog algorithm;
+- vectors and hence vector operations
+  like stochastic gradient descent;
 - quantile estimators such as the t-digest
 
 to name but a few.
