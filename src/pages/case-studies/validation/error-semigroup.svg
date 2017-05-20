@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1921px" height="660px" viewBox="0 0 1921 660" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.1 (39012) - http://www.bohemiancoding.com/sketch -->
+    <title>error-semigroup</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="error-semigroup">
+            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1921" height="660"></rect>
+            <text id="E-•-E-=&gt;-E" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="840" y="319">E • E =&gt; E</tspan>
+            </text>
+            <text id="List[String]-•-List[" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="419.2" y="601">List[String] • List[String] =&gt; List[String]</tspan>
+            </text>
+            <g id="Group-17" transform="translate(580.000000, 42.000000)">
+                <polygon id="Polygon-2" stroke="#000000" stroke-width="4" points="364.5 1 441.06005 56.624132 411.816713 146.625868 317.183287 146.625868 287.93995 56.624132"></polygon>
+                <polygon id="Polygon-2" stroke="#000000" stroke-width="4" points="76.5600496 0 153.120099 55.624132 123.876762 145.625868 29.2433368 145.625868 -1.42108547e-14 55.624132"></polygon>
+                <polygon id="Polygon-2" stroke="#000000" stroke-width="4" points="683.56005 0 760.120099 55.624132 730.876762 145.625868 636.243337 145.625868 607 55.624132"></polygon>
+                <polygon id="Path-1" fill="#000000" points="485 60 525 60 525 40 565 79.4977671 525 120 525 100 485 100"></polygon>
+                <circle id="Oval" fill="#000000" cx="219" cy="81" r="20"></circle>
+            </g>
+            <g id="Group-20" transform="translate(565.000000, 334.000000)">
+                <g id="Group-18" transform="translate(289.000000, 9.000000)" stroke-width="4" stroke="#000000" fill="#FFFFFF">
+                    <polygon id="Polygon-2" points="95.5600496 27 172.120099 82.624132 142.876762 172.625868 48.2433368 172.625868 19 82.624132"></polygon>
+                    <polygon id="Polygon-2" points="76.5600496 0 153.120099 55.624132 123.876762 145.625868 29.2433368 145.625868 -1.42108547e-14 55.624132"></polygon>
+                </g>
+                <g id="Group-18" transform="translate(0.000000, 5.000000)" stroke-width="4" stroke="#000000" fill="#FFFFFF">
+                    <polygon id="Polygon-2" points="95.5600496 27 172.120099 82.624132 142.876762 172.625868 48.2433368 172.625868 19 82.624132"></polygon>
+                    <polygon id="Polygon-2" points="76.5600496 0 153.120099 55.624132 123.876762 145.625868 29.2433368 145.625868 -1.42108547e-14 55.624132"></polygon>
+                </g>
+                <g id="Group-19" transform="translate(597.000000, 0.000000)" stroke-width="4" stroke="#000000" fill="#FFFFFF">
+                    <polygon id="Polygon-2" points="116.56005 42 193.120099 97.624132 163.876762 187.625868 69.2433368 187.625868 40 97.624132"></polygon>
+                    <polygon id="Polygon-2" points="95.5600496 22 172.120099 77.624132 142.876762 167.625868 48.2433368 167.625868 19 77.624132"></polygon>
+                    <polygon id="Polygon-2" points="76.5600496 0 153.120099 55.624132 123.876762 145.625868 29.2433368 145.625868 -1.42108547e-14 55.624132"></polygon>
+                </g>
+                <polygon id="Path-1" fill="#000000" points="494 82 534 82 534 62 574 101.497767 534 142 534 122 494 122"></polygon>
+                <circle id="Oval" fill="#000000" cx="228" cy="103" r="20"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

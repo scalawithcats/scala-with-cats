@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1614px" height="221px" viewBox="0 0 1614 221" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->
+    <title>flatmap</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="279.385663 100.013471 245.151257 117.8958 251.689447 80.0204196 223.99323 53.1969265 262.26846 47.6709831 279.385663 13.2108239 296.502867 47.6709831 334.778097 53.1969265 307.08188 80.0204196 313.62007 117.8958"></polygon>
+        <ellipse id="path-2" cx="53.168329" cy="66.1042853" rx="53.168329" ry="52.8934614"></ellipse>
+        <polygon id="path-3" points="267.026863 98.1362496 232.792456 116.018578 239.330646 78.1431983 211.634429 51.3197052 249.909659 45.7937617 267.026863 11.3336026 284.144066 45.7937617 322.419296 51.3197052 294.723079 78.1431983 301.261269 116.018578"></polygon>
+        <ellipse id="path-4" cx="53.2969557" cy="67.3288411" rx="53.168329" ry="52.8934614"></ellipse>
+        <ellipse id="path-5" cx="53.422681" cy="66.3288411" rx="53.168329" ry="52.8934614"></ellipse>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="monadic" transform="translate(-155.000000, -358.000000)">
+            <g id="flatmap" transform="translate(155.000000, 358.000000)">
+                <g id="Group-10" transform="translate(0.000000, 2.000000)">
+                    <g id="Star-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                        <path stroke="#000000" stroke-width="4" d="M247.810095,114.250545 L253.660298,80.3606353 L253.840095,79.3190787 L253.080844,78.5837521 L228.310883,54.5943066 L262.554245,49.6504595 L263.592833,49.5005145 L264.059655,48.5607134 L279.385663,17.7065679 L294.711672,48.5607134 L295.178494,49.5005145 L296.217082,49.6504595 L330.460444,54.5943066 L305.690483,78.5837521 L304.931232,79.3190787 L305.111029,80.3606353 L310.961232,114.250545 L280.311646,98.2407453 L279.385663,97.7570587 L278.459681,98.2407453 L247.810095,114.250545 Z"></path>
+                    </g>
+                    <g id="Oval-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-2"></use>
+                        <ellipse stroke="#000000" stroke-width="4" cx="53.168329" cy="66.1042853" rx="51.168329" ry="50.8934614"></ellipse>
+                    </g>
+                    <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="214.286267" y="2.02827141" width="128.920823" height="128.233654" rx="8"></rect>
+                    <polygon id="Path-1" fill="#000000" points="133.459381 54.3501828 160.043546 54.3501828 160.043546 41.1268174 186.62771 67.2414877 160.043546 94.0202789 160.043546 80.7969135 133.459381 80.7969135"></polygon>
+                </g>
+                <g id="Group-8" transform="translate(586.000000, 0.000000)">
+                    <g id="Star-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-3"></use>
+                        <path stroke="#000000" stroke-width="4" d="M235.451294,112.373323 L241.301497,78.483414 L241.481294,77.4418574 L240.722043,76.7065308 L215.952082,52.7170852 L250.195444,47.7732382 L251.234032,47.6232932 L251.700855,46.6834921 L267.026863,15.8293466 L282.352871,46.6834921 L282.819693,47.6232932 L283.858281,47.7732382 L318.101643,52.7170852 L293.331682,76.7065308 L292.572431,77.4418574 L292.752228,78.483414 L298.602431,112.373323 L267.952845,96.363524 L267.026863,95.8798373 L266.10088,96.363524 L235.451294,112.373323 Z"></path>
+                    </g>
+                    <polygon id="Path-1" fill="#000000" points="347.435203 53.2484057 374.019368 53.2484057 374.019368 40.0250404 400.603532 66.1397107 374.019368 92.9185018 374.019368 79.6951365 347.435203 79.6951365"></polygon>
+                    <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="428.800647" y="2.47738288" width="128.920823" height="128.233654" rx="8"></rect>
+                    <g id="Oval-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-4"></use>
+                        <ellipse stroke="#000000" stroke-width="4" cx="53.2969557" cy="67.3288411" rx="51.168329" ry="50.8934614"></ellipse>
+                    </g>
+                    <polygon id="Path-1" fill="#000000" points="133.588008 55.5747385 160.172172 55.5747385 160.172172 42.3513732 186.756337 68.4660435 160.172172 95.2448346 160.172172 82.0214693 133.588008 82.0214693"></polygon>
+                    <polygon id="Polygon" stroke="#000000" stroke-width="4" fill="#FFFFFF" points="493.082597 23 539.165194 56.2656167 521.563208 110.090515 464.601986 110.090515 447 56.2656167"></polygon>
+                </g>
+                <text id="A-=&gt;-F[B]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                    <tspan x="59.4670213" y="215">A =&gt; F[B]</tspan>
+                </text>
+                <text id="B-=&gt;-(A-=&gt;-F[C])" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                    <tspan x="664.570696" y="215">B =&gt; (A =&gt; F[C])</tspan>
+                </text>
+                <text id="A-=&gt;-F[C]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                    <tspan x="1327.1103" y="215">A =&gt; F[C]</tspan>
+                </text>
+                <g id="Group-9" transform="translate(1268.000000, 1.000000)">
+                    <g id="Oval-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-5"></use>
+                        <ellipse stroke="#000000" stroke-width="4" cx="53.422681" cy="66.3288411" rx="51.168329" ry="50.8934614"></ellipse>
+                    </g>
+                    <polygon id="Path-1" fill="#000000" points="133.713733 53.02385 160.297898 53.02385 160.297898 39.8004847 186.882062 65.9151549 160.297898 92.6939461 160.297898 79.4705807 133.713733 79.4705807"></polygon>
+                    <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="215.079177" y="2.25282714" width="128.920823" height="128.233654" rx="8"></rect>
+                    <polygon id="Polygon" stroke="#000000" stroke-width="4" fill="#FFFFFF" points="280.082597 23 326.165194 56.2656167 308.563208 110.090515 251.601986 110.090515 234 56.2656167"></polygon>
+                </g>
+                <polygon id="Path-1" fill="#F6A623" points="1178.50097 53.2075929 1209.71954 53.2075929 1209.71954 37.6987076 1240.9381 68.3270246 1209.71954 99.7342488 1209.71954 84.2253635 1178.50097 84.2253635"></polygon>
+                <text id="flatMap" font-family="FiraMono-Bold, Fira Mono" font-size="45" font-weight="bold" fill="#F6A623">
+                    <tspan x="375.781673" y="82">flatMap</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>

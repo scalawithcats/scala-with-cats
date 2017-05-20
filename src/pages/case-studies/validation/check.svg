@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1921px" height="360px" viewBox="0 0 1921 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.1 (39012) - http://www.bohemiancoding.com/sketch -->
+    <title>check</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <ellipse id="path-1" cx="80" cy="100" rx="80" ry="80"></ellipse>
+        <ellipse id="path-2" cx="100" cy="100" rx="80" ry="80"></ellipse>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="check">
+            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1921" height="360"></rect>
+            <g id="Group-3" transform="translate(702.000000, 40.000000)">
+                <g id="Oval-1">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <ellipse stroke="#000000" stroke-width="4" cx="80" cy="100" rx="78" ry="78"></ellipse>
+                </g>
+                <g id="Group" transform="translate(318.000000, 0.000000)">
+                    <g id="Oval-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-2"></use>
+                        <ellipse stroke="#000000" stroke-width="4" cx="100" cy="100" rx="78" ry="78"></ellipse>
+                    </g>
+                    <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="2" y="2" width="196" height="196" rx="8"></rect>
+                </g>
+                <polygon id="Path-1" fill="#000000" points="200 80 240 80 240 60 280 99.4977671 240 140 240 120 200 120"></polygon>
+            </g>
+            <text id="A-=&gt;-F[A]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="847.1" y="314">A =&gt; F[A]</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

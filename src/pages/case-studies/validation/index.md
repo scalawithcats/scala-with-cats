@@ -6,7 +6,7 @@ Almost all programs must check their input meets certain criteria.
 Usernames must not be blank, email addresses must be valid, and so on.
 This type of validation often occurs in web forms,
 but it could be performed on configuration files,
-on web service responses, and in any other case where
+on web service responses, and any other case where
 we have to deal with data that we can't guarantee is correct.
 Authentication, for example, is just a specialised form of validation.
 
@@ -15,12 +15,14 @@ What design goals should we have?
 For inspiration, let's look at some examples of
 the types of checks we want to perform:
 
-- A bid must apply to one or more items and have a positive value.
+- A user must be over 18 years old
+  or must have parental consent.
 
-- An `String` ID must be parsable as a `Int`
+- A `String` ID must be parsable as a `Int`
   and the `Int` must correspond to a valid record ID.
 
-- The user must be over 18 years old, or must have parental consent.
+- A bid in an auction must apply
+  to one or more items and have a positive value.
 
 - A username must contain at least four characters
   and all characters must be alphanumeric.
@@ -48,7 +50,7 @@ With these examples in mind we can state some goals:
 - Finally, we should be able to accumulate all the failures in one go,
   so the user can correct all the issues before resubmitting.
 
-The above all assume we're checking a single piece of data.
+These goals assume we're checking a single piece of data.
 We will also need to combine checks across multiple pieces of data.
 For a login form, for example,
 we'll need to combine the check results for the username and the password.

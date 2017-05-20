@@ -35,17 +35,24 @@ does this message indicate a failing conjunction (two `ands`)
 or a failing disjunction (two `ors`)?
 We can probably guess in this case
 but in general we don't have sufficient information to work this out.
-We can solve this problem by wrapping all messages in a type such as
+We can solve this problem by wrapping all messages in a type as follows:
 
 ```scala
 sealed trait Structure[E]
-final case class Or[E](messages: List[Structure[E]]) extends Structure[E]
-final case class And[E](messages: List[Structure[E]]) extends Structure[E]
-final case class Not[E](messages: List[Structure[E]]) extends Structure[E]
-final case class Pure[E](message: E) extends Structure[E]
+
+final case class Or[E](messages: List[Structure[E]])
+  extends Structure[E]
+
+final case class And[E](messages: List[Structure[E]])
+  extends Structure[E]
+
+final case class Not[E](messages: List[Structure[E]])
+  extends Structure[E]
+
+final case class Pure[E](message: E)
+  extends Structure[E]
 ```
 
-representing the structure of the predicates that created them.
 We can simplify this structure by converting all predicates into a normal form.
 For example, if we use disjunctive normal form
 the structure of the predicate will always be
@@ -66,4 +73,5 @@ but is not clear if you don't have this experience.
 Many functional programmers come to prefer avoiding subtyping,
 as it plays poorly with implicit resolution and type inference,
 but there could be an argument to use it here.
-As always the best decisions depend on the context in which the could will be used.
+As always the best decisions depend on the context
+in which the library will be used.

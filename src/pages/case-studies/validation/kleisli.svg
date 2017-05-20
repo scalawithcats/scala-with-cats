@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1476px" height="220px" viewBox="0 0 1476 220" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->
+    <title>kleisli</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <ellipse id="path-1" cx="53.168329" cy="67.8934614" rx="53.168329" ry="52.8934614"></ellipse>
+        <ellipse id="path-2" cx="279.168329" cy="67.8934614" rx="53.168329" ry="52.8934614"></ellipse>
+        <ellipse id="path-3" cx="627.168329" cy="65.8934614" rx="53.168329" ry="52.8934614"></ellipse>
+        <polygon id="path-4" points="853.392433 99.802647 819.158027 117.684976 825.696217 79.8095957 798 52.9861026 836.27523 47.4601592 853.392433 13 870.509637 47.4601592 908.784867 52.9861026 881.08865 79.8095957 887.62684 117.684976"></polygon>
+        <polygon id="path-5" points="1201.39243 99.802647 1167.15803 117.684976 1173.69622 79.8095957 1146 52.9861026 1184.27523 47.4601592 1201.39243 13 1218.50964 47.4601592 1256.78487 52.9861026 1229.08865 79.8095957 1235.62684 117.684976"></polygon>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="kleisli" transform="translate(-223.000000, -38.000000)">
+            <rect id="Background" x="0" y="0" width="1921" height="300"></rect>
+            <g id="Group-15" transform="translate(223.000000, 38.000000)">
+                <g id="Oval-1">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <ellipse stroke="#000000" stroke-width="4" cx="53.168329" cy="67.8934614" rx="51.168329" ry="50.8934614"></ellipse>
+                </g>
+                <g id="Oval-1">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <ellipse stroke="#000000" stroke-width="4" cx="279.168329" cy="67.8934614" rx="51.168329" ry="50.8934614"></ellipse>
+                </g>
+                <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="214" y="4" width="128.920823" height="128.233654" rx="8"></rect>
+                <polygon id="Path-1" fill="#000000" points="133 56.2233654 159.584165 56.2233654 159.584165 43 186.168329 69.1146703 159.584165 95.8934614 159.584165 82.6700961 133 82.6700961"></polygon>
+                <text id="A-=&gt;-F[A]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                    <tspan x="59.4670213" y="215">A =&gt; F[A]</tspan>
+                </text>
+                <text id="flatMap" font-family="FiraMono-Bold, Fira Mono" font-size="45" font-weight="bold" fill="#F6A623">
+                    <tspan x="365.781673" y="82">flatMap</tspan>
+                </text>
+                <text id="flatMap" font-family="FiraMono-Bold, Fira Mono" font-size="45" font-weight="bold" fill="#F6A623">
+                    <tspan x="940.781673" y="82">flatMap</tspan>
+                </text>
+                <text id="A-=&gt;-F[B]" font-family="FiraMono-Regular, Fira Mono" font-size="40" font-weight="normal" fill="#000000">
+                    <tspan x="638.137814" y="213">A =&gt; F[B]</tspan>
+                </text>
+                <g id="Oval-1">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-3"></use>
+                    <ellipse stroke="#000000" stroke-width="4" cx="627.168329" cy="65.8934614" rx="51.168329" ry="50.8934614"></ellipse>
+                </g>
+                <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="788" y="2" width="128.920823" height="128.233654" rx="8"></rect>
+                <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="1345" y="2" width="128.920823" height="128.233654" rx="8"></rect>
+                <polygon id="Path-1" fill="#000000" points="707 54.2233654 733.584165 54.2233654 733.584165 41 760.168329 67.1146703 733.584165 93.8934614 733.584165 80.6700961 707 80.6700961"></polygon>
+                <g id="Star-1">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-4"></use>
+                    <path stroke="#000000" stroke-width="4" d="M821.816865,114.039721 L827.667068,80.1498114 L827.846865,79.1082548 L827.087614,78.3729282 L802.317653,54.3834827 L836.561015,49.4396356 L837.599603,49.2896906 L838.066425,48.3498895 L853.392433,17.495744 L868.718441,48.3498895 L869.185264,49.2896906 L870.223852,49.4396356 L904.467214,54.3834827 L879.697253,78.3729282 L878.938002,79.1082548 L879.117799,80.1498114 L884.968002,114.039721 L854.318416,98.0299214 L853.392433,97.5462347 L852.466451,98.0299214 L821.816865,114.039721 Z"></path>
+                </g>
+                <text id="B-=&gt;-F[C]" font-family="FiraMono-Regular, Fira Mono" font-size="40" font-weight="normal" fill="#000000">
+                    <tspan x="1193.40062" y="213">B =&gt; F[C]</tspan>
+                </text>
+                <g id="Star-1">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-5"></use>
+                    <path stroke="#000000" stroke-width="4" d="M1169.81686,114.039721 L1175.66707,80.1498114 L1175.84686,79.1082548 L1175.08761,78.3729282 L1150.31765,54.3834827 L1184.56101,49.4396356 L1185.5996,49.2896906 L1186.06643,48.3498895 L1201.39243,17.495744 L1216.71844,48.3498895 L1217.18526,49.2896906 L1218.22385,49.4396356 L1252.46721,54.3834827 L1227.69725,78.3729282 L1226.938,79.1082548 L1227.1178,80.1498114 L1232.968,114.039721 L1202.31842,98.0299214 L1201.39243,97.5462347 L1200.46645,98.0299214 L1169.81686,114.039721 Z"></path>
+                </g>
+                <polygon id="Path-1" fill="#000000" points="1283 54.2233654 1309.58416 54.2233654 1309.58416 41 1336.16833 67.1146703 1309.58416 93.8934614 1309.58416 80.6700961 1283 80.6700961"></polygon>
+                <polygon id="Polygon" stroke="#000000" stroke-width="4" fill="#FFFFFF" points="1409.0826 21 1455.16519 54.2656167 1437.56321 108.090515 1380.60199 108.090515 1363 54.2656167"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
