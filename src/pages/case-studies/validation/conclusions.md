@@ -28,7 +28,8 @@ For example, if we represent error messsages as a `List[String]`
 and we get back the message:
 
 ```tut:book:silent
-List("Must be longer than 4 characters", "Must not contain a number")
+List("Must be longer than 4 characters",
+     "Must not contain a number")
 ```
 
 does this message indicate a failing conjunction (two `ands`)
@@ -37,7 +38,7 @@ We can probably guess in this case
 but in general we don't have sufficient information to work this out.
 We can solve this problem by wrapping all messages in a type as follows:
 
-```scala
+```tut:book:silent
 sealed trait Structure[E]
 
 final case class Or[E](messages: List[Structure[E]])
