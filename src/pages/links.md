@@ -109,6 +109,7 @@
 [link-scalaz-contrib]: https://github.com/typelevel/scalaz-contrib
 [link-si2712-compiler-plugin]: https://github.com/milessabin/si2712fix-plugin
 [link-si2712]: https://issues.scala-lang.org/browse/SI-2712
+[link-si-6680]: https://issues.scala-lang.org/browse/SI-6680
 [link-simulacrum]: https://github.com/mpilquist/simulacrum
 [link-stochastic-gradient-descent]: http://en.wikipedia.org/wiki/Stochastic_gradient_descent
 [link-summingbird]: https://github.com/twitter/summingbird

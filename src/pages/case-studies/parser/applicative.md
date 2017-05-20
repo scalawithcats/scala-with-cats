@@ -149,7 +149,7 @@ Applicative[Parser] {
   def point[A](a: => A): Parser[A] =
     ???
 
-  def ap[A,B](fa: => Parser[A])(f: => Parser[A => B]): Parser[B] =
+  def ap[A, B](fa: => Parser[A])(f: => Parser[A => B]): Parser[B] =
     ???
 }
 ~~~
@@ -172,7 +172,7 @@ implicit object applicativeInstance extends Applicative[Parser] {
   def point[A](a: => A): Parser[A] =
     identity map (_ => a)
 
-  def ap[A,B](fa: => Parser[A])(f: => Parser[A => B]): Parser[B] =
+  def ap[A, B](fa: => Parser[A])(f: => Parser[A => B]): Parser[B] =
     Parser { input =>
       f.parse(input) match {
         case fail @ Failure(_) =>
