@@ -83,6 +83,8 @@ pages:
 
   - parts/part2.md
 
+  - case-studies/testing/index.md
+
   - case-studies/mapreduce/index.md
 
   # - case-studies/json-codec/index.md

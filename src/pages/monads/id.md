@@ -1,4 +1,4 @@
-## The *Identity* Monad {#id-monad}
+## The *Identity* Monad {#sec:id-monad}
 
 In the previous section we demonstrated Cats' `flatMap` and `map` syntax
 by writing a method that abstracted over different monads:
