@@ -25,17 +25,13 @@ Starting from the March 2016 release, here are the major changes to the book:
 - Added sections on `Cartesian` to the applicatives chapter.
 - Added sections on `Foldable` and `Traverse`.
 - Added type chart diagrams for `Functor` and `Monad`.
+- Added a new case study on asynchonous testing.
+- New diagrams for the map reduce and validation case studies.
 
 ### Omissions {-}
 
 Here are the major things missing from the book:
 
- 1. We are missing some of the case studies
-    that make up the last third of the book.
-    These are in various states of completion
-    so we have chosen to hold them back
-    until we have a better idea of what they will look like.
-
- 2. Some case studies are still written using Scalaz.
+ 1. Proof reading, final tweaks.
 
  3. Upgrade to Cats 1.0!
