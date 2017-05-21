@@ -39,19 +39,21 @@ but in general we don't have sufficient information to work this out.
 We can solve this problem by wrapping all messages in a type as follows:
 
 ```tut:book:silent
-sealed trait Structure[E]
+object wrapper {
+  sealed trait Structure[E]
 
-final case class Or[E](messages: List[Structure[E]])
-  extends Structure[E]
+  final case class Or[E](messages: List[Structure[E]])
+    extends Structure[E]
 
-final case class And[E](messages: List[Structure[E]])
-  extends Structure[E]
+  final case class And[E](messages: List[Structure[E]])
+    extends Structure[E]
 
-final case class Not[E](messages: List[Structure[E]])
-  extends Structure[E]
+  final case class Not[E](messages: List[Structure[E]])
+    extends Structure[E]
 
-final case class Pure[E](message: E)
-  extends Structure[E]
+  final case class Pure[E](message: E)
+    extends Structure[E]
+}; import wrapper._
 ```
 
 We can simplify this structure by converting all predicates into a normal form.
