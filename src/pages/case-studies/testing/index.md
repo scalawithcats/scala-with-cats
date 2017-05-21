@@ -7,7 +7,8 @@ by making them synchronous.
 Let's return to the example
 from Chapter [@sec:foldable-traverse]
 where we're measuring the uptime on a set of servers.
-We have two components to our code.
+We'll flesh out the code into a more complete structure.
+There will be two components.
 The first is an `UptimeClient`
 that polls remote servers for their uptime:
 
@@ -37,7 +38,8 @@ class UptimeService(client: UptimeClient) {
 We've modelled `UptimeClient` as a trait
 because we're going to want to stub it out in unit tests.
 For example, we can write a test client
-that allows us to provide test data:
+that allows us to provide dummy data
+rather than calling out to actual servers:
 
 ```tut:book:silent
 class TestUptimeClient(hosts: Map[String, Int]) extends UptimeClient {
@@ -46,10 +48,10 @@ class TestUptimeClient(hosts: Map[String, Int]) extends UptimeClient {
 }
 ```
 
-Now let's suppose we're writing unit tests for `UptimeService`.
-We want to test its ability to sum uptimes
-using the `TestUptimeClient` to provide the raw data.
-Here's an example using `assert`:
+Now, suppose we're writing unit tests for `UptimeService`.
+We want to test its ability to sum values,
+regardless of where it is getting them from.
+Here's an example:
 
 ```tut:book:fail
 def testTotalUptime() = {
@@ -69,18 +71,16 @@ Our `actual` result is of type `Future[Int]`
 and out `expected` result is of type `Int`.
 We can't compare them directly!
 
-[^warnings]: Technically this is a *compiler warning* not an error.
+[^warnings]: Technically this is a *warning* not an error.
 It has been promoted to an error in our case
 because we're using the `-Xfatal-warnings` flag on `scalac`.
-We recommend using this flag to avoid gotchas like this!
 
-There are numerous ways to solve this problem.
-We could block on the future and make the test synchronous.
-Or we could rewrite the whole test to be asynchronous,
-blocking on the final result.
-However, there is another alternative:
-to make our service code synchronous
-so the test above works without modification!
+There are a couple of ways to solve this problem.
+We could alter our test code
+to accommodate the asynchronousness.
+However, there is another alternative.
+Let's make our service code synchronous
+so our test works without modification!
 
 ## Abstracting over Type Constructors
 
@@ -98,9 +98,9 @@ trait TestUptimeClient extends UptimeClient {
 }
 ```
 
-To do this we need to abstract over
-the two return types for `getUptime`:
-`Future[Int]` and `Int`:
+The question is: what result type should we give
+to the abstract method in `UptimeClient`?
+We need to abstract over `Future[Int]` and `Int`:
 
 ```scala
 trait UptimeClient {
@@ -108,14 +108,13 @@ trait UptimeClient {
 }
 ```
 
-At first this may seem like a difficult task.
+At first this may seem difficult.
 We want to retain the `Int` part from each type
-but "throw away" the `Future` part when we're writing tests.
-Fortunately, we can make the problem much simpler
-using the the *identity monad*
+but "throw away" the `Future` part in the test code.
+Fortunately, Cats provides a solution
+in terms of the *identity type*, `Id`,
 that we discussed way back in Section [@sec:id-monad].
-If you remember, Cats provides a type alias
-that allows us to "wrap" simple types in a type constructor
+`Id` allows us to "wrap" types in a type constructor
 without changing their meaning:
 
 ```scala
@@ -124,10 +123,8 @@ package cats
 type Id[A] = A
 ```
 
-We can use `Id` to convert the return types
-for `getUptime` to the same shape.
-This allows us to abstract over them in `UptimeClient`.
-Do this now:
+`Id` allows us to abstract over them in `UptimeClient`.
+Implement this now:
 
 - write a trait definition for `UptimeClient`
   that accepts a type constructor `F[_]` as a parameter;
@@ -140,7 +137,7 @@ Do this now:
   in each case to verify that it compiles.
 
 <div class="solution">
-Here's the basic implementation:
+Here's the implementation:
 
 ```tut:book:silent
 import scala.language.higherKinds
@@ -160,7 +157,7 @@ trait TestUptimeClient extends UptimeClient[Id] {
 ```
 
 Note that, because `Id[A]` is just a simple alias for `A`,
-we don't even need to refer to the return type in `TestUptimeClient`
+we don't need to refer to the type in `TestUptimeClient`
 as `Id[Int]`---we can simply write `Int` instead:
 
 ```tut:book:silent
@@ -168,14 +165,22 @@ trait TestUptimeClient extends UptimeClient[Id] {
   def getUptime(hostname: String): Int
 }
 ```
+
+Of course, technically speaking
+we don't need to redeclare `getUptime`
+in `RealUptimeClient` or `TestUptimeClient`.
+However, writing everything out
+helps illustrate the technique.
 </div>
 
 You should now be able to flesh your definition of `TestUptimeClient`
 out into a full class based on a `Map[String, Int]` as before.
 
 <div class="solution">
-Now we're not dealing with `Futures`,
-the code is even simpler than before:
+The final code is similar to
+our original implementation of `TestUptimeClient`,
+except we no longer need
+the call to `Future.successful`:
 
 ```tut:book:silent
 object wrapper {
@@ -194,7 +199,7 @@ Let's turn our attention to `UptimeService`.
 We need to rewrite it to abstract over
 the two types of `UptimeClient`.
 We'll do this in two stages:
-we'll get the class and method headers compiling first,
+first we'll get the class and method headers compiling,
 then we'll turn our attention to the method bodies.
 Starting with the method headers:
 
@@ -226,17 +231,17 @@ You should get a compilation error similar to the following:
 //                              ^
 ```
 
-The problem here is that the `traverse` method only works
+The problem here is that `traverse` only works
 on sequences of values that have an `Applicative`.
-In our original code we were traversing a `List[Future[Int]]`
-and there is an applicative for `Future`.
-In this code we are traversing a `List[F[Int]]`.
+In our original code we were traversing a `List[Future[Int]]`.
+There is an applicative for `Future` so that was fine.
+In this version we are traversing a `List[F[Int]]`.
 We need to *prove* to the compiler that `F` has an `Applicative`.
 Do this by adding an implicit constructor parameter
 to `UptimeService`.
 
 <div class="solution">
-We can write this as a full implicit parameter:
+We can write this as an implicit parameter:
 
 ```tut:book:silent
 import cats.Applicative
@@ -270,13 +275,13 @@ object wrapper {
 Note that we need to import `cats.syntax.functor`
 as well as `cats.Applicative`.
 This is because we're switching from using
-the `map` of `Future` to Cats' extension method
-that requires an implicit `Functor` as a parameter.
+`future.map` to the Cats' generic extension method
+that requires an implicit `Functor` parameter.
 </div>
 
-
 Finally, let's turn our attention to our unit tests.
-Our test code now works exactly as intended.
+Our test code now works
+as intended without any modification.
 We create an instance of `TestUptimeClient`
 and wrap it in an `UptimeService`.
 This effectively binds `F` to `Id`,
@@ -333,22 +338,30 @@ This case study provides a nice
 introduction to how Cats can help us
 abstract over different computational scenarios.
 We used the `Applicative` type class
-to abstract over asynchronous and synchronous
-scenarios for collecting values (uptime measurements)
-from a set of data sources (servers and fake servers).
+to abstract over asynchronous and synchronous code.
+Leaning on a functional abstraction allows us
+to specify the sequence of computations we want to perform
+without worrying about the details of the implementation.
 
 Back in Figure [@fig:applicatives:hierarchy],
-we outlined a "stack" of computational type classes
-that are useful for just this kind of abstraction.
-We used `Applicative` here because it was
-the least powerful type class that did what we needed.
+we showed a "stack" of computational type classes
+that are meant for exactly this kind of abstraction.
+Type classes like `Functor`, `Applicative`, `Monad`,
+and `Traverse` provide abstract implementations
+of patterns such as mapping, zipping, sequencing, and iteration.
+The mathematical laws on those types ensure
+that they work together with a consistent set of semantics.
+
+We used `Applicative` in this case study because
+it was the least powerful type class that did what we needed.
 If we had required `flatMap`,
 we could have swapped out `Applicative` for `Monad`.
+If we had needed to abstract over different sequence types,
+we could have used `Traverse`.
 There are also type classes like `ApplicativeError`
 and `MonadError` that help model failures
 as well as successful computations.
 
 Let's move on now to a more complex case study
-where we'll look at the application of type classes
-to a more concrete scenario:
+where type classes will help us produce something more interesting:
 a map-reduce-style framework for parallel processing.
