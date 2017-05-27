@@ -2,7 +2,15 @@
 
 Written by [Dave Gurnell](http://twitter.com/davegurnell) and
 [Noel Welsh](http://twitter.com/noelwelsh).
-Copyright [Underscore Consulting LLP](http://underscore.io), 2015--2017.
+Copyright [Underscore Consulting LLP](http://underscore.io), 2015-2017.
+
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+
+
+## Overview
+
+[Advanced Scala with Cats][advanced-scala] teaches core functional abstractions of monoids, functors, monads, and applicative functors using the Cats library and a number of case studies.
+
 
 ## Building
 
@@ -21,3 +29,4 @@ This will open a `bash` shell running inside the Docker container which contains
 Within `sbt` you can issue the commands `pdf`, `html`, `epub`, or `all` to build the desired version(s) of the book. Targets are placed in the `dist` directory:
 
 [ebook-template]: https://github.com/underscoreio/underscore-ebook-template
+[advanced-scala]: http://underscore.io/books/advanced-scala/
