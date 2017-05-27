@@ -1,63 +1,23 @@
-Advanced Scala with Scalaz
---------------------------
+# Advanced Scala with Cats
 
-Getting Started
----------------
+Written by [Dave Gurnell](http://twitter.com/davegurnell) and
+[Noel Welsh](http://twitter.com/noelwelsh).
+Copyright [Underscore Consulting LLP](http://underscore.io), 2015--2017.
 
-You'll need to install the grunt project dependencies the first time you check the project out:
+## Building
 
-~~~
-brew install pandoc
-npm install -g grunt-cli coffee-script
-npm install
-~~~
+Advanced Scala uses [Underscore's ebook build system][ebook-template].
 
-Building
---------
+The simplest way to build the book is to use [Docker Compose](http://docker.com):
 
-Use the following commands to build a single format:
+- install Docker Compose (`brew install docker-compose` on OS X; or download from [docker.com](http://docker.com/)); and
+- run `go.sh` (or `docker-compose run book bash` if `go.sh` doesn't work).
 
-~~~
-sbt pdf
-grunt html
-grunt epub
-~~~
+This will open a `bash` shell running inside the Docker container which contains all the dependencies to build the book. From the shell run:
 
+- `npm install`; and then
+- `sbt`.
 
-BELOW IS POSSIBLY BROKEN
+Within `sbt` you can issue the commands `pdf`, `html`, `epub`, or `all` to build the desired version(s) of the book. Targets are placed in the `dist` directory:
 
-
-The default grunt behaviour is to build all formats:
-
-
-~~~
-grunt
-~~~
-
-All targets are placed in the `dist` directory.
-
-Run the following to build all formats, start a web server to serve them,
-and rebuild if you change any files:
-
-~~~
-grunt watch
-~~~
-
-Publishing a Preview
---------------------
-
-The `grunt` command generates `advanced-scala-preview.pdf` but this does not include the full TOC.
-To create a version of the preview with the full TOC:
-
-~~~
-$ cd  ..
-$ git checkout https://github.com/d6y/toctastic
-$ cd toctastic
-$ sh ascala.sh
-~~~
-
-This will create `dist/advanced-scala-preview-with-full-toc.pdf`.
-
-Upload this file to the Underscore S3 account, in the `book-sample` bucket.
-It should have world-read permissions on it.
-Check that you can download it from the book page to be sure.
+[ebook-template]: https://github.com/underscoreio/underscore-ebook-template
