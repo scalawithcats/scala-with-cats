@@ -56,7 +56,7 @@ Option(1).map(_.toString)
 We expect `map` on  `Option` to behave in the same way as `List`:
 
 ```tut:book
-Option(123).map(_ * 4).map(_ + 4)
+Option(123).map(_ * 2).map(_ + 4)
 
 Option(123).map(x => (x * 2) + 4)
 ```
