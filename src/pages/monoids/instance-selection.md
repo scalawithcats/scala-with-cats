@@ -39,7 +39,7 @@ To quickly recap, there are three cases:
 
  -  A type with a parameter `Foo[-A]` is *contravariant* in `A`.
 
-    If `C` is a supertype of `B`, `Foo[C]` is a subtype of `Foo[B]`.
+    If `C` is a supertype of `B`, `Foo[C]` is a supertype of `Foo[B]`.
 
 When the compiler searches for an implicit
 it looks for one matching the type *or subtype*.
