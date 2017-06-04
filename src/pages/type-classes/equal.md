@@ -17,7 +17,7 @@ trait Eq[A] {
 }
 ```
 
-The interface syntax, defined in [`cats.syntax.equal`][cats.syntax.equal],
+The interface syntax, defined in [`cats.syntax.eq`][cats.syntax.eq],
 provides two methods for performing type-safe equality checks
 provided there is an instance `Eq[A]` in scope:
 
