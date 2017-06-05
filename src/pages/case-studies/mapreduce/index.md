@@ -1,5 +1,34 @@
 # Case Study: Pygmy Hadoop {#map-reduce}
 
+<!--
+TODO:
+
+- DONE - talk about map-reduce -- it's just foldMap
+- DONE - introduce/reimplement foldMap
+- DONE - implement parallelFoldMap to mimic map-reduce
+  - DONE - mention that we're specifically imitating multi-machine
+           map-reduce where we need to split data between machines
+           in large blocks
+  - DONE - implement in terms of our foldMap first
+  - DONE - then implement in terms of Cats' foldMap
+  - DONE - talk about traverse
+- summary
+  - DONE - real-world map-reduce has communication costs
+  - DONE - multi-cpu map-reduce doesn't have communication costs
+  - DONE - parallelFoldMap mimics multi-machine
+  - DONE - our final version of parallelFoldMap (based on traverse) is far simpler
+  - talk about substitution and the things it doesn't model:
+    - performance
+    - parallelism
+    - side-effects (future starts immediately)
+    - etc...
+
+TODO:
+
+- DONE - drop the current foldMapM stuff
+- DONE - maybe move it elsewhere
+-->
+
 In this case study we're going to implement
 a simple-but-powerful parallel processing framework
 using `Monoids`, `Functors`, and a host of other goodies.
@@ -7,11 +36,11 @@ using `Monoids`, `Functors`, and a host of other goodies.
 If you have used Hadoop or otherwise worked in "big data"
 you will have heard of [MapReduce][link-mapreduce],
 which is a programming model for doing parallel data processing
-across tens or hundreds of machines.
+across clusters tens or hundreds of machines (aka "nodes").
 As the name suggests, the model is built around a *map* phase,
 which is the same `map` function we know
-from Scala and the `Functor` type class,
-and a *reduce* phase, which we usually call `fold`[^hadoop-shuffle] in Scala.
+from Scala and the `Functor` type class, and a *reduce* phase,
+which we usually call `fold`[^hadoop-shuffle] in Scala.
 
 [^hadoop-shuffle]: In Hadoop there is also a shuffle phase
 that we will ignore here.
@@ -19,7 +48,8 @@ that we will ignore here.
 ## Parallelizing *map* and *fold*
 
 Recall the general signature for `map` is
-to apply a function `A => B` to a `F[A]`, returning a `F[B]`:
+to apply a function `A => B` to a `F[A]`,
+returning a `F[B]`:
 
 ![Type chart: functor map](src/pages/functors/generic-map.pdf+svg){#fig:mapreduce:functor-type-chart}
 
@@ -35,7 +65,7 @@ We can implement this step with an instance of `Foldable`.
 Not every functor also has an instance of foldable,
 but we can implement a map reduce system
 on top of any data type that has both of these type classes.
-Our reduction step becomes a `fold`
+Our reduction step becomes a `foldLeft`
 over the results of the distributed `map`.
 
 ![Type chart: fold](src/pages/foldable-traverse/generic-foldleft.pdf+svg){#fig:mapreduce:foldleft-type-chart}
@@ -52,8 +82,7 @@ reduce(a1, reduce(a2, a3)) == reduce(reduce(a1, a2), a3)
 
 If we have associativity,
 we can arbitrarily distribute work
-amongst threads or machines
-provided we preserve the ordering
+between our nodes provided we preserve the ordering
 on the sequence of elements we're processing.
 
 Our fold operation requires us to seed the computation
@@ -84,6 +113,10 @@ In this project we're going to implement
 a very simple single-machine map-reduce.
 We'll start by implementing a method called `foldMap`
 to model the data-flow we need.
+
+<!--
+TODO: Remove this?
+
 We'll then parallelize `foldMap`
 and see how we can introduce error handling
 using monads, applicative functors,
@@ -91,37 +124,55 @@ and a new tool called natural transformations.
 Finally we'll ground our discussion
 by looking at some of more interesting monoids
 that are applicable for processing large data sets.
+-->
 
 ## Implementing *foldMap*
 
-Start by implementing a method called `foldMap` that:
+We saw `foldMap` briefly back when we covered `Foldable`.
+It is one of the derived operations that sits
+on top of `foldLeft` and `foldRight`.
+However, rather than use `Foldable`,
+we will re-implement `foldMap` here ourselves
+as it will provide useful insight into
+the structure of map reduce.
 
- - accepts a sequence parameter of type `Iterable[A]`
-   and a function of type `A => B`,
-   where there is a `Monoid` for `B`;
- - maps the function over the sequence;
- - reduces the results using the monoid.
+Start by writing out the signature of `foldMap`.
+It should accept the following parameters:
 
-Here's a basic type signature.
+ - a sequence of type `Vector[A]`;
+ - a function of type `A => B`, where there is a `Monoid` for `B`;
+
 You will have to add implicit parameters or context bounds
-to complete the type signature:
+to complete the type signature.
 
+<div class="solution">
 ```tut:book:silent
 /** Single-threaded map reduce function.
   * Maps `func` over `values`
   * and reduces using a `Monoid[B]`.
   */
-def foldMap[A, B](values: Iterable[A])(func: A => B): B =
+def foldMap[A, B](values: Vector[A])(func: A => B): B =
   ???
 ```
+</div>
 
-Here's some sample output:
+Now implement the body of `foldMap`.
+Use the flow chart in Figure [@fig:map-reduce:fold-map] as a guide
+to the steps required:
+
+1. start with a sequence of items of type `A`;
+2. map over the list to produce a sequence of items of type `B`;
+3. use the `Monoid` to reduce the items to a single `B`.
+
+![*foldMap* algorithm](src/pages/case-studies/mapreduce/fold-map.pdf+svg){#fig:map-reduce:fold-map}
+
+Here's some sample output for reference:
 
 ```tut:book:invisible
 import cats.Monoid
 import cats.syntax.semigroup._
 
-def foldMap[A, B: Monoid](values: Iterable[A])(func: A => B): B =
+def foldMap[A, B: Monoid](values: Vector[A])(func: A => B): B =
   values.foldLeft(Monoid[B].empty)(_ |+| func(_))
 ```
 
@@ -130,7 +181,7 @@ import cats.instances.int._
 ```
 
 ```tut:book
-foldMap(List(1, 2, 3))(identity)
+foldMap(Vector(1, 2, 3))(identity)
 
 ```tut:book:silent
 import cats.instances.string._
@@ -138,16 +189,16 @@ import cats.instances.string._
 
 ```tut:book
 // Mapping to a String uses the concatenation monoid:
-foldMap(List(1, 2, 3))(_.toString + "! ")
+foldMap(Vector(1, 2, 3))(_.toString + "! ")
 
 // Mapping over a String to produce a String:
-foldMap("Hello world!")(_.toString.toUpperCase)
+foldMap("Hello world!".toVector)(_.toString.toUpperCase)
 ```
 
 <div class="solution">
 We have to modify the type signature to accept a `Monoid` for `B`.
-With that change we can use
-the `Monoid` `empty` and `|+|` syntax [described in the monoids chapter](#monoid-syntax):
+With that change we can use the `Monoid` `empty` and `|+|` syntax
+as described in Section [@sec:monoid-syntax]:
 
 ```tut:book:silent
 import cats.Monoid
@@ -155,40 +206,58 @@ import cats.instances.int._
 import cats.instances.string._
 import cats.syntax.semigroup._
 
-def foldMap[A, B : Monoid](values: Iterable[A])(func: A => B = (a: A) => a): B =
+def foldMap[A, B : Monoid](values: Vector[A])(func: A => B): B =
   values.map(func).foldLeft(Monoid[B].empty)(_ |+| _)
 ```
 
 We can make a slight alteration to this code to do everything in one step:
 
 ```tut:book:silent
-def foldMap[A, B : Monoid](values: Iterable[A])(func: A => B = (a: A) => a): B =
+def foldMap[A, B : Monoid](values: Vector[A])(func: A => B): B =
   values.foldLeft(Monoid[B].empty)(_ |+| func(_))
 ```
 </div>
 
 ## Parallelising *foldMap*
 
-To run the fold in parallel we need to change our implementation strategy.
-A simple strategy is to allocate as many threads as we have CPUs
-and evenly partition our sequence amongst the threads.
-We can append the results together as each thread completes.
+Now we have a working single-threaded implementation of `foldMap`,
+let's look at distributing work to run in parallel.
+We'll use our single-threaded version of `foldMap` as a building block.
 
-Scala provides some simple tools to distribute work amongst threads.
-We could simply use
-the [parallel collections library][link-parallel-collections] to implement a solution,
-but let's challenge ourselves by diving a bit deeper.
-You might have already used `Futures`.
-A `Future` models a computation that may not yet have a value.
-That is, it represents a value that will become available "in the future".
-They are a good tool for this sort of job.
+We'll write a multi-CPU implementation
+that simulates the way we would distribute work
+in a map-reduce cluster as shown in Figure [@fig:map-reduce:parallel-fold-map]:
 
-Before we begin we need to introduce some new building blocks:
-*futures* and *partioning sequences*.
+1. we start with an initial list of all the data we need to process;
+2. we divide the data into batches, sending one batch to each CPU;
+3. the CPUs run a batch-level map phase in parallel;
+4. the CPUs run a batch-level reduce phase in parallel,
+   producing a local result for each batch;
+5. we reduce the results for each batch to a single final result.
 
-### Futures
+![*parallelFoldMap* algorithm](src/pages/case-studies/mapreduce/parallel-fold-map.pdf+svg){#fig:map-reduce:parallel-fold-map}
 
-To execute an operation in parallel we can construct a `Future` as follows:
+Scala provides some simple tools
+to distribute work amongst threads.
+We could simply use the
+[parallel collections library][link-parallel-collections]
+to implement a solution,
+but let's challenge ourselves by diving a bit deeper
+and implementing the algorithm ourselves using `Futures`.
+
+### *Futures*, Thread Pools, and *ExecutionContexts*
+
+We already know a fair amount about
+the monadic nature of `Futures`.
+Let's take a moment for a quick recap,
+and to describe how Scala futures
+are scheduled behind the scenes.
+
+`Futures` run on a thread pool,
+determined by an implicit `ExecutionContext` parameter.
+Whenever we create a `Future`,
+whether through a call to `Future.apply` or some other combinator,
+we must have an implicit `ExecutionContext` in scope:
 
 ```tut:book:silent
 import scala.concurrent.Future
@@ -196,26 +265,44 @@ import scala.concurrent.ExecutionContext.Implicits.global
 ```
 
 ```tut:book
-val future: Future[String] =
-  Future { "Construct this string in parallel!" }
+val future1 = Future {
+  (1 to 100).toList.foldLeft(0)(_ + _)
+}
+
+val future2 = Future {
+  (100 to 200).toList.foldLeft(0)(_ + _)
+}
 ```
 
-We need to have an implicit `ExecutionContext` in scope,
-which determines which thread pool runs the operation.
-The default `ExecutionContext.Implicits.global` shown above is a good choice,
-but we can use any choice in practice.
+In this example we've imported a `ExecutionContext.Implicits.global`.
+This default context allocates a thread pool
+with one thread per CPU in our machine.
+When we create a `Future`
+the `ExecutionContext` schedules it for execution.
+If there is a free thread in the pool,
+the `Future` starts executing immediately.
+Most modern machines have at least two CPUs,
+so in our example it is likely that `future1` and `future2`
+will execute in parellel.
 
-We operate on the value in a `Future` using the familiar `map` and `flatMap` methods:
+Some combinators create new `Futures`
+that schedule work based on the results of other `Futures`.
+The `map` and `flatMap` methods, for example,
+schedule computations that run as soon as
+their input values are computed and a CPU is available:
 
 ```tut:book
-val future2 = future.map(_.length)
+val future3 = future1.map(_.toString)
 
-val future3 =
-  future2.flatMap { length => Future { length * 1000 } }
+val future4 = for {
+  a <- future1
+  b <- future2
+} yield a + b
 ```
 
-If we have a `List[Future[A]]` we can convert it
-to a `Future[List[A]]` using the method `Future.sequence`:
+As we saw in Section [@sec:traverse],
+we can convert a `List[Future[A]]` to a `Future[List[A]]`
+using `Future.sequence`:
 
 ```tut:book
 Future.sequence(List(Future(1), Future(2), Future(3)))
@@ -233,8 +320,9 @@ import cats.syntax.traverse._  // foo.sequence syntax
 List(Future(1), Future(2), Future(3)).sequence
 ```
 
+An `ExecutionContext` is required in either case.
 Finally, we can use `Await.result`
-to block on a `Future` till a result is available.
+to block on a `Future` until a result is available:
 
 ```tut:book:silent
 import scala.concurrent._
@@ -249,57 +337,74 @@ There are also `Monad` and `Monoid` implementations for `Future`
 available from `cats.instances.future`:
 
 ```tut:book:silent
+import cats.Monad
 import cats.instances.future._
+
+Monad[Future].pure(42)
+
+import cats.Monoid
+import cats.instances.int._
+
+Monoid[Future[Int]].combine(Future(1), Future(2))
 ```
 
-### Partitioning Sequences
+### Dividing Work
 
-We can partition a sequence
-(actually anything that implements `Iterable`)
-using the `grouped` method.
-We'll use this to split off chunks of work for each CPU:
-
-```tut:book
-List(1, 2, 3, 4).grouped(2).toList
-```
-
+Now we've refreshed our memory of `Futures`,
+let's look at how we can divide work into batches.
 We can query the number of available CPUs on our machine
-using this API call to the Java standard library:
+using an API call from the Java standard library:
 
 ```tut:book
 Runtime.getRuntime.availableProcessors
 ```
 
-### Parallel *foldMap*
+We can partition a sequence
+(actually anything that implements `Vector`)
+using the `grouped` method.
+We'll use this to split off batches of work for each CPU:
 
-Implement a parallel version of `foldMap` called `foldMapP`
-using the tools described above:
-
-```tut:book:silent
-def foldMapP[A, B : Monoid]
-    (values: Iterable[A])
-    (func: A => B = (a: A) => a): Future[B] = ???
+```tut:book
+(1 to 10).toList.grouped(3).toList
 ```
 
-Start by splitting the input into a set of even chunks, one per CPU.
-Create a future to do the work for each chunk using `Future.apply`,
-and then `foldMap` cross the futures.
+### Implementing *parallelFoldMap*
+
+Implement a parallel version of `foldMap` called `parallelFoldMap`.
+Here is the type signature:
+
+```tut:book:silent
+def parallelFoldMap[A, B : Monoid]
+    (values: Vector[A])
+    (func: A => B): Future[B] = ???
+```
+
+Use the techniques described above to
+split the work into batches, one batch per CPU.
+Process each batch in a parallel thread.
+Refer back to Figure [@fig:map-reduce:parallel-fold-map]
+if you need to review the overall algorithm.
+
+For bonus points, process the batches for each CPU
+using your implementation of `foldMap` from above.
 
 <div class="solution">
-The annotated solution is below:
+Here is an annotated solution that
+splits out each `map` and `fold`
+into a separate line of code:
 
 ```tut:book:silent
 import scala.concurrent.duration.Duration
 
-def foldMapP[A, B: Monoid]
-    (values: Iterable[A])
-    (func: A => B = (a: A) => a): Future[B] = {
+def parallelFoldMap[A, B: Monoid]
+    (values: Vector[A])
+    (func: A => B): Future[B] = {
   // Calculate the number of items to pass to each CPU:
-  val numCores: Int = Runtime.getRuntime.availableProcessors
-  val groupSize: Int = (1.0 * values.size / numCores).ceil.toInt
+  val numCores  = Runtime.getRuntime.availableProcessors
+  val groupSize = (1.0 * values.size / numCores).ceil.toInt
 
   // Create one group for each CPU:
-  val groups: Iterator[Iterable[A]] =
+  val groups: Iterator[Vector[A]] =
     values.grouped(groupSize)
 
   // Create a future to foldMap each group:
@@ -318,245 +423,172 @@ def foldMapP[A, B: Monoid]
 ```
 
 ```tut:book
-Await.result(foldMapP(1 to 1000000)(), 1.second)
+Await.result(parallelFoldMap((1 to 1000000).toVector)(identity), 1.second)
 ```
-</div>
 
-## Monadic *foldMap*
-
-It's useful to allow the user of `foldMap`
-to perform monadic actions within their mapping function.
-This, for example, allows the mapping to indicate failure
-by returning an `Option`.
-
-Implement a variant of `foldMap` (without parallelism)
-called `foldMapM` that allows this.
-Here's the basic type signature---add
-implicit parameters and context bounds as necessary to make your code compile:
+We can re-use our definition of `foldMap` for a more concise solution.
+Note that the local maps and reduces in steps 3 and 4 of
+Figure [@fig:map-reduce:parallel-fold-map]
+are actually equivalent to a single call to `foldMap`,
+shortening the entire algorithm as follows:
 
 ```tut:book:silent
-import scala.language.higherKinds
+def parallelFoldMap[A, B: Monoid]
+    (values: Vector[A])
+    (func: A => B): Future[B] = {
+  val numCores  = Runtime.getRuntime.availableProcessors
+  val groupSize = (1.0 * values.size / numCores).ceil.toInt
 
-def foldMapM[A, M[_], B](iter: Iterable[A])(f: A => M[B]): M[B] =
-  ???
-```
+  val groups: Iterator[Vector[A]] =
+    values.grouped(groupSize)
 
-```tut:book:invisible
-import cats.Monad
-import cats.syntax.applicative._
-import cats.syntax.flatMap._
-import cats.syntax.functor._
+  val futures: Iterator[Future[B]] =
+    groups.map(group => Future(foldMap(group)(func)))
 
-def foldMapM[A, M[_]: Monad, B: Monoid](iter: Iterable[A])(f: A => M[B]): M[B] =
-  iter.foldLeft(Monoid[B].empty.pure[M]) { (accum, elt) =>
-    for {
-      a <- accum
-      b <- f(elt)
-    } yield a |+| b
+  Future.sequence(futures) map { iterable =>
+    iterable.foldLeft(Monoid[B].empty)(_ |+| _)
   }
-```
-
-The focus here is on the monadic component
-so base your code on `foldMap` for simplicity.
-Here are some examples of use:
-
-```tut:book:silent
-import cats.instances.int._
-import cats.instances.option._
-import cats.instances.list._
-
-val seq = List(1, 2, 3)
-```
-
-```tut:book
-foldMapM(seq)(a => Option(a))
-
-foldMapM(seq)(a => List(a))
-
-foldMap(seq)(a => if(a % 2 == 0) Option(a) else Option.empty[Int])
-```
-
-<div class="solution">
-First we change
-the type of our `func` parameter
-from `A => B` to `A => M[B]`
-and bring in the `Monoid` for `M`.
-Then we tweak the method implementation
-to `flatMap` over the monad and call `|+|`:
-
-```tut:book:silent
-import cats.Monad
-import cats.syntax.applicative._
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-
-def foldMapM[A, M[_]: Monad, B: Monoid](iter: Iterable[A])(f: A => M[B]): M[B] =
-  iter.foldLeft(Monoid[B].empty.pure[M]) { (accum, elt) =>
-    for {
-      a <- accum
-      b <- f(elt)
-    } yield a |+| b
-  }
-```
-</div>
-
-### Exercise: Everything is Monadic
-
-We can unify monadic and normal code by
-using the `Id` monad described in the [Monads chapter](#id-monad).
-Using this trick, implement a default `func` parameter for `foldMapM`.
- This allows us to write code like:
-
-```scala
-foldMapM(seq)
-```
-
-<div class="solution">
-We have `Monad[B]` in scope in our method header,
-so all we need to do is use the `point` syntax:
-
-```tut:book:silent
-import cats.Id
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-
-def foldMapM[A, M[_] : Monad, B: Monoid]
-    (iter: Iterable[A])
-    (f: A => M[B] = (a: A) => a.pure[Id]): M[B] =
-  iter.foldLeft(Monoid[B].empty.pure[M]) { (accum, elt) =>
-    for {
-      a <- accum
-      b <- f(elt)
-    } yield a |+| b
-  }
-```
-</div>
-
-It also allows us to implement `foldMap` in terms of `foldMapM`. Try it!
-
-<div class="solution">
-```tut:book:silent
-def foldMap[A, B : Monoid](iter: Iterable[A])(f: A => B = (a: A) => a): B =
-  foldMapM[A, Id, B](iter) { a => f(a).pure[Id] }
-```
-</div>
-
-### Exercise: Seeing is Believing
-
-Call `foldMapM` using `Either`
-and verify that it really does
-stop execution as soon an error is encountered.
-Start by writing a type alias to convert `Either`
-to a type constructor with one parameter.
-We'll use `Either.catchOnly` to read input,
-so define your alias using an appropriate error type:
-
-```tut:book:silent
-import cats.instances.either._
-import cats.syntax.either._
-```
-
-```tut:book
-Either.catchOnly[NumberFormatException]("Cat".toInt)
-
-Either.catchOnly[NumberFormatException]("1".toInt)
-```
-
-Once you have your type alias, call `foldMapM`.
-Start with a sequence of `Strings`---both valid and invalid input---and
-see what results you get:
-
-<div class="solution">
-The `catchOnly` approach gives us a `Either[NumberFormatException, Int]`
-so we'll go with `NumberFormatException` as our error type:
-
-```tut:book:silent
-type ParseResult[A] = Either[NumberFormatException, A]
-```
-
-Now we can use `foldMapM`.
-The resulting code iterates over the sequence,
-adding up numbers using the `Monoid` for `Int`
-until a `NumberFormatException` is encountered.
-At that point the `Monad` for `Either` fails fast,
-returning the failure without processing the rest of the list:
-
-```tut:book
-foldMapM[String, ParseResult, Int](List("1", "2", "3")) { str =>
-  Either.catchOnly[NumberFormatException](str.toInt)
-}
-
-foldMapM[String, ParseResult, Int](List("1", "x", "3")) { str =>
-  Either.catchOnly[NumberFormatException](str.toInt)
 }
 ```
+
+```tut:book
+Await.result(parallelFoldMap((1 to 1000000).toVector)(identity), 1.second)
+```
 </div>
 
-## Parallel Monadic *foldMap*
+### *parallelFoldMap* with more Cats
 
-We've seen that we can extend `foldMap`
-to work over a monad to add error handling (and other effects)
-to the sequential version of `foldMap`.
-What about a monadic parallel version of `foldMap`?
+Although we implemented `foldMap` ourselves above,
+the method is also available as part of the `Foldable`
+type class we discussed in Section [@sec:foldable].
 
-The straightforward extension of `foldMapP` doesn't really do what we want.
-Because we're working in parallel
-we can encounter multiple errors---one per thread---and
-we would ideally report *all* of these errors.
-Our current implementation will only report the first.
+Reimplement `parallelFoldMap` using Cats'
+`Foldable` and `Traverseable` type classes.
 
-When we looked at applicatives in Chapter [@sec:applicatives]
-we saw they allowed us to accumulate errors,
-rather than stopping on the first error as inherently sequential monads do.
-If we converted the monad to an applicative
-we could use this accumulate all the errors we encounter.
+<div class="solution">
+We'll restate all of the necessary imports for completeness:
 
-It's easy enough to hard-code a choice of monad and applicative,
-we can do a lot better than that.
-If we allow the user to specify the transformation
-they gain the flexibility to choose the error handling strategy
-appropriate for their task.
-They might want fail-fast error handling, accumulating all errors,
-or even ignoring errors and replacing them with the identity.
+```tut:book:silent:reset
+import cats.Monoid
+import cats.Foldable
+import cats.Traverse
 
-This transformation should accept a `F[_]` and return a `G[_]`.
-This concept known as a *natural transformation*[^kind-polymorphism].
+import cats.instances.int._    // for Monoid
+import cats.instances.future._ // for Applicative and Monad
+import cats.instances.vector._ // for Foldable and Traverse
 
-[^kind-polymorphism]: Why can't we use a function with type `F => G` to do this?
-The reason is the kinds are wrong.
-`F` is a type with kind `*`,
-while `F[_]` is a type constructor with kind `* => *`.
-Scala provides no way to abstract over kinds.
-Such a feature is known as *kind polymorphism*.
+import cats.syntax.monoid._   // for |+|
+import cats.syntax.foldable._ // for combineAll and foldMap
+import cats.syntax.traverse._ // for traverse
 
-Implement `foldMapPM` with a user specified `NaturalTransformation`
-to convert our `Monad` to an `Applicative`.
-As every `Monad` is an `Applicative` define a default value
-using the identity natural transformation.
+import scala.concurrent._
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+```
 
-## *foldMap* in the Real World
+Here's the implementation of `parallelFoldMap`
+delegating as much of the method body to Cats as possible:
 
-We've implemented a sequence processing abstraction, `foldMap`,
-based on monoidal addition of elements.
-We've seen that we can extend this to more flexible situations,
-particularly user-specified error handling,
-by combining monads, applicative functors, and natural transformations.
-The result is a powerful and general framework
-for sequential and parallel processing.
-Is it useful, however?
+```tut:book:silent
+def parallelFoldMap[A, B: Monoid]
+    (values: Vector[A])
+    (func: A => B): Future[B] = {
+  val numCores  = Runtime.getRuntime.availableProcessors
+  val groupSize = (1.0 * values.size / numCores).ceil.toInt
 
-It turns out that yes, this concept is very useful.
-As we mentioned previously
-the core idea of monoidal addition underlies [Summingbird][link-summingbird],
-Twitter's framework that powers all their internal data processing jobs.
+  values
+    .grouped(groupSize)
+    .toVector
+    .traverse(group => Future(group.toVector.foldMap(func)))
+    .map(_.combineAll)
+}
+```
 
-Monoids are not restricted to simple tasks like addition and string concatenation.
-Most of the tasks data scientists perform in their day-to-day analyses can be cast as monoids.
+```tut:book:silent
+val future: Future[Int] =
+  parallelFoldMap((1 to 1000).toVector)(_ * 1000)
+```
+
+```tut:book
+Await.result(future, 1.second)
+```
+
+The call to `vector.grouped` returns an `Iterable[Iterator[Int]]`.
+We sprinkle calls to `toVector` through the code
+to convert the data back to a form that Cats can understand.
+The call to `traverse` creates a `Future[Vector[Int]]`
+containing one `Int` per batch.
+The call to `map` then combines the `match` using
+the `combineAll` method from `Foldable`.
+</div>
+
+## Summary
+
+In this case study we implemented
+a system that imitates map-reduce
+as performed on a cluster.
+Our algorithm followed three steps:
+
+1. batch the data and send one batch to each "node";
+2. perform a local map-reduce on each batch;
+3. combine the results using monoidal addition.
+
+### Batching Strategies in the Real World
+
+The main bottleneck in real map-reduce
+is network communication between the nodes.
+To counter this, systems like Hadoop
+provide mechanisms for pre-batching data
+to limit the communication required
+to distribute work.
+
+Our toy system is designed to emulate
+this real-world batching behaviour.
+However, in reality we are
+running all of our work on a single machine
+where communcation between nodes is negligable.
+We don't actually need to pre-batch data
+to gain efficient parallel processing of a list.
+We can simply map:
+
+```tut:book:silent
+val future1: Future[Vector[Int]] =
+  (1 to 1000).toVector.
+    traverse(item => Future(item + 1))
+```
+
+and reduce using a `Monoid`:
+
+```tut:book:silent
+val future2: Future[Int] =
+  future1.map(_.combineAll)
+```
+
+```tut:book
+Await.result(future2, 1.second)
+```
+
+### Reduction using *Monoids*
+
+Regardless of the batching strategy,
+mapping and reducing with `Monoids`
+is a powerful and general framework.
+The core idea of monoidal addition
+underlies [Summingbird][link-summingbird],
+Twitter's framework that powers
+all their internal data processing jobs.
+
+Monoids are not restricted to simple tasks
+like addition and string concatenation.
+Most of the tasks data scientists perform
+in their day-to-day analyses can be cast as monoids.
 There are monoids for all the following:
 
 - approximate sets such as the Bloom filter;
-- set cardinality estimators, such as the HyperLogLog algorithm;
-- vectors and hence vector operations like stochastic gradient descent;
+- set cardinality estimators,
+  such as the HyperLogLog algorithm;
+- vectors and hence vector operations
+  like stochastic gradient descent;
 - quantile estimators such as the t-digest
 
 to name but a few.
