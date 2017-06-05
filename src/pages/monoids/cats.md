@@ -151,8 +151,8 @@ We can alternatively write the fold using `Monoids`,
 although there's not a compelling use case for this yet:
 
 ```tut:book:silent
-import cats.instances.int._
 import cats.Monoid
+import cats.instances.int._
 import cats.syntax.semigroup._
 
 def add(items: List[Int]): Int =
