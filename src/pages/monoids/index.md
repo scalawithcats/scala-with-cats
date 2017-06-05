@@ -288,4 +288,7 @@ implicit def setIntersectionSemigroup[A]: Semigroup[Set[A]] =
       a intersect b
   }
 ```
+
+Set complement and set difference are not associative,
+so they cannot be considered for either monoids or semigroups.
 </div>
