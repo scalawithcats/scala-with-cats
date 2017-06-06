@@ -124,7 +124,7 @@ each machine would report the current values as `3 + 2 = 5`.
 We can implement a GCounter with the interface
 
 ```tut:book:silent
-final case class GCounter(counters: Map[String,Int]) {
+final case class GCounter(counters: Map[String, Int]) {
   def increment(machine: String, amount: Int) =
     ???
 
@@ -145,7 +145,7 @@ Hopefully the description above was clear enough that
 you can get to an implementation like the below.
 
 ```tut:book:silent
-final case class GCounter(counters: Map[String,Int]) {
+final case class GCounter(counters: Map[String, Int]) {
   def increment(machine: String, amount: Int) =
     GCounter(counters + (machine -> (amount + counters.getOrElse(machine, 0))))
 
@@ -154,7 +154,7 @@ final case class GCounter(counters: Map[String,Int]) {
 
   def merge(that: GCounter): GCounter =
     GCounter(that.counters ++ {
-      for((k,v) <- counters) yield {
+      for((k, v) <- counters) yield {
         k -> (v max that.counters.getOrElse(k,0))
       }
     })

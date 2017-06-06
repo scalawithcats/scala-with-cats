@@ -101,7 +101,7 @@ pages:
   - case-studies/crdt/abstraction.md
   - case-studies/crdt/summary.md
 
-  - case-studies/parser/index.md
+  # - case-studies/parser/index.md
   # - case-studies/parser/intro.md
   # - case-studies/parser/error-handling.md
   # - case-studies/parser/transforms.md

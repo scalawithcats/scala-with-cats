@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1801px" height="272px" viewBox="0 0 1801 272" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.1 (39012) - http://www.bohemiancoding.com/sketch -->
+    <title>applicative</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <ellipse id="path-1" cx="68.1239804" cy="85.2105263" rx="68.1239804" ry="68.2105263"></ellipse>
+        <ellipse id="path-2" cx="86.1239804" cy="85.2105263" rx="68.1239804" ry="68.2105263"></ellipse>
+        <ellipse id="path-3" cx="68.1239804" cy="85.2105263" rx="68.1239804" ry="68.2105263"></ellipse>
+        <ellipse id="path-4" cx="85.1239804" cy="86.2105263" rx="68.1239804" ry="68.2105263"></ellipse>
+        <ellipse id="path-5" cx="68.1239804" cy="85.2105263" rx="68.1239804" ry="68.2105263"></ellipse>
+        <ellipse id="path-6" cx="89.1239804" cy="86.2105263" rx="68.1239804" ry="68.2105263"></ellipse>
+        <ellipse id="path-7" cx="240.12398" cy="86.2105263" rx="68.1239804" ry="68.2105263"></ellipse>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="applicative" transform="translate(-61.000000, -60.000000)">
+            <rect id="Background" x="0" y="0" width="1921" height="360"></rect>
+            <g id="Group-7" transform="translate(61.000000, 61.000000)">
+                <g id="Oval-1">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <ellipse stroke="#000000" stroke-width="4" cx="68.1239804" cy="85.2105263" rx="66.1239804" ry="66.2105263"></ellipse>
+                </g>
+                <g id="Group" transform="translate(272.000000, 0.000000)">
+                    <g id="Oval-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-2"></use>
+                        <ellipse stroke="#000000" stroke-width="4" cx="86.1239804" cy="85.2105263" rx="66.1239804" ry="66.2105263"></ellipse>
+                    </g>
+                    <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="2" y="2" width="166.309951" height="166.526316" rx="8"></rect>
+                </g>
+                <polygon id="Path-1" fill="#000000" points="171 70.0526316 205.06199 70.0526316 205.06199 53 239.12398 86.6770436 205.06199 121.210526 205.06199 104.157895 171 104.157895"></polygon>
+            </g>
+            <text id="A-=&gt;-F[A]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="168.936868" y="325">A =&gt; F[A]</tspan>
+            </text>
+            <g id="Group-6" transform="translate(661.000000, 60.000000)">
+                <g id="Oval-1">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-3"></use>
+                    <ellipse stroke="#000000" stroke-width="4" cx="68.1239804" cy="85.2105263" rx="66.1239804" ry="66.2105263"></ellipse>
+                </g>
+                <g id="Group" transform="translate(273.000000, 0.000000)">
+                    <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="2" y="2" width="166.309951" height="166.526316" rx="8"></rect>
+                    <g id="Oval-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-4"></use>
+                        <ellipse stroke="#000000" stroke-width="4" cx="85.1239804" cy="86.2105263" rx="66.1239804" ry="66.2105263"></ellipse>
+                    </g>
+                </g>
+                <polygon id="Path-1" fill="#000000" points="172 71.0526316 206.06199 71.0526316 206.06199 54 240.12398 87.6770436 206.06199 122.210526 206.06199 105.157895 172 105.157895"></polygon>
+            </g>
+            <text id="A-=&gt;-F[A]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="768.351223" y="324">A =&gt; F[A]</tspan>
+            </text>
+            <text id="A-=&gt;-F[(A,-A)]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="1384.63426" y="324">A =&gt; F[(A, A)]</tspan>
+            </text>
+            <g id="Group-5" transform="translate(1261.000000, 60.000000)">
+                <g id="Oval-1">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-5"></use>
+                    <ellipse stroke="#000000" stroke-width="4" cx="68.1239804" cy="85.2105263" rx="66.1239804" ry="66.2105263"></ellipse>
+                </g>
+                <polygon id="Path-1" fill="#000000" points="171 68.0526316 205.06199 68.0526316 205.06199 51 239.12398 84.6770436 205.06199 119.210526 205.06199 102.157895 171 102.157895"></polygon>
+                <g id="Group-4" transform="translate(272.000000, 0.000000)">
+                    <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="2.69004894" y="2" width="323.644372" height="166.526316" rx="8"></rect>
+                    <g id="Oval-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-6"></use>
+                        <ellipse stroke="#000000" stroke-width="4" cx="89.1239804" cy="86.2105263" rx="66.1239804" ry="66.2105263"></ellipse>
+                    </g>
+                    <g id="Oval-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-7"></use>
+                        <ellipse stroke="#000000" stroke-width="4" cx="240.12398" cy="86.2105263" rx="66.1239804" ry="66.2105263"></ellipse>
+                    </g>
+                </g>
+            </g>
+            <polygon id="Path-1" fill="#F6A623" points="1145 127 1185 127 1185 107 1225 146.497767 1185 187 1185 167 1145 167"></polygon>
+            <text id="|@|" font-family="FiraMono-Bold, Fira Mono" font-size="56" font-weight="bold" fill="#F6A623">
+                <tspan x="533.1" y="169">|@|</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

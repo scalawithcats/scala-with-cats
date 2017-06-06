@@ -17,7 +17,7 @@ It had no `map` or `flatMap` method:
 
 Right(123).flatMap(x => Right(x * 2))
 // <console>:12: error: value flatMap is not a member
-//   of scala.util.Right[Nothing,Int]
+//   of scala.util.Right[Nothing, Int]
 //        Right(123).flatMap(x => Right(x * 2))
 //                   ^
 ```

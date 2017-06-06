@@ -1,65 +1,73 @@
 ## Sketching the Library Structure
 
-Let's start with the bottom level,
-checking individual components of the data.
-Before getting into the code,
-let's try to develop a feel for what we'll be building.
-We can use our graphical notation to help us.
+Let's start at the bottom,
+checking individual pieces of data.
+Before we start coding
+let's try to develop a feel
+for what we'll be building.
+We can use a graphical notation to help us.
+We'll go through our goals one by one.
 
-Start with our first goals:
-associating useful error messages with check failure.
+**Providing error messages**
+
+Our first goal requires us to
+associate useful error messages with a check failure.
 The output of a check could be either the value being checked,
 if it passed the check, or some kind of error message.
 We can abstactly represent this as a value in a context,
-where the context is the possibility of an error message:
+where the context is the possibility of an error message
+as shown in Figure [@fig:validation:result].
 
-```
-[.]
-```
+![A validation result](src/pages/case-studies/validation/result.pdf+svg){#fig:validation:result}
 
-Then a check itself is a function that
-transforms a value into a value in a context:
+A check itself is therefore a function that
+transforms a value into a value in a context
+as shown in Figure [@fig:validation:check].
 
-```
-. => [.]
-```
+![A validation check](src/pages/case-studies/validation/check.pdf+svg){#fig:validation:check}
 
-Our next goal is to combine smaller checks into larger ones?
-Is this an applicative?
+**Combine checks**
 
-```
-. => [.] |@| . => [.] = [(.,.)]
-```
+How do we combine smaller checks into larger ones?
+Is this an applicative or cartesian
+as shown in Figure [@fig:validation:applicative]?
+
+![Applicative combination of checks](src/pages/case-studies/validation/applicative.pdf+svg){#fig:validation:applicative}
 
 Not really.
-Both checks are applied to the same value
-and we want to just get that value back,
-not a tuple with the value repeated.
-It feels more like a monoid.
+With a cartesian, both checks are applied to the same value
+and result in a tuple with the value repeated.
+What we want feels more like a monoid
+as shown in Figure [@fig:validation:monoidal].
+We can define a sensible identity---a check that always passes---and
+two binary combination operators---*and* and *or*:
 
-```
-. => [.] |+| . => [.] = . => [.]
-```
+![Monoidal combination of checks](src/pages/case-studies/validation/monoidal.pdf+svg){#fig:validation:monoidal}
 
-We can even define a sensible identity---the check that always passes.
-So a monoid seems the right track.
-Thinking a bit more about the problem,
-we want to combine checks using logical operators---mainly and and or---so
-a monoid is the right abstraction.
-However we might not want to actually use a monoid API
-as we'll probably use and and or about equally often
-and it will be annoying to have to continuously wrap types
-to switch between the two methods.
-We'll probably want methods `and` and `or` instead.
+We'll probably be using *and* and *or* about equally often
+with our validation library
+and it will be annoying to continuously
+switch between two monoids for combining rules.
+We consequently won't actually use the monoid API:
+we'll use two separate methods, `and` and `or`, instead.
 
-Now we have the goal of transforming data.
-This seems like it should be a map or a flatMap
-depending on whether the transform can fail or not.
-In the example, parsing a `String` to an `Int`,
-that can definitely fail so it seems we also want checks to be a monad.
+**Accumulating errors as we check**
 
-Finally we get to accumulating error messages.
-This feels like a monoid, which we've already discussed above.
+Monoids also feel like a good mechanism
+for accumulating error messages.
+If we store messages as a `List` or `NonEmptyList`,
+we can even use a pre-existing monoid from inside Cats.
+
+**Transforming data as we check it**
+
+In addition to checking data,
+we also have the goal of transforming it.
+This seems like it should be a `map` or a `flatMap`
+depending on whether the transform can fail or not,
+so it seems we also want checks to be a monad
+as shown in Figure [@fig:validation:monadic].
+
+![Monadic combination of checks](src/pages/case-studies/validation/monadic.pdf+svg){#fig:validation:monadic}
 
 We've now broken down our library into familiar abstractions
 and are in a good position to begin development.
