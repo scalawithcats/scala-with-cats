@@ -1,4 +1,4 @@
-# *Foldable* and *Traverse*
+# *Foldable* and *Traverse* {#sec:foldable-traverse}
 
 In this chapter we'll look at two type classes
 that capture iteration over collections:
