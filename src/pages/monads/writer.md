@@ -149,7 +149,7 @@ val writer2 = writer1.mapWritten(_.map(_.toUpperCase))
 writer2.run
 ```
 
-We can tranform both log and result simultaneously using `bimap` or `mapBoth`.
+We can transform both log and result simultaneously using `bimap` or `mapBoth`.
 `bimap` takes two function parameters, one for the log and one for the result.
 `mapBoth` takes a single function that accepts two parameters:
 
