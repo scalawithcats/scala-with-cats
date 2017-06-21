@@ -107,7 +107,7 @@ because a bounded semilattice is a monoid
 
 #### BoundedSemiLattice Instances
 
-Implement some `BoundedSemiLattice` type class instances (e.g. for `Int` and `Set`).
+Implement some `BoundedSemiLattice` type class instances (e.g. for non-negative `Int`, and for `Set`).
 
 <div class="solution">
 It's natural to place the instance
@@ -124,6 +124,7 @@ trait BoundedSemiLattice[A] extends Monoid[A] {
 }
 
 object BoundedSemiLattice {
+  /** This BoundedSemiLattice instance is for non-negative `Int` only. */
   implicit object intBoundedSemiLatticeInstance extends BoundedSemiLattice[Int] {
     def combine(a1: Int, a2: Int): Int =
       a1 max a2
