@@ -147,11 +147,13 @@ to complete the type signature.
 
 <div class="solution">
 ```tut:book:silent
+import cats.Monoid
+
 /** Single-threaded map reduce function.
   * Maps `func` over `values`
   * and reduces using a `Monoid[B]`.
   */
-def foldMap[A, B](values: Vector[A])(func: A => B): B =
+def foldMap[A, B: Monoid](values: Vector[A])(func: A => B): B =
   ???
 ```
 </div>

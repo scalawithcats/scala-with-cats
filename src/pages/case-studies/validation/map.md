@@ -205,7 +205,7 @@ shown in Figure [@fig:validation:generic-flatmap]:
 
 ![Type chart for flatMap](src/pages/monads/generic-flatmap.pdf+svg){#fig:validation:generic-flatmap}
 
-How do we relate `F` in the igure to `Check` in our code?
+How do we relate `F` in the figure to `Check` in our code?
 `Check` has *three* type variables while `F` only has one.
 
 To unify the types we need to fix two of the type parameters.
@@ -293,7 +293,7 @@ Implement `andThen` now!
 
 <div class="solution">
 Here's a minimal definition of `andThen`
-and its corrsponding `AndThen` class:
+and its corresponding `AndThen` class:
 
 ```tut:book:silent
 object wrapper {

@@ -46,15 +46,15 @@ Now `A` serves a single visitor.
 
 ```
 A: 6
-B: 4
+B: 5
 ```
 
 The machines attempt to merge counters again.
 If they use addition as the merging algorithm they will end up with
 
 ```
-A: 10
-B: 10
+A: 11
+B: 11
 ```
 
 This is clearly wrong!

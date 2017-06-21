@@ -58,7 +58,9 @@ that wraps a function just `Check` does.
 If `Kleisli` seems familiar to you, then congratulations.
 You've seen through its disguise and recognised it as another
 concept from earlier in the book.
-`Kleisli` is just another name for the `Reader` monad!
+`Kleisli` is just another name for the `Reader` monad![^kleisli]
+
+[^kleisli]: `Kleisli` is in fact a generalisation of `Reader`. It is directly equivalent to the monad transformer variant of `Reader`, `ReaderT`. Alternatively `Reader` is a specialisation of `Kleisli` to the `Id` monad.
 
 Here is a simple example using `Kleisli`
 to transform an integer into a list of integers

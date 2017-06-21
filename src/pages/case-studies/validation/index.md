@@ -35,7 +35,7 @@ the types of checks we want to perform:
 
 With these examples in mind we can state some goals:
 
-- We should be able associate meaningful messages with each validation failure,
+- We should be able to associate meaningful messages with each validation failure,
   so the user knows why their data is not valid.
 
 - We should be able to combine small checks into larger ones.

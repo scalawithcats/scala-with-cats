@@ -67,7 +67,7 @@ which parameters to "fix" to create
 a unary type constructor for a given type.
 Cats provides instances of `Unapply`
 for the common binary types:
-`Either`, `Either`, `Validated`, and `Function1`, and so on.
+`Either`, `Validated`, `Function1`, and so on.
 `Traverse` provides variants of `traverse` and `sequence`
 called `traverseU` and `sequenceU`
 that use `Unapply` to guide the compiler
