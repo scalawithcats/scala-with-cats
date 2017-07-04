@@ -14,7 +14,7 @@ between these two methods.
 Fortunately, Cats provides
 a data type called `Validated`
 that has an instance of `Cartesian`
-but *no* instace of `Monad`.
+but *no* instance of `Monad`.
 The implementation of `product`
 is therefore free to accumulate errors:
 
