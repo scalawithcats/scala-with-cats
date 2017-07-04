@@ -266,12 +266,12 @@ read the `"name"` and `"age"` fields:
 - `readName` will take a `Map[String, String]` parameter,
   extract the `"name"` field,
   check the relevant validation rules,
-  and return an `Either[List[String, String]]`;
+  and return an `Either[List[String], String]`.
 
 - `readAge` will take a `Map[String, String]` parameter,
   extract the `"age"` field,
   check the relevant validation rules,
-  and return an `Either[List[String, Int]`.
+  and return an `Either[List[String], Int]`.
 
 We'll build these methods up from smaller building blocks.
 Start by defining a method `getValue` that
