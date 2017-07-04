@@ -179,7 +179,7 @@ import cats.data.NonEmptyVector
 
 `Validated` comes with a suite of methods
 that closely resemble those available for `Either`,
-including the methods from [`cats.syntax.either`].
+including the methods from [`cats.syntax.either`][cats.syntax.either].
 We can use `map`, `leftMap`, and `bimap`
 to transform the values inside
 the valid and invalid sides:
