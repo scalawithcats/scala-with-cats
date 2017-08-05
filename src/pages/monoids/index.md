@@ -291,4 +291,15 @@ implicit def setIntersectionSemigroup[A]: Semigroup[Set[A]] =
 
 Set complement and set difference are not associative,
 so they cannot be considered for either monoids or semigroups.
+However, symmetric difference (the union less the intersection)
+does also form a monoid with the empty set:
+
+```tut:book:silent
+implicit def symDiffMonoid[A]: Monoid[Set[A]] = 
+  new Monoid[Set[A]] {
+    def combine(a: Set[A], b: Set[A]): Set[A] = 
+      (a diff b) union (b diff a)
+    def empty: Set[A] = Set.empty
+  }
+```
 </div>
