@@ -38,7 +38,7 @@ This is a property known as *associativity*:
 **Integer multiplication**
 
 The same properties for addition also apply for multiplication,
-provided wee use `1` as the identity instead of `0`:
+provided we use `1` as the identity instead of `0`:
 
 ```tut:book
 1 * 3

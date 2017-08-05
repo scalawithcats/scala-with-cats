@@ -17,7 +17,7 @@ so we can run concurrent computations without mixing logs.
 *Cats data types*
 
 `Writer` is the first data type we've seen
-from the [`cats.data`] package.
+from the [`cats.data`][cats.data.package] package.
 This package provides numerous data types:
 instances of various type classes
 that produce useful semantics.

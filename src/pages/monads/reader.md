@@ -65,8 +65,7 @@ The `flatMap` method is more interesting.
 It allows us to combine multiple readers
 that depend on the same input type.
 To illustrate this, let's extend our greeting example
-to produce a login system that checks a user's password
-and displays different messages depending on whether it was valid:
+to also feed the cat.
 
 ```tut:book:silent
 val feedKitty: Reader[Cat, String] =

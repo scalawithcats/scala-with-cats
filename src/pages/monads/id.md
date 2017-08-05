@@ -24,7 +24,7 @@ sumSquare(3, 4)
 ```
 
 It would be incredibly useful if we could use `sumSquare`
-with a combination of monadic and non-monadic parameters.
+with parameters that were either in some monad or not in a monad at all.
 This would allow us to abstract over monadic and non-monadic code.
 Fortunately, Cats provides the `Id` type to bridge the gap:
 

@@ -115,9 +115,10 @@ object GCounterExample {
 
   val g1 = Map("a" -> 7, "b" -> 3)
   val g2 = Map("a" -> 2, "b" -> 5)
+  val merged = GCounter[Map, String, Int].merge(g1, g2)
 
-  println(s"Merged: ${GCounter[Map, String, Int].merge(g1,g2)}")
-  println(s"Total: ${GCounter[Map, String, Int].total(g1)}")
+  println(s"Merged: ${merged}")
+  println(s"Total: ${GCounter[Map, String, Int].total(merged)}")
 }
 ```
 
