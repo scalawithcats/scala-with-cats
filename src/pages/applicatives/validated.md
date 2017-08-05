@@ -14,7 +14,7 @@ between these two methods.
 Fortunately, Cats provides
 a data type called `Validated`
 that has an instance of `Cartesian`
-but *no* instace of `Monad`.
+but *no* instance of `Monad`.
 The implementation of `product`
 is therefore free to accumulate errors:
 
@@ -179,7 +179,7 @@ import cats.data.NonEmptyVector
 
 `Validated` comes with a suite of methods
 that closely resemble those available for `Either`,
-including the methods from [`cats.syntax.either`].
+including the methods from [`cats.syntax.either`][cats.syntax.either].
 We can use `map`, `leftMap`, and `bimap`
 to transform the values inside
 the valid and invalid sides:
@@ -266,12 +266,12 @@ read the `"name"` and `"age"` fields:
 - `readName` will take a `Map[String, String]` parameter,
   extract the `"name"` field,
   check the relevant validation rules,
-  and return an `Either[List[String, String]]`;
+  and return an `Either[List[String], String]`.
 
 - `readAge` will take a `Map[String, String]` parameter,
   extract the `"age"` field,
   check the relevant validation rules,
-  and return an `Either[List[String, Int]`.
+  and return an `Either[List[String], Int]`.
 
 We'll build these methods up from smaller building blocks.
 Start by defining a method `getValue` that
