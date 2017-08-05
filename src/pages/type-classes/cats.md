@@ -67,7 +67,7 @@ and so on...                                     See the [`cats.instances`][cats
 ------------------------------------------------------------------------------
 
 <div class="callout callout-info">
-Most people use `import cats.implicits.all._`
+Most people use `import cats.instances.all._`
 to bring all instances into scope at the same time.
 In this book we will use specific imports
 to show you exactly which instances we need in each case.
