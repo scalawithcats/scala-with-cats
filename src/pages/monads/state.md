@@ -11,7 +11,7 @@ without using mutation.
 
 Boiled down to its simplest form,
 instances of `State[S, A]` represent functions of type `S => (S, A)`.
-`S` is the type of the state and and `A` is the type of the result.
+`S` is the type of the state and `A` is the type of the result.
 
 ```tut:book:silent
 import cats.data.State
