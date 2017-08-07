@@ -94,7 +94,7 @@ stringDivideBy("bar", "2")
 Every monad is also a functor (see below for proof),
 so we can rely on both `flatMap` and `map`
 to sequence computations
-that do and and don't introduce a new monad.
+that do and don't introduce a new monad.
 Plus, if we have both `flatMap` and `map`
 we can use for comprehensions
 to clarify the sequencing behaviour:
