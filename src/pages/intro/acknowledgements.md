@@ -1,14 +1,28 @@
 ## Acknowledgements {-}
 
-Thanks to everyone who helped shape this book:
-Richard Dallaway,
-Jonathon Ferguson,
-Cody Koeninger,
-Jason Scott,
-Toby Weston,
-Gregor Ihmor,
-Narayan Iyer,
-Pablo Francisco Pérez Hidalgo,
-all our students who have attended a course online or in person,
-and everyone else who gave feedback
-or encouraged us to hurry up and finish!
+We'd like to extend a warm thank you to
+everyone who helped contribute to this book.
+In alphabetical order:
+
+```include
+src/pages/contributors.md
+```
+
+Thanks also to our colleagues at Underscore,
+our friends at Typelevel,
+all of our course students,
+and everyone else who gave us feedback or encouragement!
+
+-----
+
+We'd like to extend very special and heartfelt thanks
+to all of our backers---fine people who helped
+fund the development of the book by buying a copy
+before we released it as open source.
+Again, in alphabetical order:
+
+```include
+src/pages/backers.md
+```
+
+Thanks to you all! This book wouldn't exist without you.

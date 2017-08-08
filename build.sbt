@@ -25,7 +25,7 @@ scalacOptions ++= Seq(
 
 // resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"))
 
-libraryDependencies ++= Seq("org.typelevel" %% "cats" % "0.9.0")
+libraryDependencies ++= Seq("org.typelevel" %% "cats" % "1.0.0")
 
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
 
