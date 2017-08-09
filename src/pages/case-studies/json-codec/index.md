@@ -303,7 +303,7 @@ trait JsonDecoderInstances {
   implicit def list[A](implicit aDecoder: JsonDecoder[A]): JsonDecoder[List[A]] =
     pure {
       case json @ JsonArray(values) =>
-        values.map(aDecoder.decode).sequenceU
+        values.map(aDecoder.decode).sequence
 
       case other =>
         fail(s"Could not decode $other").asLeft
@@ -312,7 +312,7 @@ trait JsonDecoderInstances {
   implicit def map[A](implicit aDecoder: JsonDecoder[A]): JsonDecoder[Map[String, A]] =
     pure {
       case json @ JsonObject(fields) =>
-        fields.traverseU {
+        fields.traverse {
           case (name, value) =>
             aDecoder.decode(value).map(name -> _)
         }.map(_.toMap)

@@ -78,7 +78,7 @@ import cats.instances.either._
 ```
 
 ```tut:book
-eithers.sequenceU
+eithers.sequence
 ```
 
 The inner workings of `Unapply`

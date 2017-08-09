@@ -99,11 +99,11 @@ Here's an example:
 
 ```tut:book:silent
 import cats.instances.option._
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 ```
 
 ```tut:book
-(Option(123) |@| Option("abc")).tupled
+(Option(123), Option("abc")).tupled
 ```
 
 The `|@|` operator, better known as a "tie fighter",
@@ -113,7 +113,7 @@ to create useful data types.
 For example, the `tupled` method zips the values into a tuple:
 
 ```tut:book:silent
-val builder2 = Option(123) |@| Option("abc")
+val builder2 = (Option(123), Option("abc"))
 ```
 
 ```tut:book
@@ -125,19 +125,11 @@ Each arity of builder, from 2 to 22, defines a `tupled` method
 to combine the values to form a tuple of the correct size:
 
 ```tut:book:silent
-val builder3 = Option(123) |@| Option("abc") |@| Option(true)
+val builder3 = (Option(123), Option("abc"), Option(true))
 ```
 
 ```tut:book
 builder3.tupled
-```
-
-```tut:book:silent
-val builder5 = builder3 |@| Option(0.5) |@| Option('x')
-```
-
-```tut:book
-builder5.tupled
 ```
 
 The idiomatic way of writing builder syntax is
@@ -146,8 +138,8 @@ going from single values to a tuple in one step:
 
 ```tut:book
 (
-  Option(1) |@|
-  Option(2) |@|
+  Option(1),
+  Option(2),
   Option(3)
 ).tupled
 ```
@@ -162,10 +154,10 @@ case class Cat(name: String, born: Int, color: String)
 
 ```tut:book
 (
-  Option("Garfield") |@|
-  Option(1978)       |@|
+  Option("Garfield"),
+  Option(1978),
   Option("Orange and black")
-).map(Cat.apply)
+).mapN(Cat.apply)
 ```
 
 If we supply a function that
@@ -177,11 +169,11 @@ val add: (Int, Int) => Int = (a, b) => a + b
 ```
 
 ```tut:book:fail
-(Option(1) |@| Option(2) |@| Option(3)).map(add)
+(Option(1), Option(2), Option(3)).mapN(add)
 ```
 
 ```tut:book:fail
-(Option("cats") |@| Option(true)).map(add)
+(Option("cats"), Option(true)).mapN(add)
 ```
 
 ### Fancy Functors and Cartesian Builder Syntax
@@ -198,7 +190,8 @@ import cats.instances.boolean._
 import cats.instances.int._
 import cats.instances.list._
 import cats.instances.string._
-import cats.syntax.cartesian._
+import cats.instances.monoid._
+import cats.syntax.apply._
 
 case class Cat(
   name: String,
@@ -210,10 +203,10 @@ def catToTuple(cat: Cat) =
   (cat.name, cat.yearOfBirth, cat.favoriteFoods)
 
 implicit val catMonoid = (
-  Monoid[String] |@|
-  Monoid[Int] |@|
+  Monoid[String],
+  Monoid[Int],
   Monoid[List[String]]
-).imap(Cat.apply)(catToTuple)
+).imapN(Cat.apply)(catToTuple)
 ```
 
 Our `Monoid` allows us to create "empty" `Cats`

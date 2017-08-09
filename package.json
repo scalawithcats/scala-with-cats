@@ -3,7 +3,7 @@
   "description": "Take your Scala skills to the next level",
   "version": "0.0.1",
   "devDependencies": {
-    "underscore-ebook-template": "git+https://github.com/underscoreio/underscore-ebook-template.git#0.3.0"
+    "underscore-ebook-template": "git+https://github.com/underscoreio/underscore-ebook-template.git#0.5.0"
   },
   "_devDependencies": {
     "underscore-ebook-template": "file:///Users/dave/dev/projects/underscore-ebook-template"

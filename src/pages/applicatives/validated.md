@@ -134,12 +134,12 @@ or any of the other `Cartesian` methods
 to accumulate errors as we like:
 
 ```tut:book:silent
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 ```
 
 ```tut:book
 (
-  "Error 1".invalid[Int] |@|
+  "Error 1".invalid[Int],
   "Error 2".invalid[Int]
 ).tupled
 ```
@@ -154,7 +154,7 @@ import cats.instances.vector._
 
 ```tut:book
 (
-  Vector(404).invalid[Int] |@|
+  Vector(404).invalid[Int],
   Vector(500).invalid[Int]
 ).tupled
 ```
@@ -170,7 +170,7 @@ import cats.data.NonEmptyVector
 
 ```tut:book
 (
-  NonEmptyVector.of("Error 1").invalid[Int] |@|
+  NonEmptyVector.of("Error 1").invalid[Int],
   NonEmptyVector.of("Error 2").invalid[Int]
 ).tupled
 ```
@@ -427,23 +427,23 @@ One option is to use `product` and `map`:
 
 ```tut:book:silent
 def readUser(data: FormData): AllErrorsOr[User] =
-  Cartesian[AllErrorsOr].product(
+  Cartesian.map2(
     readName(data).toValidated,
     readAge(data).toValidated
-  ).map(User.tupled)
+  )(User.apply)
 ```
 
 A more idiomatic solution is to
 use cartesian builder syntax:
 
 ```tut:book:silent
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 
 def readUser(data: FormData): AllErrorsOr[User] =
   (
-    readName(data).toValidated |@|
+    readName(data).toValidated,
     readAge(data).toValidated
-  ).map(User.apply)
+  ).mapN(User.apply)
 ```
 
 Both solutions yield the same results:

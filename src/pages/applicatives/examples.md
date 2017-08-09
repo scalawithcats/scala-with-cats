@@ -32,7 +32,7 @@ Cartesian builder syntax provides a concise syntax
 for zipping fixed numbers of `Futures`:
 
 ```tut:book:silent
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 
 case class Cat(
   name: String,
@@ -41,10 +41,10 @@ case class Cat(
 )
 
 val futureCat = (
-  Future("Garfield") |@|
-  Future(1978)       |@|
+  Future("Garfield"),
+  Future(1978),
   Future(List("Lasagne"))
-).map(Cat.apply)
+).mapN(Cat.apply)
 ```
 
 ```tut:book

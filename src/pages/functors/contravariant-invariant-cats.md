@@ -75,7 +75,8 @@ val add1: Int => Int    = _ + 1
 ```
 
 ```tut:book
-div2.contramap(add1)(2)
+// TODO: Can't do this because of the elimination order in the SI-2712 fix?
+// div2.contramap(add1)(2)
 ```
 
 #### *Invariant* in Cats
@@ -92,8 +93,9 @@ and one to convert the result of the `String` append back to a `Symbol`:
 
 ```tut:book:silent
 import cats.Semigroup
-import cats.instances.string._ // semigroup for String
-import cats.syntax.invariant._ // imap extension method
+import cats.instances.semigroup._ // Cartesian for Semigroup
+import cats.instances.string._    // Semigroup for String
+import cats.syntax.invariant._    // imap extension method
 
 implicit val symbolSemigroup: Semigroup[Symbol] =
   Semigroup[String].imap(Symbol.apply)(_.name)

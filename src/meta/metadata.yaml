@@ -14,9 +14,11 @@ exercisesRepo: null # "git@github.com:underscoreio/advanced-scala-code.git"
 tocDepth: 3
 copyright: "2014-16"
 # Enable pandoc-crossref (must be installed on user's computer)
-# There's no distinction here between section and chapter prefixes,
-# we disable all prefixes for consistency and write them by hand:
+# There's no distinction here between section and chapter prefixes.
+# We disable all prefixes for consistency and write them by hand:
 usePandocCrossref: true
+# Enable pandoc-include (must be installed on user's computer):
+usePandocInclude: true
 figPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "$$i$$"
 tblPrefixTemplate: "$$i$$"
@@ -28,6 +30,8 @@ pages:
   - intro/early-access.md
   - intro/conventions.md
   - intro/acknowledgements.md
+  - intro/contributors.md
+  - intro/backers.md
 
   - parts/part1.md
 
@@ -69,7 +73,6 @@ pages:
   - applicatives/examples.md
   - applicatives/validated.md
   - applicatives/applicative.md
-  # - applicatives/cats.md
   - applicatives/summary.md
 
   - foldable-traverse/index.md

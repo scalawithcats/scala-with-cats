@@ -56,14 +56,6 @@ ajv@^4.9.1:
     co "^4.6.0"
     json-stable-stringify "^1.0.1"
 
-align-text@^0.1.1, align-text@^0.1.3:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/align-text/-/align-text-0.1.4.tgz#0cd90a561093f35d0a99256c22b7069433fad117"
-  dependencies:
-    kind-of "^3.0.2"
-    longest "^1.0.1"
-    repeat-string "^1.5.2"
-
 amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
@@ -205,10 +197,6 @@ boom@2.x.x:
   resolved "https://registry.yarnpkg.com/boom/-/boom-2.10.1.tgz#39c8918ceff5799f83f9492a848f625add0c766f"
   dependencies:
     hoek "2.x.x"
-
-bootstrap@3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-3.3.1.tgz#43a408cd24859fdbe876e3d37ab2876d31e256a2"
 
 brace-expansion@^1.0.0:
   version "1.1.7"
@@ -445,13 +433,6 @@ caseless@~0.12.0:
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
 
-center-align@^0.1.1:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/center-align/-/center-align-0.1.3.tgz#aa0d32629b6ee972200411cbd4461c907bc2b7ad"
-  dependencies:
-    align-text "^0.1.3"
-    lazy-cache "^1.0.3"
-
 chalk@^0.5.1, chalk@~0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-0.5.1.tgz#663b3a648b68b55d04690d49167aa837858f2174"
@@ -477,33 +458,13 @@ cipher-base@^1.0.0, cipher-base@^1.0.1:
   dependencies:
     inherits "^2.0.1"
 
-cliui@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/cliui/-/cliui-2.1.0.tgz#4b475760ff80264c762c3a1719032e91c7fea0d1"
-  dependencies:
-    center-align "^0.1.1"
-    right-align "^0.1.1"
-    wordwrap "0.0.2"
-
 co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
 
-coffee-script@^1.8.0:
-  version "1.12.5"
-  resolved "https://registry.yarnpkg.com/coffee-script/-/coffee-script-1.12.5.tgz#809f4585419112bbfe46a073ad7543af18c27346"
-
 coffee-script@~1.3.3:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/coffee-script/-/coffee-script-1.3.3.tgz#150d6b4cb522894369efed6a2101c20bc7f4a4f4"
-
-coffeeify@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/coffeeify/-/coffeeify-1.0.0.tgz#ec38c7f56d45fb180b9d28e65c7e5d1009b11635"
-  dependencies:
-    coffee-script "^1.8.0"
-    convert-source-map "^0.4.1"
-    through "^2.3.6"
 
 colors@~0.6.2:
   version "0.6.2"
@@ -627,14 +588,6 @@ constants-browserify@~0.0.1:
 content-type@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/content-type/-/content-type-1.0.2.tgz#b7d113aee7a8dd27bd21133c4dc2529df1721eed"
-
-convert-source-map@^0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-0.4.1.tgz#f919a0099fe31f80fc5a1d0eb303161b394070c7"
-
-convert-source-map@~0.2.3:
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-0.2.6.tgz#ae0ed736e8a6344a58b50a894723de5c851de2d4"
 
 convert-source-map@~0.3.0:
   version "0.3.5"
@@ -921,10 +874,6 @@ express-session@~1.11.3:
     parseurl "~1.3.0"
     uid-safe "~2.0.0"
     utils-merge "1.0.0"
-
-extend@^1.2.1:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/extend/-/extend-1.3.0.tgz#d1516fb0ff5624d2ebf9123ea1dac5a1994004f8"
 
 extend@~3.0.0:
   version "3.0.1"
@@ -1308,7 +1257,7 @@ insert-module-globals@^6.2.0:
     through2 "^1.0.0"
     xtend "^4.0.0"
 
-is-buffer@^1.1.0, is-buffer@^1.1.5:
+is-buffer@^1.1.0:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.5.tgz#1f3b26ef613b214b88cbca23cc6c01d87961eecc"
 
@@ -1333,10 +1282,6 @@ jodid25519@^1.0.0:
   resolved "https://registry.yarnpkg.com/jodid25519/-/jodid25519-1.0.2.tgz#06d4912255093419477d425633606e0e90782967"
   dependencies:
     jsbn "~0.1.0"
-
-jquery@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.1.1.tgz#828fc60f50f7ee5983363ef4eb01c5f70af4bd5b"
 
 js-yaml@3.2.6:
   version "3.2.6"
@@ -1397,12 +1342,6 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.3.6"
 
-kind-of@^3.0.2:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-3.2.0.tgz#b58abe4d5c044ad33726a8c1525b48cf891bff07"
-  dependencies:
-    is-buffer "^1.1.5"
-
 labeled-stream-splicer@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/labeled-stream-splicer/-/labeled-stream-splicer-1.0.2.tgz#4615331537784981e8fd264e1f3a434c4e0ddd65"
@@ -1410,10 +1349,6 @@ labeled-stream-splicer@^1.0.0:
     inherits "^2.0.1"
     isarray "~0.0.1"
     stream-splicer "^1.1.0"
-
-lazy-cache@^1.0.3:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/lazy-cache/-/lazy-cache-1.0.4.tgz#a1d78fc3a50474cb80845d3b3b6e1da49a446e8e"
 
 less@^2.1.0:
   version "2.7.2"
@@ -1449,10 +1384,6 @@ lodash@~0.9.2:
 lodash@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-1.0.2.tgz#8f57560c83b59fc270bd3d561b690043430e2551"
-
-longest@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/longest/-/longest-1.0.1.tgz#30a0b2da38f73770e8294a0d22e6625ed77d0097"
 
 lru-cache@2:
   version "2.7.3"
@@ -1504,7 +1435,7 @@ minimalistic-crypto-utils@^1.0.0, minimalistic-crypto-utils@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/minimalistic-crypto-utils/-/minimalistic-crypto-utils-1.0.1.tgz#f6c00c1c0b082246e5c4d99dfb8c7c083b2b582a"
 
-minimatch@0.3, minimatch@^0.3.0:
+minimatch@0.3:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-0.3.0.tgz#275d8edaac4f1bb3326472089e7949c8394699dd"
   dependencies:
@@ -1666,9 +1597,9 @@ pako@~0.2.0:
   version "0.2.9"
   resolved "https://registry.yarnpkg.com/pako/-/pako-0.2.9.tgz#f3f7522f4ef782348da8161bad9ecfd51bf83a75"
 
-pandoc-filter@0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/pandoc-filter/-/pandoc-filter-0.1.4.tgz#ff18d0bd701b010eed2667cbcc96f01d82df3f3a"
+pandoc-filter@0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/pandoc-filter/-/pandoc-filter-0.1.6.tgz#263d54de26da9d7db6aeb6e0f0fe19ac7a764ad2"
   dependencies:
     get-stdin "~0.1.0"
 
@@ -1843,10 +1774,6 @@ readdirp@~1.3.0:
     minimatch "~0.2.12"
     readable-stream "~1.0.26-2"
 
-repeat-string@^1.5.2:
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/repeat-string/-/repeat-string-1.6.1.tgz#8dcae470e1c88abc2d600fff4a776286da75e637"
-
 request@^2.51.0, request@^2.72.0:
   version "2.81.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.81.0.tgz#c6928946a0e06c5f8d6f8a9333469ffda46298a0"
@@ -1905,12 +1832,6 @@ rfile@~1.0, rfile@~1.0.0:
   dependencies:
     callsite "~1.0.0"
     resolve "~0.3.0"
-
-right-align@^0.1.1:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/right-align/-/right-align-0.1.3.tgz#61339b722fe6a3515689210d24e14c96148613ef"
-  dependencies:
-    align-text "^0.1.1"
 
 rimraf@~2.2.1, rimraf@~2.2.8:
   version "2.2.8"
@@ -2018,7 +1939,7 @@ source-map@0.1.34, source-map@~0.1.31, source-map@~0.1.7:
   dependencies:
     amdefine ">=0.0.4"
 
-source-map@^0.5.3, source-map@~0.5.1:
+source-map@^0.5.3:
   version "0.5.6"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.6.tgz#75ce38f52bf0733c5a7f0c118d81334a2bb5f412"
 
@@ -2132,7 +2053,7 @@ through2@~0.5.1:
     readable-stream "~1.0.17"
     xtend "~3.0.0"
 
-"through@>=2.2.7 <3", through@^2.3.6, through@~2.3.4:
+"through@>=2.2.7 <3", through@~2.3.4:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
 
@@ -2186,15 +2107,6 @@ typedarray@~0.0.5:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-uglify-js@2.x.x:
-  version "2.8.22"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.22.tgz#d54934778a8da14903fa29a326fb24c0ab51a1a0"
-  dependencies:
-    source-map "~0.5.1"
-    yargs "~3.10.0"
-  optionalDependencies:
-    uglify-to-browserify "~1.0.0"
-
 uglify-js@~2.2:
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.2.5.tgz#a6e02a70d839792b9780488b7b8b184c095c99c7"
@@ -2214,16 +2126,6 @@ uglify-js@~2.4.0:
 uglify-to-browserify@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/uglify-to-browserify/-/uglify-to-browserify-1.0.2.tgz#6e0924d6bda6b5afe349e39a6d632850a0f882b7"
-
-uglifyify@2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/uglifyify/-/uglifyify-2.6.0.tgz#f978ae338abbe14f32ed030af7a78c6d2a861591"
-  dependencies:
-    convert-source-map "~0.2.3"
-    extend "^1.2.1"
-    minimatch "^0.3.0"
-    through "~2.3.4"
-    uglify-js "2.x.x"
 
 uid-safe@2.1.4:
   version "2.1.4"
@@ -2250,9 +2152,9 @@ umd@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/umd/-/umd-3.0.1.tgz#8ae556e11011f63c2596708a8837259f01b3d60e"
 
-"underscore-ebook-template@git+https://github.com/underscoreio/underscore-ebook-template.git#0.3.0":
-  version "0.3.0"
-  resolved "git+https://github.com/underscoreio/underscore-ebook-template.git#8e040f91be67fe54e272f29d3093d8b69d6b3615"
+"underscore-ebook-template@git+https://github.com/underscoreio/underscore-ebook-template.git#0.5.0":
+  version "0.5.0"
+  resolved "git+https://github.com/underscoreio/underscore-ebook-template.git#3a4fe1b525193b141267944bffbc8ee5c340587f"
   dependencies:
     grunt "0.4.5"
     grunt-browserify "3.3.0"
@@ -2263,7 +2165,7 @@ umd@^3.0.0:
     grunt-contrib-watch "0.6.1"
     grunt-css-url-embed "1.5.0"
     js-yaml "3.2.6"
-    pandoc-filter "0.1.4"
+    pandoc-filter "0.1.6"
 
 underscore.string@~2.2.1:
   version "2.2.1"
@@ -2277,7 +2179,7 @@ underscore.string@~2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/underscore.string/-/underscore.string-2.4.0.tgz#8cdd8fbac4e2d2ea1e7e2e8097c42f442280f85b"
 
-underscore@1.7.0, underscore@~1.7.0:
+underscore@~1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.7.0.tgz#6bbaf0877500d36be34ecaa584e0db9fef035209"
 
@@ -2362,15 +2264,6 @@ wrappy@1:
 xtend@^3.0.0, xtend@~3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-3.0.0.tgz#5cce7407baf642cba7becda568111c493f59665a"
-
-yargs@~3.10.0:
-  version "3.10.0"
-  resolved "https://registry.yarnpkg.com/yargs/-/yargs-3.10.0.tgz#f7ee7bd857dd7c1d2d38c0e74efbd681d1431fd1"
-  dependencies:
-    camelcase "^1.0.2"
-    cliui "^2.1.0"
-    decamelize "^1.0.0"
-    window-size "0.1.0"
 
 yargs@~3.5.4:
   version "3.5.4"
