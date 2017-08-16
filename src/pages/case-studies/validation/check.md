@@ -133,8 +133,8 @@ we'll call this implementation `CheckF`:
 
 ```tut:book:silent
 import cats.Semigroup
-import cats.syntax.either._    // asLeft and asRight syntax
-import cats.syntax.semigroup._ // |+| syntax
+import cats.syntax.either._
+import cats.syntax.semigroup._
 ```
 
 ```tut:book:silent
@@ -311,8 +311,8 @@ Here's the complete implementation:
 ```tut:book:silent
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.semigroup._ // |+| syntax
-import cats.syntax.apply._ // |@| syntax
+import cats.syntax.semigroup._
+import cats.syntax.apply._
 ```
 
 ```tut:book:silent
@@ -354,8 +354,8 @@ is implicit in the semantics of "or".
 ```tut:book:silent
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.semigroup._ // |+| syntax
-import cats.syntax.apply._ // |@| syntax
+import cats.syntax.semigroup._
+import cats.syntax.apply._
 import cats.data.Validated._   // Valid and Invalid
 ```
 
