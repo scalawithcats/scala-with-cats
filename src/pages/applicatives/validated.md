@@ -129,7 +129,7 @@ Cartesian[AllErrorsOr]
 
 As long as the compiler has all the implicits in scope
 to summon a `Cartesian` of the correct type,
-we can use cartesian builder syntax
+we can use apply syntax
 or any of the other `Cartesian` methods
 to accumulate errors as we like:
 
@@ -421,20 +421,8 @@ Make sure you switch from `Either` to `Validated`
 to accumulate errors.
 
 <div class="solution">
-There are a couple of ways to do this,
-each involving switching from `Either` to `Validated`.
-One option is to use `product` and `map`:
-
-```tut:book:silent
-def readUser(data: FormData): AllErrorsOr[User] =
-  Cartesian.map2(
-    readName(data).toValidated,
-    readAge(data).toValidated
-  )(User.apply)
-```
-
-A more idiomatic solution is to
-use cartesian builder syntax:
+We can do this by switching from `Either` to `Validated`
+and using apply syntax:
 
 ```tut:book:silent
 import cats.syntax.apply._
@@ -445,8 +433,6 @@ def readUser(data: FormData): AllErrorsOr[User] =
     readAge(data).toValidated
   ).mapN(User.apply)
 ```
-
-Both solutions yield the same results:
 
 ```tut:book
 readUser(Map("name" -> "Dave", "age" -> "37"))

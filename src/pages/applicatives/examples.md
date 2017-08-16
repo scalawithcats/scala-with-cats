@@ -28,8 +28,7 @@ Await.result(futurePair, 1.second)
 
 The two `Futures` start executing the moment we create them,
 so they are already calculating results by the time we call `product`.
-Cartesian builder syntax provides a concise syntax
-for zipping fixed numbers of `Futures`:
+We can use apply syntax to zip fixed numbers of `Futures`:
 
 ```tut:book:silent
 import cats.syntax.apply._
