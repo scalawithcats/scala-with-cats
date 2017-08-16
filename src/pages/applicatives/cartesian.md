@@ -90,11 +90,11 @@ product(a, product(b, c)) == product(product(a, b), c)
 ```
 -->
 
-## *Cartesian Builder* Syntax
+## *Apply* Syntax
 
-Cats provides a convenient syntax called *cartesian builder syntax*,
-that provides shorthand for methods like `tupleN` and `mapN`.
-We import the syntax from [`cats.syntax.cartesian`][cats.syntax.cartesian].
+Cats provides a convenient syntax called *apply syntax*,
+that provides a shorthand for methods like `tupleN` and `mapN`.
+We import the syntax from [`cats.syntax.apply`][cats.syntax.apply].
 Here's an example:
 
 ```tut:book:silent
@@ -106,46 +106,19 @@ import cats.syntax.apply._
 (Option(123), Option("abc")).tupled
 ```
 
-The `|@|` operator, better known as a "tie fighter",
-creates a temporary "builder" object that provides
-several methods for combining the parameters
-to create useful data types.
-For example, the `tupled` method zips the values into a tuple:
+The `tupled` method is implicitly added to the tuple of `Options`.
+It uses the `Cartesian` for `Option` to zip the values inside the
+`Option`, creating a single `Option` of a tuple.
 
-```tut:book:silent
-val builder2 = (Option(123), Option("abc"))
-```
+We can use the same trick on tuples of up to 22 values.
+Cats defines a separate `tupled` method for each arity:
 
 ```tut:book
-builder2.tupled
+(Option(123), Option("abc"), Option(true)).tupled
 ```
 
-We can use `|@|` repeatedly to create builders for up to 22 values.
-Each arity of builder, from 2 to 22, defines a `tupled` method
-to combine the values to form a tuple of the correct size:
-
-```tut:book:silent
-val builder3 = (Option(123), Option("abc"), Option(true))
-```
-
-```tut:book
-builder3.tupled
-```
-
-The idiomatic way of writing builder syntax is
-to combine `|@|` and `tupled` in a single expression,
-going from single values to a tuple in one step:
-
-```tut:book
-(
-  Option(1),
-  Option(2),
-  Option(3)
-).tupled
-```
-
-In addition to `tupled`, every builder has a `map` method
-that accepts an implicit `Functor`
+In addition to `tupled`, Cats' apply syntax provides
+a `mapN` method that accepts an implicit `Functor`
 and a function of the correct arity to combine the values:
 
 ```tut:book:silent
@@ -160,6 +133,11 @@ case class Cat(name: String, born: Int, color: String)
 ).mapN(Cat.apply)
 ```
 
+Internally `mapN` uses
+the `Cartesian` to extract the values from the `Option`
+and the `Functor` to apply the values to the function.
+
+It's nice to see that this syntax is type checked.
 If we supply a function that
 accepts the wrong number or types of parameters,
 we get a compile error:
@@ -176,9 +154,9 @@ val add: (Int, Int) => Int = (a, b) => a + b
 (Option("cats"), Option(true)).mapN(add)
 ```
 
-### Fancy Functors and Cartesian Builder Syntax
+### Fancy Functors and Apply Syntax
 
-Cartesian builders also have a `contramap` and `imap` methods
+Apply syntax also has `contramapN` and `imapN` methods
 that accept [Contravariant](#contravariant)
 and [Invariant](#invariant) functors.
 For example, we can combine `Monoids` and `Semigroups` using `Invariant`.

@@ -42,7 +42,7 @@
 [cats.kernel.Semigroup]: http://typelevel.org/cats/api/cats/kernel/Semigroup.html
 [cats.syntax]: http://typelevel.org/cats/api/cats/syntax/
 [cats.syntax.applicative]: http://typelevel.org/cats/api/cats/syntax/package$$applicative$
-[cats.syntax.cartesian]: http://typelevel.org/cats/api/cats/syntax/package$$cartesian$
+[cats.syntax.apply]: http://typelevel.org/cats/api/cats/syntax/package$$cartesian$
 [cats.syntax.contravariant]: http://typelevel.org/cats/api/cats/syntax/package$$contravariant$
 [cats.syntax.either]: http://typelevel.org/cats/api/cats/syntax/package$$either$
 [cats.syntax.eq]: http://typelevel.org/cats/api/cats/syntax/package$$eq$
