@@ -1,6 +1,6 @@
 ## *Contravariant* and *Invariant* in Cats
 
-Cats's [`Contravariant`][cats.functor.Contravariant] and
+Cats' [`Contravariant`][cats.functor.Contravariant] and
 [`Invariant`][cats.functor.Invariant] type classes
 are slightly different to its other type classes:
 they live under [`cats.functor`][cats.functor.package]
