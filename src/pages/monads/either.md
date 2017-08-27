@@ -115,7 +115,7 @@ based on the first parameter list to `foldRight`:
    so the compiler infers the left parameter as `Nothing`.
 
 Switching to `asRight` avoids both of these problems.
-It as a return type of `Either`,
+It has a return type of `Either`,
 and allows us to completely specify the type
 with only one type parameter:
 

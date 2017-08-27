@@ -123,7 +123,7 @@ from [`cats.implicits`][cats.implicits].
 However, we'll use the individual imports here for clarity.
 
 We can use `pure` to construct instances of a monad.
-We'll often need to specify the type parameter to disambiguate the particlar instance we want.
+We'll often need to specify the type parameter to disambiguate the particular instance we want.
 
 ```tut:book:silent
 import cats.syntax.applicative._
