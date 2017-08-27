@@ -229,7 +229,7 @@ we can test that them as easily as pure functions,
 plus we gain access to the `map` and `flatMap` combinators.
 
 For more advanced problems where we have lots of dependencies,
-or a our program isn't easily represented as a pure function,
+or where a program isn't easily represented as a pure function,
 other dependency injection techniques tend to be more appropriate.
 
 <div class="callout callout-warning">
