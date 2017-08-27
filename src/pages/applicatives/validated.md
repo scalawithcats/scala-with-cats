@@ -94,7 +94,7 @@ Validated.fromOption[String, Int](None, "Badness")
 
 We can combine instances of `Validated`
 using any of the methods described above:
-`product`, `map2..22`, cartesian builder syntax,
+`product`, `map2..22`, apply syntax,
 and so on.
 
 All of these techniques require

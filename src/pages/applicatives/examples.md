@@ -27,7 +27,8 @@ Await.result(futurePair, 1.second)
 ```
 
 The two `Futures` start executing the moment we create them,
-so they are already calculating results by the time we call `product`.
+so they are already calculating results
+by the time we call `product`.
 We can use apply syntax to zip fixed numbers of `Futures`:
 
 ```tut:book:silent
@@ -129,7 +130,8 @@ def product[M[_]: Monad, A, B](
 ```
 
 <div class="solution">
-We can implement `product` in terms of `map` and `flatMap` like so:
+We can implement `product`
+in terms of `map` and `flatMap` like so:
 
 ```tut:book:silent
 import cats.syntax.flatMap._
@@ -175,10 +177,13 @@ product[ErrorOr, Int, Int](
 ```
 
 Even our results for `Future` are a trick of the light.
-`flatMap` provides sequential ordering, so `product` provides the same.
+`flatMap` provides sequential ordering,
+so `product` provides the same.
 The only reason we get parallel execution
-is because our constituent `Futures` start running before we call `product`.
-This is equivalent to the classic create-then-flatmap pattern:
+is because our constituent `Futures`
+start running before we call `product`.
+This is equivalent to the classic
+create-then-flatMap pattern:
 
 ```tut:book:silent
 val a = Future("Future 1")

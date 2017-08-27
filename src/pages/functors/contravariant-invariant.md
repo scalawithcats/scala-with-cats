@@ -1,6 +1,6 @@
 ## *Contravariant* and *Invariant* Functors {#contravariant-invariant}
 
-We can think of `map` as
+We can think of `Functor's` `map` method as
 "appending" a transformation to a chain.
 We start with an `F[A]`,
 run it through a function `A => B`,
@@ -16,12 +16,8 @@ Option(1).map(_ + 2).map(_ * 3).map(_ + 100)
 We're now going to look at two other type classes,
 one that represents *prepending* operations to a chain,
 and one that represents building a *bidirectional*
-chain of operations.
-
-One great use case for these new type classes is
-building libraries that transform, read, and write values.
-The content ties in tightly to the [JSON codec](#json-codec)
-case study later in the book.
+chain of operations. These are called *contravariant*
+and *invariant functors* respectively.
 
 ### Contravariant functors and the *contramap* method {#contravariant}
 
@@ -32,10 +28,10 @@ This is illustrated in Figure [@fig:functors:contramap-type-chart].
 
 ![Type chart: the contramap method](src/pages/functors/generic-contramap.pdf+svg){#fig:functors:contramap-type-chart}
 
-We'll talk about `contramap` itself directly for now,
-bringing in the type class in a moment.
+We'll talk about the `contramap` method first,
+introducing the Cats type class in a moment.
 
-The `contramap` method only makes sense for certain data types.
+`contramap` only makes sense for certain data types.
 For example, we can't define `contramap` for an `Option`
 because there is no way of feeding a value in an
 `Option[B]` backwards through a function `A => B`.
@@ -67,7 +63,9 @@ def format[A](value: A)(implicit p: Printable[A]): String =
   p.format(value)
 ```
 
-This says that if `A` is `Printable`, and we can transform `B` into `A`, then `B` is also `Printable`.
+This says that if `A` is `Printable`,
+and we can transform `B` into `A`,
+then `B` is also `Printable`.
 
 #### Exercise: Showing off with Contramap
 
@@ -159,11 +157,12 @@ The second of our type classes, the *invariant functor*,
 provides a method called `imap` that is informally equivalent to
 a combination of `map` and `contramap`.
 We can demonstrate this by extending `Printable`
-to produce a typeclass for encoding and decoding to a `String`:
+to support encoding and decoding to/from a `String`:
 
 ```tut:book:silent
 trait Codec[A] {
   def encode(value: A): String
+
   def decode(value: String): Option[A]
 
   def imap[B](dec: A => B, enc: B => A): Codec[B] =
@@ -177,9 +176,19 @@ def decode[A](value: String)(implicit c: Codec[A]): Option[A] =
   c.decode(value)
 ```
 
-The type chart for `imap` is showin in Figure [@fig:functors:imap-type-chart].
+The type chart for `imap` is shown in
+Figure [@fig:functors:imap-type-chart].
 
 ![Type chart: the imap method](src/pages/functors/generic-imap.pdf+svg){#fig:functors:imap-type-chart}
+
+Note that the `decode` method of our `Codec` type class
+doesn't account for failures.
+If we want to model more sophisticated relationships,
+we need to move beyond functors and look at
+*lenses* and *optics*, which are beyond the scope of this book.
+See Julien Truffaut's excellent library
+[Monocle][link-monocle] for an implementation
+of many useful kinds of optics.
 
 #### Transformative Thinking with Imap
 
@@ -251,40 +260,151 @@ decode[Box[Int]]("123")
 
 ### What's With the Name?
 
-What's the relationship between contravariance, invariance, and covariance as we usually understand them in Scala,
-and the names for the functors above?
+What's the relationship between the terms
+"contravariance", "invariance", and "covariance"
+and these different finds of functors?
 
-The usual meaning of these terms in Scala relates to subtypes.
-We say that `B` is a subtype of `A` if we can use `B` anywhere we want an `A`.
-Put another way, we can convert `A` into `B` and our program keeps on working.
+These three variance terms relate to subtypes.
+We say that `B` is a subtype of `A`
+if we can use a value of type `B`
+anywhere we expect a value of type `A`.
 
-Co- and contravariance usually arises in Scala when working with type constructors like `List` and `Option`.
-If we declare a type constructor `F`,
-and we want `F[B]` to be a subtype of `F[A]` when `B` is a subtype of `A`,
-we declare the type parameter to be covariant.
+Co- and contravariance annotations arise
+when working with type constructors.
+For example, we denote covariance with a `+` symbol:
 
-```tut:silent
-trait F[+A] // A is covariant
+```scala
+trait F[+A] // the "+" means "covariant"
 ```
 
-If `B` is a subtype of `A`,
-and we want `F[A]` to be a subtype of `F[B]`,
-then we declare `F` to have a contravariant type parameter.
+**Covariance**
 
-```tut:silent
-trait F[-A] // A is contravariant
+Covariance means that the type `F[B]`
+is a subtype of the type `F[A]` if `B` is a subtype of `A`.
+This is useful for modelling many types,
+including collections like `List` and `Option`:
+
+```scala
+trait List[+A]
+trait Option[+A]
 ```
 
-Co- and contravariant functors capture the same principle without the limitations of subtyping.
-As we said above subtyping can be viewed as a conversion.
+The covariance of Scala collections allows
+us to substitute collections of one type for another in our code.
+For example, we can use a `List[Circle]`
+anywhere we expect a `List[Shape]` because
+`Circle` is a subtype of `Shape`:
+
+```tut:book:silent
+sealed trait Shape
+case class Circle(radius: Double) extends Shape
+```
+
+```scala
+val circles: List[Circle] = ???
+val shapes: List[Shape] = circles
+```
+
+```tut:book:invisible
+val circles: List[Circle] = null
+val shapes: List[Shape] = circles
+```
+
+What about contravariance?
+We write contravariant type constructors
+with a `-` symbol like this:
+
+```scala
+trait F[-A]
+```
+
+**Contravariance**
+
+Confusingly, contravariance means that the type `F[B]`
+is a subtype of `F[A]` if `A` is a subtype of `B`.
+This is useful for modelling types that represent processes,
+like our `Printable` type class above:
+
+```scala
+trait Printable[-A] {
+  def format(value: A): String
+}
+```
+
+Let's unpack this a bit further.
+Remember that variance is all about
+the ability to substitute one value for another.
+Consider a scenario where we have two values,
+one of type `Shape` and one of type `Circle`,
+and two `Printables`, one for `Shape` and one for `Circle`:
+
+```scala
+val shape: Shape = ???
+val circle: Circle = ???
+
+val shapePrinter: Printable[Shape] = ???
+val circlePrinter: Printable[Circle] = ???
+```
+
+```tut:book:invisible
+val shape: Shape = null
+val circle: Circle = null
+
+val shapePrinter: Printable[Shape] = null
+val circlePrinter: Printable[Circle] = null
+```
+
+```tut:book
+def format[A](value: A, printable: Printable[A]): String =
+  printable.format(value)
+```
+
+Now ask yourself the question:
+"Which of combinations of value and printer can I pass to `format`?"
+We can combine `circle` with either printer
+because all `Circles` are `Shapes`.
+Conversely, we can't combine `shape` with `circlePrinter`
+because not all `Shapes` are `Circles`.
+
+This relationship is what we formally model using contravariance.
+`Printable[Shape]` is a subtype of `Printable[Circle]`
+because `Circle` is a subtype of `Shape`.
+This means we can use `shapePrinter`
+anywhere we expect to see a `Printable[Circle]`.
+
+**Invariance**
+
+Invariance is actually the easiest situation to describe.
+It's what we get when we don't write a `+` or `-`
+in a type constructor:
+
+```scala
+trait F[A]
+```
+
+This means the types `F[A]` and `F[B]` are never subtypes of one another,
+no matter what the relationship between `A` and `B`.
+This is the default semantics for Scala type constructors.
+
+**Back to Functors**
+
+Co- and contravariant functors capture the
+principles of co- and contravariance
+without the limitations of subtyping.
+
+As we said above, subtyping can be viewed as a conversion.
 `B` is a subtype of `A` if we can convert `A` to `B`.
 In other words there exists a function `A => B`.
-A covariant functor, which is what the standard `Functor` is,
-captures exactly this.
-If `F` is a (covariant) functor,
-whenever we have a `F[A]` and a conversion `A => B`
-we have a `F[B]`.
-A contravariant functor captures the case in the opposite direction.
+A standard covariant functor captures exactly this.
+If `F` is a covariant functor,
+wherever we have an `F[A]` and a conversion `A => B`
+we can convert to an `F[B]`.
+
+A contravariant functor captures the opposite case.
 If `F` is a contravariant functor,
 whenever we have a `F[A]` and a conversion `B => A`
-we have a `F[B]`.
+we can convert to an `F[B]`.
+
+Finally, invariant functors capture the case where
+we can convert from `F[A]` to `F[B]`
+via a function `A => B` or `B => A`.

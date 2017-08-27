@@ -104,6 +104,7 @@
 [link-mapreduce-monoid]: http://arxiv.org/abs/1304.7544
 [link-mapreduce]: http://research.google.com/archive/mapreduce.html
 [link-monads-burritos]: http://blog.plover.com/prog/burritos.html
+[link-monocle]: http://julien-truffaut.github.io/Monocle/
 [link-parallel-collections]: http://docs.scala-lang.org/overviews/parallel-collections/overview.html
 [link-phil-freeman-tailrecm]: http://functorial.com/stack-safety-for-free/index.pdf
 [link-scalaz-contrib]: https://github.com/typelevel/scalaz-contrib

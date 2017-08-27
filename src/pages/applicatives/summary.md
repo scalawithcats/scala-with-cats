@@ -7,12 +7,20 @@ These type classes provide a generic mechanism
 to combine values and apply functions within a context,
 from which we can fashion monads and a variety of other combinators.
 
-Cartesians and applicatives are most commonly used as
-a means of combining independent values such as the results of validation rules.
-Cats provides the `Validated` type for this specific purpose,
-along with cartesian builder syntax as a convenient way to express the combination of rules.
+Cartesians and applicatives are
+most commonly used as a means of
+combining independent values such as
+the results of validation rules.
+Cats provides the `Validated` type
+for this specific purpose,
+along with apply syntax as
+a convenient way to express
+the combination of rules.
 
-We have almost covered all of the functional programming concepts on our agenda for this book.
+We have almost covered
+all of the functional programming concepts
+on our agenda for this book.
 The next chapter covers `Traverse` and `Foldable`,
 two powerful type classes for converting between data types.
-After that we'll look at several case studies that bring together all of the concepts covered.
+After that we'll look at several case studies
+that bring together all of the concepts from Part I.

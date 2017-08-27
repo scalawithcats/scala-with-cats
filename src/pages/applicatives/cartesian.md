@@ -1,6 +1,7 @@
 ## *Cartesian* {#cartesian}
 
-`Cartesian` is a type class that allows us to "zip" values within a context.
+`Cartesian` is a type class that
+allows us to "zip" values within a context.
 If we have two objects of type `F[A]` and `F[B]`,
 a `Cartesian[F]` allows us to combine them to form an `F[(A, B)]`.
 Its definition in Cats is:
@@ -93,7 +94,7 @@ product(a, product(b, c)) == product(product(a, b), c)
 ## *Apply* Syntax
 
 Cats provides a convenient syntax called *apply syntax*,
-that provides a shorthand for methods like `tupleN` and `mapN`.
+that provides a shorthand for the methods described above.
 We import the syntax from [`cats.syntax.apply`][cats.syntax.apply].
 Here's an example:
 
@@ -108,7 +109,7 @@ import cats.syntax.apply._
 
 The `tupled` method is implicitly added to the tuple of `Options`.
 It uses the `Cartesian` for `Option` to zip the values inside the
-`Option`, creating a single `Option` of a tuple.
+`Options`, creating a single `Option` of a tuple.
 
 We can use the same trick on tuples of up to 22 values.
 Cats defines a separate `tupled` method for each arity:
@@ -118,7 +119,7 @@ Cats defines a separate `tupled` method for each arity:
 ```
 
 In addition to `tupled`, Cats' apply syntax provides
-a `mapN` method that accepts an implicit `Functor`
+a method called `mapN` that accepts an implicit `Functor`
 and a function of the correct arity to combine the values:
 
 ```tut:book:silent
@@ -159,7 +160,8 @@ val add: (Int, Int) => Int = (a, b) => a + b
 Apply syntax also has `contramapN` and `imapN` methods
 that accept [Contravariant](#contravariant)
 and [Invariant](#invariant) functors.
-For example, we can combine `Monoids` and `Semigroups` using `Invariant`.
+For example, we can combine `Monoids` and `Semigroups`
+using `Invariant`.
 Here's an example:
 
 ```tut:book:silent
