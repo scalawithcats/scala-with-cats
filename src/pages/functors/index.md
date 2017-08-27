@@ -73,7 +73,7 @@ This is shown in Figure [@fig:functors:option-type-chart].
 
 ![Type chart: mapping over an Option](src/pages/functors/option-map.pdf+svg){#fig:functors:option-type-chart}
 
-## More Examples of Functors
+## More Examples of Functors {#sec:functors:more-examples}
 
 Let's expand how we think about `map`
 by taking some other examples into account:
@@ -150,6 +150,29 @@ func3(1) // function composition by calling map
 
 func2(func1(1)) // function composition written out by hand
 ```
+
+<div class="callout callout-warning">
+**Partial unification**
+
+For the above examples to work,
+you need to add the following compiler option to `build.sbt`:
+
+```scala
+scalacOptions += "-Ypartial-unification"
+```
+
+otherwise you'll get a compiler error as follows:
+
+```scala
+func1.map(func2)
+// <console>: error: value map is not a member of Int => Double
+//        func1.map(func2)
+                ^
+```
+
+We'll look at why this happens in detail
+in Section [@sec:functors:partial-unification].
+</div>
 
 ## Definition of a Functor
 

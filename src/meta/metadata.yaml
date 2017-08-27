@@ -51,6 +51,7 @@ pages:
   - functors/cats.md
   - functors/contravariant-invariant.md
   - functors/contravariant-invariant-cats.md
+  - functors/partial-unification.md
   - functors/summary.md
 
   - monads/index.md
