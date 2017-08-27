@@ -82,7 +82,7 @@ Once again, concatenation is associative:
 Note that we used `++` above instead of the more usual `+`
 to suggest a parallel with sequences.
 We can do exactly the same with other types of sequence,
-using concatenation as as the binary operator
+using concatenation as the binary operator
 and the empty sequence as our identity.
 
 ## Definition of a Monoid
