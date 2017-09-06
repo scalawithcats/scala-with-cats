@@ -1,6 +1,6 @@
 ## Applications of Monoids
 
-We now know what a moniod is---an abstraction of the concept of adding or combining---but where is it useful?
+We now know what a monoid is---an abstraction of the concept of adding or combining---but where is it useful?
 Here are a few big ideas where monoids play a major role.
 These are explored in more detail in case studies later in the book.
 
