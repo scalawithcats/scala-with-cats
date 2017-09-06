@@ -5,9 +5,8 @@ how functors and monads let us
 transform values using `map` and `flatMap`.
 While functors and monads are
 both immensely useful abstractions,
-there are types of transformation
-that are inconvenient to represent
-with these methods.
+there are certain types of transformation
+that we cannot represent with these methods.
 
 One such example is form validation.
 When we validate a form we want to

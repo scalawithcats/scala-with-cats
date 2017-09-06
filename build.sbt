@@ -17,15 +17,16 @@ scalacOptions ++= Seq(
   "-encoding", "UTF-8",
   "-unchecked",
   "-feature",
-  "-Ywarn-dead-code",
   "-Xlint",
   "-Xfatal-warnings",
+  "-Ywarn-dead-code",
+  "-Ypartial-unification",
   "-Ydelambdafy:inline" // workaround for future deadlock on the 2.12.1 REPL
 )
 
 // resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"))
 
-libraryDependencies ++= Seq("org.typelevel" %% "cats" % "0.9.0")
+libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % "1.0.0-MF")
 
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
 

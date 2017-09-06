@@ -177,7 +177,7 @@ def checkPred[A](pred: Predicate[Errors, A]): Check[A, A] =
 // Foreword declarations
 
 import cats.Semigroup
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 import cats.syntax.monoid._
 import cats.data.Validated
 import cats.data.Validated.{Valid, Invalid}
@@ -201,7 +201,7 @@ object wrapper {
           func(a)
 
         case And(left, right) =>
-          (left(a) |@| right(a)).map((_, _) => a)
+          (left(a), right(a)).mapN((_, _) => a)
 
         case Or(left, right) =>
           left(a) match {
@@ -247,7 +247,7 @@ import cats.data.{Kleisli, NonEmptyList, Validated}
 import cats.instances.either._
 import cats.instances.function._
 import cats.instances.list._
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 import cats.syntax.validated._
 ```
 
@@ -322,7 +322,7 @@ val checkRight: Check[String, String] =
 
 val joinEmail: Check[(String, String), String] =
   check { case (l, r) =>
-    (checkLeft(l) |@| checkRight(r)).map(_+"@"+_) }
+    (checkLeft(l), checkRight(r)).mapN(_+"@"+_) }
 
 val checkEmail: Check[String, String] =
   splitEmail andThen joinEmail
@@ -335,9 +335,9 @@ example works as expected using `Kleisli`:
 final case class User(username: String, email: String)
 
 def createUser(username: String, email: String): Either[Errors, User] = (
-  checkUsername.run(username) |@|
+  checkUsername.run(username),
   checkEmail.run(email)
-).map(User)
+).mapN(User)
 ```
 
 ```tut:book

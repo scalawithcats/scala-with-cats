@@ -52,8 +52,8 @@ and simply return the original input on success:
 ```scala
 (this(a), that(a)) match {
   case And(left, right) =>
-    (left(a) |@| right(a))
-      .map((result1, result2) => Right(a))
+    (left(a), right(a))
+      .mapN((result1, result2) => Right(a))
 
   // etc...
 }
@@ -90,7 +90,7 @@ Making this change gives us the following code:
 import cats.Semigroup
 import cats.data.Validated
 import cats.syntax.semigroup._ // |+| syntax
-import cats.syntax.cartesian._ // |@| syntax
+import cats.syntax.apply._ // |@| syntax
 import cats.data.Validated._   // Valid and Invalid
 ```
 
@@ -109,7 +109,7 @@ object wrapper {
           func(a)
 
         case And(left, right) =>
-          (left(a) |@| right(a)).map((_, _) => a)
+          (left(a), right(a)).mapN((_, _) => a)
 
         case Or(left, right) =>
           left(a) match {
@@ -333,7 +333,7 @@ including some tidying and repackaging of the code:
 import cats.Semigroup
 import cats.data.Validated
 import cats.syntax.semigroup._ // |+| syntax
-import cats.syntax.cartesian._ // |@| syntax
+import cats.syntax.apply._ // |@| syntax
 import cats.syntax.validated._ // .valid and .invalid syntax
 import cats.data.Validated._   // Valid and Invalid patterns
 ```
@@ -360,7 +360,7 @@ object wrapper {
           func(a)
 
         case And(left, right) =>
-          (left(a) |@| right(a)).map((_, _) => a)
+          (left(a), right(a)).mapN((_, _) => a)
 
         case Or(left, right) =>
           left(a) match {
@@ -500,7 +500,7 @@ You might find the following predicates useful:
 ```tut:book:silent
 import cats.data.{NonEmptyList, OneAnd, Validated}
 import cats.instances.list._
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 import cats.syntax.validated._
 ```
 
@@ -546,7 +546,7 @@ that make the library easier to use.
 ```tut:book:silent
 import cats.data.{NonEmptyList, OneAnd, Validated}
 import cats.instances.list._
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 import cats.syntax.validated._
 ```
 
@@ -588,7 +588,7 @@ val checkRight: Check[Errors, String, String] =
 
 val joinEmail: Check[Errors, (String, String), String] =
   Check { case (l, r) =>
-    (checkLeft(l) |@| checkRight(r)).map(_+"@"+_) }
+    (checkLeft(l), checkRight(r)).mapN(_+"@"+_) }
 
 val checkEmail: Check[Errors, String, String] =
   splitEmail andThen joinEmail
@@ -603,7 +603,7 @@ final case class User(username: String, email: String)
 def createUser(
   username: String,
   email: String): Validated[Errors, User] =
-  (checkUsername(username) |@| checkEmail(email)).map(User)
+  (checkUsername(username), checkEmail(email)).mapN(User)
 ```
 
 We can check our work by creating

@@ -170,14 +170,14 @@ def oldCombine(
 is now equivalent to `Cartesian.combine`:
 
 ```tut:book:silent
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 
 // Combining an accumulator and a hostname using an Applicative:
 def newCombine(
   accum: Future[List[Int]],
   host: String
 ): Future[List[Int]] =
-  (accum |@| getUptime(host)).map(_ :+ _)
+  (accum, getUptime(host)).mapN(_ :+ _)
 ```
 
 By substituting these snippets back into the definition of `traverse`
@@ -189,7 +189,7 @@ import scala.language.higherKinds
 def listTraverse[F[_] : Applicative, A, B]
     (list: List[A])(func: A => F[B]): F[List[B]] =
   list.foldLeft(List.empty[B].pure[F]) { (accum, item) =>
-    (accum |@| func(item)).map(_ :+ _)
+    (accum, func(item)).mapN(_ :+ _)
   }
 
 def listSequence[F[_] : Applicative, B]

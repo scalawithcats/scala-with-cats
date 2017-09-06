@@ -1,8 +1,11 @@
 ## *Contravariant* and *Invariant* in Cats
 
-Cats' [`Contravariant`][cats.functor.Contravariant] and
+Let's look at the implementation of
+contravariant and invariant functors in Cats.
+
+The [`Contravariant`][cats.functor.Contravariant] and
 [`Invariant`][cats.functor.Invariant] type classes
-are slightly different to its other type classes:
+are slightly different to Cats' other type classes:
 they live under [`cats.functor`][cats.functor.package]
 instead of [`cats`][cats.package].
 Here's a simplified version of the code:
@@ -37,7 +40,7 @@ Cats uses this to provide operations
 that work with any of the three types of functor[^tupled].
 
 [^tupled]: One example is the `tupled` method
-provided by the cartesian builder syntax
+provided by the *apply syntax*
 discussed in Chapter [@sec:applicatives].
 
 ### *Contravariant* in Cats
@@ -67,18 +70,14 @@ More conveniently, we can use
 which provides a `contramap` extension method:
 
 ```tut:book:silent
-import cats.instances.function._
 import cats.syntax.contravariant._
-
-val div2: Int => Double = _ / 2.0
-val add1: Int => Int    = _ + 1
 ```
 
 ```tut:book
-div2.contramap(add1)(2)
+showString.contramap[Symbol](_.name).show('dave)
 ```
 
-#### *Invariant* in Cats
+### *Invariant* in Cats
 
 Cats provides instances of `Invariant` for `Semigroup` and `Monoid`.
 It also provides an `imap` extension method
@@ -92,8 +91,9 @@ and one to convert the result of the `String` append back to a `Symbol`:
 
 ```tut:book:silent
 import cats.Semigroup
-import cats.instances.string._ // semigroup for String
-import cats.syntax.invariant._ // imap extension method
+import cats.instances.semigroup._ // Cartesian for Semigroup
+import cats.instances.string._    // Semigroup for String
+import cats.syntax.invariant._    // imap extension method
 
 implicit val symbolSemigroup: Semigroup[Symbol] =
   Semigroup[String].imap(Symbol.apply)(_.name)

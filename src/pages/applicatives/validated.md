@@ -94,7 +94,7 @@ Validated.fromOption[String, Int](None, "Badness")
 
 We can combine instances of `Validated`
 using any of the methods described above:
-`product`, `map2..22`, cartesian builder syntax,
+`product`, `map2..22`, apply syntax,
 and so on.
 
 All of these techniques require
@@ -129,17 +129,17 @@ Cartesian[AllErrorsOr]
 
 As long as the compiler has all the implicits in scope
 to summon a `Cartesian` of the correct type,
-we can use cartesian builder syntax
+we can use apply syntax
 or any of the other `Cartesian` methods
 to accumulate errors as we like:
 
 ```tut:book:silent
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 ```
 
 ```tut:book
 (
-  "Error 1".invalid[Int] |@|
+  "Error 1".invalid[Int],
   "Error 2".invalid[Int]
 ).tupled
 ```
@@ -154,7 +154,7 @@ import cats.instances.vector._
 
 ```tut:book
 (
-  Vector(404).invalid[Int] |@|
+  Vector(404).invalid[Int],
   Vector(500).invalid[Int]
 ).tupled
 ```
@@ -170,7 +170,7 @@ import cats.data.NonEmptyVector
 
 ```tut:book
 (
-  NonEmptyVector.of("Error 1").invalid[Int] |@|
+  NonEmptyVector.of("Error 1").invalid[Int],
   NonEmptyVector.of("Error 2").invalid[Int]
 ).tupled
 ```
@@ -421,32 +421,18 @@ Make sure you switch from `Either` to `Validated`
 to accumulate errors.
 
 <div class="solution">
-There are a couple of ways to do this,
-each involving switching from `Either` to `Validated`.
-One option is to use `product` and `map`:
+We can do this by switching from `Either` to `Validated`
+and using apply syntax:
 
 ```tut:book:silent
-def readUser(data: FormData): AllErrorsOr[User] =
-  Cartesian[AllErrorsOr].product(
-    readName(data).toValidated,
-    readAge(data).toValidated
-  ).map(User.tupled)
-```
-
-A more idiomatic solution is to
-use cartesian builder syntax:
-
-```tut:book:silent
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 
 def readUser(data: FormData): AllErrorsOr[User] =
   (
-    readName(data).toValidated |@|
+    readName(data).toValidated,
     readAge(data).toValidated
-  ).map(User.apply)
+  ).mapN(User.apply)
 ```
-
-Both solutions yield the same results:
 
 ```tut:book
 readUser(Map("name" -> "Dave", "age" -> "37"))

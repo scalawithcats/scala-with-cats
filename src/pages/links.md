@@ -42,7 +42,7 @@
 [cats.kernel.Semigroup]: http://typelevel.org/cats/api/cats/kernel/Semigroup.html
 [cats.syntax]: http://typelevel.org/cats/api/cats/syntax/
 [cats.syntax.applicative]: http://typelevel.org/cats/api/cats/syntax/package$$applicative$
-[cats.syntax.cartesian]: http://typelevel.org/cats/api/cats/syntax/package$$cartesian$
+[cats.syntax.apply]: http://typelevel.org/cats/api/cats/syntax/package$$cartesian$
 [cats.syntax.contravariant]: http://typelevel.org/cats/api/cats/syntax/package$$contravariant$
 [cats.syntax.either]: http://typelevel.org/cats/api/cats/syntax/package$$either$
 [cats.syntax.eq]: http://typelevel.org/cats/api/cats/syntax/package$$eq$
@@ -104,6 +104,7 @@
 [link-mapreduce-monoid]: http://arxiv.org/abs/1304.7544
 [link-mapreduce]: http://research.google.com/archive/mapreduce.html
 [link-monads-burritos]: http://blog.plover.com/prog/burritos.html
+[link-monocle]: http://julien-truffaut.github.io/Monocle/
 [link-parallel-collections]: http://docs.scala-lang.org/overviews/parallel-collections/overview.html
 [link-phil-freeman-tailrecm]: http://functorial.com/stack-safety-for-free/index.pdf
 [link-scalaz-contrib]: https://github.com/typelevel/scalaz-contrib

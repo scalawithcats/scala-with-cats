@@ -133,8 +133,8 @@ we'll call this implementation `CheckF`:
 
 ```tut:book:silent
 import cats.Semigroup
-import cats.syntax.either._    // asLeft and asRight syntax
-import cats.syntax.semigroup._ // |+| syntax
+import cats.syntax.either._
+import cats.syntax.semigroup._
 ```
 
 ```tut:book:silent
@@ -311,8 +311,8 @@ Here's the complete implementation:
 ```tut:book:silent
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.semigroup._ // |+| syntax
-import cats.syntax.cartesian._ // |@| syntax
+import cats.syntax.semigroup._
+import cats.syntax.apply._
 ```
 
 ```tut:book:silent
@@ -327,7 +327,7 @@ object wrapper {
           func(a)
 
         case And(left, right) =>
-          (left(a) |@| right(a)).map((_, _) => a)
+          (left(a), right(a)).mapN((_, _) => a)
       }
   }
 
@@ -354,8 +354,8 @@ is implicit in the semantics of "or".
 ```tut:book:silent
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.semigroup._ // |+| syntax
-import cats.syntax.cartesian._ // |@| syntax
+import cats.syntax.semigroup._
+import cats.syntax.apply._
 import cats.data.Validated._   // Valid and Invalid
 ```
 
@@ -374,7 +374,7 @@ object wrapper {
           func(a)
 
         case And(left, right) =>
-          (left(a) |@| right(a)).map((_, _) => a)
+          (left(a), right(a)).mapN((_, _) => a)
 
         case Or(left, right) =>
           left(a) match {

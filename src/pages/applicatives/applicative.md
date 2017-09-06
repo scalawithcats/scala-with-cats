@@ -114,4 +114,4 @@ We choose our semantics by choosing our data structures.
 If we choose a monad, we get strict sequencing.
 If we choose an applicative, we lose the ability to `flatMap`.
 This is the trade-off enforced by the consistency laws.
-So choose your types carefully, friend!
+So choose your types carefully!
