@@ -312,6 +312,6 @@ def foldRight[A, B](as: List[A], acc: B)
 ```
 
 ```tut:book
-foldRight((1 to 100000).toList, 0)(_ + _)
+foldRight((1 to 100000).toList, 0L)(_ + _)
 ```
 </div>
