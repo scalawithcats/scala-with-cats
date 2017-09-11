@@ -1,7 +1,7 @@
 ## Defining Custom Monads
 
 We can define a `Monad` for a custom type
-by providing implementations of thee methods:
+by providing implementations of three methods:
 `flatMap`, `pure`, and a new method called `tailRecM`.
 Here is an implementation of `Monad` for `Option` as an example:
 
