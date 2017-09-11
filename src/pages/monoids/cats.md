@@ -174,6 +174,7 @@ We can write this as a generic method that accepts an implicit `Monoid` as a par
 
 ```tut:book:silent
 import cats.Monoid
+import cats.instances.int._
 import cats.syntax.semigroup._
 
 def add[A](items: List[A])(implicit monoid: Monoid[A]): A =
