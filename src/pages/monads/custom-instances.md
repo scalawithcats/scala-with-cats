@@ -34,7 +34,7 @@ the amount of stack space used by nested calls to `flatMap`.
 The technique comes from a [2015 paper][link-phil-freeman-tailrecm]
 by PureScript creator Phil Freeman.
 The method should recursively call itself
-as long as the result of `f` returns a `Right`.
+until the result of `fn` returns a `Right`.
 If we can make `tailRecM` tail recursive,
 we should do so to allow Cats to perform
 additional internal optimisations.
