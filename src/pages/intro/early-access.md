@@ -35,11 +35,12 @@ Starting from the March 2016 release, here are the major changes to the book:
      with a section on apply syntax.
    - Removed the section on `Unapply`.
    - Added a section on `-Ypartial-unification`.
+- Added a list of contributors to the Intro
+- Added a list of backers to the Intro
 
 ### Omissions {-}
 
 Here are the major things missing from the book:
 
- 1. Acknowledge backers in the intro.
- 2. Incorporate all the feedback from Github Issues.
- 3. Proof reading, final tweaks.
+ 1. Incorporate all the feedback from Github Issues.
+ 2. Proof reading, final tweaks.

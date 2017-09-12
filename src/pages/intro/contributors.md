@@ -3,7 +3,7 @@
 We'd like to thank our colleagues at Underscore,
 our friends at Typelevel,
 and everyone who helped contribute to this book.
-Here is a list of contributors in alphabetical order:
+Here is an alphabetical list of contributors:
 
 Javier Arrieta,
 Seoh Char,
