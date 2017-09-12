@@ -35,7 +35,7 @@ This is what we mean by sequencing computations.
 A monad allows us to specify a sequence of operations that happen one after another.
 We specify the application-specific part of the computation as a function parameter,
 and `flatMap` runs our function and takes care of some kind of complication
-(conventionally referred to as an ``effect'').
+(conventionally referred to as an "effect").
 Let's ground things by looking at some examples.
 
 **Options**
