@@ -71,6 +71,7 @@ To do this we must have a `Monoid[W]` in scope
 so Cats knows how to produce an empty log:
 
 ```tut:book:silent
+import cats.instances.vector._   // `Monoid` for `Vector`
 import cats.syntax.applicative._ // `pure` method
 
 type Logged[A] = Writer[Vector[String], A]

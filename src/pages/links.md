@@ -112,6 +112,7 @@
 [link-si2712]: https://issues.scala-lang.org/browse/SI-2712
 [link-si-6680]: https://issues.scala-lang.org/browse/SI-6680
 [link-simulacrum]: https://github.com/mpilquist/simulacrum
+[link-so-tree-tailrecm]: https://stackoverflow.com/questions/44504790/cats-non-tail-recursive-tailrecm-method-for-monads
 [link-stochastic-gradient-descent]: http://en.wikipedia.org/wiki/Stochastic_gradient_descent
 [link-summingbird]: https://github.com/twitter/summingbird
 [link-topk]: http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.114.9563

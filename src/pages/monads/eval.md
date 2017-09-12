@@ -29,9 +29,14 @@ the code to compute the value of `x` happens eagerly at the definition site.
 Accessing `x` simply recalls the stored value without re-running the code.
 
 ```tut:book
+def time: Long = {
+  Thread.sleep(10)
+  System.currentTimeMillis % 1000
+}
+
 val x = {
   println("Computing X")
-  1 + 1
+  time
 }
 
 x // first access
@@ -46,7 +51,7 @@ and is re-run on every access (not memoized):
 ```tut:book
 def y = {
   println("Computing Y")
-  1 + 1
+  time
 }
 
 y // first access
@@ -64,7 +69,7 @@ and re-used on subsequent accesses (memoized):
 ```tut:book
 lazy val z = {
   println("Computing Z")
-  1 + 1
+  time
 }
 
 z // first access
@@ -82,9 +87,9 @@ and return them typed as `Eval`:
 ```tut:book
 import cats.Eval
 
-val now    = Eval.now(1 + 2)
-val later  = Eval.later(3 + 4)
-val always = Eval.always(5 + 6)
+val now    = Eval.now(time + 1000)
+val later  = Eval.later(time + 2000)
+val always = Eval.always(time + 3000)
 ```
 
 We can extract the result of an `Eval`
@@ -104,7 +109,7 @@ Its semantics are similar to a `val`---eager and memoized:
 ```tut:book
 val x = Eval.now {
   println("Computing X")
-  1 + 1
+  time
 }
 
 x.value // first access
@@ -117,7 +122,7 @@ similar to a `def`:
 ```tut:book
 val y = Eval.always {
   println("Computing Y")
-  1 + 1
+  time
 }
 
 y.value // first access
@@ -130,7 +135,7 @@ and memoizes the result, similar to a `lazy val`:
 ```tut:book
 val z = Eval.later {
   println("Computing Z")
-  1 + 1
+  time
 }
 
 z.value // first access

@@ -85,7 +85,7 @@ Type Class Variance             Invariant   Covariant   Contravariant
 ------------------------------- ----------- ----------- ---------------
 Supertype instance used?        No          No          Yes
 
-More specific type preferred?   Yes         Yes         No
+More specific type preferred?   No          Yes         No
 -----------------------------------------------------------------------
 
 It's clear there is no perfect system.
