@@ -38,7 +38,7 @@ To quickly recap, there are three cases:
     If `C` is a subtype of `B`, `Foo[C]` is a subtype of `Foo[B]`.
 
     This is common in "collection" types such as `List` and `Option`.
-    It seems sensible that a `List[C]` is a subtype of `List[B]`.
+    It is useful for a `List[C]` is a subtype of `List[B]`.
 
  -  A type with a parameter `Foo[-A]` is *contravariant* in `A`.
 
@@ -47,7 +47,7 @@ To quickly recap, there are three cases:
     This is common when modelling function parameters,
     including the parameters of Scala's built-in function types.
     For example, a function that accepts a parameter of type `List[B]`
-    can always also accept a parameter of type `List[C]`.
+    will always accept a parameter of type `List[C]`.
     We therefore say that `List[B] => R` is
     a subtype of `List[C] => R` for any given `R`.
 
