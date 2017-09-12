@@ -225,7 +225,7 @@ to complex techniques like the cake pattern and DI frameworks.
   parts of the program in isolation.
 
 By representing the steps of our program as `Readers`
-we can test that them as easily as pure functions,
+we can test them as easily as pure functions,
 plus we gain access to the `map` and `flatMap` combinators.
 
 For more advanced problems where we have lots of dependencies,

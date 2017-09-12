@@ -112,9 +112,11 @@
 [link-si2712]: https://issues.scala-lang.org/browse/SI-2712
 [link-si-6680]: https://issues.scala-lang.org/browse/SI-6680
 [link-simulacrum]: https://github.com/mpilquist/simulacrum
+[link-so-tree-tailrecm]: https://stackoverflow.com/questions/44504790/cats-non-tail-recursive-tailrecm-method-for-monads
 [link-stochastic-gradient-descent]: http://en.wikipedia.org/wiki/Stochastic_gradient_descent
 [link-summingbird]: https://github.com/twitter/summingbird
 [link-topk]: http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.114.9563
 [link-typelevel-scala]: https://github.com/typelevel/scala
 [link-value-classes]: http://docs.scala-lang.org/overviews/core/value-classes.html
 [link-gibbons-oliviera-iterator-pattern]: https://www.cs.ox.ac.uk/jeremy.gibbons/publications/iterator.pdf
+[link-underscore]: https://underscore.io

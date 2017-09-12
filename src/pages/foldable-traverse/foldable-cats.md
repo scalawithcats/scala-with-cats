@@ -67,7 +67,7 @@ Using `Eval` means folding is always *stack safe*,
 even when the collection's default definition of `foldRight` is not.
 For example, the default implementation of `foldRight` for `Stream` is not stack safe.
 The longer the stream, the larger the stack requirements for the fold.
-A sufficiently large stream will trigger a `StackOverflowException`:
+A sufficiently large stream will trigger a `StackOverflowError`:
 
 ```tut:book:silent
 import cats.Eval
@@ -78,11 +78,11 @@ def bigData = (1 to 100000).toStream
 
 ```tut:book:fail:invisible
 // This example isn't printed... it's here to check the next code block is ok:
-bigData.foldRight(0)(_ + _)
+bigData.foldRight(0L)(_ + _)
 ```
 
 ```scala
-bigData.foldRight(0)(_ + _)
+bigData.foldRight(0L)(_ + _)
 // java.lang.StackOverflowError ...
 ```
 
@@ -95,7 +95,7 @@ import cats.instances.stream._
 
 ```tut:book
 val eval = Foldable[Stream].
-  foldRight(bigData, Eval.now(0)) { (num, eval) =>
+  foldRight(bigData, Eval.now(0L)) { (num, eval) =>
     eval.map(_ + num)
   }
 
@@ -110,8 +110,8 @@ The most commonly used collection types, such as `List` and `Vector`,
 provide stack safe implementations of `foldRight`:
 
 ```tut:book
-(1 to 100000).toList.foldRight(0)(_ + _)
-(1 to 100000).toVector.foldRight(0)(_ + _)
+(1 to 100000).toList.foldRight(0L)(_ + _)
+(1 to 100000).toVector.foldRight(0L)(_ + _)
 ```
 
 We've called out `Stream` because it is an exception to this rule.

@@ -124,8 +124,8 @@ final case class Box[A](value: A)
 Rather than writing out
 the complete definition from scratch
 (`new Printable[Box]` etc...),
-create your instance using
-the `contramap` method of one of the instances above.
+create your instance from an existing instance
+using the `contramap` syntax.
 
 <div class="solution">
 To make the instance generic across all types of `Box`,

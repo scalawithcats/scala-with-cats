@@ -186,13 +186,13 @@ we can generalise it to to work with any `Applicative`:
 ```tut:book:silent
 import scala.language.higherKinds
 
-def listTraverse[F[_] : Applicative, A, B]
+def listTraverse[F[_]: Applicative, A, B]
     (list: List[A])(func: A => F[B]): F[List[B]] =
   list.foldLeft(List.empty[B].pure[F]) { (accum, item) =>
     (accum, func(item)).mapN(_ :+ _)
   }
 
-def listSequence[F[_] : Applicative, B]
+def listSequence[F[_]: Applicative, B]
     (list: List[F[B]]): F[List[B]] =
   listTraverse(list)(identity)
 ```
@@ -284,7 +284,7 @@ process(List(1, 2, 3))
 
 #### Exercise: Traversing with Validated
 
-Finally, gere's an example that uses `Validated`:
+Finally, here is an example that uses `Validated`:
 
 ```tut:book:silent
 import cats.data.Validated

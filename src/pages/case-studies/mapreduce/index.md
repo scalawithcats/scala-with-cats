@@ -3,7 +3,7 @@
 <!--
 TODO:
 
-- DONE - talk about map-reduce -- it's just foldMap
+- DONE - talk about map-reduce - it's just foldMap
 - DONE - introduce/reimplement foldMap
 - DONE - implement parallelFoldMap to mimic map-reduce
   - DONE - mention that we're specifically imitating multi-machine

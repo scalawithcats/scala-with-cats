@@ -23,10 +23,11 @@ val a = State[Int, String] { state =>
 }
 ```
 
-In other words, an instance of `State` is a combination of two things:
+In other words, an instance of `State` is a function
+that does two things:
 
-- a transformation from an input state to an output state;
-- a computation of a result.
+- transforms an input state to an output state;
+- computes a result.
 
 We can "run" our monad by supplying an initial state.
 `State` provides three methods---`run`, `runS`, and `runA`---that return

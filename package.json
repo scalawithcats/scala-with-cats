@@ -3,12 +3,12 @@
   "description": "Take your Scala skills to the next level",
   "version": "0.0.1",
   "devDependencies": {
-    "bootstrap": "3.3.1",
+    "bootstrap": "^3.3.7",
     "coffeeify": "1.0.0",
     "jquery": "2.1.1",
     "uglifyify": "2.6.0",
     "underscore": "1.7.0",
-    "underscore-ebook-template" : "git+https://github.com/underscoreio/underscore-ebook-template.git#0.5.0"
+    "underscore-ebook-template": "git+https://github.com/underscoreio/underscore-ebook-template.git#0.5.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specificed\" && exit 1"

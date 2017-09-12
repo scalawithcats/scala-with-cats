@@ -319,7 +319,7 @@ getName(Map())
 </div>
 
 Next define a method `parseInt` that
-consumes an `Int` and parses it as a `String`.
+consumes a `String` and parses it as an `Int`.
 
 <div class="solution">
 We'll use `Either` again here.

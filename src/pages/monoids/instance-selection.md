@@ -37,9 +37,19 @@ To quickly recap, there are three cases:
 
     If `C` is a subtype of `B`, `Foo[C]` is a subtype of `Foo[B]`.
 
+    This is common in "collection" types such as `List` and `Option`.
+    It is useful for a `List[C]` is a subtype of `List[B]`.
+
  -  A type with a parameter `Foo[-A]` is *contravariant* in `A`.
 
-    If `C` is a supertype of `B`, `Foo[C]` is a subtype of `Foo[B]`.
+    If `C` is a subtype of `B`, `Foo[B]` is a subtype of `Foo[C]`.
+
+    This is common when modelling function parameters,
+    including the parameters of Scala's built-in function types.
+    For example, a function that accepts a parameter of type `List[B]`
+    will always accept a parameter of type `List[C]`.
+    We therefore say that `List[B] => R` is
+    a subtype of `List[C] => R` for any given `R`.
 
 When the compiler searches for an implicit
 it looks for one matching the type *or subtype*.
@@ -75,7 +85,7 @@ Type Class Variance             Invariant   Covariant   Contravariant
 ------------------------------- ----------- ----------- ---------------
 Supertype instance used?        No          No          Yes
 
-More specific type preferred?   Yes         Yes         No
+More specific type preferred?   No          Yes         No
 -----------------------------------------------------------------------
 
 It's clear there is no perfect system.
