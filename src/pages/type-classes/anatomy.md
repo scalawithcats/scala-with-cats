@@ -26,6 +26,9 @@ trait JsonWriter[A] {
 }
 ```
 
+`JsonWriter` is our type class in this example,
+with `Json` and its subtypes providing supporting code.
+
 ### Type Class Instances
 
 The *instances* of a type class
@@ -41,26 +44,30 @@ and tagging them with the `implicit` keyword:
 final case class Person(name: String, email: String)
 
 object JsonWriterInstances {
-  implicit val stringJsonWriter = new JsonWriter[String] {
-    def write(value: String): Json =
-      JsString(value)
-  }
-  implicit val personJsonWriter = new JsonWriter[Person] {
-    def write(value: Person): Json =
-      JsObject(Map(
-        "name" -> JsString(value.name),
-        "email" -> JsString(value.email)
-      ))
-  }
+  implicit val stringWriter: JsonWriter[String] =
+    new JsonWriter[String] {
+      def write(value: String): Json =
+        JsString(value)
+    }
+
+  implicit val personWriter: JsonWriter[Person] =
+    new JsonWriter[Person] {
+      def write(value: Person): Json =
+        JsObject(Map(
+          "name" -> JsString(value.name),
+          "email" -> JsString(value.email)
+        ))
+    }
+
   // etc...
 }
 ```
 
-### Interfaces
+### Type Class Interfaces
 
-An *interface* is any functionality we expose to users.
-Interfaces to type classes are generic methods
-that accept instances of the type class as implicit parameters.
+A type class *interface* is any functionality we expose to users.
+Interfaces are generic methods that accept
+instances of the type class as implicit parameters.
 
 There are two common ways of specifying an interface:
 *Interface Objects* and *Interface Syntax*.
@@ -119,6 +126,93 @@ import JsonSyntax._
 Person("Dave", "dave@example.com").toJson
 ```
 
+**The *implicitly* Method**
+
+The standard library provides a generic interface method called `implicitly`.
+Its definition is very simple:
+
+```scala
+def implicitly[A](implicit value: A): A =
+  value
+```
+
+We can use `implicitly` to summon any value from implicit scope.
+We simply provide the type we want to summon and `implicitly` does the rest:
+
+```tut:book
+import JsonWriterInstances._
+
+implicitly[JsonWriter[String]]
+```
+
+Most type classes in Cats provide other means to summon instances.
+However, `implicitly` is a good fallback for debugging purposes.
+We can insert a call to `implicitly` within the general flow of our code
+to ensure the compiler is able to find an instance of a type class
+and ensure that there are no ambiguous implicit errors.
+
+### Packaging Type Class Instances
+
+In a curious quirk of the language,
+`implicit` values in Scala must be defined
+inside an object or trait.
+They can't be defined at the top level.
+In the example above we packaged our instances
+in an object called `JsonWriterInstances`.
+We could equally have placed the instances
+in a companion object to `JsonWriter`.
+Placing instances in a companion object
+to the type class has special significance in Scala.
+
+The compiler looks for caldidate values for implicit parameters by type.
+It searches in the *implicit scope* at the call site,
+which roughly consists of:
+
+- local or inherited values of the correct type;
+- imported values of the correct type;
+- values of the correct type that are defined
+  in the companion object of the type class or parameter type
+  (in this case `JsonWriter` or `Person`).
+
+Values are only eligible if they are tagged with the `implicit` keyword,
+and if the compiler sees multiple candidate values,
+it fails with an *ambiguous implicit values* error:
+
+```scala
+implicit val writer1: JsonWriter[String] =
+  JsonWriterInstances.stringWriter
+
+implicit val writer2: JsonWriter[String] =
+  JsonWriterInstances.stringWriter
+
+Json.toJson("A string")
+// <console>:23: error: ambiguous implicit values:
+//  both value stringWriter in object JsonWriterInstances of type => JsonWriter[String]
+//  and value writer1 of type => JsonWriter[String]
+//  match expected type JsonWriter[String]
+//          Json.toJson("A string")
+//                     ^
+```
+
+The precise rules of how the compiler searches for implicits
+are actually a little more complex than we're letting on here.
+However, the details are largely irrelevant for this book[^implicit-search].
+For our purposes, we can package implicits in roughly four ways:
+
+1. by placing them in an object such as `JsonWriterInstances`;
+2. by placing them in a trait;
+3. by placing them in the companion object of the type class;
+4. by placing them in the companion object of the parameter type.
+
+With option 1 we bring instances into scope by `importing` them.
+With option 2 we bring them into scope with inheritance.
+With options 3 and 4, instances are always in scope,
+regardless of where we try to use them.
+
+[^implicit-search]: If you're interested in the finer rules of implicit resolution in Scala,
+start by taking a look at [this Stack Overflow post on implicit schope][link-so-implicit-scope]
+and [this post on implicit priority][link-so-implicit-priority].
+
 ### Exercise: *Printable* Library
 
 Scala provides a `toString` method
@@ -131,7 +225,7 @@ and we can't opt-in to specific implementations for specific types.
 Let's define a `Printable` type class to work around these problems:
 
  1. Define a type class `Printable[A]` containing a single method `format`.
-    `format` should accept a value of type `A` and returns a `String`.
+    `format` should accept a value of type `A` and return a `String`.
 
  2. Create an object `PrintableInstances`
     containing instances of `Printable` for `String` and `Int`.
@@ -249,7 +343,7 @@ Scala brings them into scope for us automatically.
 Otherwise we use an `import` to access them:
 
 ```tut:book
-val cat = Cat("Garfield", 35, "ginger and black")
+val cat = Cat("Garfield", 38, "ginger and black")
 
 Printable.print(cat)
 ```
@@ -262,10 +356,10 @@ by defining some extension methods to provide better syntax:
 
  1. Create an object called `PrintableSyntax`.
 
- 2. Inside `PrintableSyntax` define an `implicit class PrintOps[A]`
+ 2. Inside `PrintableSyntax` define an `implicit class PrintableOps[A]`
     to wrap up a value of type `A`.
 
- 3. In `PrintOps` define the following methods:
+ 3. In `PrintableOps` define the following methods:
 
      - `format` accepts an implicit `Printable[A]`
        and returns a `String` representation of the wrapped `A`;
@@ -281,7 +375,7 @@ First we define an `implicit class` containing our extension methods:
 
 ```tut:book:silent
 object PrintableSyntax {
-  implicit class PrintOps[A](value: A) {
+  implicit class PrintableOps[A](value: A) {
     def format(implicit p: Printable[A]): String =
       p.format(value)
 
@@ -291,7 +385,7 @@ object PrintableSyntax {
 }
 ```
 
-With `PrintOps` in scope,
+With `PrintableOps` in scope,
 we can call the imaginary `print` and `format` methods
 on any value for which Scala can locate an implicit instance of `Printable`:
 
@@ -300,7 +394,7 @@ import PrintableSyntax._
 ```
 
 ```tut:book
-Cat("Garfield", 35, "ginger and black").print
+Cat("Garfield", 38, "ginger and black").print
 ```
 
 We get a compile error if we haven't defined an instance of `Printable`
@@ -326,8 +420,8 @@ The Scala implementation of a type class has **three parts**:
  - *instances* for each type we care about; and
  - one or more generic *interface* methods.
 
-Interface methods can be defined in *interface objects* or *interface syntax*.
-Implicit classes are the most common way of implementing syntax.
+Interface methods can be defined in **interface objects** or **interface syntax**.
+**Implicit classes** are the most common way of implementing syntax.
 
 In the next section we will take a first look at Cats.
 We will examine the standard code layout Cats uses

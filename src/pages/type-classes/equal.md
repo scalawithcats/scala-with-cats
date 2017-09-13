@@ -2,6 +2,26 @@
 
 We will finish off this chapter by looking at another useful type class:
 [`cats.Eq`][cats.kernel.Eq].
+`Eq` is designed to support *type-safe equality*
+and address annoyances using Scala's built-in `==` operator.
+
+Almost every Scala developer has written code like this before:
+
+```tut:book
+List(1, 2, 3).map(Option(_)).filter(item => item == 1)
+```
+
+Ok, many of you won't have made such a simple mistake as this,
+but the principle is sound.
+The predicate in the `filter` clause always returns `false`
+because it is comparing an `Int` to an `Option[Int]`.
+
+This is programmer error---we
+should have compared `item` to `Some(1)` instead of `1`.
+However, it's not technically a type error because
+`==` works for any pair of objects, no matter what types we compare.
+`Eq` is designed to add some type safety to equality checks
+and work around this problem.
 
 ### Equality, Liberty, and Fraternity
 
@@ -18,7 +38,7 @@ trait Eq[A] {
 ```
 
 The interface syntax, defined in [`cats.syntax.eq`][cats.syntax.eq],
-provides two methods for performing type-safe equality checks
+provides two methods for performing equality checks
 provided there is an instance `Eq[A]` in scope:
 
  - `===` compares two objects for equality;
@@ -67,6 +87,12 @@ import cats.syntax.eq._
 123 =!= 234
 ```
 
+Again, comparing values of different types causes a compiler error:
+
+```tut:book:fail
+123 === "123"
+```
+
 ### Comparing *Options*
 
 Now for a more interesting example---`Option[Int]`.
@@ -84,10 +110,9 @@ Now we can try some comparisons:
 Some(1) === None
 ```
 
-We have received a compile error here
-because the `Eq` type class is invariant.
-The instances we have in scope
-are for `Int` and `Option[Int]`, not `Some[Int]`.
+We have received an error here because the types don't quite match up.
+We have `Eq` instances in scope for `Int` and `Option[Int]`
+but the values we are comparing are of type `Some[Int]`.
 To fix the issue we have to re-type the arguments as `Option[Int]`:
 
 ```tut:book
@@ -123,9 +148,10 @@ import cats.instances.long._
 ```
 
 ```tut:book:silent
-implicit val dateEqual = Eq.instance[Date] { (date1, date2) =>
-  date1.getTime === date2.getTime
-}
+implicit val dateEq: Eq[Date] =
+  Eq.instance[Date] { (date1, date2) =>
+    date1.getTime === date2.getTime
+  }
 ```
 
 ```tut:book:silent
@@ -149,8 +175,8 @@ final case class Cat(name: String, age: Int, color: String)
 Use this to compare the following pairs of objects for equality and inequality:
 
 ```tut:book:silent
-val cat1 = Cat("Garfield",   35, "orange and black")
-val cat2 = Cat("Heathcliff", 30, "orange and black")
+val cat1 = Cat("Garfield",   38, "orange and black")
+val cat2 = Cat("Heathcliff", 33, "orange and black")
 
 val optionCat1 = Option(cat1)
 val optionCat2 = Option.empty[Cat]
@@ -190,8 +216,8 @@ implicit val catEqual = Eq.instance[Cat] { (cat1, cat2) =>
 Finally, we test things out in a sample application:
 
 ```tut:book
-val cat1 = Cat("Garfield",   35, "orange and black")
-val cat2 = Cat("Heathcliff", 30, "orange and black")
+val cat1 = Cat("Garfield",   38, "orange and black")
+val cat2 = Cat("Heathcliff", 32, "orange and black")
 
 cat1 === cat2
 cat1 =!= cat2

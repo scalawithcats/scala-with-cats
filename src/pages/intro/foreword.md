@@ -13,8 +13,8 @@ They differ from object-oriented patterns in two main ways:
 - they are formally, and thus precisely, defined; and
 - they are extremely (extremely) general.
 
-This generality means they can be difficult to understand;
-everyone find abstraction difficult.
+This generality means they can be difficult to understand.
+*Everyone* finds abstraction difficult.
 However, it is generality that allows concepts like monads
 to be applied in such a wide variety of situations.
 

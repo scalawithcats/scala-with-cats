@@ -32,16 +32,10 @@ object MyApp extends App {
 
 Most code passes through [tut] to ensure it compiles.
 tut uses the Scala console behind the scenes,
-so we sometimes wrap code in an object
-to account for differences between the console and regular code:
+so we sometimes show console-style output as comments:
 
-```tut:book:silent
-object example {
-  sealed trait Foo[A]
-  final case class Bar[A](a: A) extends Foo[A]
-
-  println(Bar("wrapping this code in an object makes sure tut interprets it correctly"))
-}
+```tut:book
+"Hello Cats!".toUpperCase
 ```
 
 ### Callout Boxes {-}

@@ -10,13 +10,16 @@ Let's take a first look using [`cats.Show`][cats.Show] as an example.
 
 `Show` is Cats' equivalent of
 the `Printable` type class we defined in the last section.
-It provides a mechanism for
-producing developer-friendly console output without using `toString`.
+It provides a mechanism for producing
+developer-friendly console output without using `toString`.
+Here's an abbreviated definition:
 
-`Show` defines one method of interest:
+```scala
+package cats
 
-```tut:book
-def show[A](value: A): String = ???
+trait Show[A] {
+  def show(value: A): String
+}
 ```
 
 ### Importing Type Classes
@@ -45,7 +48,7 @@ The [`cats.instances`][cats.instances] package
 provides default instances for a wide variety of types.
 We can import these as shown in the table below.
 Each import provides instances of all Cats' type classes
-for a specific target type:
+for a specific parameter type:
 
 ------------------------------------------------------------------------------
 Import                                           Parameter types
@@ -99,8 +102,8 @@ val stringAsString: String =
 
 We can make `Show` easier to use by
 importing the *interface syntax* from [`cats.syntax.show`][cats.syntax.show].
-This adds a `show` method to any type
-for which we have an instance of `Show` in scope:
+This adds an extension method called `show`
+to any type for which we have an instance of `Show` in scope:
 
 ```tut:book:silent
 import cats.syntax.show._
@@ -117,29 +120,49 @@ We will introduce these as we encounter them in later sections and chapters.
 
 ### Defining Custom Instances {#defining-custom-instances}
 
-There are two constructor methods on the companion object of `Show`
-that we can use to define instances for our own types:
-
-```tut:book:silent
-// Convert a function to a `Show` instance:
-def show[A](f: A => String): Show[A] = ???
-
-// Create a `Show` instance from a `toString` method:
-def fromToString[A]: Show[A] = ???
-```
-
-These allows us to quickly construct instances of `Show`.
+We can define an instance of `Show`
+simply by implementing the trait for a given type:
 
 ```tut:book:silent
 import java.util.Date
 
 implicit val dateShow: Show[Date] =
+  new Show[Date] {
+    def show(date: Date): String =
+      s"${date.getTime}ms since the epoch."
+  }
+```
+
+However, Cats also provides
+a couple of convenient methods to simplfy the process.
+There are two construction methods on the companion object of `Show`
+that we can use to define instances for our own types:
+
+```scala
+object Show {
+  // Convert a function to a `Show` instance:
+  def show[A](f: A => String): Show[A] =
+    ???
+
+  // Create a `Show` instance from a `toString` method:
+  def fromToString[A]: Show[A] =
+    ???
+}
+```
+
+These allows us to quickly construct instances
+with less ceremony than defining them from scratch:
+
+```tut:book:silent
+implicit val dateShow: Show[Date] =
   Show.show(date => s"${date.getTime}ms since the epoch.")
 ```
 
-These constructors exist for `Show`
-but don't make sense for all Cats type classes.
-We will introduce constructors for other type classes as we come to then.
+As you can see, the code using construction methods
+is much terser than the code without.
+Many type classes in Cats provide helper methods like these
+for constructing instances, either from scratch
+or by transforming existing instances for other types.
 
 ### Exercise: Cat Show
 
@@ -180,7 +203,7 @@ implicit val catShow = Show.show[Cat] { cat =>
 Finally, we use the `Show` interface syntax to print our instance of `Cat`:
 
 ```tut:book
-println(Cat("Garfield", 35, "ginger and black").show)
+println(Cat("Garfield", 38, "ginger and black").show)
 ```
 </div>
 
@@ -191,8 +214,10 @@ For example, the `Show` type class is defined as [`cats.Show`][cats.Show].
 
 Default instances are defined in the
 [`cats.instances`][cats.instances] package.
-Imports are organized by parameter type
-(as opposed to by type class).
+There are separate objects in this package for each parameter type
+(as opposed to by type class):
+`cats.instances.int` for `Int`,
+`cats.instances.string` for `String`, and so on.
 
 Interface syntax is defined in the [`cats.syntax`][cats.syntax] package.
 There are separate syntax imports for each type class.
