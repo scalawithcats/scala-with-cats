@@ -114,7 +114,7 @@
 [link-si-6680]: https://issues.scala-lang.org/browse/SI-6680
 [link-simulacrum]: https://github.com/mpilquist/simulacrum
 [link-so-implicit-scope]: https://stackoverflow.com/questions/5598085/where-does-scala-look-for-implicits
-[link-so-implicit-priority]: https://stackoverflow.com/questions/20128473/how-to-control-priority-of-implicit-conversions-applied-on-method-arguments
+[link-implicit-priority]: http://eed3si9n.com/revisiting-implicits-without-import-tax
 [link-so-tree-tailrecm]: https://stackoverflow.com/questions/44504790/cats-non-tail-recursive-tailrecm-method-for-monads
 [link-stochastic-gradient-descent]: http://en.wikipedia.org/wiki/Stochastic_gradient_descent
 [link-summingbird]: https://github.com/twitter/summingbird

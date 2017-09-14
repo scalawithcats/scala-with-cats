@@ -41,6 +41,20 @@ val tuple2 = ("world", 321)
 tuple1 |+| tuple2
 ```
 
+We can also write generic code that works with any type
+for which we have an instance of `Monoid`:
+
+```tut:book:silent
+def addAll[A](values: List[A])
+    (implicit monoid: Monoid[A]): A =
+  values.foldRight(monoid.empty)(_ |+| _)
+```
+
+```tut:book
+add(List(1, 2, 3)
+add(List(None, Some(1), Some(2)))
+```
+
 `Monoids` are a great gateway to Cats.
 They're easy to understand and simple to use.
 However, they're just the tip of the iceberg

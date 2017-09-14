@@ -1,25 +1,22 @@
 ## Controlling Instance Selection
 
 When working with type classes
-we must consider two issues that control instance selection:
+we must consider two issues
+that control instance selection:
 
  -  What is the relationship between
     an instance defined on a type and its subtypes?
 
-    For example, if we define a `Monoid[Option[Int]]`,
-    will the expression `Some(1) |+| Some(2)` select this instance?
+    For example, if we define a `JsonWriter[Option[Int]]`,
+    will the expression `Json.toJson(Some(1))` select this instance?
     (Remember that `Some` is a subtype of `Option`).
 
  -  How do we choose between type class instances
     when there are many available?
 
-    We've seen two monoids for `Int`:
-    addition and zero, and multiplication and one.
-    Similarly there are at least four monoids for `Boolean`
-    (and, or, equal, and not equal).
-    When we write `true |+| false`, which instance is selected?
-
-In this section we explore how Cats answers these questions.
+    What if we define two `JsonWriters` for `Person`?
+    When we write `Json.toJson(aPerson)`,
+    which instance is selected?
 
 ### Type Class Variance
 
@@ -28,7 +25,8 @@ add variance annotations to the type parameter
 like we can for any other generic type.
 To quickly recap, there are three cases:
 
- -  A type with an unannotated parameter `Foo[A]` is *invariant* in `A`.
+ -  A type with an unannotated parameter
+    `Foo[A]` is *invariant* in `A`.
 
     This means there is no relationship between `Foo[B]` and `Foo[C]`
     no matter what the sub- or super-type relationship is between `B` and `C`.
@@ -46,7 +44,8 @@ To quickly recap, there are three cases:
 
     This is common when modelling function parameters,
     including the parameters of Scala's built-in function types.
-    For example, a function that accepts a parameter of type `List[B]`
+    For example, a function that accepts
+    a parameter of type `List[B]`
     will always accept a parameter of type `List[C]`.
     We therefore say that `List[B] => R` is
     a subtype of `List[C] => R` for any given `R`.
@@ -67,7 +66,8 @@ final case object C extends A
 
 The issues are:
 
- 1. Will an instance defined on a supertype be selected if one is available?
+ 1. Will an instance defined on a supertype be selected
+    if one is available?
     For example, can we define an instance for `A`
     and have it work for values of type `B` and `C`?
 
@@ -90,54 +90,31 @@ More specific type preferred?   No          Yes         No
 
 It's clear there is no perfect system.
 Cats generally prefers to use invariant type classes.
-This allows us to specify more specific instances for subtypes if we want.
-It does mean that if we have, for example, a value of type `Some[Int]`,
-our monoid instance for `Option` will not be used.
-We can solve this problem with a type annotation like `Some(1) : Option[Int]`
+This allows us to specify
+more specific instances for subtypes if we want.
+It does mean that if we have, for example,
+a value of type `Some[Int]`,
+our type class instance for `Option` will not be used.
+We can solve this problem with
+a type annotation like `Some(1) : Option[Int]`
 or by using "smart constructors" that construct values
 with the type of the base trait in an algebraic data type.
-For example, Cats provides `some` and `none` constructors for `Option`:
+For example, the Scala standard library
+`Option.apply` and `Option.empty` constructors for `Option`:
+
+```tut:book
+Option(1)
+Option.empty[Int]
+```
+
+Cats also provides `some` and `none` extension methods
+via the `cats.syntax.option` import:
 
 ```tut:book:silent
-import cats.instances.option._
 import cats.syntax.option._
 ```
 
 ```tut:book
-Some(1)
-
 1.some
-
-None
-
 none[Int]
-```
-
-### Identically Typed Instances
-
-The other issue is choosing between type class instances
-when several are available for a specific type.
-For example, how do we select the monoid for integer multiplication
-instead of the monoid for integer addition?
-
-Cats currently has no mechanism for selecting alternative instances,
-though this may change in the future.
-
-We can always define or import a type class instance into the local scope.
-This will take precedence
-over other type class instances in the implicit scope:
-
-```tut:book:silent
-import cats.Monoid
-import cats.syntax.semigroup._
-
-implicit val multiplicationMonoid =
-  new Monoid[Int] {
-    def empty: Int = 1
-    override def combine(x: Int, y: Int): Int = x * y
-  }
-```
-
-```tut:book
-3 |+| 2
 ```
