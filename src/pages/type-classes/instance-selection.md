@@ -18,37 +18,141 @@ that control instance selection:
     When we write `Json.toJson(aPerson)`,
     which instance is selected?
 
-### Type Class Variance
+### Type Class Variance {#sec:variance}
 
 When we define type classes we can
 add variance annotations to the type parameter
-like we can for any other generic type.
-To quickly recap, there are three cases:
+to affect the variance of the type class
+and the compiler's ability to select instances
+during implicit resolution.
 
- -  A type with an unannotated parameter
-    `Foo[A]` is *invariant* in `A`.
+To recap Essential Scala,
+variance relates to subtypes.
+We say that `B` is a subtype of `A`
+if we can use a value of type `B`
+anywhere we expect a value of type `A`.
 
-    This means there is no relationship between `Foo[B]` and `Foo[C]`
-    no matter what the sub- or super-type relationship is between `B` and `C`.
+Co- and contravariance annotations arise
+when working with type constructors.
+For example, we denote covariance with a `+` symbol:
 
- -  A type with a parameter `Foo[+A]` is *covariant* in `A`.
+```scala
+trait F[+A] // the "+" means "covariant"
+```
 
-    If `C` is a subtype of `B`, `Foo[C]` is a subtype of `Foo[B]`.
+**Covariance**
 
-    This is common in "collection" types such as `List` and `Option`.
-    It is useful for a `List[C]` is a subtype of `List[B]`.
+Covariance means that the type `F[B]`
+is a subtype of the type `F[A]` if `B` is a subtype of `A`.
+This is useful for modelling many types,
+including collections like `List` and `Option`:
 
- -  A type with a parameter `Foo[-A]` is *contravariant* in `A`.
+```scala
+trait List[+A]
+trait Option[+A]
+```
 
-    If `C` is a subtype of `B`, `Foo[B]` is a subtype of `Foo[C]`.
+The covariance of Scala collections allows
+us to substitute collections of one type for another in our code.
+For example, we can use a `List[Circle]`
+anywhere we expect a `List[Shape]` because
+`Circle` is a subtype of `Shape`:
 
-    This is common when modelling function parameters,
-    including the parameters of Scala's built-in function types.
-    For example, a function that accepts
-    a parameter of type `List[B]`
-    will always accept a parameter of type `List[C]`.
-    We therefore say that `List[B] => R` is
-    a subtype of `List[C] => R` for any given `R`.
+```tut:book:silent
+sealed trait Shape
+case class Circle(radius: Double) extends Shape
+```
+
+```scala
+val circles: List[Circle] = ???
+val shapes: List[Shape] = circles
+```
+
+```tut:book:invisible
+val circles: List[Circle] = null
+val shapes: List[Shape] = circles
+```
+
+What about contravariance?
+We write contravariant type constructors
+with a `-` symbol like this:
+
+```scala
+trait F[-A]
+```
+
+**Contravariance**
+
+Confusingly, contravariance means that the type `F[B]`
+is a subtype of `F[A]` if `A` is a subtype of `B`.
+This is useful for modelling types that represent processes,
+like our `JsonWriter` type class above:
+
+```tut:book:invisible
+trait Json
+```
+
+```tut:book
+trait JsonWriter[-A] {
+  def write(value: A): Json
+}
+```
+
+Let's unpack this a bit further.
+Remember that variance is all about
+the ability to substitute one value for another.
+Consider a scenario where we have two values,
+one of type `Shape` and one of type `Circle`,
+and two `JsonWriters`, one for `Shape` and one for `Circle`:
+
+```scala
+val shape: Shape = ???
+val circle: Circle = ???
+
+val shapeWriter: JsonWriter[Shape] = ???
+val circleWriter: JsonWriter[Circle] = ???
+```
+
+```tut:book:invisible
+val shape: Shape = null
+val circle: Circle = null
+
+val shapeWriter: JsonWriter[Shape] = null
+val circleWriter: JsonWriter[Circle] = null
+```
+
+```tut:book:silent
+def format[A](value: A, writer: JsonWriter[A]): Json =
+  writer.write(value)
+```
+
+Now ask yourself the question:
+"Which of combinations of value and writer can I pass to `format`?"
+We can combine `circle` with either writer
+because all `Circles` are `Shapes`.
+Conversely, we can't combine `shape` with `circleWriter`
+because not all `Shapes` are `Circles`.
+
+This relationship is what we formally model using contravariance.
+`JsonWriter[Shape]` is a subtype of `JsonWriter[Circle]`
+because `Circle` is a subtype of `Shape`.
+This means we can use `shapeWriter`
+anywhere we expect to see a `JsonWriter[Circle]`.
+
+**Invariance**
+
+Invariance is actually the easiest situation to describe.
+It's what we get when we don't write a `+` or `-`
+in a type constructor:
+
+```scala
+trait F[A]
+```
+
+This means the types `F[A]` and `F[B]`
+are never subtypes of one another,
+no matter what the relationship between `A` and `B`.
+This is the default semantics for Scala type constructors.
 
 When the compiler searches for an implicit
 it looks for one matching the type *or subtype*.

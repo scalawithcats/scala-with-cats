@@ -28,11 +28,11 @@ val func3 = func1.map(func2)
 ```
 
 Obviously this compiler flag
-enables some additional compiler behaviour,
+enables some optional compiler behaviour,
 without which our code will not compile.
 We should take a moment to
 describe what partial unification is
-and discuss some gotchas and how to work around them.
+and discuss some gotchas and workarounds.
 
 ### Unifying Type Constructors
 
@@ -49,9 +49,14 @@ Functor[? => Double]
 However, earlier versions of the Scala compiler
 were not able to make this choice.
 This infamous limitation,
-known as [SI-2712][link-si2712], is now fixed.
-However, the fix must be  disabled by default
-and must be enabled via `-Ypartial-unification`.
+known as [SI-2712][link-si2712],
+prevented the compiler "unifying" type constructors
+of different arities.
+This compiler limitation is now fixed.
+However, in current versions of the Scala compiler
+the fix is disabled by default
+and must be enabled via
+the `-Ypartial-unification` feature flag.
 
 ### Left-to-Right Elimination
 
@@ -79,7 +84,8 @@ either.map(_ + 1)
 However, there are situations where
 left-to-right elimination is not the correct choice.
 One example is the `Or` type in [Scalactic][link-scalactic],
-which is a conventionally left-biased equivalent of `Either`.
+which is a conventionally left-biased equivalent of `Either`
+allowing users to specify types such as `SomeResult Or SomeError`.
 Another example is the `Contravariant` functor for `Function1`.
 
 While the `Functor` for `Function1` implements
@@ -95,7 +101,8 @@ func2.compose(func1)
 a => func1(func2(a))
 ```
 
-If we try this for real, however, it won't compile:
+If we try this for real, however,
+our code won't compile:
 
 ```tut:book:silent
 import cats.syntax.contravariant._
@@ -122,7 +129,7 @@ that flips the parameters on Function1:
 type <=[B, A] = A => B
 ```
 
-If we re-type `func2` as an instance of our new type,
+If we re-type `func2` as an instance of `<=`,
 we reset the required order of elimination and
 we can call `contramap` as desired:
 
@@ -142,6 +149,6 @@ requiring the left-to-right elimination
 supported by the compiler.
 However, it's useful to know about
 `-Ypartial-unification`
-and this elimination order limiation
+and this elimination order limitation
 in case you ever come across
 an odd scenario like the one above.

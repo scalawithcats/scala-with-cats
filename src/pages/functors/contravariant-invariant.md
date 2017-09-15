@@ -1,21 +1,10 @@
 ## *Contravariant* and *Invariant* Functors {#contravariant-invariant}
 
-We can think of `Functor's` `map` method as
+As we have seen, we can think of `Functor's` `map` method as
 "appending" a transformation to a chain.
-We start with an `F[A]`,
-run it through a function `A => B`,
-and end up with an `F[B]`.
-We can extend the chain further by mapping again:
-run the `F[B]` through a function `B => C`
-and end up with an `F[C]`:
-
-```tut:book
-Option(1).map(_ + 2).map(_ * 3).map(_ + 100)
-```
-
 We're now going to look at two other type classes,
-one that represents *prepending* operations to a chain,
-and one that represents building a *bidirectional*
+one representing *prepending* operations to a chain,
+and one representing building a *bidirectional*
 chain of operations. These are called *contravariant*
 and *invariant functors* respectively.
 
@@ -36,10 +25,10 @@ For example, we can't define `contramap` for an `Option`
 because there is no way of feeding a value in an
 `Option[B]` backwards through a function `A => B`.
 
-`contramap` starts to make sense when we have a data types
-that represent tranformations.
+`contramap` makes more sense for
+types that represent transformations.
 For example, consider the `Printable` type class
-we discussed in [Chapter 2](#type-classes):
+we discussed in Chapter [@sec:type-classes]:
 
 ```tut:book:silent
 trait Printable[A] {
@@ -72,19 +61,23 @@ then `B` is also `Printable`.
 Implement the `contramap` method for `Printable` above.
 
 <div class="solution">
-Here's a working implementation:
+Here's a working implementation.
+In a small show of sleight of hand
+we use a `self` alias
+to refer to the outer `Printable`
+from the `format` method of the inner `Printable`:
 
 ```tut:book:silent
 trait Printable[A] {
+  self =>
+
   def format(value: A): String
 
-  def contramap[B](func: B => A): Printable[B] = {
-    val self = this
+  def contramap[B](func: B => A): Printable[B] =
     new Printable[B] {
       def format(value: B): String =
         self.format(func(value))
     }
-  }
 }
 
 def format[A](value: A)(implicit p: Printable[A]): String =
@@ -92,17 +85,17 @@ def format[A](value: A)(implicit p: Printable[A]): String =
 ```
 </div>
 
-Let's define some basic instances of `Printable`
-for `String` and `Boolean`:
+Let's define some instances of `Printable`
+for `String` and `Boolean` for testing purposes:
 
 ```tut:book:silent
-implicit val stringPrintable =
+implicit val stringPrintable: Printable[String] =
   new Printable[String] {
     def format(value: String): String =
       "\"" + value + "\""
   }
 
-implicit val booleanPrintable =
+implicit val booleanPrintable: Printable[Boolean] =
   new Printable[Boolean] {
     def format(value: Boolean): String =
       if(value) "yes" else "no"
@@ -114,8 +107,9 @@ format("hello")
 format(true)
 ```
 
-Define an instance of `Printable` that prints
-the value from this case class:
+Now define an instance of `Printable` for
+the following `Box` case class.
+You'll need to write this as an `implicit def`:
 
 ```tut:book:silent
 final case class Box[A](value: A)
@@ -124,17 +118,34 @@ final case class Box[A](value: A)
 Rather than writing out
 the complete definition from scratch
 (`new Printable[Box]` etc...),
-create your instance from an existing instance
-using the `contramap` syntax.
+create your instance from an
+existing instance using `contramap`:
 
 <div class="solution">
 To make the instance generic across all types of `Box`,
-we base it on the `Printable` for the type inside the `Box`:
+we base it on the `Printable` for the type inside the `Box`.
+We can either write out the complete definition by hand:
+
+```tut:book:silent
+implicit def boxPrintable[A](implicit p: Printable[A]) =
+  new Printable[Box[A]] {
+    def format(box: Box[A]): String =
+      p.format(box.value)
+  }
+```
+
+or use `contramap` to base the new instance
+on the implicit parameter:
 
 ```tut:book:silent
 implicit def boxPrintable[A](implicit p: Printable[A]) =
   p.contramap[Box[A]](_.value)
 ```
+
+Using `contramap` is much simpler,
+and conveys the functional programming approach
+of building solutions by combining simple building blocks
+using pure functional combinators.
 </div>
 
 Your instance should work as follows:
@@ -144,7 +155,7 @@ format(Box("hello world"))
 format(Box(true))
 ```
 
-If we don't have a `Printable` for the contents of the `Box`,
+If we don't have a `Printable` for the type inside the `Box`,
 calls to `format` should fail to compile:
 
 ```tut:book:fail
@@ -163,16 +174,37 @@ to support encoding and decoding to/from a `String`:
 trait Codec[A] {
   def encode(value: A): String
 
-  def decode(value: String): Option[A]
+  def decode(value: String): A
 
   def imap[B](dec: A => B, enc: B => A): Codec[B] =
     ???
 }
+```
 
+```tut:book:invisible
+trait Codec[A] {
+  self =>
+
+  def encode(value: A): String
+
+  def decode(value: String): A
+
+  def imap[B](dec: A => B, enc: B => A): Codec[B] =
+    new Codec[B] {
+      def encode(value: B): String =
+        self.encode(enc(value))
+
+      def decode(value: String): B =
+        dec(self.decode(value))
+    }
+}
+```
+
+```tut:book:silent
 def encode[A](value: A)(implicit c: Codec[A]): String =
   c.encode(value)
 
-def decode[A](value: String)(implicit c: Codec[A]): Option[A] =
+def decode[A](value: String)(implicit c: Codec[A]): A =
   c.decode(value)
 ```
 
@@ -180,6 +212,28 @@ The type chart for `imap` is shown in
 Figure [@fig:functors:imap-type-chart].
 
 ![Type chart: the imap method](src/pages/functors/generic-imap.pdf+svg){#fig:functors:imap-type-chart}
+
+As an example use case, imagine we have a basic `Codec[String]`,
+whose `encode` and `decode` methods are both a no-op:
+
+```tut:book:silent
+implicit val stringCodec: Codec[String] =
+  new Codec[String] {
+    def encode(value: String): String = value
+    def decode(value: String): String = value
+  }
+```
+
+We can construct many useful `Codecs` for other types
+by building off of `stringCodec` using `imap`:
+
+```tut:book:silent
+implicit val intCodec: Codec[Int] =
+  stringCodec.imap(_.toInt, _.toString)
+
+implicit val booleanCodec: Codec[Boolean] =
+  stringCodec.imap(_.toBoolean, _.toString)
+```
 
 Note that the `decode` method of our `Codec` type class
 doesn't account for failures.
@@ -197,10 +251,10 @@ Implement the `imap` method for `Codec` above.
 <div class="solution">
 Here's a working implementation:
 
-```tut:book:silent
+```tut:book:silent:reset
 trait Codec[A] {
   def encode(value: A): String
-  def decode(value: String): Option[A]
+  def decode(value: String): A
 
   def imap[B](dec: A => B, enc: B => A): Codec[B] = {
     val self = this
@@ -208,32 +262,31 @@ trait Codec[A] {
       def encode(value: B): String =
         self.encode(enc(value))
 
-      def decode(value: String): Option[B] =
-        self.decode(value).map(dec)
+      def decode(value: String): B =
+        dec(self.decode(value))
     }
   }
 }
+```
+
+```tut:book:invisible
+implicit val stringCodec: Codec[String] =
+  new Codec[String] {
+    def encode(value: String): String = value
+    def decode(value: String): String = value
+  }
+
+implicit val intCodec: Codec[Int] =
+  stringCodec.imap[Int](_.toInt, _.toString)
+
+implicit val booleanCodec: Codec[Boolean] =
+  stringCodec.imap[Boolean](_.toBoolean, _.toString)
 
 def encode[A](value: A)(implicit c: Codec[A]): String =
   c.encode(value)
 
-def decode[A](value: String)(implicit c: Codec[A]): Option[A] =
+def decode[A](value: String)(implicit c: Codec[A]): A =
   c.decode(value)
-```
-</div>
-
-Here's an example `Codec` representing parsing and serializing `Ints`:
-
-<div class="solution">
-```tut:book:silent
-implicit val intCodec =
-  new Codec[Int] {
-    def encode(value: Int): String =
-      value.toString
-
-    def decode(value: String): Option[Int] =
-      scala.util.Try(value.toInt).toOption
-  }
 ```
 </div>
 
@@ -258,147 +311,28 @@ encode(Box(123))
 decode[Box[Int]]("123")
 ```
 
-### What's With the Name?
+<div class="callout callout-info">
+*What's with the names?*
 
 What's the relationship between the terms
 "contravariance", "invariance", and "covariance"
-and these different finds of functors?
+and these different kinds of functor?
 
-These three variance terms relate to subtypes.
-We say that `B` is a subtype of `A`
-if we can use a value of type `B`
-anywhere we expect a value of type `A`.
+If you recall from Section [@sec:variance],
+variance affects to subtyping,
+which essentially controls
+our ability to use a value of one type
+in place of a value of another type
+without breaking the code.
 
-Co- and contravariance annotations arise
-when working with type constructors.
-For example, we denote covariance with a `+` symbol:
-
-```scala
-trait F[+A] // the "+" means "covariant"
-```
-
-**Covariance**
-
-Covariance means that the type `F[B]`
-is a subtype of the type `F[A]` if `B` is a subtype of `A`.
-This is useful for modelling many types,
-including collections like `List` and `Option`:
-
-```scala
-trait List[+A]
-trait Option[+A]
-```
-
-The covariance of Scala collections allows
-us to substitute collections of one type for another in our code.
-For example, we can use a `List[Circle]`
-anywhere we expect a `List[Shape]` because
-`Circle` is a subtype of `Shape`:
-
-```tut:book:silent
-sealed trait Shape
-case class Circle(radius: Double) extends Shape
-```
-
-```scala
-val circles: List[Circle] = ???
-val shapes: List[Shape] = circles
-```
-
-```tut:book:invisible
-val circles: List[Circle] = null
-val shapes: List[Shape] = circles
-```
-
-What about contravariance?
-We write contravariant type constructors
-with a `-` symbol like this:
-
-```scala
-trait F[-A]
-```
-
-**Contravariance**
-
-Confusingly, contravariance means that the type `F[B]`
-is a subtype of `F[A]` if `A` is a subtype of `B`.
-This is useful for modelling types that represent processes,
-like our `Printable` type class above:
-
-```scala
-trait Printable[-A] {
-  def format(value: A): String
-}
-```
-
-Let's unpack this a bit further.
-Remember that variance is all about
-the ability to substitute one value for another.
-Consider a scenario where we have two values,
-one of type `Shape` and one of type `Circle`,
-and two `Printables`, one for `Shape` and one for `Circle`:
-
-```scala
-val shape: Shape = ???
-val circle: Circle = ???
-
-val shapePrinter: Printable[Shape] = ???
-val circlePrinter: Printable[Circle] = ???
-```
-
-```tut:book:invisible
-val shape: Shape = null
-val circle: Circle = null
-
-val shapePrinter: Printable[Shape] = null
-val circlePrinter: Printable[Circle] = null
-```
-
-```tut:book
-def format[A](value: A, printable: Printable[A]): String =
-  printable.format(value)
-```
-
-Now ask yourself the question:
-"Which of combinations of value and printer can I pass to `format`?"
-We can combine `circle` with either printer
-because all `Circles` are `Shapes`.
-Conversely, we can't combine `shape` with `circlePrinter`
-because not all `Shapes` are `Circles`.
-
-This relationship is what we formally model using contravariance.
-`Printable[Shape]` is a subtype of `Printable[Circle]`
-because `Circle` is a subtype of `Shape`.
-This means we can use `shapePrinter`
-anywhere we expect to see a `Printable[Circle]`.
-
-**Invariance**
-
-Invariance is actually the easiest situation to describe.
-It's what we get when we don't write a `+` or `-`
-in a type constructor:
-
-```scala
-trait F[A]
-```
-
-This means the types `F[A]` and `F[B]` are never subtypes of one another,
-no matter what the relationship between `A` and `B`.
-This is the default semantics for Scala type constructors.
-
-**Back to Functors**
-
-Co- and contravariant functors capture the
-principles of co- and contravariance
-without the limitations of subtyping.
-
-As we said above, subtyping can be viewed as a conversion.
-`B` is a subtype of `A` if we can convert `A` to `B`.
-In other words there exists a function `A => B`.
+Subtyping can be viewed as conversion.
+`A` is a subtype of `B` if we can always convert `A` to `B`.
+Equivalently we could say that `A` is a subtype of `B`
+if there exists a function `A => B`.
 A standard covariant functor captures exactly this.
 If `F` is a covariant functor,
 wherever we have an `F[A]` and a conversion `A => B`
-we can convert to an `F[B]`.
+we can always convert to an `F[B]`.
 
 A contravariant functor captures the opposite case.
 If `F` is a contravariant functor,
@@ -407,4 +341,6 @@ we can convert to an `F[B]`.
 
 Finally, invariant functors capture the case where
 we can convert from `F[A]` to `F[B]`
-via a function `A => B` or `B => A`.
+via a function `A => B`
+and vice versa via a function `B => A`.
+</div>

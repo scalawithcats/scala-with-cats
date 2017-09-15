@@ -2,7 +2,6 @@
 
 Let's look at the implementation of
 contravariant and invariant functors in Cats.
-
 The [`Contravariant`][cats.functor.Contravariant] and
 [`Invariant`][cats.functor.Invariant] type classes
 are slightly different to Cats' other type classes:
@@ -48,7 +47,14 @@ discussed in Chapter [@sec:applicatives].
 We can summon instances of `Contravariant`
 using the `Contravariant.apply` method.
 Cats provides instances for data types that consume parameters,
-including `Eq`, `Show`, `Writer`, `WriterT`, and `Function1`:
+including `Eq`, `Show`, and `Function1`.
+As you may have guessed, the instance for `Function1`
+fixes the return type and allows the parameter type to vary
+as shown in Figure [@fig:functors:function-contramap-type-chart]:
+
+![Type chart: contramapping over a Function1](src/pages/functors/function-contramap.pdf+svg){#fig:functors:function-contramap-type-chart}
+
+Here's an example:
 
 ```tut:book:silent:reset
 import cats.Show
@@ -84,10 +90,14 @@ It also provides an `imap` extension method
 via the `cats.syntax.invariant` import.
 Imagine we have a semigroup for a well known type,
 for example `Semigroup[String]`,
-and we want to convert it to another type like `Semigroup[Symbol]`.
-To do this we need two functions:
-one to convert the `Symbol` parameters to `Strings`,
-and one to convert the result of the `String` append back to a `Symbol`:
+and we want to convert it to another type like `Semigroup[Symbol]`:
+
+- the `combine` method accepts two `Symbols` as parameters;
+- we need a function to convert the `Symbols` to `Strings`;
+- we combine the `Strings` using the `Semigroup[String]`;
+- we need a second function to convert the result to a `Symbol`.
+
+Here's a demonstration:
 
 ```tut:book:silent
 import cats.Semigroup

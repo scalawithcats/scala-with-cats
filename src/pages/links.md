@@ -91,6 +91,7 @@
 [link-applicative-programming]: http://www.staff.city.ac.uk/~ross/papers/Applicative.html
 [link-bloom-filter]: http://en.wikipedia.org/wiki/Bloom_filter
 [link-bnf]: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_Form
+[link-catalysts]: https://github.com/typelevel/catalysts
 [link-cats]: http://typelevel.org/cats
 [link-crdt-survey]: https://hal.inria.fr/inria-00609399v2/document
 [link-don-stewart-so]: http://stackoverflow.com/questions/27852709/enterprise-patterns-with-functional-programming/27860072#27860072
@@ -99,6 +100,7 @@
 [link-github]: https://github.com/underscoreio/advanced-scala
 [link-hadoop]: http://hadoop.apache.org
 [link-hyperloglog]: http://en.wikipedia.org/wiki/HyperLogLog
+[link-implicit-priority]: http://eed3si9n.com/revisiting-implicits-without-import-tax
 [link-iterator-pattern]: https://www.cs.ox.ac.uk/jeremy.gibbons/publications/iterator.pdf
 [link-json]: http://json.org/
 [link-kind-projector]: https://github.com/non/kind-projector
@@ -108,17 +110,20 @@
 [link-monocle]: http://julien-truffaut.github.io/Monocle/
 [link-parallel-collections]: http://docs.scala-lang.org/overviews/parallel-collections/overview.html
 [link-phil-freeman-tailrecm]: http://functorial.com/stack-safety-for-free/index.pdf
+[link-sbt]: http://www.scala-sbt.org/
+[link-sbt-catalysts]: https://github.com/typelevel/sbt-catalysts
+[link-scalactic]: http://scalactic.org
 [link-scalaz-contrib]: https://github.com/typelevel/scalaz-contrib
 [link-si2712-compiler-plugin]: https://github.com/milessabin/si2712fix-plugin
 [link-si2712]: https://issues.scala-lang.org/browse/SI-2712
 [link-si-6680]: https://issues.scala-lang.org/browse/SI-6680
 [link-simulacrum]: https://github.com/mpilquist/simulacrum
 [link-so-implicit-scope]: https://stackoverflow.com/questions/5598085/where-does-scala-look-for-implicits
-[link-implicit-priority]: http://eed3si9n.com/revisiting-implicits-without-import-tax
 [link-so-tree-tailrecm]: https://stackoverflow.com/questions/44504790/cats-non-tail-recursive-tailrecm-method-for-monads
 [link-stochastic-gradient-descent]: http://en.wikipedia.org/wiki/Stochastic_gradient_descent
 [link-summingbird]: https://github.com/twitter/summingbird
 [link-topk]: http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.114.9563
+[link-tut]: https://github.com/tpolecat/tut
 [link-typelevel-scala]: https://github.com/typelevel/scala
 [link-value-classes]: http://docs.scala-lang.org/overviews/core/value-classes.html
 [link-gibbons-oliviera-iterator-pattern]: https://www.cs.ox.ac.uk/jeremy.gibbons/publications/iterator.pdf

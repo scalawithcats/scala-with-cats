@@ -1,4 +1,4 @@
-# Introduction {#type-classes}
+# Introduction {#sec:type-classes}
 
 Cats contains a wide variety of functional programming tools
 and allows developers to pick and choose the ones we want to use.
