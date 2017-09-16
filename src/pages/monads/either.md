@@ -295,7 +295,7 @@ result2.fold(handleError, println)
 
 ### Exercise: What is Best?
 
-Is the error handling strategy in the previous exercises
+Is the error handling strategy in the previous examples
 well suited for all purposes?
 What other features might we want from error handling?
 

@@ -263,7 +263,7 @@ def factorial(n: BigInt): Eval[BigInt] =
 factorial(50000).value
 ```
 
-`Eval` is a useful tool to enforce stack
+`Eval` is a useful tool to enforce stack safety
 when working on very large computations and data structures.
 However, we must bear in mind that trampolining is not free.
 It avoids consuming stack by creating a chain of function calls on the heap.
