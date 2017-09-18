@@ -332,8 +332,7 @@ turn it into an error message:
 type NumFmtExn = NumberFormatException
 
 def parseInt(name: String)(data: String): ErrorsOr[Int] =
-  Right(data).
-    flatMap(s => Either.catchOnly[NumFmtExn](s.toInt)).
+  Either.catchOnly[NumFmtExn](data.toInt).
     leftMap(_ => List(s"$name must be an integer"))
 ```
 
