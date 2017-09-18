@@ -329,6 +329,8 @@ and we use `leftMap` to
 turn it into an error message:
 
 ```tut:book:silent
+import cats.syntax.either._
+
 type NumFmtExn = NumberFormatException
 
 def parseInt(name: String)(data: String): ErrorsOr[Int] =
@@ -424,6 +426,7 @@ We can do this by switching from `Either` to `Validated`
 and using apply syntax:
 
 ```tut:book:silent
+import cats.instances.list._
 import cats.syntax.apply._
 
 def readUser(data: FormData): AllErrorsOr[User] =
