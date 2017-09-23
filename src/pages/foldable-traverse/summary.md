@@ -5,7 +5,7 @@ two type classes for iterating over sequences.
 
 `Foldable` abstracts
 the `foldLeft` and `foldRight` methods we know
-from collections in the standaed library.
+from collections in the standard library.
 It adds stack-safe implementations of these methods
 to a handful of extra data types,
 and defines a host of situationally useful additions.
