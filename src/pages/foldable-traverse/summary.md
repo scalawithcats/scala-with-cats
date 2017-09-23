@@ -22,14 +22,6 @@ In terms of the reduction we get in lines of code,
 `Traverse` is one of the most powerful patterns in this book.
 We can reduce `folds` of many lines down to a single `foo.traverse`.
 
-Finally we looked at the `Unapply` type class,
-which works around restrictions in the compiler
-and allows us to use methods like `traverse`
-with types that have multiple type parameters.
-Fixes in recent releases of Scala make `Unapply`
-less important than it once was,
-but will still be a necessity in many Scala versions to come.
-
 -----
 
 ...and with that,
