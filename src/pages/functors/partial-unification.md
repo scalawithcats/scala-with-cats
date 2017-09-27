@@ -1,4 +1,4 @@
-## Partial Unification {#sec:functors:partial-unification}
+## Aside: Partial Unification {#sec:functors:partial-unification}
 
 In Section [@sec:functors:more-examples]
 we saw a curious compiler error.

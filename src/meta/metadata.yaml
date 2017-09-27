@@ -27,6 +27,7 @@ secPrefixTemplate: "$$i$$"
 # Used by Grunt to assemble pandoc command line:
 pages:
   - intro/foreword.md
+  - intro/versions.md
   - intro/early-access.md
   - intro/conventions.md
   - intro/contributors.md

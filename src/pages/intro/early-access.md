@@ -1,13 +1,9 @@
-## Notes on the Pre-Release Edition {-}
+## Notes on the Early Access Edition {-}
 
 <div class="callout callout-danger">
 This book is in *early access* status.
 This means there are unfinished aspects as detailed below.
 There may be typos and errata in the text and examples.
-
-As an early access customer you will receive a
-**free copy of the final text** when it is released,
-plus **free lifetime updates**.
 If you spot any mistakes
 or would like to provide feedback on the book,
 please let us know on Github:
@@ -30,7 +26,7 @@ Starting from the March 2016 release, here are the major changes to the book:
 - Added a new case study on asynchonous testing.
 - New diagrams for the map reduce and validation case studies.
 - Upgraded to Cats 0.9.1
-- Upgraded to Cats 1.0-MF:
+- Upgraded to Cats 1.0.0-MF:
    - Replaced the section on cartesian builder syntax
      with a section on apply syntax.
    - Removed the section on `Unapply`.

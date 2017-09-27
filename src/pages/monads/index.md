@@ -6,36 +6,67 @@ even if we don't know them by name.
 
 Informally, a monad is anything with a `flatMap` method.
 All of the functors we saw in the last chapter are also monads,
-including `Option`, `List`, `Either`, and `Future`.
+including `Option`, `List`, and `Future`.
 We even have special syntax to support monads: for comprehensions.
 However, despite the ubiquity of the concept,
-the Scala standard library lacks a concrete type to encompass "things that can be flatMapped".
+the Scala standard library lacks
+a concrete type to encompass "things that can be flatMapped".
 This is one of the benefits that Cats brings us.
 
 In this chapter we will take a deep dive into monads.
 We will start by motivating them with a few examples.
 We'll proceed to their formal definition and their implementation in Cats.
-Finally, we'll tour some interesting monads that you may not have heard of,
+Finally, we'll tour some interesting monads that you may not have seen,
 providing introductions and examples of their use.
 
 ## What is a Monad?
 
 This is the question that has been posed in a thousand blog posts,
-with explanations and analogies involving concepts as diverse as cats, mexican food,
-and monoids in the category of endofunctors (whatever they are).
-We're going to solve the problem of explaining monads once and for all by stating very simply:
+with explanations and analogies involving concepts as diverse as
+cats, mexican food, space suits full of toxic waste,
+and monoids in the category of endofunctors (whatever that means).
+We're going to solve the problem of explaining monads once and for all
+by stating very simply:
 
 > A monad is a control mechanism for *sequencing computations*.
 
-That was easy! Problem solved, right? Ok, maybe we need some more discussion...
+That was easy! Problem solved, right?
+But then again, last chapter we said functors
+were a control mechanism for exactly the same thing.
+Ok, maybe we need some more discussion...
 
+Functors allow us to sequence computations ignoring some complication,
+which is technically referred to as an "effect".
+With `Options`, the effect is that the input value may or may not be present:
+
+```tut:book
+// Add 1 then multiply by 2. Initial value present:
+Option(20).map(n => n + 1).map(n => n * 2)
+
+// Add 1 then multiply by 2. Initial value absent:
+Option.empty[Int].map(n => n + 1).map(n => n * 2)
+```
+
+With `Lists`, the effect is
+that there could be multiple input values.
+With `Futures`, the effect is
+that the input value may not be ready for some time.
+However, functors are limited in that
+they only allow this effect
+to occur once at the beginning of the sequence.
+They don't account further effects
+at each step in the sequence.
+
+This is where monads come in.
 Informally, the most important feature of a monad is its `flatMap` method,
 which allows us to specify what happens next.
-This is what we mean by sequencing computations.
-A monad allows us to specify a sequence of operations that happen one after another.
-We specify the application-specific part of the computation as a function parameter,
-and `flatMap` runs our function and takes care of some kind of complication
-(conventionally referred to as an "effect").
+Unlike `map`, the functions passed to `flatMap` result in a effect.
+With `Option`, `flatMap` they return `Some` or `None`.
+With `List`, they return `Lists`. And so on.
+The function specifies
+the application-specific part of the computation,
+and the `flatMap` method takes care of the effect
+allowing us to `flatMap` again.
 Let's ground things by looking at some examples.
 
 **Options**
@@ -52,7 +83,8 @@ def divide(a: Int, b: Int): Option[Int] =
   if(b == 0) None else Some(a / b)
 ```
 
-Each of these computations may fail, as indicated by their `Option` return types.
+Each of these methods may "fail"
+as indicated by their `Option` return types.
 The `flatMap` method on `Option` allows us to sequence these operations
 without having to constantly check whether they return `Some` or `None`:
 
@@ -80,7 +112,7 @@ This is shown in Figure [@fig:monads:option-type-chart].
 ![Type chart: flatMap for Option](src/pages/monads/option-flatmap.pdf+svg){#fig:monads:option-type-chart}
 
 The result of the computation is an `Option`,
-allowing us to call `flatMap` again and so the process continues.
+allowing us to call `flatMap` again and so the sequence continues.
 This results in the fail-fast error handling behaviour that we know and love,
 where a `None` at any step results in a `None` overall:
 
@@ -202,7 +234,7 @@ which shows the function parameter of type `A => Future[B]`:
 
 In other words, the monadic behaviour of `Future`
 allows us to sequence asynchronous computations one after the other.
-We can run `Futures` in parallel,
+We can also run `Futures` in parallel,
 but that is another story and shall be told another time.
 Monads are truly all about sequencing.
 
@@ -216,7 +248,7 @@ the monad behaviour is formally captured in two operations:
 
 [^bind]: In some languages and libraries,
 notably Haskell and Scalaz,
-`flatMap` is referred to as `bind`.
+`flatMap` is referred to as `bind` or `>>=`.
 This is purely a difference in terminology.
 We'll use the term `flatMap`
 for compatibility with Cats and the Scala standard library.
@@ -238,7 +270,11 @@ trait Monad[F[_]] {
 }
 ```
 
-Importantly, the `pure` and `flatMap` methods must obey three laws:
+As with functors, the `pure` and `flatMap` methods
+must obey a set of laws that
+allow us to sequence many small computations individually
+or fuse them into a small number of large steps.
+In the case of monads there are three laws:
 
 *Left identity*: calling `pure`
 then transforming the result with a function `f`

@@ -8,6 +8,7 @@ Here is an alphabetical list of contributors:
 Alessandro Marrella,
 Cody Koeninger,
 Daniela Sfregola,
+Danielle Ashley,
 David Piggott,
 Edd Steel,
 Francis Devereux,
@@ -26,3 +27,7 @@ Rodrigo B. de Oliveira,
 Seoh Char,
 Sergio Magnacco,
 and Toby Weston.
+
+If you spot an error or potential improvement,
+please raise an issue or submit a PR
+on the book's [Github page][link-github].

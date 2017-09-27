@@ -18,7 +18,7 @@ that control instance selection:
     When we write `Json.toJson(aPerson)`,
     which instance is selected?
 
-### Type Class Variance {#sec:variance}
+### Variance {#sec:variance}
 
 When we define type classes we can
 add variance annotations to the type parameter
