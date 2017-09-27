@@ -33,9 +33,8 @@ trait Functor[F[_]] extends Invariant[F] {
 }
 ```
 
-Cats treats `Functor` and `Contravariant` as specialisations of `Invariant`
-where one side of the bidirectional transformation is ignored.
-Cats uses this to provide operations
+Cats treats `Functor` and `Contravariant` as specialisations of `Invariant`.
+This means Cats can provide operations
 that work with any of the three types of functor[^tupled].
 
 [^tupled]: One example is the `tupled` method
