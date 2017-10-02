@@ -11,6 +11,7 @@ The semantics for `Future` are pretty much what we'd expect,
 providing parallel as opposed to sequential execution:
 
 ```tut:book:silent
+import scala.language.higherKinds
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -120,7 +121,6 @@ in terms of `map` and `flatMap`.
 Try writing this implementation now:
 
 ```tut:book:silent
-import scala.language.higherKinds
 import cats.Monad
 
 def product[M[_]: Monad, A, B](

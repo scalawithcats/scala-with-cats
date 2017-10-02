@@ -389,10 +389,23 @@ or any function from a fixed parameter type to a variable result type.
 *Language feature imports*
 
 Higher kinded types are considered an advanced language feature in Scala.
-Whenever we *declare* a type constructor with `A[_]` syntax,
- we need to "import" the feature to suppress compiler warnings:
+Whenever we declare a type constructor with `A[_]` syntax,
+we need to "enable" the higher kinded type language feature
+to suppress a load of warnings from the compiler.
+We can either do this with a "language import" as above:
 
 ```scala
 import scala.language.higherKinds
 ```
+
+or by adding the following to `scalacOptions` in `build.sbt`:
+
+```scala
+scalacOptions += "-language:higherKinds"
+```
+
+We'll use the language import in this book
+to ensure we are as explicit as possible.
+In practice, however, we find the `scalacOptions`
+flag to be simpler and less verbose.
 </div>

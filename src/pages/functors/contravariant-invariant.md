@@ -17,17 +17,11 @@ This is illustrated in Figure [@fig:functors:contramap-type-chart].
 
 ![Type chart: the contramap method](src/pages/functors/generic-contramap.pdf+svg){#fig:functors:contramap-type-chart}
 
-We'll talk about the `contramap` method first,
-introducing the Cats type class in a moment.
-
-`contramap` only makes sense for certain data types.
+The `contramap` method only makes sense for data types that represent *transformations*.
 For example, we can't define `contramap` for an `Option`
 because there is no way of feeding a value in an
 `Option[B]` backwards through a function `A => B`.
-
-`contramap` makes more sense for
-types that represent transformations.
-For example, consider the `Printable` type class
+However, we can define `contramap` for the `Printable` type class
 we discussed in Chapter [@sec:type-classes]:
 
 ```tut:book:silent
@@ -37,8 +31,8 @@ trait Printable[A] {
 ```
 
 A `Printable[A]` represents a transformation from `A` to `String`.
-We can define a `contramap` method that
-"prepends" a transformation from another type `B`:
+Its `contramap` method accepts a function `func` of type `B => A`
+and creates a new `Printable[B]`:
 
 ```tut:book:silent
 trait Printable[A] {
@@ -52,20 +46,37 @@ def format[A](value: A)(implicit p: Printable[A]): String =
   p.format(value)
 ```
 
-This says that if `A` is `Printable`,
-and we can transform `B` into `A`,
-then `B` is also `Printable`.
-
 #### Exercise: Showing off with Contramap
 
 Implement the `contramap` method for `Printable` above.
+Start with the following code template
+and replace the `???` with a working method body:
+
+```tut:book:silent
+trait Printable[A] {
+  def format(value: A): String
+
+  def contramap[B](func: B => A): Printable[B] =
+    new Printable[B] {
+      def format(value: B): String =
+        ???
+    }
+}
+```
+
+If you get stuck, think about the types.
+You need to turn `value`, which is of type `B`, into a `String`.
+What functions and methods do you have available
+and in what order do they need to be combined?
 
 <div class="solution">
 Here's a working implementation.
+We call `func` to turn the `B` into an `A`
+and then use our original `Printable`
+to turn the `A` into a `String`.
 In a small show of sleight of hand
-we use a `self` alias
-to refer to the outer `Printable`
-from the `format` method of the inner `Printable`:
+we use a `self` alias to distinguish
+the outer and inner `Printables`:
 
 ```tut:book:silent
 trait Printable[A] {
@@ -85,8 +96,9 @@ def format[A](value: A)(implicit p: Printable[A]): String =
 ```
 </div>
 
-Let's define some instances of `Printable`
-for `String` and `Boolean` for testing purposes:
+For testing purposes,
+let's define some instances of `Printable`
+for `String` and `Boolean`:
 
 ```tut:book:silent
 implicit val stringPrintable: Printable[String] =
@@ -109,7 +121,8 @@ format(true)
 
 Now define an instance of `Printable` for
 the following `Box` case class.
-You'll need to write this as an `implicit def`:
+You'll need to write this as an `implicit def`
+as described in Section [@sec:type-classes:recursive-implicits]:
 
 ```tut:book:silent
 final case class Box[A](value: A)
@@ -119,7 +132,7 @@ Rather than writing out
 the complete definition from scratch
 (`new Printable[Box]` etc...),
 create your instance from an
-existing instance using `contramap`:
+existing instance using `contramap`.
 
 <div class="solution">
 To make the instance generic across all types of `Box`,
@@ -162,12 +175,23 @@ calls to `format` should fail to compile:
 format(Box(123))
 ```
 
-### Invariant functors and the *imap* method {#invariant}
+### Invariant functors and the *imap* method {#sec:functors:invariant}
 
-The second of our type classes, the *invariant functor*,
-provides a method called `imap` that is informally equivalent to
-a combination of `map` and `contramap`.
-We can demonstrate this by extending `Printable`
+*Invariant functors* implement a method called `imap`
+that is informally equivalent to a
+combination of `map` and `contramap`.
+If `map` generates new type class instances by
+ap  pending a function to a chain,
+and `contramap` generates them by
+prepending an operation to a chain,
+`imap` generates them via
+a pair of bidirectional transformations.
+
+The most intuitive examples of this are a type class
+that represents encoding and decoding as some data type,
+such as Play JSON's [`Format`][link-play-json-format]
+and scodec's [`Codec`][link-scodec-codec].
+We can build our own `Codec` by enhancing `Printable`
 to support encoding and decoding to/from a `String`:
 
 ```tut:book:silent
@@ -210,6 +234,9 @@ def decode[A](value: String)(implicit c: Codec[A]): A =
 
 The type chart for `imap` is shown in
 Figure [@fig:functors:imap-type-chart].
+If we have a `Codec[A]`
+and a pair of functions `A => B` and `B => A`,
+the `imap` method creates a `Codec[B]`:
 
 ![Type chart: the imap method](src/pages/functors/generic-imap.pdf+svg){#fig:functors:imap-type-chart}
 
@@ -235,14 +262,20 @@ implicit val booleanCodec: Codec[Boolean] =
   stringCodec.imap(_.toBoolean, _.toString)
 ```
 
+<div class="callout callout-info">
+*Coping with Failure*
+
 Note that the `decode` method of our `Codec` type class
 doesn't account for failures.
-If we want to model more sophisticated relationships,
-we need to move beyond functors and look at
-*lenses* and *optics*, which are beyond the scope of this book.
-See Julien Truffaut's excellent library
-[Monocle][link-monocle] for an implementation
-of many useful kinds of optics.
+If we want to model more sophisticated relationships
+we can look move beyond functors
+to look at *lenses* and *optics*.
+
+Optics are beyond the scope of this book.
+However, Julien Truffaut's library
+[Monocle][link-monocle] provides a great
+starting point for further investigation.
+</div>
 
 #### Transformative Thinking with Imap
 
@@ -290,28 +323,47 @@ def decode[A](value: String)(implicit c: Codec[A]): A =
 ```
 </div>
 
-Demonstrate your `imap` method works by creating a
-`Codec` for conversions between `Strings` and `Boxes`:
+Demonstrate your `imap` method works by
+creating a `Codec` for `Double`.
+
+<div class="solution">
+We can implement this using
+the `imap` method of `stringCodec`:
+
+```tut:book:silent
+implicit val doubleCodec: Codec[Double] =
+  stringCodec.imap[Double](_.toDouble, _.toString)
+```
+</div>
+
+Finally, implement a `Codec` for the following `Box` type:
 
 ```tut:book:silent
 case class Box[A](value: A)
 ```
 
 <div class="solution">
+We need a generic `Codec` for `Box[A]` for any given `A`.
+We create this by calling `imap` on a `Codec[A]`,
+which we bring into scope using an implicit parameter:
+
 ```tut:book:silent
 implicit def boxCodec[A](implicit c: Codec[A]): Codec[Box[A]] =
   c.imap[Box[A]](Box(_), _.value)
 ```
 </div>
 
-Your instance should work as follows:
+Your instances should work as follows:
 
 ```tut:book
-encode(Box(123))
-decode[Box[Int]]("123")
+encode(123.4)
+decode[Double]("123.4")
+
+encode(Box(123.4))
+decode[Box[Double]]("123.4")
 ```
 
-<div class="callout callout-info">
+<div class="callout callout-warning">
 *What's with the names?*
 
 What's the relationship between the terms
@@ -319,15 +371,16 @@ What's the relationship between the terms
 and these different kinds of functor?
 
 If you recall from Section [@sec:variance],
-variance affects to subtyping,
-which essentially controls
-our ability to use a value of one type
+variance affects subtyping,
+which is essentially our ability to use a value of one type
 in place of a value of another type
 without breaking the code.
 
-Subtyping can be viewed as conversion.
-`A` is a subtype of `B` if we can always convert `A` to `B`.
-Equivalently we could say that `A` is a subtype of `B`
+Subtyping can be viewed as a conversion.
+If `B` is a subtype of `A`,
+we can always convert a `B` to an `A`.
+
+Equivalently we could say that `B` is a subtype of `A`
 if there exists a function `A => B`.
 A standard covariant functor captures exactly this.
 If `F` is a covariant functor,

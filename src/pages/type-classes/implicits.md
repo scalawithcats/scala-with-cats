@@ -122,7 +122,7 @@ regardless of where we try to use them.
 start by taking a look at [this Stack Overflow post on implicit scope][link-so-implicit-scope]
 and [this blog post on implicit priority][link-implicit-priority].
 
-### Recursive Implicit Resolution
+### Recursive Implicit Resolution {#sec:type-classes:recursive-implicits}
 
 The power of type classes and implicits lies in
 the compiler's ability to *combine* implicit definitions

@@ -110,10 +110,12 @@
 [link-monocle]: http://julien-truffaut.github.io/Monocle/
 [link-parallel-collections]: http://docs.scala-lang.org/overviews/parallel-collections/overview.html
 [link-phil-freeman-tailrecm]: http://functorial.com/stack-safety-for-free/index.pdf
+[link-play-json-format]: https://www.playframework.com/documentation/2.6.x/ScalaJsonCombinators#Format
 [link-sbt]: http://www.scala-sbt.org/
 [link-sbt-catalysts]: https://github.com/typelevel/sbt-catalysts
 [link-scalactic]: http://scalactic.org
 [link-scalaz-contrib]: https://github.com/typelevel/scalaz-contrib
+[link-scodec-codec]: http://scodec.org/guide/Core+Algebra.html#Codec
 [link-si2712-compiler-plugin]: https://github.com/milessabin/si2712fix-plugin
 [link-si2712]: https://issues.scala-lang.org/browse/SI-2712
 [link-si-6680]: https://issues.scala-lang.org/browse/SI-6680
@@ -122,6 +124,7 @@
 [link-so-tree-tailrecm]: https://stackoverflow.com/questions/44504790/cats-non-tail-recursive-tailrecm-method-for-monads
 [link-stochastic-gradient-descent]: http://en.wikipedia.org/wiki/Stochastic_gradient_descent
 [link-summingbird]: https://github.com/twitter/summingbird
+[link-symbol]: http://www.scala-lang.org/api/2.12.1/scala/Symbol.html
 [link-topk]: http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.114.9563
 [link-tut]: https://github.com/tpolecat/tut
 [link-typelevel-scala]: https://github.com/typelevel/scala

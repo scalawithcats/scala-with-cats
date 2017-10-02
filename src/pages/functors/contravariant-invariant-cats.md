@@ -14,32 +14,14 @@ import scala.language.higherKinds
 ```
 
 ```tut:book:silent
+trait Contravariant[F[_]] {
+  def contramap[A, B](fa: F[A])(f: B => A): F[B]
+}
+
 trait Invariant[F[_]] {
   def imap[A, B](fa: F[A])(f: A => B)(g: B => A): F[B]
 }
-
-trait Contravariant[F[_]] extends Invariant[F] {
-  def contramap[A, B](fa: F[A])(f: B => A): F[B]
-
-  def imap[A, B](fa: F[A])(f: A => B)(fi: B => A): F[B] =
-    contramap(fa)(fi)
-}
-
-trait Functor[F[_]] extends Invariant[F] {
-  def map[A, B](fa: F[A])(f: A => B): F[B]
-
-  def imap[A, B](fa: F[A])(f: A => B)(fi: B => A): F[B] =
-    map(fa)(f)
-}
 ```
-
-Cats treats `Functor` and `Contravariant` as specialisations of `Invariant`.
-This means Cats can provide operations
-that work with any of the three types of functor[^tupled].
-
-[^tupled]: One example is the `tupled` method
-provided by the *apply syntax*
-discussed in Chapter [@sec:applicatives].
 
 ### *Contravariant* in Cats
 
@@ -47,12 +29,6 @@ We can summon instances of `Contravariant`
 using the `Contravariant.apply` method.
 Cats provides instances for data types that consume parameters,
 including `Eq`, `Show`, and `Function1`.
-As you may have guessed, the instance for `Function1`
-fixes the return type and allows the parameter type to vary
-as shown in Figure [@fig:functors:function-contramap-type-chart]:
-
-![Type chart: contramapping over a Function1](src/pages/functors/function-contramap.pdf+svg){#fig:functors:function-contramap-type-chart}
-
 Here's an example:
 
 ```tut:book:silent:reset
@@ -84,19 +60,40 @@ showString.contramap[Symbol](_.name).show('dave)
 
 ### *Invariant* in Cats
 
-Cats provides instances of `Invariant` for `Semigroup` and `Monoid`.
-It also provides an `imap` extension method
-via the `cats.syntax.invariant` import.
-Imagine we have a semigroup for a well known type,
-for example `Semigroup[String]`,
-and we want to convert it to another type like `Semigroup[Symbol]`:
+Among other types,
+Cats provides instances of `Invariant`
+for `Semigroup` and `Monoid`.
+These are a little different from the `Codec`
+example we introducted in Section [@sec:functors:invariant].
+Let's look at semigroups as an example.
+If you recall, this is what `Semigroup` looks like:
 
-- the `combine` method accepts two `Symbols` as parameters;
-- we need a function to convert the `Symbols` to `Strings`;
-- we combine the `Strings` using the `Semigroup[String]`;
-- we need a second function to convert the result to a `Symbol`.
+```scala
+package cats
 
-Here's a demonstration:
+trait Semigroup[A] {
+  def combine(x: A, y: A): A
+}
+```
+
+Imagine we want to produce a `Semigroup`
+for Scala's [`Symbol`][link-symbol] type.
+Cats doesn't provide a `Semigroup` for `Symbol`
+but it does provide a `Semigroup` for a similar type: `String`.
+We can write our new semigroup with
+a `combine` method that works as follows:
+
+1. accept two `Symbols` as parameters;
+2. convert the `Symbols` to `Strings`;
+3. combine the `Strings` using `Semigroup[String]`;
+4. convert the result back to a `Symbol`.
+
+We can implement this code using `imap`,
+passing functions of type `String => Symbol`
+and `Symbol => String` as parameters.
+Here' the code, written out using
+the `imap` extension method
+provided by `cats.syntax.invariant`:
 
 ```tut:book:silent
 import cats.Semigroup
