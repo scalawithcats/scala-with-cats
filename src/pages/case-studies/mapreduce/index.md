@@ -184,6 +184,7 @@ import cats.instances.int._
 
 ```tut:book
 foldMap(Vector(1, 2, 3))(identity)
+```
 
 ```tut:book:silent
 import cats.instances.string._
