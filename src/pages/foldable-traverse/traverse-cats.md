@@ -20,10 +20,10 @@ trait Traverse[F[_]] {
 }
 ```
 
-Cats provides instances OF `Traverse`
+Cats provides instances of `Traverse`
 for `List`, `Vector`, `Stream`, `Option`, `Either`,
 and a variety of other types.
-We can summon instances as usual using `Traverse.apply` as usual
+We can summon instances as usual using `Traverse.apply`
 and use the `traverse` and `sequence` methods
 as described in the previous section:
 
