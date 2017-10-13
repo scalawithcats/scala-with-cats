@@ -329,11 +329,12 @@ and we use `leftMap` to
 turn it into an error message:
 
 ```tut:book:silent
+import cats.syntax.either._
+
 type NumFmtExn = NumberFormatException
 
 def parseInt(name: String)(data: String): ErrorsOr[Int] =
-  Right(data).
-    flatMap(s => Either.catchOnly[NumFmtExn](s.toInt)).
+  Either.catchOnly[NumFmtExn](data.toInt).
     leftMap(_ => List(s"$name must be an integer"))
 ```
 
@@ -425,6 +426,7 @@ We can do this by switching from `Either` to `Validated`
 and using apply syntax:
 
 ```tut:book:silent
+import cats.instances.list._
 import cats.syntax.apply._
 
 def readUser(data: FormData): AllErrorsOr[User] =
