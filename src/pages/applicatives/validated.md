@@ -243,7 +243,7 @@ parses the incoming data enforcing the following rules:
 
  - the name and age must be specified;
  - the name must not be blank;
- - the the age must be a valid non-negative integer.
+ - the age must be a valid non-negative integer.
 
 If all the rules pass,
 our parser we should return a `User`.
