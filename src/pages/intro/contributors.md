@@ -7,6 +7,7 @@ Here is an alphabetical list of contributors:
 
 Alessandro Marrella,
 Cody Koeninger,
+Conor Fennell,
 Daniela Sfregola,
 Danielle Ashley,
 David Piggott,
