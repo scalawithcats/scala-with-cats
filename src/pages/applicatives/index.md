@@ -101,7 +101,7 @@ Applicatives are often formulated in terms of function application,
 instead of the cartesian formulation that is emphasised in Cats.
 This alternative formulation provides a link
 to other libraries and languages such as Scalaz and Haskell.
-We'll take a look a different formulations of Applicative,
+We'll take a look at different formulations of Applicative,
 as well as the relationships between
 `Cartesian`, `Functor`, `Applicative`, and `Monad`,
 towards the end of the chapter.
