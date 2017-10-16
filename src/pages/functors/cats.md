@@ -1,7 +1,7 @@
 ## Functors in Cats
 
 Let's look at the implementation of functors in Cats.
-We'll examine the apects we did for monoids:
+We'll examine the aspects we did for monoids:
 the *type class*, the *instances*, and the *syntax*.
 
 ### The *Functor* Type Class
