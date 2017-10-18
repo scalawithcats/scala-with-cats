@@ -181,7 +181,7 @@ format(Box(123))
 that is informally equivalent to a
 combination of `map` and `contramap`.
 If `map` generates new type class instances by
-ap  pending a function to a chain,
+appending a function to a chain,
 and `contramap` generates them by
 prepending an operation to a chain,
 `imap` generates them via
