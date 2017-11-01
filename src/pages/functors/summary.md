@@ -27,10 +27,7 @@ several more interesting abstractions that we use all the time.
 In the following chapters we will look at two of these abstractions:
 *monads* and *applicative functors*.
 
-Covariant functors for collections
-are extremely important because `map` and `contramap`
-transform each element in a collection
-can be transformed independently of the rest.
+Functors for collections are extremely important, as they transform each element independently of the rest.
 This allows us to parallelise or distribute
 transformations on large collections,
 a technique leveraged heavily in
