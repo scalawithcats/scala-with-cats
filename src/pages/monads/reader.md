@@ -1,16 +1,17 @@
 ## The *Reader* Monad
 
 [`cats.data.Reader`][cats.data.Reader] is a monad
-that allows us to compose operations that depend on some input.
+that allows us to sequence operations that depend on some input.
 Instances of `Reader` wrap up functions of one argument,
 providing us with useful methods for composing them.
 
-One common use for `Readers` is injecting configuration.
-If we have a number of operations that all depend on some external configuration,
-we can chain them together using a `Reader`.
-The `Reader` produces one large operation that
+One common use for `Readers` is dependency injection.
+If we have a number of operations
+that all depend on some external configuration,
+we can chain them together using a `Reader`
+to produce one large operation that
 accepts the configuration as a parameter
-and runs our program in the order we specified it.
+and runs our program in the order specified.
 
 ### Creating and Unpacking Readers
 
@@ -36,7 +37,6 @@ and call it using `apply` as usual:
 catName.run(Cat("Garfield", "lasagne"))
 ```
 
-We can create `Readers` from functions and extract the functions again.
 So far so simple,
 but what advantage do `Readers` give us over the raw functions?
 
@@ -44,8 +44,8 @@ but what advantage do `Readers` give us over the raw functions?
 
 The power of `Readers` comes from their `map` and `flatMap` methods,
 which represent different kinds of function composition.
-The general pattern of usage is
-to create a set of `Readers` that accept the same type of configuration,
+We typically create a set of `Readers`
+that accept the same type of configuration,
 combine them with `map` and `flatMap`,
 and then call `run` to inject the config at the end.
 
@@ -62,10 +62,9 @@ greetKitty.run(Cat("Heathcliff", "junk food"))
 ```
 
 The `flatMap` method is more interesting.
-It allows us to combine multiple readers
-that depend on the same input type.
+It allows us to combine readers that depend on the same input type.
 To illustrate this, let's extend our greeting example
-to also feed the cat.
+to also feed the cat:
 
 ```tut:book:silent
 val feedKitty: Reader[Cat, String] =
@@ -73,9 +72,9 @@ val feedKitty: Reader[Cat, String] =
 
 val greetAndFeed: Reader[Cat, String] =
   for {
-    msg1 <- greetKitty
-    msg2 <- feedKitty
-  } yield s"${msg1} ${msg2}"
+    greet <- greetKitty
+    feed  <- feedKitty
+  } yield s"$greet. $feed."
 ```
 
 ```tut:book
@@ -90,7 +89,7 @@ that accept a configuration at the end.
 Let's ground this with a complete example
 of a simple login system.
 Our configuration will consist of two databases:
-a list of valid users, and a list of their passwords:
+a list of valid users and a list of their passwords:
 
 ```tut:book:silent
 case class Db(
@@ -101,7 +100,7 @@ case class Db(
 
 Start by creating a type alias `DbReader` for
 a `Reader` that consumes a `Db` as input.
-This will make the rest of our code shorter:
+This will make the rest of our code shorter.
 
 <div class="solution">
 Our type alias fixes the `Db` type
@@ -182,20 +181,23 @@ def checkLogin(
 
 You should be able to use `checkLogin` as follows:
 
-```tut:book
-val db = Db(
-  Map(
-    1 -> "dade",
-    2 -> "kate",
-    3 -> "margo"
-  ),
-  Map(
-    "dade"  -> "zerocool",
-    "kate"  -> "acidburn",
-    "margo" -> "secret"
-  )
+```tut:book:silent
+val users = Map(
+  1 -> "dade",
+  2 -> "kate",
+  3 -> "margo"
 )
 
+val passwords = Map(
+  "dade"  -> "zerocool",
+  "kate"  -> "acidburn",
+  "margo" -> "secret"
+)
+
+val db = Db(users, passwords)
+```
+
+```tut:book
 checkLogin(1, "zerocool").run(db)
 checkLogin(4, "davinci").run(db)
 ```
