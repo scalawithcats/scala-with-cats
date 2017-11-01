@@ -64,7 +64,7 @@ Among other types,
 Cats provides instances of `Invariant`
 for `Semigroup` and `Monoid`.
 These are a little different from the `Codec`
-example we introducted in Section [@sec:functors:invariant].
+example we introduced in Section [@sec:functors:invariant].
 Let's look at semigroups as an example.
 If you recall, this is what `Semigroup` looks like:
 
