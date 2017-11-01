@@ -1,4 +1,4 @@
-# Case Study: Testing Asynchronous Code
+# Case Study: Testing Asynchronous Code {#sec:case-studies:testing}
 
 We'll start with a simple case study:
 how to simplify unit tests for asynchronous code
@@ -113,7 +113,7 @@ We want to retain the `Int` part from each type
 but "throw away" the `Future` part in the test code.
 Fortunately, Cats provides a solution
 in terms of the *identity type*, `Id`,
-that we discussed way back in Section [@sec:id-monad].
+that we discussed way back in Section [@sec:monads:identity].
 `Id` allows us to "wrap" types in a type constructor
 without changing their meaning:
 

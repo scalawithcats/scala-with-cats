@@ -9,9 +9,10 @@ The monad type class is [`cats.Monad`][cats.Monad].
 `Monad` extends two other type classes:
 `FlatMap`, which provides the `flatMap` method,
 and `Applicative`, which provides `pure`.
-`Applicative` also extends `Functor`
-so every `Monad` also has a `map` method.
-We'll discuss `Applicatives` in a later chapter.
+`Applicative` also extends `Functor`,
+which gives every `Monad` a `map` method
+as we saw in the exercise above.
+We'll discuss `Applicatives` in a Chapter [@sec:applicatives].
 
 Here are some examples using `pure` and `flatMap`, and `map` directly:
 
@@ -28,8 +29,8 @@ val opt3 = Monad[Option].map(opt2)(a => 100 * a)
 
 val list1 = Monad[List].pure(3)
 val list2 = Monad[List].
-  flatMap(List(1, 2, 3))(x => List(x, x*10))
-val list3 = Monad[List].map(list2)(_ + 123)
+  flatMap(List(1, 2, 3))(a => List(a, a*10))
+val list3 = Monad[List].map(list2)(a => a + 123)
 ```
 
 `Monad` provides many other methods as well,
@@ -46,7 +47,7 @@ import cats.instances.option._
 ```
 
 ```tut:book
-Monad[Option].flatMap(Option(1))(x => Option(x*2))
+Monad[Option].flatMap(Option(1))(a => Option(a*2))
 ```
 
 ```tut:book:silent
@@ -54,7 +55,7 @@ import cats.instances.list._
 ```
 
 ```tut:book
-Monad[List].flatMap(List(1, 2, 3))(x => List(x, x*10))
+Monad[List].flatMap(List(1, 2, 3))(a => List(a, a*10))
 ```
 
 ```tut:book:silent
@@ -62,16 +63,16 @@ import cats.instances.vector._
 ```
 
 ```tut:book
-Monad[Vector].flatMap(Vector(1, 2, 3))(x => Vector(x, x*10))
+Monad[Vector].flatMap(Vector(1, 2, 3))(a => Vector(a, a*10))
 ```
 
-The `Monad` for `Future` doesn't accept
-implicit `ExecutionContext` parameters to `pure` and `flatMap`
-like `Future` itself does
-(it can't because the parameters aren't in the definitions in the `Monad` trait).
-To work around this,
-Cats requires us to have an `ExecutionContext` in scope
-when we summon the `Monad` for `Future`:
+Cats also provides a `Monad` for `Future`.
+Unlike the methods on the `Future` class itself,
+the `pure` and `flatMap` methods on the monad
+can't accept implicit `ExecutionContext` parameters
+(because the parameters aren't part of the definitions in the `Monad` trait).
+To work around this, Cats requires us to have an `ExecutionContext` in scope
+when we summon a `Monad` for `Future`:
 
 ```tut:book:silent
 import cats.instances.future._
@@ -91,7 +92,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 val fm = Monad[Future]
 ```
 
-The `Monad` instances uses the captured `ExecutionContext`
+The `Monad` instance uses the captured `ExecutionContext`
 for subsequent calls to `pure` and `flatMap`:
 
 ```tut:book
@@ -105,7 +106,7 @@ Await.result(
 
 In addition to the above,
 Cats provides a host of new monads that we don't have in the standard library.
-We'll familiarise ourselves with the most important of these in a moment.
+We'll familiarise ourselves with some of these in a moment.
 
 ### *Monad* Syntax
 
@@ -149,7 +150,8 @@ import cats.Monad
 import cats.syntax.functor._
 import cats.syntax.flatMap._
 
-def sumSquare[M[_] : Monad](a: M[Int], b: M[Int]): M[Int] =
+def sumSquare[F[_]](a: F[Int], b: F[Int])
+    (implicit monad: Monad[F]): F[Int] =
   a.flatMap(x => b.map(y => x*x + y*y))
 
 import cats.instances.option._
@@ -167,7 +169,7 @@ rewriting our comprehension in terms of `flatMap` and `map`
 and inserting the correct implicit conversions to use our `Monad`:
 
 ```tut:book:silent
-def sumSquare[M[_] : Monad](a: M[Int], b: M[Int]): M[Int] =
+def sumSquare[F[_] : Monad](a: F[Int], b: F[Int]): F[Int] =
   for {
     x <- a
     y <- b
@@ -179,5 +181,7 @@ sumSquare(Option(3), Option(4))
 sumSquare(List(1, 2, 3), List(4, 5))
 ```
 
-That's more or less everything we need to know about the generalities of monads in Cats.
-Now let's take a look at some useful monad instances.
+That's more or less everything we need to know
+about the generalities of monads in Cats.
+Now let's take a look at some useful monad instances
+that we haven't seen in the Scala standard library.

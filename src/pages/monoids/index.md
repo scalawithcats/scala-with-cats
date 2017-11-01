@@ -106,7 +106,10 @@ trait Monoid[A] {
 }
 ```
 
-In addition to providing these operations,
+<div class="callout callout-warning">
+*Monoid laws*
+
+In addition to providing the `combine` and `empty` operations,
 monoids must formally obey several *laws*.
 For all values `x`, `y`, and `z`, in `A`,
 `combine` must be associative and
@@ -134,9 +137,13 @@ is not a monoid because subtraction is not associative:
 ```
 
 In practice we only need to think about laws
-when we are writing our own `Monoid` instances for custom data types.
+when we are writing our own `Monoid` instances.
+Unlawful instances are dangerous because
+they can yield unpredictable results
+when used with the rest of Cats' machinery.
 Most of the time we can rely on the instances provided by Cats
 and assume the library authors know what they're doing.
+</div>
 
 ## Definition of a Semigroup
 
@@ -295,9 +302,9 @@ However, symmetric difference (the union less the intersection)
 does also form a monoid with the empty set:
 
 ```tut:book:silent
-implicit def symDiffMonoid[A]: Monoid[Set[A]] = 
+implicit def symDiffMonoid[A]: Monoid[Set[A]] =
   new Monoid[Set[A]] {
-    def combine(a: Set[A], b: Set[A]): Set[A] = 
+    def combine(a: Set[A], b: Set[A]): Set[A] =
       (a diff b) union (b diff a)
     def empty: Set[A] = Set.empty
   }

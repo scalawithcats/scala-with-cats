@@ -1,4 +1,4 @@
-## The *Identity* Monad {#sec:id-monad}
+## The *Identity* Monad {#sec:monads:identity}
 
 In the previous section we demonstrated Cats' `flatMap` and `map` syntax
 by writing a method that abstracted over different monads:
@@ -9,7 +9,7 @@ import cats.Monad
 import cats.syntax.functor._
 import cats.syntax.flatMap._
 
-def sumSquare[M[_] : Monad](a: M[Int], b: M[Int]): M[Int] =
+def sumSquare[F[_] : Monad](a: F[Int], b: F[Int]): F[Int] =
   for {
     x <- a
     y <- b
@@ -24,7 +24,7 @@ sumSquare(3, 4)
 ```
 
 It would be incredibly useful if we could use `sumSquare`
-with parameters that were either in some monad or not in a monad at all.
+with parameters that were either in a monad or not in a monad at all.
 This would allow us to abstract over monadic and non-monadic code.
 Fortunately, Cats provides the `Id` type to bridge the gap:
 
@@ -36,7 +36,7 @@ import cats.Id
 sumSquare(3 : Id[Int], 4 : Id[Int])
 ```
 
-Now we can call our monadic method using plain values.
+`Id` allows us to call our monadic method using plain values.
 However, the exact semantics are difficult to understand.
 We cast the parameters to `sumSquare` as `Id[Int]`
 and received an `Int` back as a result!
@@ -61,7 +61,8 @@ List(1, 2, 3) : Id[List[Int]]
 
 Cats provides instances of various type classes for `Id`,
 including `Functor` and `Monad`.
-These let us call `map`, `flatMap` and so on on plain values:
+These let us call `map`, `flatMap`, and `pure`
+passing in plain values:
 
 ```tut:book
 val a = Monad[Id].pure(3)
@@ -80,26 +81,13 @@ for {
 } yield x + y
 ```
 
-The main use for `Id` is to write generic methods like `sumSquare`
-that operate on monadic and non-monadic data types.
+The ability to abstract over monadic and non-monadic code
+is extremely powerful.
 For example,
 we can run code asynchronously in production using `Future`
-and synchronously in test using `Id`:
-
-```tut:book:silent
-import scala.concurrent._
-import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
-import cats.instances.future._
-```
-
-```tut:book
-// In production:
-Await.result(sumSquare(Future(3), Future(4)), 1.second)
-
-// In test:
-sumSquare(a, b)
-```
+and synchronously in test using `Id`.
+We'll see this in our first case study
+in Chapter [@sec:case-studies:testing].
 
 ### Exercise: Monadic Secret Identities
 
@@ -123,8 +111,7 @@ def flatMap[A, B](initial: Id[A])(func: A => Id[B]): Id[B] =
 ```
 
 Now let's look at each method in turn.
-The `pure` operation is a constructor---it
-creates an `Id[A]` from an initial value of type `A`.
+The `pure` operation creates an `Id[A]` from an `A`.
 But `A` and `Id[A]` are the same type!
 All we have to do is return the initial value:
 
@@ -137,8 +124,8 @@ def pure[A](value: A): Id[A] =
 pure(123)
 ```
 
-The `map` method applies a function of type `A => B` to an `Id[A]`,
-creating an `Id[B]`.
+The `map` method takes a parameter of type `Id[A]`,
+applies a function of type `A => B`, and returns an `Id[B]`.
 But `Id[A]` is simply `A` and `Id[B]` is simply `B`!
 All we have to do is call the function---no packing or unpacking required:
 
@@ -164,14 +151,21 @@ def flatMap[A, B](initial: Id[A])(func: A => Id[B]): Id[B] =
 flatMap(123)(_ * 2)
 ```
 
-Notice that we haven't had to add any casts
-to any of the examples in this solution.
+This ties in with our understanding of functors and monads
+as sequencing type classes.
+Each type class allows us to sequence operations
+ignoring some kind of effect.
+In the case of `Id` there is no effect,
+making `map` and `flatMap` the same thing.
+
+Notice that we haven't had to write any type annotations
+in any of the method bodies above.
 Scala is able to interpret values of type `A` as `Id[A]` and vice versa,
 simply by the context in which they are used.
 
-The only restriction to this is that Scala cannot unify
-different shapes of type constructor when searching for implicits.
-Hence our need to cast to `Id[A]`
+The only restriction we've seen to this is that Scala cannot unify
+types and type constructors when searching for implicits.
+Hence our need to re-type `Int` as `Id[Int]`
 in the call to `sumSquare` at the opening of this section:
 
 ```tut:book:silent

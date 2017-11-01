@@ -1,16 +1,16 @@
 ## *Either*
 
-Let's look at another useful monadic data type.
-The Scala standard library has a type `Either`.
+Let's look at another useful monad:
+the `Either` type from the Scala standard library.
 In Scala 2.11 and earlier,
-`Either` wasn't technically a monad
+many people didn't consider `Either` a monad
 because it didn't have `map` and `flatMap` methods.
 In Scala 2.12, however, `Either` became *right biased*.
 
 ### Left and Right Bias
 
-In Scala 2.11, `Either` was unbiased.
-It had no `map` or `flatMap` method:
+In Scala 2.11, `Either` had no default
+`map` or `flatMap` method:
 
 ```scala
 // Scala 2.11 example
@@ -22,26 +22,26 @@ Right(123).flatMap(x => Right(x * 2))
 //                   ^
 ```
 
-Instead of calling `map` or `flatMap` directly,
+If we wanted to `flatMap` on an old-school `Either`,
 we had to decide which side we wanted
 to be the "correct" side
 by taking a left- or right-projection:
 
+```tut:book:silent
+val either1: Either[String, Int] = Right(123)
+val either2: Either[String, Int] = Right(321)
+```
+
 ```tut:book
 // Valid in Scala 2.11 and Scala 2.12
 
-val either1: Either[String, Int] = Right(123)
-val either2: Either[String, Int] = Right(321)
-
 either1.right.flatMap(x => Right(x * 2))
-
 either2.left.flatMap(x => Left(x + "!!!"))
 ```
 
 This made the Scala 2.11 version of `Either`
-incovenient to use as a monad.
-If we wanted to use for comprehensions,
-for example, we had to insert calls to `.right`
+incovenient to use in for comprehensions.
+We had to insert calls to `.right`
 in every generator clause:
 
 ```tut:book
@@ -53,12 +53,25 @@ for {
 
 In Scala 2.12, `Either` was redesigned.
 The modern `Either` makes the decision
-that the right side is always the success case
+that the right side represents the success case
 and thus supports `map` and `flatMap` directly.
-This turns `Either` into a monad
-and makes working with it much more pleasant:
+This makes for comprehensions much more pleasant:
 
 ```tut:book
+for {
+  a <- either1
+  b <- either2
+} yield a + b
+```
+
+Cats back-ports this behaviour to Scala 2.11
+via the `cats.syntax.either` import,
+allowing us to use right-biased `Either`
+in all supported versions of Scala:
+
+```tut:book:silent
+import cats.syntax.either._
+
 for {
   a <- either1
   b <- either2
@@ -85,12 +98,12 @@ for {
 } yield x*x + y*y
 ```
 
-<div class="callout callout-info">
-*Smart Constructors and Avoiding Over-Narrowing*
-
-The `asLeft` and `asRight` methods
-have advantages over `Left.apply` and `Right.apply`
-in terms of type inference.
+These "smart constructors" have
+advantages over `Left.apply` and `Right.apply`
+because they return results of type `Either`
+instead of `Left` and `Right`.
+This helps avoiding type inference bugs
+caused by over-narrowing.
 The following code provides an example:
 
 ```tut:book:fail
@@ -104,18 +117,15 @@ def countPositive(nums: List[Int]) =
   }
 ```
 
-There are two problems here,
-both arising because the compiler
-chooses the type of `accumulator`
-based on the first parameter list to `foldRight`:
+This code fails to compile for two reasons:
 
-1. the type of the accumulator
-   ends up being `Right` instead of `Either`;
+1. the compiler infers the type of the accumulator
+   as `Right` instead of `Either`;
 2. we didn't specify type parameters for `Right.apply`
    so the compiler infers the left parameter as `Nothing`.
 
 Switching to `asRight` avoids both of these problems.
-It has a return type of `Either`,
+`asRight` has a return type of `Either`,
 and allows us to completely specify the type
 with only one type parameter:
 
@@ -134,16 +144,15 @@ def countPositive(nums: List[Int]) =
 countPositive(List(1, 2, 3))
 countPositive(List(1, -2, 3))
 ```
-</div>
 
-In addition to `asLeft` and `asRight`,
-`cats.syntax.either` also adds
+`cats.syntax.either` adds
 some useful extension methods
 to the `Either` companion object.
 The `catchOnly` and `catchNonFatal` methods
-are for capturing `Exceptions` in instances of `Either`:
+are great for capturing `Exceptions`
+as instances of `Either`:
 
-```scala
+```tut:book
 Either.catchOnly[NumberFormatException]("foo".toInt)
 Either.catchNonFatal(sys.error("Badness"))
 ```
@@ -151,15 +160,15 @@ Either.catchNonFatal(sys.error("Badness"))
 There are also methods for creating an `Either`
 from other data types:
 
-```scala
+```tut:book
 Either.fromTry(scala.util.Try("foo".toInt))
 Either.fromOption[String, Int](None, "Badness")
 ```
 
 ### Transforming Eithers
 
-`cats.syntax.either` adds
-a number of useful methods to `Either`.
+`cats.syntax.either` also adds
+some useful methods to instances of `Either`.
 We can use `orElse` and `getOrElse` to extract
 values from the right side:
 the right value or return a default:
@@ -174,7 +183,8 @@ import cats.syntax.either._
 ```
 
 The `ensure` method allows us
-to check whether a wrapped value satisfies a predicate:
+to check whether the right-hand value
+satisfies a predicate:
 
 ```tut:book
 -1.asRight[String].ensure("Must be non-negative!")(_ > 0)
@@ -184,14 +194,12 @@ The `recover` and `recoverWith` methods
 provide similar error handling to their namesakes on `Future`:
 
 ```tut:book
-"error".asLeft[String] recover {
-  case str: String =>
-    "Recovered from " + str
+"error".asLeft[Int].recover {
+  case str: String => -1
 }
 
-"error".asLeft[String] recoverWith {
-  case str: String =>
-    Right("Recovered from " + str)
+"error".asLeft[Int].recoverWith {
+  case str: String => Right(-1)
 }
 ```
 
@@ -213,11 +221,12 @@ The `swap` method lets us exchange left for right:
 Finally, Cats adds a host of conversion methods:
 `toOption`, `toList`, `toTry`, `toValidated`, and so on.
 
-### Fail-Fast Error Handling
+### Error Handling
 
 `Either` is typically used to implement fail-fast error handling.
-We sequence a number of computations using `flatMap`,
-and if one computation fails the remaining computations are not run:
+We sequence computations using `flatMap` as usual.
+If one computation fails,
+the remaining computations are not run:
 
 ```tut:book
 for {
@@ -227,38 +236,35 @@ for {
 } yield c * 100
 ```
 
-### Representing Errors {#representing-errors}
-
 When using `Either` for error handling,
 we need to determine
 what type we want to use to represent errors.
-We could use `Throwable` for this as follows:
+We could use `Throwable` for this:
 
 ```tut:book:silent
 type Result[A] = Either[Throwable, A]
 ```
 
 This gives us similar semantics to `scala.util.Try`.
-The problem, however,
-is that `Throwable` is an extremely broad supertype.
+The problem, however, is that `Throwable`
+is an extremely broad type.
 We have (almost) no idea about what type of error occurred.
 
 Another approach is to define an algebraic data type
-to represent the errors that can occur:
+to represent errors that may occur in our program:
 
 ```tut:book:silent
-sealed trait LoginError extends Product with Serializable
+object wrapper {
+  sealed trait LoginError extends Product with Serializable
+  final case class UserNotFound(username: String)
+    extends LoginError
+  final case class PasswordIncorrect(username: String)
+    extends LoginError
+  case object UnexpectedError extends LoginError
+}; import wrapper._
+```
 
-final case class UserNotFound(
-  username: String
-) extends LoginError
-
-final case class PasswordIncorrect(
-  username: String
-) extends LoginError
-
-case object UnexpectedError extends LoginError
-
+```tut:book:silent
 case class User(username: String, password: String)
 
 type LoginResult = Either[LoginError, User]
@@ -306,17 +312,17 @@ answer depends on the semantics we're looking for.
 Some points to ponder:
 
 - Error recovery is important when processing large jobs.
-We don't want to run a job for a day
-and then find it failed on the last element.
+  We don't want to run a job for a day
+  and then find it failed on the last element.
 
 - Error reporting is equally important.
-We need to know what went wrong,
-not just that something went wrong.
+  We need to know what went wrong,
+  not just that something went wrong.
 
 - In a number of cases we want to collect all the errors,
-not just the first one we encountered.
-A typical example is validating a web form.
-It's a far better experience to
-report all errors to the user when they submit a form
-than to report them one at a time.
+  not just the first one we encountered.
+  A typical example is validating a web form.
+  It's a far better experience to
+  report all errors to the user when they submit a form
+  than to report them one at a time.
 </div>

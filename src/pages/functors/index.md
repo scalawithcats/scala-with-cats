@@ -275,29 +275,6 @@ Intuitively, a functor represents
 some data (the `A` type) in a context (the `F` type).
 The `map` operation modifies the data within
 but retains the structure of the surrounding context.
-To ensure this is the case, the following laws must hold:
-
-*Identity*: calling `map` with the identity function
-is the same as doing nothing:
-
-```scala
-fa.map(a => a) == fa
-```
-
-*Composition*: `mapping` with two functions `f` and `g` is
-the same as `mapping` with `f` and then `mapping` with `g`:
-
-```scala
-fa.map(g(f(_))) == fa.map(f).map(g)
-```
-
-If we consider the laws
-in the context of the functors we've discussed above,
-we can see they make sense and are true.
-They guarantee the same semantics
-whether we sequence many small operations directly
-or group them into larger functions before `mapping`.
-
 A simplified version of the definition from Cats is:
 
 ```tut:book:silent
@@ -312,6 +289,29 @@ If you haven't seen syntax like `F[_]` before,
 it's time to take a brief detour to discuss
 *type constructors* and *higher kinded types*.
 We'll explain that `scala.language` import as well.
+
+<div class="callout callout-warning">
+*Functor laws*
+
+Functors guarantee the same semantics
+whether we sequence many small operations one by one,
+or combine them into a larger function before `mapping`.
+To ensure this is the case the following laws must hold:
+
+*Identity*: calling `map` with the identity function
+is the same as doing nothing:
+
+```scala
+fa.map(a => a) == fa
+```
+
+*Composition*: `mapping` with two functions `f` and `g` is
+the same as `mapping` with `f` and then `mapping` with `g`:
+
+```scala
+fa.map(g(f(_))) == fa.map(f).map(g)
+```
+</div>
 
 ## Aside: Higher Kinds and Type Constructors
 
