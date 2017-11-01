@@ -9,28 +9,27 @@ Here is an implementation of `Monad` for `Option` as an example:
 import cats.Monad
 import scala.annotation.tailrec
 
-val optionMonad =
-  new Monad[Option] {
-    def flatMap[A, B](opt: Option[A])
-        (fn: A => Option[B]): Option[B] =
-      opt flatMap fn
+val optionMonad = new Monad[Option] {
+  def flatMap[A, B](opt: Option[A])
+      (fn: A => Option[B]): Option[B] =
+    opt flatMap fn
 
-    def pure[A](opt: A): Option[A] =
-      Some(opt)
+  def pure[A](opt: A): Option[A] =
+    Some(opt)
 
-    @tailrec
-    def tailRecM[A, B](a: A)
-        (fn: A => Option[Either[A, B]]): Option[B] =
-      fn(a) match {
-        case None           => None
-        case Some(Left(a1)) => tailRecM(a1)(fn)
-        case Some(Right(b)) => Some(b)
-      }
-  }
+  @tailrec
+  def tailRecM[A, B](a: A)
+      (fn: A => Option[Either[A, B]]): Option[B] =
+    fn(a) match {
+      case None           => None
+      case Some(Left(a1)) => tailRecM(a1)(fn)
+      case Some(Right(b)) => Some(b)
+    }
+}
 ```
 
-`tailRecM` is an optimisation in Cats that limits
-the amount of stack space used by nested calls to `flatMap`.
+The `tailRecM` method is an optimisation used in Cats to limit
+the amount of stack space consumed by nested calls to `flatMap`.
 The technique comes from a [2015 paper][link-phil-freeman-tailrecm]
 by PureScript creator Phil Freeman.
 The method should recursively call itself
@@ -38,8 +37,8 @@ until the result of `fn` returns a `Right`.
 
 If we can make `tailRecM` tail-recursive,
 Cats is able to guarantee stack safety
-in complex operations involving recursive `flatMap` operations
-such as folding over large lists (see Section [@sec:foldable]).
+in recursive situations such as
+folding over large lists (see Section [@sec:foldable]).
 If we can't make `tailRecM` tail-recursive,
 Cats cannot make these guarantees
 and extreme use cases may result in `StackOverflowErrors`.
@@ -69,7 +68,7 @@ def leaf[A](value: A): Tree[A] =
 Verify that the code works on instances of `Branch` and `Leaf`,
 and that the `Monad` provides `Functor`-like behaviour for free.
 
-Verify that having a `Monad` in scope allows us to use for comprehensions,
+Also verify that having a `Monad` in scope allows us to use for comprehensions,
 despite the fact that we haven't directly implemented `flatMap` or `map` on `Tree`.
 
 Don't feel you have to make `tailRecM` tail-recursive.
@@ -131,9 +130,7 @@ implicit val treeMonad = new Monad[Tree] {
 ```
 
 The solution above is perfectly fine for this exercise.
-Its only downside is that Cats cannot guarantee
-stack safety in complex operations involving
-recursive calls to `flatMap`.
+Its only downside is that Cats cannot make guarantees about stack safety.
 
 The tail-recursive solution is much harder to write.
 We actually adapted this solution from
