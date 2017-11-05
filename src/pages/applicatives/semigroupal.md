@@ -17,7 +17,7 @@ the parameters `fa` and `fb` are independent of one another.
 This gives us a lot more flexibility when
 defining instances of `Semigroupal` than we do when defining `Monads`.
 
-[^semigroupal-name]: "Semigroupal"
+[^semigroupal-name]: It
 is also the winner of Underscore's 2017 award for
 the most difficult functional programming term
 to work into a coherent English sentence.
