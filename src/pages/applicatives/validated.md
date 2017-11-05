@@ -235,6 +235,8 @@ and convert back again immediately:
 41.valid[String].withEither(_.flatMap(n => Right(n + 1)))
 ```
 
+There is also a `withValidated` method in `cats.syntax.either`.
+
 As with `Either`, we can use the `ensure` method
 to fail with a specified error
 if a predicate does not hold:
@@ -271,11 +273,9 @@ parses the incoming data enforcing the following rules:
  - the name must not be blank;
  - the age must be a valid non-negative integer.
 
-If all the rules pass,
-our parser we should return a `User`.
-If any rules fail,
-we should return a `List`
-of the error messages.
+If all the rules pass our parser we should return a `User`.
+If any rules fail we should return
+a `List` of the error messages.
 
 To implement this complete example
 we'll need to combine rules
@@ -311,8 +311,8 @@ so we'll start with some imports:
 import cats.data.Validated
 
 type FormData = Map[String, String]
-type ErrorsOr[A] = Either[List[String], A]
-type AllErrorsOr[A] = Validated[List[String], A]
+type FailFast[A] = Either[List[String], A]
+type FailSlow[A] = Validated[List[String], A]
 ```
 
 The `getValue` rule
@@ -322,7 +322,7 @@ with rules for parsing `Ints` and checking values,
 so we'll define it to return an `Either`:
 
 ```tut:book:silent
-def getValue(name: String)(data: FormData): ErrorsOr[String] =
+def getValue(name: String)(data: FormData): FailFast[String] =
   data.get(name).
     toRight(List(s"$name field not specified"))
 ```
@@ -359,7 +359,7 @@ import cats.syntax.either._
 
 type NumFmtExn = NumberFormatException
 
-def parseInt(name: String)(data: String): ErrorsOr[Int] =
+def parseInt(name: String)(data: String): FailFast[Int] =
   Either.catchOnly[NumFmtExn](data.toInt).
     leftMap(_ => List(s"$name must be an integer"))
 ```
@@ -392,11 +392,11 @@ and `nonNegative` to check `Ints`.
 These definitions use the same patterns as above:
 
 ```tut:book:silent
-def nonBlank(name: String)(data: String): ErrorsOr[String] =
+def nonBlank(name: String)(data: String): FailFast[String] =
   Right(data).
     ensure(List(s"$name cannot be blank"))(_.nonEmpty)
 
-def nonNegative(name: String)(data: Int): ErrorsOr[Int] =
+def nonNegative(name: String)(data: Int): FailFast[Int] =
   Right(data).
     ensure(List(s"$name must be non-negative"))(_ >= 0)
 ```
@@ -419,11 +419,11 @@ to create `readName` and `readAge`:
 We use `flatMap` to combine the rules sequentially:
 
 ```tut:book:silent
-def readName(data: FormData): ErrorsOr[String] =
+def readName(data: FormData): FailFast[String] =
   getValue("name")(data).
     flatMap(nonBlank("name"))
 
-def readAge(data: FormData): ErrorsOr[Int] =
+def readAge(data: FormData): FailFast[Int] =
   getValue("age")(data).
     flatMap(nonBlank("age")).
     flatMap(parseInt("age")).
@@ -455,7 +455,7 @@ and using apply syntax:
 import cats.instances.list._
 import cats.syntax.apply._
 
-def readUser(data: FormData): AllErrorsOr[User] =
+def readUser(data: FormData): FailSlow[User] =
   (
     readName(data).toValidated,
     readAge(data).toValidated

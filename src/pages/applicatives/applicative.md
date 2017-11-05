@@ -36,7 +36,8 @@ trait Applicative[F[_]] extends Apply[F] {
 
 Breaking this down, the `ap` method applies a parameter `fa`
 to a function `ff` within a context `F[_]`.
-The `product` method from `Semigroupal` is defined in terms of `ap` and `map`.
+The `product` method from `Semigroupal`
+is defined in terms of `ap` and `map`.
 
 Don't worry too much about the implementation of `product`---it's
 difficult to read and the details aren't particuarly important.
@@ -62,14 +63,20 @@ Figure [@fig:applicatives:hierarchy] shows the big picture.
 
 Each type class in the hierarchy
 represents a particular set of sequencing semantics.
-It introduces its characteristic methods,
-and defines all of the functionality from its supertypes in terms of them.
-Every monad is an applicative, every applicative a semigroupal, and so on.
+It introduces its characteristic methods
+and defines the functionality from its supertypes in terms of them:
 
-Because of the lawful nature of the relationships between the type classes,
-the inheritance relationships are constant across all instances of a type class.
+- every monad is an applicative;
+- every applicative a semigroupal;
+- and so on.
+
+Because of the lawful nature of
+the relationships between the type classes,
+the inheritance relationships are constant
+across all instances of a type class.
 `Apply` defines `product` in terms of `ap` and `map`;
-`Monad` defines `product`, `ap`, and `map`, in terms of `pure` and `flatMap`.
+`Monad` defines `product`, `ap`, and `map`,
+in terms of `pure` and `flatMap`.
 
 To illustrate this let's consider two hypothetical data types:
 
@@ -104,13 +111,17 @@ but the fewer behaviours we can model.
 Monads happen to be a sweet spot in this trade-off.
 They are flexible enough to model a wide range of behaviours
 and restrictive enough to give strong guarantees about those behaviours.
-However, there are situations where monads aren't the right tool for the job.
-Sometimes we want thai food, and burritos just won't satisfy.
+However, there are situations where monads
+aren't the right tool for the job.
+Sometimes we want thai food,
+and burritos just won't satisfy.
 
-Whereas monads impose a strict *sequencing* on the computations they model,
+Whereas monads impose a strict *sequencing*
+on the computations they model,
 applicatives and semigroupals impose no such restriction.
 This puts them in another sweet spot in the hierarchy.
-We can use them to represent classes of parallel / independent computations
+We can use them to represent
+classes of parallel / independent computations
 that monads cannot.
 
 We choose our semantics by choosing our data structures.
