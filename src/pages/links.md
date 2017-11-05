@@ -42,6 +42,7 @@
 [cats.kernel.Semigroup]: http://typelevel.org/cats/api/cats/kernel/Semigroup.html
 [cats.syntax]: http://typelevel.org/cats/api/cats/syntax/
 [cats.syntax.applicative]: http://typelevel.org/cats/api/cats/syntax/package$$applicative$
+[cats.syntax.applicativeError]: http://typelevel.org/cats/api/cats/syntax/package$$applicativeError$
 [cats.syntax.apply]: http://typelevel.org/cats/api/cats/syntax/package$$semigroupal$
 [cats.syntax.contravariant]: http://typelevel.org/cats/api/cats/syntax/package$$contravariant$
 [cats.syntax.either]: http://typelevel.org/cats/api/cats/syntax/package$$either$
@@ -49,6 +50,7 @@
 [cats.syntax.flatMap]: http://typelevel.org/cats/api/cats/syntax/package$$flatMap$
 [cats.syntax.foldable]: http://typelevel.org/cats/api/cats/syntax/package$$foldable$
 [cats.syntax.functor]: http://typelevel.org/cats/api/cats/syntax/package$$functor$
+[cats.syntax.monadError]: http://typelevel.org/cats/api/cats/syntax/package$$monadError$
 [cats.syntax.option]: http://typelevel.org/cats/api/cats/syntax/package$$option$
 [cats.syntax.semigroup]: http://typelevel.org/cats/api/cats/syntax/package$$semigroup$
 [cats.syntax.show]: http://typelevel.org/cats/api/cats/syntax/package$$show$

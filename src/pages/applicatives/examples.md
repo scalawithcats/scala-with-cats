@@ -122,10 +122,8 @@ Try writing this implementation now:
 ```tut:book:silent
 import cats.Monad
 
-def product[M[_]: Monad, A, B](
-  fa: M[A],
-  fb: M[B]
-): M[(A, B)] = ???
+def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
+  ???
 ```
 
 <div class="solution">
@@ -136,20 +134,17 @@ in terms of `map` and `flatMap` like so:
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 
-def product[M[_] : Monad, A, B](fa: M[A], fb: M[B]): M[(A, B)] =
-  fa.flatMap(a => fb.map(b => (a, b)))
+def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
+  x.flatMap(a => y.map(b => (a, b)))
 ```
 
 Unsurprisingly, this code is equivalent to a for comprehension:
 
 ```tut:book:silent
-def product[M[_] : Monad, A, B](
-  fa: M[A],
-  fb: M[B]
-): M[(A, B)] =
+def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
   for {
-    a <- fa
-    b <- fb
+    a <- x
+    b <- y
   } yield (a, b)
 ```
 

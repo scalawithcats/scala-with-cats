@@ -8,8 +8,8 @@ are the same as those for `flatMap`.
 In fact, it is impossible for us
 to design a monadic data type
 that implements error accumulating semantics
-without breaking the consistency rules
-between these two methods.
+without breaking the consistency
+of these two methods.
 
 Fortunately, Cats provides
 a data type called `Validated`
@@ -43,12 +43,14 @@ fail-fast and accumulating.
 `Validated` has two subtypes,
 `Validated.Valid` and `Validated.Invalid`,
 that correspond loosely to `Right` and `Left`.
-We can create instances directly
+There are a lot of ways to
+create instances of these types.
+We can create them directly
 using their `apply` methods:
 
 ```tut:book
 val v = Validated.Valid(123)
-val i = Validated.Invalid("Badness")
+val i = Validated.Invalid(List("Badness"))
 ```
 
 However, it is often easier to use
@@ -56,8 +58,8 @@ the `valid` and `invalid` smart constructors,
 which widen the return type to `Validated`:
 
 ```tut:book
-val v = Validated.valid[String, Int](123)
-val i = Validated.invalid[String, Int]("Badness")
+val v = Validated.valid[List[String], Int](123)
+val i = Validated.invalid[List[String], Int](List("Badness"))
 ```
 
 As a third option we can import
@@ -69,12 +71,29 @@ import cats.syntax.validated._
 ```
 
 ```tut:book
-123.valid[String]
-"Badness".invalid[Int]
+123.valid[List[String]]
+List("Badness").invalid[Int]
 ```
 
-Finally, there are a variety of methods on `Validated`
-to create instances from different sources.
+As a fourth option we can use `pure` and `raiseError`
+from [`cats.syntax.applicative`][cats.syntax.applicative]
+and [`cats.syntax.applicativeError`][cats.syntax.applicativeError]
+respectively:
+
+```tut:book:silent
+import cats.syntax.applicative._      // pure method
+import cats.syntax.applicativeError._ // raiseError method
+
+type ErrorsOr[A] = Validated[List[String], A]
+```
+
+```tut:book
+123.pure[ErrorsOr]
+List("Badness").raiseError[ErrorsOr, Int]
+```
+
+Finally, there are a variety of helper methods
+to create instances of `Validated` from different sources.
 We can create them from `Exceptions`,
 as well as instances of `Try`, `Either`, and `Option`:
 
@@ -93,12 +112,11 @@ Validated.fromOption[String, Int](None, "Badness")
 ### Combining Instances of *Validated*
 
 We can combine instances of `Validated`
-using any of the methods described above:
-`product`, `map2..22`, apply syntax,
-and so on.
+using any of the methods or syntax
+described for `Semigroupal` above.
 
 All of these techniques require
-an appropriate `Semigroupal` to be in scope.
+an instance of `Semigroupal` to be in scope.
 As with `Either`, we need to fix the error type
 to create a type constructor with the correct
 number of parameters for `Semigroupal`:
@@ -108,15 +126,16 @@ type AllErrorsOr[A] = Validated[String, A]
 ```
 
 `Validated` accumulates errors using a `Semigroup`,
-so we need one of those in scope to summon the `Semigroupal`.
-If we don't have one we get
-an annoyingly unhelpful compilation error:
+so we need one of those in scope to summon the `Semigroupal`
+(sorry if this sounds complicated).
+If no `Semigroup` is visible at the call site,
+we get an annoyingly unhelpful compilation error:
 
 ```tut:book:fail
 Semigroupal[AllErrorsOr]
 ```
 
-Once we import a `Semigroup[String]`,
+Once we import a `Semigroup` for the error type,
 everything works as expected:
 
 ```tut:book:silent
@@ -198,7 +217,6 @@ We can't `flatMap` because `Validated` isn't a monad.
 However, we can convert back and forth
 between `Validated` and `Either`
 using the `toEither` and `toValidated` methods.
-This allows us to switch error-handling semantics on the fly.
 Note that `toValidated` comes from [`cats.syntax.either`]:
 
 ```tut:book
@@ -207,6 +225,14 @@ import cats.syntax.either._ // toValidated method
 "Badness".invalid[Int]
 "Badness".invalid[Int].toEither
 "Badness".invalid[Int].toEither.toValidated
+```
+
+We can even use the `withEither` method
+to temporarily convert to an `Either`
+and convert back again immediately:
+
+```tut:book
+41.valid[String].withEither(_.flatMap(n => Right(n + 1)))
 ```
 
 As with `Either`, we can use the `ensure` method

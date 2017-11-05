@@ -1,7 +1,7 @@
 ## *Semigroupal* {#semigroupal}
 
 `Semigroupal` is a type class that
-allows us to combine values within a context[^semigroupal-name].
+allows us to combine effectful contexts[^semigroupal-name].
 If we have two objects of type `F[A]` and `F[B]`,
 a `Semigroupal[F]` allows us to combine them to form an `F[(A, B)]`.
 Its definition in Cats is:
@@ -68,17 +68,9 @@ apply a user-specified function
 to the values inside 2 to 22 contexts:
 
 ```tut:book
-Semigroupal.map3(
-  Option(1),
-  Option(2),
-  Option(3)
-)(_ + _ + _)
+Semigroupal.map3(Option(1), Option(2), Option(3))(_ + _ + _)
 
-Semigroupal.map3(
-  Option(1),
-  Option(2),
-  Option.empty[Int]
-)(_ + _ + _)
+Semigroupal.map2(Option(1), Option.empty[Int])(_ + _)
 ```
 
 There are also methods `contramap2` through `contramap22`
@@ -98,7 +90,7 @@ product(a, product(b, c)) == product(product(a, b), c)
 
 ## *Apply* Syntax
 
-Cats provides a convenient syntax called *apply syntax*,
+Cats provides a convenient *apply syntax*
 that provides a shorthand for the methods described above.
 We import the syntax from [`cats.syntax.apply`][cats.syntax.apply].
 Here's an example:
@@ -108,13 +100,13 @@ import cats.instances.option._
 import cats.syntax.apply._
 ```
 
+The `tupled` method is implicitly added to the tuple of `Options`.
+It uses the `Semigroupal` for `Option` to zip the values inside the
+`Options`, creating a single `Option` of a tuple:
+
 ```tut:book
 (Option(123), Option("abc")).tupled
 ```
-
-The `tupled` method is implicitly added to the tuple of `Options`.
-It uses the `Semigroupal` for `Option` to zip the values inside the
-`Options`, creating a single `Option` of a tuple.
 
 We can use the same trick on tuples of up to 22 values.
 Cats defines a separate `tupled` method for each arity:
@@ -165,8 +157,7 @@ val add: (Int, Int) => Int = (a, b) => a + b
 Apply syntax also has `contramapN` and `imapN` methods
 that accept [Contravariant](#contravariant)
 and [Invariant](#invariant) functors.
-For example, we can combine `Monoids` and `Semigroups`
-using `Invariant`.
+For example, we can combine `Monoids` using `Invariant`.
 Here's an example:
 
 ```tut:book:silent
@@ -182,30 +173,28 @@ case class Cat(
   yearOfBirth: Int,
   favoriteFoods: List[String]
 )
+```
 
-def catToTuple(cat: Cat) =
+```tut:book
+val tupleToCat =
+  Cat.apply _
+
+val catToTuple = (cat: Cat) =>
   (cat.name, cat.yearOfBirth, cat.favoriteFoods)
 
 implicit val catMonoid = (
   Monoid[String],
   Monoid[Int],
   Monoid[List[String]]
-).imapN(Cat.apply)(catToTuple)
+).imapN(tupleToCat)(catToTuple)
 ```
 
-Our `Monoid` allows us to create "empty" `Cats`
-and add `Cats` together using the syntax from
-Chapter [@sec:monoids]:
+Our `Monoid` allows us to create "empty" `Cats`,
+and add `Cats` together using the syntax from Chapter [@sec:monoids]:
 
 ```tut:book:silent
 import cats.syntax.monoid._
-```
 
-```tut:book
-Monoid[Cat].empty
-```
-
-```tut:book:silent
 val garfield   = Cat("Garfield", 1978, List("Lasagne"))
 val heathcliff = Cat("Heathcliff", 1988, List("Junk Food"))
 ```
