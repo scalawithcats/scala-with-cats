@@ -72,7 +72,7 @@ pages:
   - monad-transformers/summary.md
 
   - applicatives/index.md
-  - applicatives/cartesian.md
+  - applicatives/semigroupal.md
   - applicatives/examples.md
   - applicatives/validated.md
   - applicatives/applicative.md

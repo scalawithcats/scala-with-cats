@@ -26,7 +26,7 @@ We have now seen the general patterns in Cats type classes:
 
 In the remaining chapters of Part I
 we will look at several broad and powerful type classes---`Semigroup`,
-`Monoid`, `Functor`, `Monad`, `Cartesian`, `Applicative`, `Traverse`, and more.
+`Monoid`, `Functor`, `Monad`, `Semigroupal`, `Applicative`, `Traverse`, and more.
 In each case we will learn what functionality the type class provides,
 the formal rules it follows, and how it is implemented in Cats.
 Many of these type classes are more abstract than `Show` or `Eq`.

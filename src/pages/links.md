@@ -4,9 +4,8 @@
 
 [cats.package]: http://typelevel.org/cats/api/cats/
 [cats.Eval]: http://typelevel.org/cats/api/cats/Eval.html
-[cats.functor.package]: http://typelevel.org/cats/api/cats/functor/
-[cats.functor.Contravariant]: http://typelevel.org/cats/api/cats/functor/Contravariant.html
-[cats.functor.Invariant]: http://typelevel.org/cats/api/cats/functor/Invariant.html
+[cats.Contravariant]: http://typelevel.org/cats/api/cats/Contravariant.html
+[cats.Invariant]: http://typelevel.org/cats/api/cats/Invariant.html
 [cats.Functor]: http://typelevel.org/cats/api/cats/Functor.html
 [cats.Id]: http://typelevel.org/cats/api/cats/Id.html
 [cats.Monoid]: http://typelevel.org/cats/api/cats/kernel/Monoid.html
@@ -43,7 +42,7 @@
 [cats.kernel.Semigroup]: http://typelevel.org/cats/api/cats/kernel/Semigroup.html
 [cats.syntax]: http://typelevel.org/cats/api/cats/syntax/
 [cats.syntax.applicative]: http://typelevel.org/cats/api/cats/syntax/package$$applicative$
-[cats.syntax.apply]: http://typelevel.org/cats/api/cats/syntax/package$$cartesian$
+[cats.syntax.apply]: http://typelevel.org/cats/api/cats/syntax/package$$semigroupal$
 [cats.syntax.contravariant]: http://typelevel.org/cats/api/cats/syntax/package$$contravariant$
 [cats.syntax.either]: http://typelevel.org/cats/api/cats/syntax/package$$either$
 [cats.syntax.eq]: http://typelevel.org/cats/api/cats/syntax/package$$eq$

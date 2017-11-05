@@ -1,13 +1,13 @@
-## *Cartesian* {#cartesian}
+## *Semigroupal* {#semigroupal}
 
-`Cartesian` is a type class that
-allows us to "zip" values within a context.
+`Semigroupal` is a type class that
+allows us to combine values within a context[^semigroupal-name].
 If we have two objects of type `F[A]` and `F[B]`,
-a `Cartesian[F]` allows us to combine them to form an `F[(A, B)]`.
+a `Semigroupal[F]` allows us to combine them to form an `F[(A, B)]`.
 Its definition in Cats is:
 
 ```scala
-trait Cartesian[F[_]] {
+trait Semigroupal[F[_]] {
   def product[A, B](fa: F[A], fb: F[B]): F[(A, B)]
 }
 ```
@@ -15,21 +15,26 @@ trait Cartesian[F[_]] {
 As we discussed above,
 the parameters `fa` and `fb` are independent of one another.
 This gives us a lot more flexibility when
-defining instances of `Cartesian` than we do when defining `Monads`.
+defining instances of `Semigroupal` than we do when defining `Monads`.
+
+[^semigroupal-name]: "Semigroupal"
+is also the winner of Underscore's 2017 award for
+the most difficult functional programming term
+to work into a coherent English sentence.
 
 ### Joining Two Contexts
 
-Whereas `Semigroups` allow us to join values,
-`Cartesians` allow us to join contexts.
+While `Semigroup` allows us to join values,
+`Semigroupal` allows us to join contexts.
 Let's join some `Options` as an example:
 
 ```tut:book:silent
-import cats.Cartesian
-import cats.instances.option._ // Cartesian for Option
+import cats.Semigroupal
+import cats.instances.option._ // Semigroupal for Option
 ```
 
 ```tut:book
-Cartesian[Option].product(Some(123), Some("abc"))
+Semigroupal[Option].product(Some(123), Some("abc"))
 ```
 
 If both parameters are instances of `Some`,
@@ -38,24 +43,24 @@ If either parameter evaluates to `None`,
 the entire result is `None`:
 
 ```tut:book
-Cartesian[Option].product(None, Some("abc"))
-Cartesian[Option].product(Some(123), None)
+Semigroupal[Option].product(None, Some("abc"))
+Semigroupal[Option].product(Some(123), None)
 ```
 
 ### Joining Three or More Contexts
 
-The companion object for `Cartesian` defines
+The companion object for `Semigroupal` defines
 a set of methods on top of `product`.
 For example, the methods `tuple2` through `tuple22`
 generalise `product` to different arities:
 
 ```tut:book:silent
-import cats.instances.option._ // Cartesian for Option
+import cats.instances.option._ // Semigroupal for Option
 ```
 
 ```tut:book
-Cartesian.tuple3(Option(1), Option(2), Option(3))
-Cartesian.tuple3(Option(1), Option(2), Option.empty[Int])
+Semigroupal.tuple3(Option(1), Option(2), Option(3))
+Semigroupal.tuple3(Option(1), Option(2), Option.empty[Int])
 ```
 
 The methods `map2` through `map22`
@@ -63,13 +68,13 @@ apply a user-specified function
 to the values inside 2 to 22 contexts:
 
 ```tut:book
-Cartesian.map3(
+Semigroupal.map3(
   Option(1),
   Option(2),
   Option(3)
 )(_ + _ + _)
 
-Cartesian.map3(
+Semigroupal.map3(
   Option(1),
   Option(2),
   Option.empty[Int]
@@ -81,9 +86,9 @@ and `imap2` through `imap22`,
 that require instances of `Contravariant` and `Invariant` respectively.
 
 <!--
-### *Cartesian* Laws
+### *Semigroupal* Laws
 
-There is only one law for `Cartesian`:
+There is only one law for `Semigroupal`:
 the `product` method must be associative:
 
 ```scala
@@ -108,7 +113,7 @@ import cats.syntax.apply._
 ```
 
 The `tupled` method is implicitly added to the tuple of `Options`.
-It uses the `Cartesian` for `Option` to zip the values inside the
+It uses the `Semigroupal` for `Option` to zip the values inside the
 `Options`, creating a single `Option` of a tuple.
 
 We can use the same trick on tuples of up to 22 values.
@@ -134,8 +139,8 @@ case class Cat(name: String, born: Int, color: String)
 ).mapN(Cat.apply)
 ```
 
-Internally `mapN` uses
-the `Cartesian` to extract the values from the `Option`
+Internally `mapN` uses the `Semigroupal`
+to extract the values from the `Option`
 and the `Functor` to apply the values to the function.
 
 It's nice to see that this syntax is type checked.
@@ -170,7 +175,6 @@ import cats.instances.boolean._
 import cats.instances.int._
 import cats.instances.list._
 import cats.instances.string._
-import cats.instances.monoid._
 import cats.syntax.apply._
 
 case class Cat(

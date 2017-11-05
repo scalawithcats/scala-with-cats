@@ -39,5 +39,5 @@ The `Contravariant` and `Invariant` type classes
 are more situationally useful.
 We won't be doing much more work with them,
 although we will revisit them
-to discuss [`Cartesians`](#cartesian)
-later in the book.
+to discuss the [`Semigroupal`](#semigroupal)
+type class later in the book.

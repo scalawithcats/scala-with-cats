@@ -29,20 +29,21 @@ as shown in Figure [@fig:validation:check].
 **Combine checks**
 
 How do we combine smaller checks into larger ones?
-Is this an applicative or cartesian
+Is this an applicative or semigroupal
 as shown in Figure [@fig:validation:applicative]?
 
 ![Applicative combination of checks](src/pages/case-studies/validation/applicative.pdf+svg){#fig:validation:applicative}
 
 Not really.
-With a cartesian, both checks are applied to the same value
+With applicative combination,
+both checks are applied to the same value
 and result in a tuple with the value repeated.
 What we want feels more like a monoid
-as shown in Figure [@fig:validation:monoidal].
+as shown in Figure [@fig:validation:monoid].
 We can define a sensible identity---a check that always passes---and
 two binary combination operators---*and* and *or*:
 
-![Monoidal combination of checks](src/pages/case-studies/validation/monoidal.pdf+svg){#fig:validation:monoidal}
+![Monoid combination of checks](src/pages/case-studies/validation/monoid.pdf+svg){#fig:validation:monoid}
 
 We'll probably be using *and* and *or* about equally often
 with our validation library
@@ -65,9 +66,9 @@ we also have the goal of transforming it.
 This seems like it should be a `map` or a `flatMap`
 depending on whether the transform can fail or not,
 so it seems we also want checks to be a monad
-as shown in Figure [@fig:validation:monadic].
+as shown in Figure [@fig:validation:monad].
 
-![Monadic combination of checks](src/pages/case-studies/validation/monadic.pdf+svg){#fig:validation:monadic}
+![Monadic combination of checks](src/pages/case-studies/validation/monad.pdf+svg){#fig:validation:monad}
 
 We've now broken down our library into familiar abstractions
 and are in a good position to begin development.

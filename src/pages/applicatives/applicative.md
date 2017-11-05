@@ -1,17 +1,20 @@
 ## *Apply* and *Applicative*
 
-Cartesians aren't mentioned frequently
+Semigroupals aren't mentioned frequently
 in the wider functional programming literature.
 They provide a subset of the functionality of a related type class
 called an *applicative functor* ("applicative" for short).
-Cartesians and applicatives effectively provide alternative encodings
-of the notion of "zipping" values.
+
+`Semigroupal` and `Applicative` effectively provide
+alternative encodings of the notion of "zipping" or joining values.
 Both encodings are introduced in
 the [same 2008 paper][link-applicative-programming]
-by Conor McBride and Ross Paterson.
+by Conor McBride and Ross Paterson[^semigroupal-monoidal].
 
-Cats models `Applicatives` using two type classes.
-The first, `Apply`, extends `Cartesian` and `Functor`
+[^semigroupal-monoidal]: Semigroupal is referred to as "monoidal" in the paper.
+
+Cats models applicatives using two type classes.
+The first, `Apply`, extends `Semigroupal` and `Functor`
 and adds an `ap` method that applies a parameter
 to a function within a context.
 The second, `Applicative` extends `Apply`,
@@ -19,7 +22,7 @@ adds the `pure` method introduced in Chapter [@sec:monads].
 Here's a simplified definition in code:
 
 ```scala
-trait Apply[F[_]] extends Cartesian[F] with Functor[F] {
+trait Apply[F[_]] extends Semigroupal[F] with Functor[F] {
   def ap[A, B](ff: F[A => B])(fa: F[A]): F[B]
 
   def product[A, B](fa: F[A], fb: F[B]): F[(A, B)] =
@@ -33,7 +36,7 @@ trait Applicative[F[_]] extends Apply[F] {
 
 Breaking this down, the `ap` method applies a parameter `fa`
 to a function `ff` within a context `F[_]`.
-The `product` method from `Cartesian` is defined in terms of `ap` and `map`.
+The `product` method from `Semigroupal` is defined in terms of `ap` and `map`.
 
 Don't worry too much about the implementation of `product`---it's
 difficult to read and the details aren't particuarly important.
@@ -61,7 +64,7 @@ Each type class in the hierarchy
 represents a particular set of sequencing semantics.
 It introduces its characteristic methods,
 and defines all of the functionality from its supertypes in terms of them.
-Every monad is an applicative, every applicative a cartesian, and so on.
+Every monad is an applicative, every applicative a semigroupal, and so on.
 
 Because of the lawful nature of the relationships between the type classes,
 the inheritance relationships are constant across all instances of a type class.
@@ -105,7 +108,7 @@ However, there are situations where monads aren't the right tool for the job.
 Sometimes we want thai food, and burritos just won't satisfy.
 
 Whereas monads impose a strict *sequencing* on the computations they model,
-applicatives and cartesians impose no such restriction.
+applicatives and semigroupals impose no such restriction.
 This puts them in another sweet spot in the hierarchy.
 We can use them to represent classes of parallel / independent computations
 that monads cannot.

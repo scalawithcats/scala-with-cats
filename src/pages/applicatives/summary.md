@@ -2,12 +2,12 @@
 
 While monads and functors are the most widely used
 sequencing data types we've covered in this book,
-cartesians and applicatives are the most general.
+semigroupals and applicatives are the most general.
 These type classes provide a generic mechanism
 to combine values and apply functions within a context,
 from which we can fashion monads and a variety of other combinators.
 
-Cartesians and applicatives are
+`Semigroupal` and `Applicative` are
 most commonly used as a means of
 combining independent values such as
 the results of validation rules.

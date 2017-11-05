@@ -20,14 +20,14 @@ Starting from the March 2016 release, here are the major changes to the book:
 - Moved the theoretical chapters from Scalaz to Cats (currently version `0.7.2`).
 - Added sections on the `Reader`, `Writer`, `State`, and `Eval` monads.
 - Added a chapter on monad transformers.
-- Added sections on `Cartesian` to the applicatives chapter.
+- Added sections on `Semigroupal` to the applicatives chapter.
 - Added sections on `Foldable` and `Traverse`.
 - Added type chart diagrams for `Functor` and `Monad`.
 - Added a new case study on asynchonous testing.
 - New diagrams for the map reduce and validation case studies.
 - Upgraded to Cats 0.9.1
 - Upgraded to Cats 1.0.0-MF:
-   - Replaced the section on cartesian builder syntax
+   - Replaced the section on semigroupal builder syntax
      with a section on apply syntax.
    - Removed the section on `Unapply`.
    - Added a section on `-Ypartial-unification`.

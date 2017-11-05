@@ -13,13 +13,13 @@ between these two methods.
 
 Fortunately, Cats provides
 a data type called `Validated`
-that has an instance of `Cartesian`
+that has an instance of `Semigroupal`
 but *no* instance of `Monad`.
 The implementation of `product`
 is therefore free to accumulate errors:
 
 ```tut:book:silent
-import cats.Cartesian
+import cats.Semigroupal
 import cats.data.Validated
 import cats.instances.list._ // Semigroup for List
 
@@ -27,7 +27,7 @@ type AllErrorsOr[A] = Validated[List[String], A]
 ```
 
 ```tut:book
-Cartesian[AllErrorsOr].product(
+Semigroupal[AllErrorsOr].product(
   Validated.invalid(List("Error 1")),
   Validated.invalid(List("Error 2"))
 )
@@ -98,22 +98,22 @@ using any of the methods described above:
 and so on.
 
 All of these techniques require
-an appropriate `Cartesian` to be in scope.
+an appropriate `Semigroupal` to be in scope.
 As with `Either`, we need to fix the error type
 to create a type constructor with the correct
-number of parameters for `Cartesian`:
+number of parameters for `Semigroupal`:
 
 ```tut:book:silent
 type AllErrorsOr[A] = Validated[String, A]
 ```
 
 `Validated` accumulates errors using a `Semigroup`,
-so we need one of those in scope to summon the `Cartesian`.
+so we need one of those in scope to summon the `Semigroupal`.
 If we don't have one we get
 an annoyingly unhelpful compilation error:
 
 ```tut:book:fail
-Cartesian[AllErrorsOr]
+Semigroupal[AllErrorsOr]
 ```
 
 Once we import a `Semigroup[String]`,
@@ -124,13 +124,13 @@ import cats.instances.string._
 ```
 
 ```tut:book
-Cartesian[AllErrorsOr]
+Semigroupal[AllErrorsOr]
 ```
 
 As long as the compiler has all the implicits in scope
-to summon a `Cartesian` of the correct type,
+to summon a `Semigroupal` of the correct type,
 we can use apply syntax
-or any of the other `Cartesian` methods
+or any of the other `Semigroupal` methods
 to accumulate errors as we like:
 
 ```tut:book:silent
@@ -416,7 +416,7 @@ readAge(Map())
 ```
 </div>
 
-Finally, use a `Cartesian` to combine the results
+Finally, use a `Semigroupal` to combine the results
 of `readName` and `readAge` to produce a `User`.
 Make sure you switch from `Either` to `Validated`
 to accumulate errors.

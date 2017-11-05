@@ -14,7 +14,7 @@ which you can obtain from [underscore.io](http://underscore.io):
 
  - Monads
  - Monad Transformers
- - Cartesians and Applicatives
+ - Semigroupals and Applicatives
  - Foldable and Traverse
  - Case Studies
 

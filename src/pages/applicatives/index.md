@@ -1,4 +1,4 @@
-# Cartesians and Applicatives {#sec:applicatives}
+# Semigroupal and Applicative {#sec:applicatives}
 
 In previous chapters we saw
 how functors and monads let us
@@ -6,7 +6,7 @@ transform values using `map` and `flatMap`.
 While functors and monads are
 both immensely useful abstractions,
 there are certain types of transformation
-that we cannot represent with these methods.
+that they cannot represent.
 
 One such example is form validation.
 When we validate a form we want to
@@ -86,22 +86,22 @@ achieve the result we want.
 In this chapter we will look at two type classes
 that support this pattern:
 
-  - *Cartesians* encompass the notion of "zipping" pairs of contexts.
-    Cats provides a `CartesianBuilder` syntax that
-    combines `Cartesians` and `Functors` to allow users
+  - `Semigroupal` encompasses
+    the notion of composing pairs of contexts.
+    Cats provides an `apply` syntax that
+    combines `Semigroupals` and `Functors` to allow users
     to join values within a context using arbitrary functions.
 
-  - *Applicative functors*, also known as `Applicatives`,
-    extend `Cartesian` and `Functor` and provide
-    a way of applying functions to parameters within a context.
+  - `Applicative` extends `Semigroupal` and `Functor`.
+    It provides a way of applying functions to parameters within a context.
     `Applicative` is the source of the `pure` method
     we introduced in Chapter [@sec:monads].
 
 Applicatives are often formulated in terms of function application,
-instead of the cartesian formulation that is emphasised in Cats.
+instead of the semigroupal formulation that is emphasised in Cats.
 This alternative formulation provides a link
 to other libraries and languages such as Scalaz and Haskell.
 We'll take a look at different formulations of Applicative,
 as well as the relationships between
-`Cartesian`, `Functor`, `Applicative`, and `Monad`,
+`Semigroupal`, `Functor`, `Applicative`, and `Monad`,
 towards the end of the chapter.

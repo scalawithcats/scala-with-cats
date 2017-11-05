@@ -534,7 +534,7 @@ Our algorithm followed three steps:
 
 1. batch the data and send one batch to each "node";
 2. perform a local map-reduce on each batch;
-3. combine the results using monoidal addition.
+3. combine the results using monoid addition.
 
 ### Batching Strategies in the Real World
 
@@ -576,7 +576,7 @@ Await.result(future2, 1.second)
 Regardless of the batching strategy,
 mapping and reducing with `Monoids`
 is a powerful and general framework.
-The core idea of monoidal addition
+The core idea of monoid addition
 underlies [Summingbird][link-summingbird],
 Twitter's framework that powers
 all their internal data processing jobs.
