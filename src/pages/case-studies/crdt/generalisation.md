@@ -162,6 +162,7 @@ they are also useful in the small, making our code simpler.
 ```tut:book:silent
 import cats.syntax.semigroup._
 import cats.syntax.foldable._
+import cats.instances.list._
 import cats.instances.map._
 
 final case class GCounter[A](counters: Map[String,A]) {
@@ -169,7 +170,7 @@ final case class GCounter[A](counters: Map[String,A]) {
     GCounter(counters + (machine -> (amount |+| counters.getOrElse(machine, m.empty))))
 
   def get(implicit m: Monoid[A]): A =
-    this.counters.foldMap(identity)
+    this.counters.values.toList.combineAll
 
   def merge(that: GCounter[A])(implicit b: BoundedSemiLattice[A]): GCounter[A] =
     GCounter(this.counters |+| that.counters)

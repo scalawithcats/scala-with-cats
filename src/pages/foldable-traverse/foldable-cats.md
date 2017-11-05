@@ -5,7 +5,7 @@ Instances of `Foldable` define these two methods
 and inherit a host of derived methods for free.
 Cats provides out-of-the-box instances of `Foldable`
 for a handful of Scala data types:
-`List`, `Vector`, `Stream`, `Option`, and `Map`.
+`List`, `Vector`, `Stream`, and `Option`.
 
 We can summon instances as usual using `Foldable.apply`
 and call their implementations of `foldLeft` directly.
@@ -34,24 +34,6 @@ val maybeInt = Option(123)
 
 ```tut:book
 Foldable[Option].foldLeft(maybeInt, 10)(_ * _)
-```
-
-Finally, here is an example for `Map`.
-The `Foldable` instance folds over the values in the map
-(as opposed to its keys).
-`Map` has two type parameters
-so we have to fix the key type to summon the `Foldable`:
-
-```tut:book:silent
-import cats.instances.map._
-
-type StringMap[A] = Map[String, A]
-
-val stringMap = Map("a" -> "b", "c" -> "d")
-```
-
-```tut:book
-Foldable[StringMap].foldLeft(stringMap, "nil")(_ + "," + _)
 ```
 
 #### Folding Right

@@ -32,6 +32,7 @@ trait BoundedSemiLattice[A] extends Monoid[A] {
   def combine(a1: A, a2: A): A
   def empty: A
 }
+
 object BoundedSemiLattice {
   implicit object intBoundedSemiLatticeInstance extends BoundedSemiLattice[Int] {
     def combine(a1: Int, a2: Int): Int =
@@ -93,16 +94,18 @@ object GCounterExample {
     def total(f: F[K, V])(implicit m: Monoid[V]): V
     def merge(f1: F[K, V], f2: F[K, V])(implicit b: BoundedSemiLattice[V]): F[K, V]
   }
+
   object GCounter {
     implicit def mapGCounterInstance[K, V]: GCounter[Map, K, V] =
       new GCounter[Map, K, V] {
+        import cats.instances.list._
         import cats.instances.map._
 
         def increment(f: Map[K, V])(k: K, v: V)(implicit m: Monoid[V]): Map[K, V] =
           f + (k -> (f.getOrElse(k, m.empty) |+| v))
 
         def total(f: Map[K, V])(implicit m: Monoid[V]): V =
-          f.foldMap(identity)
+          f.values.toList.combineAll
 
         def merge(f1: Map[K, V], f2: Map[K, V])(implicit b: BoundedSemiLattice[V]): Map[K, V] =
           f1 |+| f2
@@ -135,14 +138,17 @@ including syntax and an example instance for `Map`.
 ```tut:book:silent
 trait KeyValueStore[F[_,_]] {
   def +[K, V](f: F[K, V])(key: K, value: V): F[K, V]
+
   def get[K, V](f: F[K, V])(key: K): Option[V]
 
   def getOrElse[K, V](f: F[K, V])(key: K, default: V): V =
     get(f)(key).getOrElse(default)
+
+  def values[K, V](f: F[K, V]): List[V]
 }
 
 object KeyValueStore {
-  implicit class KeyValueStoreOps[F[_,_],K, V](f: F[K, V]) {
+  implicit class KeyValueStoreOps[F[_,_], K, V](f: F[K, V]) {
     def +(key: K, value: V)(implicit kv: KeyValueStore[F]): F[K, V] =
       kv.+(f)(key, value)
 
@@ -151,6 +157,9 @@ object KeyValueStore {
 
     def getOrElse(key: K, default: V)(implicit kv: KeyValueStore[F]): V =
       kv.getOrElse(f)(key, default)
+
+    def values(implicit kv: KeyValueStore[F]): List[V] =
+      kv.values(f)
   }
 
   implicit object mapKeyValueStoreInstance extends KeyValueStore[Map] {
@@ -162,23 +171,22 @@ object KeyValueStore {
 
     override def getOrElse[K, V](f: Map[K, V])(key: K, default: V): V =
       f.getOrElse(key, default)
+
+    def values[K, V](f: Map[K, V]): List[V] =
+      f.values.toList
   }
 }
 ```
 
-Now we can generate `GCounter` instances with an `implicit def`.
-This implementation is moderately advanced:
-it has a number of type class dependencies,
-including one on `Foldable` that uses a type lambda.
+Now we can generate `GCounter` instances with an `implicit def`:
 
 ```tut:book:silent
-import cats.Foldable
+import cats.instances.list._
 
 implicit def keyValueInstance[F[_,_],K, V](
   implicit
   k: KeyValueStore[F],
-  km: Monoid[F[K, V]],
-  kf: Foldable[({type l[A]=F[K, A]})#l]
+  km: Monoid[F[K, V]]
 ): GCounter[F, K, V] =
   new GCounter[F, K, V] {
     import KeyValueStore._  // For KeyValueStore syntax
@@ -186,8 +194,8 @@ implicit def keyValueInstance[F[_,_],K, V](
     def increment(f: F[K, V])(key: K, value: V)(implicit m: Monoid[V]): F[K, V] =
       f + (key, (f.getOrElse(key, m.empty) |+| value))
 
-    def total(f: F[K, V])(implicit m: Monoid[V]): V =
-      f.foldMap(identity _)
+    def total(fff: F[K, V])(implicit m: Monoid[V]): V =
+      fff.values.combineAll
 
     def merge(f1: F[K, V], f2: F[K, V])(implicit b: BoundedSemiLattice[V]): F[K, V] =
       f1 |+| f2
@@ -202,16 +210,58 @@ such as [Simulacrum][link-simulacrum] and [Kind Projector][link-kind-projector].
 
 ```tut:book:silent
 object GCounterExample {
-  import cats.{Monoid, Foldable}
+  import cats.Monoid
   import cats.syntax.foldable._
   import cats.syntax.semigroup._
 
   import scala.language.higherKinds
 
+  trait KeyValueStore[F[_,_]] {
+    def +[K, V](f: F[K, V])(key: K, value: V): F[K, V]
+
+    def get[K, V](f: F[K, V])(key: K): Option[V]
+
+    def getOrElse[K, V](f: F[K, V])(key: K, default: V): V =
+      get(f)(key).getOrElse(default)
+
+    def values[K, V](f: F[K, V]): List[V]
+  }
+
+  object KeyValueStore {
+    implicit class KeyValueStoreOps[F[_,_],K, V](f: F[K, V]) {
+      def +(key: K, value: V)(implicit kv: KeyValueStore[F]): F[K, V] =
+        kv.+(f)(key, value)
+
+      def get(key: K)(implicit kv: KeyValueStore[F]): Option[V] =
+        kv.get(f)(key)
+
+      def getOrElse(key: K, default: V)(implicit kv: KeyValueStore[F]): V =
+        kv.getOrElse(f)(key, default)
+
+      def values(implicit kv: KeyValueStore[F]): List[V] =
+        kv.values(f)
+    }
+
+    implicit object mapKeyValueStoreInstance extends KeyValueStore[Map] {
+      def +[K, V](f: Map[K, V])(key: K, value: V): Map[K, V] =
+        f + (key, value)
+
+      def get[K, V](f: Map[K, V])(key: K): Option[V] =
+        f.get(key)
+
+      override def getOrElse[K, V](f: Map[K, V])(key: K, default: V): V =
+        f.getOrElse(key, default)
+
+      def values[K, V](f: Map[K, V]): List[V] =
+        f.values.toList
+    }
+  }
+
   trait BoundedSemiLattice[A] extends Monoid[A] {
     def combine(a1: A, a2: A): A
     def empty: A
   }
+
   object BoundedSemiLattice {
     implicit object intBoundedSemiLatticeInstance extends BoundedSemiLattice[Int] {
       def combine(a1: Int, a2: Int): Int =
@@ -235,6 +285,7 @@ object GCounterExample {
     def total(f: F[K, V])(implicit m: Monoid[V]): V
     def merge(f1: F[K, V], f2: F[K, V])(implicit b: BoundedSemiLattice[V]): F[K, V]
   }
+
   object GCounter {
     def apply[F[_,_],K, V](implicit g: GCounter[F, K, V]) = g
 
@@ -249,51 +300,23 @@ object GCounterExample {
         g.merge(f, that)
     }
 
-    implicit def keyValueInstance[F[_,_],K, V](implicit k: KeyValueStore[F], km: Monoid[F[K, V]], kf: Foldable[({type l[A]=F[K, A]})#l]): GCounter[F, K, V] =
+    implicit def keyValueInstance[F[_,_],K, V](
+      implicit
+      k: KeyValueStore[F],
+      km: Monoid[F[K, V]]
+    ): GCounter[F, K, V] =
       new GCounter[F, K, V] {
         import KeyValueStore._  // For KeyValueStore syntax
 
         def increment(f: F[K, V])(key: K, value: V)(implicit m: Monoid[V]): F[K, V] =
           f + (key, (f.getOrElse(key, m.empty) |+| value))
 
-        def total(f: F[K, V])(implicit m: Monoid[V]): V =
-          f.foldMap(identity _)
+        def total(fkv: F[K, V])(implicit m: Monoid[V]): V =
+          fkv.values.combineAll
 
         def merge(f1: F[K, V], f2: F[K, V])(implicit b: BoundedSemiLattice[V]): F[K, V] =
           f1 |+| f2
       }
-  }
-
-  trait KeyValueStore[F[_,_]] {
-    def +[K, V](f: F[K, V])(key: K, value: V): F[K, V]
-    def get[K, V](f: F[K, V])(key: K): Option[V]
-
-    def getOrElse[K, V](f: F[K, V])(key: K, default: V): V =
-      get(f)(key).getOrElse(default)
-  }
-
-  object KeyValueStore {
-    implicit class KeyValueStoreOps[F[_,_],K, V](f: F[K, V]) {
-      def +(key: K, value: V)(implicit kv: KeyValueStore[F]): F[K, V] =
-        kv.+(f)(key, value)
-
-      def get(key: K)(implicit kv: KeyValueStore[F]): Option[V] =
-        kv.get(f)(key)
-
-      def getOrElse(key: K, default: V)(implicit kv: KeyValueStore[F]): V =
-        kv.getOrElse(f)(key, default)
-    }
-
-    implicit object mapKeyValueStoreInstance extends KeyValueStore[Map] {
-      def +[K, V](f: Map[K, V])(key: K, value: V): Map[K, V] =
-        f + (key, value)
-
-      def get[K, V](f: Map[K, V])(key: K): Option[V] =
-        f.get(key)
-
-      override def getOrElse[K, V](f: Map[K, V])(key: K, default: V): V =
-        f.getOrElse(key, default)
-    }
   }
 
   object Example {
