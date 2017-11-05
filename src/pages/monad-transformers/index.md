@@ -31,23 +31,21 @@ def lookupUserName(id: Long): Either[Error, Option[String]] =
   for {
     optUser <- lookupUser(id)
   } yield {
-    for {
-      user <- optUser
-    } yield user.name
+    for { user <- optUser } yield user.name
   }
 ```
 
 This quickly becomes very tedious.
 
 A question arises.
-Given two monads, can we make one monad out of them in a generic way?
+Given two arbitrary monads,
+can we combine them in some way to make a single monad?
 That is, do monads *compose*?
 We can try to write the code
 but we'll soon find it impossible to implement `flatMap`:
 
 ```scala
-// This code won't actually compile.
-// It's just illustrating a point:
+// Hypothetical example. This won't actually compile:
 def compose[M1[_] : Monad, M2[_] : Monad] = {
   type Composed[A] = M1[M2[A]]
 
@@ -67,21 +65,19 @@ def compose[M1[_] : Monad, M2[_] : Monad] = {
 We can't compose monads in general.
 However, some monad instances can be made to compose with instance-specific glue code.
 For these special cases we can use *monad transformers* to compose them.
-
 Monad transformers allow us to squash together monads,
 creating one monad where we previously had two or more.
 With this transformed monad we can avoid nested calls to `flatMap`.
 
 ## A Transformative Example
 
-Cats provides a library of such transformers:
+Cats provides a library of monad transformers for common use cases:
 `EitherT` for composing `Either` with other monads,
-`OptionT` for composing `Option`,
-and so on.
+`OptionT` for composing `Option`, and so on.
 Here's an example that uses `OptionT`
 to squash `List` and `Option` into a single monad.
-Where we might use `List[Option[A]]` we can use `ListOption[A]`
-to avoid nested `flatMap` calls.
+Where we might use `List[Option[A]]` we can use `OptionT[List, A]`,
+aliased in this example to `ListOption[A]`, instead:
 
 ```tut:book:silent
 import cats.data.OptionT
@@ -96,7 +92,9 @@ we pass `List`, the type of the outer monad,
 as a parameter to `OptionT`,
 the transformer for the inner monad.
 
-We can create instances with `pure` as usual:
+We can create instances of `ListOption`
+using the `OptionT` constructor,
+or more conveniently using `pure`:
 
 ```tut:book:silent
 import cats.Monad
@@ -105,19 +103,18 @@ import cats.syntax.applicative._
 ```
 
 ```tut:book
-val result: ListOption[Int] = 42.pure[ListOption]
+val result1: ListOption[Int] = OptionT(List(Option(10)))
+
+val result2: ListOption[Int] = 32.pure[ListOption]
 ```
 
-The `map` and `flatMap` methods of `ListOption` combine
+The `map` and `flatMap` methods combine
 the corresponding methods of `List` and `Option`
 into single operations:
 
 ```tut:book
-val a = 10.pure[ListOption]
-val b = 32.pure[ListOption]
-
-a flatMap { (x: Int) =>
-  b map { (y: Int) =>
+result1.flatMap { (x: Int) =>
+  result2.map { (y: Int) =>
     x + y
   }
 }
@@ -143,41 +140,44 @@ We haven't met `Applicatives` yet,
 but all `Monads` are also `Applicatives`
 so we can ignore that difference for now.
 
-We need an `Applicative[ListOption]` to call `pure`.
-We have [`cats.data.OptionT`][cats.data.OptionT] in scope,
-which provides the implicits for `OptionT`.
-However, in order to generate our `Applicative[ListOption]`,
-the implicits for `OptionT` also require an `Applicative` for `List`.
-Hence the additional import from [`cats.instances.list`][cats.instances.list].
+In order to generate our `Applicative[ListOption]`
+we need instances of `Applicative` for `List` and `OptionT`.
+`OptionT` is a Cats data type so its instance
+is provided by its companion object.
+The instance for `List` comes from
+[`cats.instances.list`][cats.instances.list].
 
 Notice we're not importing
 [`cats.syntax.functor`][cats.syntax.functor] or
 [`cats.syntax.flatMap`][cats.syntax.flatMap].
 This is because `OptionT` is a concrete data type
 with its own explicit `map` and `flatMap` methods.
-It wouldn't hurt to import the syntax---the
-compiler will simply ignore it
+It wouldn't cause problems if we imported the syntax---the
+compiler would simply ignore it
 in favour of the explicit methods.
 
 Remember that we're subjecting ourselves to this shenanigans
-because we're stubbornly refusing to import our instances
-from [`cats.instances.all`][cats.instances.all].
-If we did that, everything would just work.
+because we're stubbornly refusing to use the universal Cats import,
+[`cats.implicits`][cats.implicits].
+If we did use that import,
+all of the instances and syntax we needed would be in scope
+and everything would just work.
 </div>
 
 ## Monad Transformers in Cats
 
-Monad transformers are a little different
-to the other abstractions we've seen---they
-don't have their own type class.
-We use monad transformers to build monads,
-which we then use via the `Monad` type class.
-Thus the main points of interest when using monad transformers are:
+Each monad transformer is a data type,
+defined in [`cats.data`][cats.data],
+that allows us to *wrap* stacks of monads
+to produce new monads.
+We use the monads we've built via the `Monad` type class.
+The main concepts we have to cover
+to understand monad transformers are:
 
 - the available transformer classes;
-- building stacks of monads using transformers;
-- constructing instances of a monad stack; and
-- pulling apart a stack to access the wrapped monads.
+- how to build stacks of monads using transformers;
+- how to construct instances of a monad stack; and
+- how to pull apart a stack to access the wrapped monads.
 
 ### The Monad Transformer Classes
 
@@ -189,45 +189,46 @@ Concretely, some of the available instances are:
 
 - [`cats.data.OptionT`][cats.data.OptionT] for `Option`;
 - [`cats.data.EitherT`][cats.data.EitherT] for `Either`;
-- [`cats.data.ReaderT`][cats.data.ReaderT],
-  [`cats.data.WriterT`][cats.data.WriterT], and
-  [`cats.data.StateT`][cats.data.StateT];
+- [`cats.data.ReaderT`][cats.data.ReaderT] for `Reader`;
+- [`cats.data.WriterT`][cats.data.WriterT] for `Writer`;
+- [`cats.data.StateT`][cats.data.StateT] for `State`;
 - [`cats.data.IdT`][cats.data.IdT] for the [`Id`][cats.Id] monad.
 
-All of these monad transformers follow the same convention:
-the first type parameter specifies the monad that is wrapped around
-the monad implied by the transformer.
-The remaining type parameters are the types
-we've used to form the corresponding monads.
-
 <div class="callout callout-info">
-  *Kleisli Arrows*
+*Kleisli Arrows*
 
-  Last chapter, in the section on the `Reader` monad,
-  we mentioned that `Reader` was a specialisation
-  of a more general concept called a "kleisli arrow"
-  (aka [`cats.data.Kleisli`][cats.data.Kleisli]).
+Last chapter, in the section on the `Reader` monad,
+we mentioned that `Reader` was a specialisation
+of a more general concept called a "kleisli arrow"
+(aka [`cats.data.Kleisli`][cats.data.Kleisli]).
 
-  We can now reveal that `Kleisli` and `ReaderT`
-  are, in fact, the same thing!
-  `ReaderT` is actually a type alias for `Kleisli`.
-  Hence why we were creating `Readers` last chapter
-  and seeing `Kleislis` on the console.
+We can now reveal that `Kleisli` and `ReaderT`
+are, in fact, the same thing!
+`ReaderT` is actually a type alias for `Kleisli`.
+Hence why we were creating `Readers` last chapter
+and seeing `Kleislis` on the console.
 </div>
 
 ### Building Monad Stacks
 
-Building monad stacks is a little confusing until you know the patterns.
-The first type parameter to a monad transformer
-is the *outer* monad in the stack---the
-transformer itself provides the inner monad.
-For example, our `ListOption` type above was
-built using `OptionT[List, A]` but
-the result was effectively a `List[Option[A]]`.
-In other words, we build monad stacks from the inside out.
+All of these monad transformers follow the same convention.
+The transformer itself represents the *inner* monad in a stack,
+while the first type parameter specifies the outer monad.
+The remaining type parameters are the types
+we've used to form the corresponding monads.
+
+For example, our `ListOption` type above
+is an alias for `OptionT[List, A]`
+but the result is effectively a `List[Option[A]]`.
+In other words, we build monad stacks from the inside out:
+
+```tut:book:silent
+type ListOption[A] = OptionT[List, A]
+```
 
 Many monads and all transformers have at least two type parameters,
 so we often have to define type aliases for intermediate stages.
+
 For example, suppose we want to wrap `Either` around `Option`.
 `Option` is the innermost type
 so we want to use the `OptionT` monad transformer.
@@ -239,44 +240,45 @@ We need a *type alias* to make everything the correct shape:
 ```tut:book:silent
 import cats.instances.either._
 
-type Error = String
+// Alias Either to a type constructor with one parameter:
+type ErrorOr[A] = Either[String, A]
 
-// Create a type alias, ErrorOr, to convert Either to
-// a type constructor with a single parameter:
-type ErrorOr[A] = Either[Error, A]
-
-// Use ErrorOr as a type parameter to OptionT:
-type ErrorOptionOr[A] = OptionT[ErrorOr, A]
+// Build our final monad stack using OptionT:
+type ErrorOrOption[A] = OptionT[ErrorOr, A]
 ```
 
-`ErrorOptionOr` is a monad.
-We can use `pure` and `flatMap` as usual
+`ErrorOrOption` is a monad, just like `ListOption`.
+We can use `pure`, `map`, and `flatMap` as usual
 to create and transform instances:
 
 ```tut:book
-val result1 = 41.pure[ErrorOptionOr]
+val a = 10.pure[ErrorOrOption]
+val b = 32.pure[ErrorOrOption]
 
-val result2 = result1.flatMap(x => (x + 1).pure[ErrorOptionOr])
+val c = a.flatMap(x => b.map(y => x + y))
 ```
 
-Now let's add another monad into our stack.
-Let's create a `Future` of an `Either` of `Option`.
+Things become even more confusing
+when we want to stack three or more monads.
+
+For example, let's create a `Future` of an `Either` of `Option`.
 Once again we build this from the inside out
 with an `OptionT` of an `EitherT` of `Future`.
 However, we can't define this in one line
 because `EitherT` has three type parameters:
 
-```tut:book:silent
-import scala.concurrent.Future
-import cats.data.EitherT
+```scala
+case class EitherT[F[_], E, A](stack: F[Either[E, A]]) {
+  // etc...
+}
 ```
 
-```tut:book:fail
-type FutureEitherOption[A] = OptionT[EitherT, A]
-```
+The three type parameters are as follows:
 
-As before, we solve the problem by
-creating a type alias with a single parameter.
+- `F[_]` is the outer monad in the stack (`Either` is the inner);
+- `E` is the error type for the `Either`;
+- `A` is the result type for the `Either`.
+
 This time we create an alias for `EitherT` that
 fixes `Future` and `Error` and allows `A` to vary:
 
@@ -284,21 +286,24 @@ fixes `Future` and `Error` and allows `A` to vary:
 import scala.concurrent.Future
 import cats.data.{EitherT, OptionT}
 
-type Error = String
 type FutureEither[A] = EitherT[Future, String, A]
+
 type FutureEitherOption[A] = OptionT[FutureEither, A]
 ```
 
-Our mammoth stack composes not two but *three* monads.
-Our `map` and `flatMap` methods cut through three layers of abstraction:
+Our mammoth stack now composes three monads
+and our `map` and `flatMap` methods
+cut through three layers of abstraction:
 
 ```tut:book:silent
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 import cats.instances.future._
 ```
 
 ```tut:book
-val answer: FutureEitherOption[Int] =
+val futureEitherOr: FutureEitherOption[Int] =
   for {
     a <- 10.pure[FutureEitherOption]
     b <- 32.pure[FutureEitherOption]
@@ -312,7 +317,7 @@ If you frequently find yourself
 defining multiple type aliases when building monad stacks,
 you may want to try the [Kind Projector][link-kind-projector] compiler plugin.
 Kind Projector enhances Scala's type syntax
-to make it easier to define partial types.
+to make it easier to define partially applied type constructors.
 For example:
 
 ```tut:book
@@ -322,33 +327,22 @@ import cats.instances.option._
 ```
 
 Kind Projector can't simplify all type declarations down to a single line,
-but it can reduce the number of intermediate type definitions we need
-to keep our code readable.
+but it can reduce the number of intermediate type definitions
+needed to keep our code readable.
 </div>
 
 ### Constructing and Unpacking Instances
 
-As we saw above, we can use `pure` to
-directly inject raw values into transformed monad stacks.
-We can also create instances from untransformed stacks
-using the monad transformer's `apply` method:
-
-```tut:book:silent
-import cats.syntax.either._ // for foo.asRight
-import cats.syntax.option._ // for foo.some
-
-type ErrorOr[A]       = Either[String, A]
-type ErrorOrOption[A] = OptionT[ErrorOr, A]
-```
+As we saw above, we can create transformed monad stacks
+using the relevant monad transformer's `apply` method
+or the usual `pure` syntax:
 
 ```tut:book
-// Create using pure:
-val stack1 = 123.pure[ErrorOrOption]
-
 // Create using apply:
-val stack2 = OptionT[ErrorOr, Int](
-  123.some.asRight[String]
-)
+val errorStack1 = OptionT[ErrorOr, Int](Right(Some(10)))
+
+// Create using pure:
+val errorStack2 = 32.pure[ErrorOrOption]
 ```
 
 Once we've finished with a monad transformer stack,
@@ -357,90 +351,34 @@ This returns the untransformed stack.
 We can then manipulate the individual monads in the usual way:
 
 ```tut:book
-stack1.value
-stack2.value
+// Extracting the untransformed monad stack:
+errorStack1.value
+
+// Mapping over the Either in the stack:
+errorStack2.value.map(_.getOrElse(-1))
 ```
 
-Each call to `value` unpacks a single monad transformer,
-so we may need more than one call to completely unpack a large stack:
-
-```tut:book:silent
-import cats.instances.vector._
-import cats.data.{Writer, EitherT, OptionT}
-
-type Logged[A] = Writer[Vector[String], A]
-type LoggedFallable[A] = EitherT[Logged, String, A]
-type LoggedFallableOption[A] = OptionT[LoggedFallable, A]
-```
+Each call to `value` unpacks a single monad transformer.
+We may need more than one call to completely unpack a large stack.
+For example, to `Await` the `FutureEitherOption` stack above,
+we need to call `value` twice:
 
 ```tut:book
-val packed = 123.pure[LoggedFallableOption]
-val partiallyPacked = packed.value
-val completelyUnpacked = partiallyPacked.value
-```
+futureEitherOr
 
-### Usage Patterns
+val intermediate = futureEitherOr.value
 
-Widespread use of monad tranformers is sometimes difficult
-because they fuse monads together in predefined ways.
-Without careful thought,
-we can end up having to unpack and repack monads
-in different configurations
-to operate on them in different contexts.
+val stack = intermediate.value
 
-One way of avoiding this is
-to use monad transformers as local "glue code".
-Expose untransformed stacks at module boundaries,
-transform them to operate on them locally,
-and untransform them before passing them on.
-This allows each module of code to make its own decisions
-about which transformers to use.
-Here's an example:
-
-```tut:book:silent
-type Logged[A] = Writer[List[String], A]
-
-// Example method that returns nested monads:
-def parseNumber(str: String): Logged[Option[Int]] =
-  util.Try(str.toInt).toOption match {
-    case Some(num) => Writer(List(s"Read $str"), Some(num))
-    case None      => Writer(List(s"Failed on $str"), None)
-  }
-
-// Example combining multiple calls to parseNumber:
-def addNumbers(
-  a: String,
-  b: String,
-  c: String
-): Logged[Option[Int]] = {
-  import cats.data.OptionT
-
-  // Transform the incoming stacks to work on them:
-  val result = for {
-    a <- OptionT(parseNumber(a))
-    b <- OptionT(parseNumber(b))
-    c <- OptionT(parseNumber(c))
-  } yield a + b + c
-
-  // Return the untransformed monad stack:
-  result.value
-}
-```
-
-```tut:book
-// This approach doesn't force OptionT on other users' code:
-val result1 = addNumbers("1", "2", "3")
-val result2 = addNumbers("1", "a", "3")
+Await.result(stack, 1.second)
 ```
 
 ### Default Instances
 
 Many monads in Cats are defined
-using the corresponding transformer
-and the `Id` monad.
+using the corresponding transformer and the `Id` monad.
 This is reassuring as it confirms
-that the APIs for these monads
-and transformers are identical.
+that the APIs for monads and transformers are identical.
 `Reader`, `Writer`, and `State`
 are all defined in this way:
 
@@ -451,14 +389,91 @@ type State[S, A]  = StateT[Id, S, A]
 ```
 
 In other cases monad transformers
-have separate definitions
-to their corresponding monads.
-In these cases,
-the methods of the transformer tend
+are defined separately to their corresponding monads.
+In these cases, the methods of the transformer tend
 to mirror the methods on the monad.
 For example, `OptionT` defines `getOrElse`,
 and `EitherT` defines `fold`, `bimap`, `swap`,
 and other useful methods.
+
+### Usage Patterns
+
+Widespread use of monad tranformers is sometimes difficult
+because they fuse monads together in predefined ways.
+Without careful thought,
+we can end up having to unpack and repack monads
+in different configurations
+to operate on them in different contexts.
+
+We can cope with this in multiple ways.
+One approach involves creating a single "super stack"
+and sticking to it throughout our code base.
+This works if the code simple and largely uniform in nature.
+For example, in a web application,
+we could decide that all request handlers are asynchronous
+and all can fail with the same set of HTTP error codes.
+We could design a custom ADT representing the errors
+and use a fusion `Future` and `Either` everywhere in our code:
+
+```tut:book:silent
+sealed abstract class HttpError
+final case class NotFound(item: String) extends HttpError
+final case class BadRequest(msg: String) extends HttpError
+// etc...
+
+type FutureEither[A] = EitherT[Future, HttpError, A]
+```
+
+The "super stack" approach starts to fail in larger,
+more heterogeneous code bases
+where different stacks make sense in different contexts.
+Another design pattern that makes more sense in these contexts
+uses monad transformers as local "glue code".
+We expose untransformed stacks at module boundaries,
+transform them to operate on them locally,
+and untransform them before passing them on.
+This allows each module of code to make its own decisions
+about which transformers to use:
+
+```tut:book:silent
+import cats.data.Writer
+
+type Logged[A] = Writer[List[String], A]
+
+// Methods generally return untransformed stacks:
+def parseNumber(str: String): Logged[Option[Int]] =
+  util.Try(str.toInt).toOption match {
+    case Some(num) => Writer(List(s"Read $str"), Some(num))
+    case None      => Writer(List(s"Failed on $str"), None)
+  }
+
+// Consumers use monad transformers locally to simplify composition:
+def addNumbers(a: String,b: String, c: String): Logged[Option[Int]] = {
+  import cats.data.OptionT
+
+  val result = for {
+    a <- OptionT(parseNumber(a))
+    b <- OptionT(parseNumber(b))
+    c <- OptionT(parseNumber(c))
+  } yield a + b + c
+
+  result.value
+}
+```
+
+```tut:book
+// This approach doesn't force OptionT on other users' code:
+val result1 = addNumbers("1", "2", "3")
+val result2 = addNumbers("1", "a", "3")
+```
+
+Unfortunately, there aren't one-size-fits-all
+approaches to working with monad transformers.
+The best approach for you may depend on a lot of factors:
+the size and experience of your team,
+the complexity of your code base, and so on.
+You may need to experiment and gather feedback from colleagues
+to determine whether monad transformers are a good fit.
 
 ## Exercise: Monads: Transform and Roll Out
 
@@ -467,7 +482,7 @@ frequently send messages during battle
 requesting the power levels of their team mates.
 This helps them coordinate strategies
 and launch devastating attacks.
-The message sending method looks like this:
+The message sending method looks like this[^transformers]:
 
 ```scala
 def getPowerLevel(autobot: String): Response[Int] =
@@ -476,7 +491,7 @@ def getPowerLevel(autobot: String): Response[Int] =
 
 Transmissions take time in Earth's viscous atmosphere,
 and messages are occasionally lost
-due to malfunctioning satellites or Decepticon interception.
+due to satellite malfunction or sabotage by pesky Decepticons.
 `Responses` are therefore represented as a stack of monads:
 
 ```tut:book
@@ -485,7 +500,7 @@ type Response[A] = Future[Either[String, A]]
 
 [^transformers]: It is a well known fact
 that autobot neural nets are implemented in Scala.
-Decepticon brains are dynamically typed.
+Decepticon brains are, of course, dynamically typed.
 
 Optimus Prime is getting tired of
 the nested for comprehensions in his neural matrix.
@@ -552,7 +567,8 @@ fail with an appropriate error message:
 def canSpecialMove(
   ally1: String,
   ally2: String
-): Response[Boolean] = ???
+): Response[Boolean] =
+  ???
 ```
 
 <div class="solution">
@@ -576,10 +592,8 @@ takes two ally names and prints a message
 saying whether they can perform a special move:
 
 ```tut:book:silent
-def tacticalReport(
-  ally1: String,
-  ally2: String
-): String = ???
+def tacticalReport(ally1: String, ally2: String): String =
+  ???
 ```
 
 <div class="solution">
@@ -591,14 +605,10 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
-def tacticalReport(
-  ally1: String,
-  ally2: String
-): String =
-  Await.result(
-    canSpecialMove(ally1, ally2).value,
-    1.second
-  ) match {
+def tacticalReport(ally1: String, ally2: String): String = {
+  val stack = canSpecialMove(ally1, ally2).value
+
+  Await.result(stack, 1.second) match {
     case Left(msg) =>
       s"Comms error: $msg"
     case Right(true)  =>
@@ -606,6 +616,7 @@ def tacticalReport(
     case Right(false) =>
       s"$ally1 and $ally2 need a recharge."
   }
+}
 ```
 </div>
 

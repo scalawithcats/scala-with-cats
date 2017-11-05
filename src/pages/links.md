@@ -14,6 +14,7 @@
 [cats.Show]: http://typelevel.org/cats/api/cats/Show.html
 [cats.Semigroup]: http://typelevel.org/cats/api/cats/kernel/Semigroup.html
 [cats.Traverse]: http://typelevel.org/cats/api/cats/Traverse.html
+[cats.data]: http://typelevel.org/cats/api/cats/data/
 [cats.data.IdT]: http://typelevel.org/cats/api/cats/data/IdT.html
 [cats.data.Kleisli]: http://typelevel.org/cats/api/cats/data/Kleisli.html
 [cats.data.NonEmptyList]: http://typelevel.org/cats/api/cats/data/NonEmptyList.html

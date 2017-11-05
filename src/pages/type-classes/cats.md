@@ -69,14 +69,6 @@ and so on...                                     See the [`cats.instances`][cats
                                                  package for more
 ------------------------------------------------------------------------------
 
-<div class="callout callout-info">
-Most people use `import cats.instances.all._`
-to bring all instances into scope at the same time.
-In this book we will use specific imports
-to show you exactly which instances we need in each case.
-Don't feel you have to do this in your code.
-</div>
-
 Let's import the instances of `Show` for `Int` and `String`:
 
 ```tut:book:silent
@@ -117,6 +109,35 @@ val shownString = "abc".show
 
 Cats provides separate syntax imports for each type class.
 We will introduce these as we encounter them in later sections and chapters.
+
+### Importing All The Things!
+
+In this book we will use specific imports to show you
+exactly which instances and syntax you need in each example.
+However, this can be time consuming for many use cases.
+You should feel free to take one of the following shortcuts
+to simplify your imports:
+
+- `import cats._` imports all of Cats' type classes in one go;
+
+- `import cats.instances.all._` imports
+  all of the type class instances for the standard library in one go;
+
+- `import cats.syntax.all._` imports all of the syntax in one go;
+
+- `import cats.implicits._` imports
+  all of the standard type class instances
+  *and* all of the syntax in one go.
+
+Most people start their files with the following imports,
+reverting to more specific imports only
+if they encounter naming conflicts
+or problems ambiguous implicits:
+
+```tut:book
+import cats._
+import cats.implicits._
+```
 
 ### Defining Custom Instances {#defining-custom-instances}
 

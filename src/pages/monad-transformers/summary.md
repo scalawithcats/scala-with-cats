@@ -2,24 +2,7 @@
 
 In this chapter we introduced monad transformers,
 which eliminate the need for nested for comprehensions and pattern matching
-when working with "stacks" of nested monads such as below:
-
-```tut:book
-import cats.syntax.either._
-
-val a = Option(1.asRight[String])
-val b = Option(1.asRight[String])
-
-val result = for {
-  x <- a
-  y <- b
-} yield {
-  for {
-    u <- x
-    v <- y
-  } yield u + v
-}
-```
+when working with "stacks" of nested monads.
 
 Each monad transformer, such as `FutureT`, `OptionT` or `EitherT`,
 provides the code needed to merge its related monad with other monads.
@@ -29,18 +12,16 @@ that unpack and repack the whole stack:
 
 ```tut:book:silent
 import cats.data.EitherT
-```
-
-```tut:book
-val wrappedA = EitherT(a)
-val wrappedB = EitherT(b)
-```
-
-```tut:book:silent
 import cats.instances.option._
+import cats.syntax.applicative._
+
+type OptionEither[A] = EitherT[Option, String, A]
 ```
 
 ```tut:book
+val wrappedA = 10.pure[OptionEither]
+val wrappedB = 32.pure[OptionEither]
+
 val wrappedResult = for {
   x <- wrappedA
   y <- wrappedB
