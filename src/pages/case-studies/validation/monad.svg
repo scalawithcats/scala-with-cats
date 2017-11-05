@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="1614px" height="542px" viewBox="0 0 1614 542" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 43.1 (39012) - http://www.bohemiancoding.com/sketch -->
-    <title>monadic</title>
+    <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->
+    <title>monad</title>
     <desc>Created with Sketch.</desc>
     <defs>
         <polygon id="path-1" points="279.385663 100.013471 245.151257 117.8958 251.689447 80.0204196 223.99323 53.1969265 262.26846 47.6709831 279.385663 13.2108239 296.502867 47.6709831 334.778097 53.1969265 307.08188 80.0204196 313.62007 117.8958"></polygon>
@@ -15,9 +15,9 @@
         <polygon id="path-9" points="55.6409826 87.2606438 21.4065761 105.142973 27.944766 67.2675925 0.248549323 40.4440994 38.5237794 34.9181559 55.6409826 0.457996769 72.7581858 34.9181559 111.033416 40.4440994 83.3371992 67.2675925 89.8753891 105.142973"></polygon>
     </defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="monadic" transform="translate(-155.000000, -37.000000)">
+        <g id="monad" transform="translate(-155.000000, -37.000000)">
             <rect id="Background" x="0" y="0" width="1921" height="621"></rect>
-            <g id="Group-16" transform="translate(155.000000, 358.000000)">
+            <g id="flatmap" transform="translate(155.000000, 358.000000)">
                 <g id="Group-10" transform="translate(0.000000, 2.000000)">
                     <g id="Star-1">
                         <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
@@ -67,7 +67,7 @@
                     <tspan x="375.781673" y="82">flatMap</tspan>
                 </text>
             </g>
-            <g id="Group-15" transform="translate(320.000000, 37.000000)">
+            <g id="map" transform="translate(320.000000, 37.000000)">
                 <text id="A-=&gt;-F[B]" font-family="FiraMono-Regular, Fira Mono" font-size="40" font-weight="normal" fill="#000000">
                     <tspan x="65.1378143" y="214">A =&gt; F[B]</tspan>
                 </text>
@@ -90,7 +90,7 @@
                     <tspan x="1001.5103" y="214">A =&gt; F[C]</tspan>
                 </text>
                 <polygon id="Path-1" fill="#F6A623" points="837.116054 52.4547658 868.334623 52.4547658 868.334623 36.9458805 899.553191 67.5741975 868.334623 98.9814216 868.334623 83.4725363 837.116054 83.4725363"></polygon>
-                <text id="map" font-family="FiraMono-Bold, Fira Mono" font-size="45" font-weight="bold" fill="#F6A623">
+                <text font-family="FiraMono-Bold, Fira Mono" font-size="45" font-weight="bold" fill="#F6A623">
                     <tspan x="380.238395" y="81.6195477">map</tspan>
                 </text>
                 <g id="Group-12" transform="translate(937.000000, 0.000000)">
