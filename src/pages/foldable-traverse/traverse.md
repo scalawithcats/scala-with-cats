@@ -124,7 +124,7 @@ but the real `Future.traverse` and `Future.sequence`
 work with any standard Scala collection.
 
 Cats' `Traverse` type class generalises these patterns
-to work with any type of "effect":
+to work with any type of `Applicative` effect:
 `Future`, `Option`, `Validated`, and so on.
 We'll approach `Traverse` in the next sections in two steps:
 first we'll generalise over the effect type,
@@ -172,7 +172,7 @@ is now equivalent to `Semigroupal.combine`:
 ```tut:book:silent
 import cats.syntax.apply._
 
-// Combining an accumulator and a hostname using an Applicative:
+// Combining accumulator and hostname using an Applicative:
 def newCombine(
   accum: Future[List[Int]],
   host: String
@@ -288,7 +288,7 @@ Finally, here is an example that uses `Validated`:
 
 ```tut:book:silent
 import cats.data.Validated
-import cats.instances.list._ // Applicative[ErrorsOr] needs a Monoid[List]
+import cats.instances.list._ // for Monoid[List]
 
 type ErrorsOr[A] = Validated[List[String], A]
 

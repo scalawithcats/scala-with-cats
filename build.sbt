@@ -33,9 +33,11 @@ addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
 lazy val pdf  = taskKey[Unit]("Build the PDF version of the book")
 lazy val html = taskKey[Unit]("Build the HTML version of the book")
 lazy val epub = taskKey[Unit]("Build the ePub version of the book")
+lazy val json = taskKey[Unit]("Build the Pandoc JSON AST of the book")
 lazy val all  = taskKey[Unit]("Build all versions of the book")
 
 pdf  := { tutQuick.value ; "grunt pdf"  ! }
 html := { tutQuick.value ; "grunt html" ! }
 epub := { tutQuick.value ; "grunt epub" ! }
-all  := { pdf.value ; html.value ; epub.value }
+json := { tutQuick.value ; "grunt json" ! }
+all  := { pdf.value ; html.value ; epub.value ; json.value }

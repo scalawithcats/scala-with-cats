@@ -9,9 +9,8 @@ We can also invent new sequences and plug them into our code.
 ### Folds and Folding
 
 Let's start with a quick recap on the general concept of folding.
-`Foldable` is a type class for folding over sequences.
 We supply an *accumulator* value and a *binary function*
-to combine it with an item in the sequence:
+to combine it with each item in the sequence:
 
 ```tut:book:silent
 def show[A](list: List[A]): String =

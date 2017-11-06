@@ -42,7 +42,8 @@ Foldable[Option].foldLeft(maybeInt, 10)(_ * _)
 in terms of the `Eval` monad:
 
 ```scala
-def foldRight[A, B](fa: F[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B]
+def foldRight[A, B](fa: F[A], lb: Eval[B])
+                     (f: (A, Eval[B]) => Eval[B]): Eval[B]
 ```
 
 Using `Eval` means folding is always *stack safe*,
@@ -75,12 +76,15 @@ which fixes the overflow exception:
 import cats.instances.stream._
 ```
 
-```tut:book
-val eval = Foldable[Stream].
-  foldRight(bigData, Eval.now(0L)) { (num, eval) =>
-    eval.map(_ + num)
-  }
+```tut:book:silent
+val eval: Eval[Long] =
+  Foldable[Stream].
+    foldRight(bigData, Eval.now(0L)) { (num, eval) =>
+      eval.map(_ + num)
+    }
+```
 
+```tut:book
 eval.value
 ```
 
