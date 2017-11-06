@@ -1,13 +1,14 @@
 ## Versions {-}
 
-This book is written for Scala 2.12.3 and Cats 1.0.0-MF.
+This book is written for Scala 2.12.3 and Cats 1.0.0.
 Here is a minimal `built.sbt` containing
 the relevant dependencies and settings[^sbt-version]:
 
 ```scala
 scalaVersion := "2.12.3"
 
-libraryDependencies += "org.typelevel" %% "cats-core" % "1.0.0-MF"
+libraryDependencies +=
+  "org.typelevel" %% "cats-core" % "1.0.0"
 
 scalacOptions ++= Seq(
   "-Xfatal-warnings",

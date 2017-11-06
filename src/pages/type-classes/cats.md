@@ -155,7 +155,7 @@ implicit val dateShow: Show[Date] =
 ```
 
 However, Cats also provides
-a couple of convenient methods to simplfy the process.
+a couple of convenient methods to simplify the process.
 There are two construction methods on the companion object of `Show`
 that we can use to define instances for our own types:
 

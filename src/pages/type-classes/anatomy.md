@@ -21,7 +21,7 @@ final case class JsString(get: String) extends Json
 final case class JsNumber(get: Double) extends Json
 case object JsNull extends Json
 
-// The "serialize to JSON" behavior is encoded in this trait
+// The "serialize to JSON" behaviour is encoded in this trait
 trait JsonWriter[A] {
   def write(value: A): Json
 }
@@ -125,7 +125,7 @@ object JsonSyntax {
 ```
 
 We use interface syntax by importing it
-along-side the instances for the types we need:
+alongside the instances for the types we need:
 
 ```tut:book:silent
 import JsonWriterInstances._
@@ -155,7 +155,7 @@ def implicitly[A](implicit value: A): A =
 ```
 
 We can use `implicitly` to summon any value from implicit scope.
-We simply provide the type we want to summon and `implicitly` does the rest:
+We provide the type we want and `implicitly` does the rest:
 
 ```tut:book
 import JsonWriterInstances._
@@ -166,5 +166,5 @@ implicitly[JsonWriter[String]]
 Most type classes in Cats provide other means to summon instances.
 However, `implicitly` is a good fallback for debugging purposes.
 We can insert a call to `implicitly` within the general flow of our code
-to ensure the compiler is able to find an instance of a type class
+to ensure the compiler can find an instance of a type class
 and ensure that there are no ambiguous implicit errors.

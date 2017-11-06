@@ -150,10 +150,12 @@ a library of `implicit vals`:
 
 ```scala
 implicit val optionIntWriter: JsonWriter[Option[Int]] =
-  ??? // and so on...
+  ???
 
 implicit val optionPersonWriter: JsonWriter[Option[Person]] =
-  ??? // and so on...
+  ???
+
+// and so on...
 ```
 
 However, this approach clearly doesn't scale.
@@ -228,9 +230,7 @@ This is an older programming pattern
 that is frowned upon in modern Scala code.
 Fortunately, the compiler will warn you when you do this.
 You have to manually enable implicit conversions
-by importing `scala.language.implicitConversions` in your file,
-so if you forget to tag parameters as `implicit`
-you will see a compiler warning like this:
+by importing `scala.language.implicitConversions` in your file:
 
 ```tut:book:fail
 implicit def optionWriter[A]

@@ -107,7 +107,7 @@ as small as possible!
 
 There is another semantic issue that will come up quite quickly:
 should `and` short-circuit if the first check fails.
-What do you think the most useful behavior is?
+What do you think the most useful behaviour is?
 
 <div class="solution">
 We want to report all the errors we can,
@@ -120,7 +120,7 @@ We can always run both rules and combine any errors we see.
 </div>
 
 Use this knowledge to implement `and`.
-Make sure you end up with the behavior you expect!
+Make sure you end up with the behaviour you expect!
 
 <div class="solution">
 There are at least two implementation strategies.
@@ -155,7 +155,7 @@ final case class CheckF[E, A](func: A => Either[E, A]) {
 }
 ```
 
-Let's test the behavior we get.
+Let's test the behaviour we get.
 First we'll setup some checks:
 
 ```tut:book:silent

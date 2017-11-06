@@ -5,7 +5,7 @@ and allows developers to pick and choose the ones we want to use.
 The majority of these tools are delivered in the form of *type classes*
 that we can apply to existing Scala types.
 
-Type classes are a programming pattern originating in Haskell [^type-class-defn].
+Type classes are a programming pattern originating in Haskell[^type-class-defn].
 They allow us to extend existing libraries with new functionality,
 without using traditional inheritance,
 and without altering the original library source code.

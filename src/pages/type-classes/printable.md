@@ -2,8 +2,8 @@
 
 Scala provides a `toString` method
 to let us convert any value to a `String`.
-However, this method comes with a few disadvantages.
-It is implemented for *every* type in the language,
+However, this method comes with a few disadvantages:
+it is implemented for *every* type in the language,
 many implementations are of limited use,
 and we can't opt-in to specific implementations for specific types.
 
@@ -68,7 +68,7 @@ The code above forms a general purpose printing library
 that we can use in multiple applications.
 Let's define an "application" now that uses the library:
 
- 1. Define a data type `Cat`:
+ 1. Define a data type to represent a well-known type of furry animal:
 
     ```scala
     final case class Cat(

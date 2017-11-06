@@ -33,6 +33,9 @@ Starting from the March 2016 release, here are the major changes to the book:
    - Added a section on `-Ypartial-unification`.
 - Added a list of contributors to the Intro
 - Added a list of backers to the Intro
+- Upgraded to Cats 1.0.0-RC1:
+  - Renamed `Cartesian` to `Semigroupal`
+  - Removed references to `Foldable` for `Map` (now in Alleycats)
 
 ### Omissions {-}
 
