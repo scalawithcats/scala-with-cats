@@ -1,4 +1,4 @@
-# Foreword {-}
+# Preface {-}
 
 The aims of this book are two-fold:
 to introduce monads, functors, and other functional programming patterns

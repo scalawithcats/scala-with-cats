@@ -206,7 +206,7 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
-bootstrap@^3.3.7:
+bootstrap@^3.3.1:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-3.3.7.tgz#5a389394549f23330875a3b150656574f8a9eb71"
 
@@ -2254,9 +2254,9 @@ umd@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/umd/-/umd-3.0.1.tgz#8ae556e11011f63c2596708a8837259f01b3d60e"
 
-"underscore-ebook-template@git+https://github.com/underscoreio/underscore-ebook-template.git#0.5.0":
-  version "0.5.0"
-  resolved "git+https://github.com/underscoreio/underscore-ebook-template.git#3a4fe1b525193b141267944bffbc8ee5c340587f"
+"underscore-ebook-template@git+https://github.com/underscoreio/underscore-ebook-template.git#0.6.1":
+  version "0.6.1"
+  resolved "git+https://github.com/underscoreio/underscore-ebook-template.git#edae6e82fde2deef35cbaacb74831af8f559ee86"
   dependencies:
     grunt "0.4.5"
     grunt-browserify "3.3.0"
