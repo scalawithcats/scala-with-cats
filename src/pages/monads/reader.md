@@ -1,4 +1,4 @@
-## The *Reader* Monad
+## The Reader Monad {#sec:monads:reader}
 
 [`cats.data.Reader`][cats.data.Reader] is a monad
 that allows us to sequence operations that depend on some input.
@@ -85,7 +85,7 @@ greetAndFeed(Cat("Heathcliff", "junk food"))
 ### Exercise: Hacking on Readers
 
 The classic use of `Readers` is to build programs
-that accept a configuration at the end.
+that accept a configuration as a parameter.
 Let's ground this with a complete example
 of a simple login system.
 Our configuration will consist of two databases:
@@ -204,13 +204,12 @@ checkLogin(4, "davinci").run(db)
 
 ### When to Use Readers?
 
-As you can hopefully see from the exercise,
-`Readers` effectively provide a simple tool for doing dependency injection.
+`Readers` provide a tool for doing dependency injection.
 We write steps of our program as instances of `Reader`,
 chain them together with `map` and `flatMap`,
 and build a function that accepts the dependency as input.
 
-There are many, many ways of implementing dependency injection in Scala,
+There are many ways of implementing dependency injection in Scala,
 from simple techniques like methods with multiple parameter lists,
 through implicit parameters and type classes,
 to complex techniques like the cake pattern and DI frameworks.
@@ -237,12 +236,9 @@ other dependency injection techniques tend to be more appropriate.
 <div class="callout callout-warning">
   *Kleisli arrows*
 
-  You may have noticed from console output in this section
+  You may have noticed from console output
   that `Reader` is implemented in terms of another type called `Kleisli`.
   *Kleisli arrows* provide a more general form of `Reader`
   that generalise over the type constructor of the result type.
-
-  Kleislis are beyond the scope of this book,
-  but will be easy to pick up based on your newfound knowledge of `Reader`
-  and the content we'll cover in the next chapter on monad transformers.
+  We will encounter Kleislis again in Chapter [@sec:monad-transformers].
 </div>

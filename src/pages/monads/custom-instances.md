@@ -2,7 +2,8 @@
 
 We can define a `Monad` for a custom type
 by providing implementations of three methods:
-`flatMap`, `pure`, and a new method called `tailRecM`.
+`flatMap`, `pure`, and
+a method we haven't seen yet called `tailRecM`.
 Here is an implementation of `Monad` for `Option` as an example:
 
 ```tut:book:silent
@@ -50,8 +51,7 @@ can be a challenge... as we shall see.
 ### Exercise: Branching out Further with Monads
 
 Let's write a `Monad` for our `Tree` data type from last chapter.
-Here's the type again, together with the smart constructors we used
-to simplify type class instance selection:
+Here's the type again:
 
 ```tut:book:silent
 sealed trait Tree[+A]
@@ -72,18 +72,17 @@ Also verify that having a `Monad` in scope allows us to use for comprehensions,
 despite the fact that we haven't directly implemented `flatMap` or `map` on `Tree`.
 
 Don't feel you have to make `tailRecM` tail-recursive.
-Doing so is actually very hard.
+Doing so is quite difficult.
 We've included both tail-recursive
 and non-tail-recursive implementations
 in the solutions so you can check your work.
 
 <div class="solution">
-The code for `flatMap` is simple. It's similar to the code for `map`.
+The code for `flatMap` is similar to the code for `map`.
 Again, we recurse down the structure
 and use the results from `func` to build a new `Tree`.
 
-The code for `tailRecM` is less simple.
-In fact, it's fairly complex
+The code for `tailRecM` is fairly complex
 regardless of whether we make it tail-recursive or not.
 
 If we follow the types,
@@ -133,9 +132,8 @@ The solution above is perfectly fine for this exercise.
 Its only downside is that Cats cannot make guarantees about stack safety.
 
 The tail-recursive solution is much harder to write.
-We actually adapted this solution from
-[this Stack Overflow post][link-so-tree-tailrecm] by Nazarii Bardiuk
-rather than attempt to write it ourselves.
+We adapted this solution from
+[this Stack Overflow post][link-so-tree-tailrecm] by Nazarii Bardiuk.
 It involves an explicit depth first traversal of the tree,
 maintaining an `open` list of nodes to visit
 and a `closed` list of nodes to use to reconstruct the tree:

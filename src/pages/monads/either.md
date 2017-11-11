@@ -1,4 +1,4 @@
-## *Either*
+## Either
 
 Let's look at another useful monad:
 the `Either` type from the Scala standard library.
@@ -10,37 +10,9 @@ In Scala 2.12, however, `Either` became *right biased*.
 ### Left and Right Bias
 
 In Scala 2.11, `Either` had no default
-`map` or `flatMap` method:
-
-```scala
-// Scala 2.11 example
-
-Right(123).flatMap(x => Right(x * 2))
-// <console>:12: error: value flatMap is not a member
-//   of scala.util.Right[Nothing, Int]
-//        Right(123).flatMap(x => Right(x * 2))
-//                   ^
-```
-
-If we wanted to `flatMap` on an old-school `Either`,
-we had to decide which side we wanted
-to be the "correct" side
-by taking a left- or right-projection:
-
-```tut:book:silent
-val either1: Either[String, Int] = Right(123)
-val either2: Either[String, Int] = Right(321)
-```
-
-```tut:book
-// Valid in Scala 2.11 and Scala 2.12
-
-either1.right.flatMap(x => Right(x * 2))
-either2.left.flatMap(x => Left(x + "!!!"))
-```
-
+`map` or `flatMap` method.
 This made the Scala 2.11 version of `Either`
-incovenient to use in for comprehensions.
+inconvenient to use in for comprehensions.
 We had to insert calls to `.right`
 in every generator clause:
 
@@ -67,7 +39,9 @@ for {
 Cats back-ports this behaviour to Scala 2.11
 via the `cats.syntax.either` import,
 allowing us to use right-biased `Either`
-in all supported versions of Scala:
+in all supported versions of Scala.
+In Scala 2.12+ we can either omit this import
+or leave it in place without breaking anything:
 
 ```tut:book:silent
 import cats.syntax.either._
@@ -102,7 +76,7 @@ These "smart constructors" have
 advantages over `Left.apply` and `Right.apply`
 because they return results of type `Either`
 instead of `Left` and `Right`.
-This helps avoiding type inference bugs
+This helps avoid type inference bugs
 caused by over-narrowing.
 The following code provides an example:
 
@@ -170,8 +144,7 @@ Either.fromOption[String, Int](None, "Badness")
 `cats.syntax.either` also adds
 some useful methods to instances of `Either`.
 We can use `orElse` and `getOrElse` to extract
-values from the right side:
-the right value or return a default:
+values from the right side or return a default:
 
 ```tut:book:silent
 import cats.syntax.either._

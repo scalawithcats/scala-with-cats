@@ -3,7 +3,7 @@
 It's time to give monads our standard Cats treatment.
 As usual we'll look at the type class, instances, and syntax.
 
-### The *Monad* Type Class {#monad-type-class}
+### The Monad Type Class {#monad-type-class}
 
 The monad type class is [`cats.Monad`][cats.Monad].
 `Monad` extends two other type classes:
@@ -12,7 +12,7 @@ and `Applicative`, which provides `pure`.
 `Applicative` also extends `Functor`,
 which gives every `Monad` a `map` method
 as we saw in the exercise above.
-We'll discuss `Applicatives` in a Chapter [@sec:applicatives].
+We'll discuss `Applicatives` in Chapter [@sec:applicatives].
 
 Here are some examples using `pure` and `flatMap`, and `map` directly:
 
@@ -33,7 +33,7 @@ val list2 = Monad[List].
 val list3 = Monad[List].map(list2)(a => a + 123)
 ```
 
-`Monad` provides many other methods as well,
+`Monad` provides many other methods,
 including all of the methods from `Functor`.
 See the [scaladoc][cats.Monad] for more information.
 
@@ -108,7 +108,7 @@ In addition to the above,
 Cats provides a host of new monads that we don't have in the standard library.
 We'll familiarise ourselves with some of these in a moment.
 
-### *Monad* Syntax
+### Monad Syntax
 
 The syntax for monads comes from three places:
 
@@ -150,8 +150,7 @@ import cats.Monad
 import cats.syntax.functor._
 import cats.syntax.flatMap._
 
-def sumSquare[F[_]](a: F[Int], b: F[Int])
-    (implicit monad: Monad[F]): F[Int] =
+def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
   a.flatMap(x => b.map(y => x*x + y*y))
 
 import cats.instances.option._
@@ -164,12 +163,12 @@ sumSquare(List(1, 2, 3), List(4, 5))
 ```
 
 We can rewrite this code using for comprehensions.
-The Scala compiler will "do the right thing" by
+The compiler will "do the right thing" by
 rewriting our comprehension in terms of `flatMap` and `map`
 and inserting the correct implicit conversions to use our `Monad`:
 
 ```tut:book:silent
-def sumSquare[F[_] : Monad](a: F[Int], b: F[Int]): F[Int] =
+def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
   for {
     x <- a
     y <- b

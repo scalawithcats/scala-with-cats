@@ -1,4 +1,4 @@
-## The *Identity* Monad {#sec:monads:identity}
+## The Identity Monad {#sec:monads:identity}
 
 In the previous section we demonstrated Cats' `flatMap` and `map` syntax
 by writing a method that abstracted over different monads:
@@ -39,7 +39,7 @@ sumSquare(3 : Id[Int], 4 : Id[Int])
 `Id` allows us to call our monadic method using plain values.
 However, the exact semantics are difficult to understand.
 We cast the parameters to `sumSquare` as `Id[Int]`
-and received an `Int` back as a result!
+and received an `Id[Int]` back as a result!
 
 What's going on? Here is the definition of `Id` to explain:
 
@@ -95,7 +95,7 @@ Implement `pure`, `map`, and `flatMap` for `Id`!
 What interesting discoveries do you uncover about the implementation?
 
 <div class="solution">
-Let's start by defining the method headers:
+Let's start by defining the method signatures:
 
 ```tut:book:silent
 import cats.Id
@@ -154,14 +154,14 @@ flatMap(123)(_ * 2)
 This ties in with our understanding of functors and monads
 as sequencing type classes.
 Each type class allows us to sequence operations
-ignoring some kind of effect.
-In the case of `Id` there is no effect,
+ignoring some kind of complication.
+In the case of `Id` there is no complication,
 making `map` and `flatMap` the same thing.
 
-Notice that we haven't had to write any type annotations
-in any of the method bodies above.
-Scala is able to interpret values of type `A` as `Id[A]` and vice versa,
-simply by the context in which they are used.
+Notice that we haven't had to write type annotations
+in the method bodies above.
+The compiler is able to interpret values of type `A` as `Id[A]` and vice versa
+by the context in which they are used.
 
 The only restriction we've seen to this is that Scala cannot unify
 types and type constructors when searching for implicits.

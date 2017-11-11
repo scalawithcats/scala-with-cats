@@ -11,18 +11,16 @@ that can fail without an error message,
 and `Future` represents a computation
 that may produce a value at some point in the future.
 
-In this chapter we've also seen some of
+We've also seen some of
 the custom types and data structures that Cats provides,
 including `Id`, `Reader`, `Writer`, and `State`.
-These cover a wide range of uses
-and many problems can be solved
-by using one of these constructs.
+These cover a wide range of use cases.
 
 Finally, in the unlikely event that
-we have to implemenet a custom monad,
+we have to implement a custom monad,
 we've learned about defining our own instance using `tailRecM`.
 `tailRecM` is an odd wrinkle that is a concession to building
 a functional programming library that is stack-safe by default.
 We don't need to understand `tailRecM` to understand monads,
-but having it around gives us mechanical benefits
+but having it around gives us benefits
 of which we can be grateful when writing monadic code.

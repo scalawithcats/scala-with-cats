@@ -1,4 +1,4 @@
-## The *State* Monad
+## The State Monad
 
 [`cats.data.State`][cats.data.State]
 allows us to pass additional state around as part of a computation.
@@ -32,7 +32,7 @@ that does two things:
 We can "run" our monad by supplying an initial state.
 `State` provides three methods---`run`, `runS`, and `runA`---that return
 different combinations of state and result.
-Each method actually returns an instance of `Eval`,
+Each method returns an instance of `Eval`,
 which `State` uses to maintain stack safety.
 We call the `value` method as usual to extract the actual result:
 
@@ -169,9 +169,10 @@ For example, we can evaluate `(1 + 2) * 3)` as follows:
           //        push (3 * 3) = 9 in their place
 ```
 
-Let's write a simple interpreter for these expressions.
+Let's write an interpreter for these expressions.
 We can parse each symbol into a `State` instance
-representing a context-free stack transform and intermediate result.
+representing a transformation on the stack
+and an intermediate result.
 The `State` instances can be threaded together using `flatMap`
 to produce an interpreter for any sequence of symbols.
 
@@ -180,7 +181,7 @@ parses a single symbol into an instance of `State`.
 Use the code below as a template.
 Don't worry about error handling for now---if
 the stack is in the wrong configuration,
-it's ok to throw an exception and fail.
+it's OK to throw an exception.
 
 ```tut:book:reset:silent
 import cats.data.State
@@ -326,7 +327,7 @@ program.runA(Nil).value
 ```
 
 Because `evalOne` and `evalAll` both return instances of `State`,
-we can even thread these results together using `flatMap`.
+we can thread these results together using `flatMap`.
 `evalOne` produces a simple stack transformation and
 `evalAll` produces a complex one, but they're both pure functions
 and we can use them in any order as many times as we like:

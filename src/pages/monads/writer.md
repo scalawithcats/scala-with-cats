@@ -1,10 +1,10 @@
-## The *Writer* Monad {#writer-monad}
+## The Writer Monad {#writer-monad}
 
 [`cats.data.Writer`][cats.data.Writer]
 is a monad that lets us carry a log along with a computation.
 We can use it to record messages, errors,
 or additional data about a computation,
-and extract the log along side the final result.
+and extract the log alongside the final result.
 
 One common use for `Writers` is
 recording sequences of steps in multi-threaded computations
@@ -14,12 +14,11 @@ With `Writer` the log for the computation is tied to the result,
 so we can run concurrent computations without mixing logs.
 
 <div class="callout callout-info">
-*Cats data types*
+*Cats Data Types*
 
 `Writer` is the first data type we've seen
 from the [`cats.data`][cats.data.package] package.
-This package provides numerous data types:
-instances of various type classes
+This package provides instances of various type classes
 that produce useful semantics.
 Other examples from `cats.data` include
 the monad transformers that we will see in the next chapter,
@@ -41,19 +40,16 @@ import cats.instances.vector._
 ```tut:book
 Writer(Vector(
   "It was the best of times",
-  "It was the worst of times"
+  "it was the worst of times"
 ), 1859)
 ```
-
-We've used a `Vector` as the log in this example
-as it is a sequence structure with an efficient append operation.
 
 Notice that the type reported on the console
 is actually `WriterT[Id, Vector[String], Int]`
 instead of `Writer[Vector[String], Int]` as we might expect.
 In the spirit of code reuse,
 Cats implements `Writer` in terms of another type, `WriterT`.
-`WriterT` is an example of a new concept called a *monad tranformer*,
+`WriterT` is an example of a new concept called a *monad transformer*,
 which we will cover in the next chapter.
 
 Let's try to ignore this detail for now.
@@ -93,8 +89,8 @@ import cats.syntax.writer._
 Vector("msg1", "msg2", "msg3").tell
 ```
 
-If we have both a result and a log
-we can either use `Writer.apply` as we did above,
+If we have both a result and a log,
+we can either use `Writer.apply`
 or we can use the `writer` syntax
 from [`cats.syntax.writer`][cats.syntax.writer]:
 
@@ -111,8 +107,10 @@ We can extract the result and log from a `Writer`
 using the `value` and `written` methods respectively:
 
 ```tut:book
-a.value
-a.written
+val aResult: Int =
+  a.value
+val aLog: Vector[String] =
+  a.written
 ```
 
 We can extract both values at the same time using the `run` method:

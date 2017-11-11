@@ -1,7 +1,7 @@
 ## Error Recovery
 
 In the previous section we looked at
-modelling fail fast error handling using monads,
+modelling fail-fast error handling using monads,
 and the `Either` monad in particular.
 
 In this section we're going to look at approaches for recovering from errors
@@ -109,7 +109,7 @@ Seq("1", "b", "3").foldMapM(recover(_.parseInt.toOption))
 // res: Option[Int] = Some(4)
 ```
 
-Hint: here's the method header for `recover`
+Hint: here's the method signature for `recover`
 
 ```tut:book
 def recover[A, M[_] : MonadPlus, B : Monoid](f: A => M[B]): (A => M[B]) = {

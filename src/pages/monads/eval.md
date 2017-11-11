@@ -1,4 +1,4 @@
-## The *Eval* Monad {#eval}
+## The Eval Monad {#eval}
 
 [`cats.Eval`][cats.Eval] is a monad that allows us to
 abstract over different *models of evaluation*.
@@ -6,7 +6,7 @@ We typically hear of two such models: *eager* and *lazy*.
 `Eval` throws in a further distinction of
 whether or not a result is *memoized*.
 
-### Eager, lazy, memoized, oh my!
+### Eager, Lazy, Memoized, Oh My!
 
 What do these terms mean?
 
@@ -21,7 +21,7 @@ In the following example,
 the code to compute the value of `x`
 happens at the definition site
 rather than on access (eager).
-Accessing `x` simply recalls the stored value
+Accessing `x` recalls the stored value
 without re-running the code (memoized).
 
 ```tut:book
@@ -67,7 +67,7 @@ z // first access
 z // second access
 ```
 
-### Eval's models of evaluation
+### Eval's Models of Evaluation
 
 `Eval` has three subtypes: `Now`, `Later`, and `Always`.
 We construct these with three constructor methods,
@@ -137,11 +137,11 @@ z.value // second access
 The three behaviours are summarized below:
 
 -----------------------------------------------------------------------
-                   Eager                     Lazy
+Scala              Cats                      Properties
 ------------------ ------------------------- --------------------------
-Memoized           `val`, `Now`              `lazy val`, `Later`
-
-Not memoized       N/A                       `def`, `Always`
+`val`              `Now`                     eager, memoized
+`lazy val`         `Later`                   lazy, memoized
+`def`              `Always`                  lazy, not memoized
 ------------------ ------------------------- --------------------------
 
 ### Eval as a Monad
@@ -159,8 +159,10 @@ val greeting = Eval.
 greeting.value
 ```
 
-Note that, while the semantics of the originating `Eval` instances are maintained,
-mapping functions are always called lazily on demand (`def` semantics):
+Note that, while the semantics of
+the originating `Eval` instances are maintained,
+mapping functions are always
+called lazily on demand (`def` semantics):
 
 ```tut:book
 val ans = for {
@@ -175,8 +177,9 @@ ans.value // first access
 ans.value // second access
 ```
 
-We can use `Eval's` `memoize` method to memoize a chain of computations.
-Calculations before the call to `memoize` are cached,
+`Eval` has a `memoize` method that
+allows us to memoize a chain of computations.
+The result of the chain up to the call to `memoize` is cached,
 whereas calculations after the call retain their original semantics:
 
 ```tut:book
