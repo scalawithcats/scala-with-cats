@@ -1,4 +1,4 @@
-## Example: *Eq*
+## Example: Eq
 
 We will finish off this chapter by looking at another useful type class:
 [`cats.Eq`][cats.kernel.Eq].
@@ -44,7 +44,7 @@ provided there is an instance `Eq[A]` in scope:
  - `===` compares two objects for equality;
  - `=!=` compares two objects for inequality.
 
-### Comparing *Ints*
+### Comparing Ints
 
 Let's look at a few examples. First we import the type class:
 
@@ -93,7 +93,7 @@ Again, comparing values of different types causes a compiler error:
 123 === "123"
 ```
 
-### Comparing *Options*
+### Comparing Options
 
 Now for a more interesting example---`Option[Int]`.
 To compare values of type `Option[Int]`

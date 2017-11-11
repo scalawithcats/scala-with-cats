@@ -1,4 +1,4 @@
-## Exercise: *Printable* Library
+## Exercise: Printable Library
 
 Scala provides a `toString` method
 to let us convert any value to a `String`.

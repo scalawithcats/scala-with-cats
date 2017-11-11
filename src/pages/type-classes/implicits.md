@@ -215,7 +215,7 @@ a combination that summons a type class instance
 of the correct overall type.
 
 <div class="callout callout-warning">
-*Implicit conversions*
+*Implicit Conversions*
 
 When you create a type class instance constructor
 using an `implicit def`,
