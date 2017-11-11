@@ -6,8 +6,9 @@ Our implementation gives us a lot of flexibility and code reuse.
 We are not tied to the data type we "count",
 nor to the data type that maps machine IDs to counters.
 
-The focus in this case study has been on using the tools that Scala provides,
-and not on exploring CRDTs.
+The focus in this exercise has been
+on using the tools that Scala provides,
+not on exploring CRDTs.
 There are many other CRDTs,
 some of which operate in a similar manner to the GCounter,
 and some of which have very different implementations.

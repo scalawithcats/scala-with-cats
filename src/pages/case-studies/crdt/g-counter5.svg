@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1761px" height="660px" viewBox="0 0 1761 660" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->
+    <title>g-counter5</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="g-counter5">
+            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1761" height="660"></rect>
+            <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="981" y="422" width="196" height="196" rx="8"></rect>
+            <text id="A:4-B:2" font-family="FiraMono-Regular, Fira Mono" font-size="60" font-weight="normal" fill="#000000">
+                <tspan x="626" y="507">A:4</tspan>
+                <tspan x="626" y="579">B:2</tspan>
+            </text>
+            <text id="A:4-B:2" font-family="FiraMono-Regular, Fira Mono" font-size="60" font-weight="normal" fill="#000000">
+                <tspan x="1025" y="506">A:4</tspan>
+                <tspan x="1025" y="578">B:2</tspan>
+            </text>
+            <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="582" y="422" width="196" height="196" rx="8"></rect>
+            <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(885.401085, 374.401085) rotate(-315.000000) translate(-885.401085, -374.401085) " points="777.755655 354.691946 953.046515 354.401085 953.046515 334.401085 993.046515 373.898852 953.046515 414.401085 953.046515 394.401085 777.755655 394.691946"></polygon>
+            <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(878.401085, 374.401085) rotate(-225.000000) translate(-878.401085, -374.401085) " points="770.755655 354.691946 946.046515 354.401085 946.046515 334.401085 986.046515 373.898852 946.046515 414.401085 946.046515 394.401085 770.755655 394.691946"></polygon>
+            <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="981" y="122" width="196" height="196" rx="8"></rect>
+            <text id="A:4-B:2" font-family="FiraMono-Regular, Fira Mono" font-size="60" font-weight="normal" fill="#000000">
+                <tspan x="626" y="206">A:4</tspan>
+                <tspan x="626" y="278">B:2</tspan>
+            </text>
+            <text id="A:3-B:2" font-family="FiraMono-Regular, Fira Mono" font-size="60" font-weight="normal" fill="#000000">
+                <tspan x="1025" y="206">A:3</tspan>
+                <tspan x="1025" y="278">B:2</tspan>
+            </text>
+            <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="582" y="122" width="196" height="196" rx="8"></rect>
+            <text id="Machine-B" font-family="Helvetica" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="981.283203" y="70">Machine B</tspan>
+            </text>
+            <text id="Machine-A" font-family="Helvetica" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="583.431641" y="70">Machine A</tspan>
+            </text>
+            <text id="Merge,-take-max" font-family="Helvetica" font-size="36" font-weight="normal" fill="#000000">
+                <tspan x="747.449219" y="382">Merge, take max</tspan>
+            </text>
+            <text id="Correct-result!" font-family="Helvetica" font-size="36" font-weight="normal" fill="#000000">
+                <tspan x="1329.97266" y="529">Correct result!</tspan>
+            </text>
+            <g id="Group" transform="translate(1274.447222, 512.961941) rotate(-315.000000) translate(-1274.447222, -512.961941) translate(1255.947222, 475.461941)" fill="#417505">
+                <rect id="Rectangle" x="-2.27373675e-13" y="53.7609307" width="36.1162697" height="20.6482323"></rect>
+                <rect id="Rectangle" transform="translate(27.528698, 37.583708) rotate(-90.000000) translate(-27.528698, -37.583708) " x="-9.34314575" y="28.3657467" width="73.7436867" height="18.4359217"></rect>
+            </g>
+            <polygon id="Path-1-Copy-2" fill="#F6A623" points="326 200.290861 501.290861 200 501.290861 180 541.290861 219.497767 501.290861 260 501.290861 240 326 240.290861"></polygon>
+            <text id="Incoming-request" font-family="Helvetica" font-size="36" font-weight="normal" fill="#000000">
+                <tspan x="211.423828" y="181">Incoming request</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

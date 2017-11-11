@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1761px" height="360px" viewBox="0 0 1761 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->
+    <title>g-counter4</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <text id="text-1" font-family="FiraMono-Regular, Fira Mono" font-size="60" font-weight="normal" fill="#000000">
+            <tspan x="625" y="207">A:4</tspan>
+            <tspan x="625" y="279">B:2</tspan>
+        </text>
+        <filter x="-1.9%" y="-1.4%" width="103.7%" height="102.8%" filterUnits="objectBoundingBox" id="filter-2">
+            <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+            <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+        <filter x="-1.9%" y="-1.4%" width="103.7%" height="102.8%" filterUnits="objectBoundingBox" id="filter-3">
+            <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+            <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+        <text id="text-4" font-family="FiraMono-Regular, Fira Mono" font-size="60" font-weight="normal" fill="#000000">
+            <tspan x="1024" y="207">A:3</tspan>
+            <tspan x="1024" y="279">B:2</tspan>
+        </text>
+        <filter x="-1.9%" y="-1.4%" width="103.7%" height="102.8%" filterUnits="objectBoundingBox" id="filter-5">
+            <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+            <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+        <filter x="-1.9%" y="-1.4%" width="103.7%" height="102.8%" filterUnits="objectBoundingBox" id="filter-6">
+            <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+            <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="g-counter4">
+            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1761" height="360"></rect>
+            <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="980" y="123" width="196" height="196" rx="8"></rect>
+            <g id="A:4-B:2" fill-opacity="1" fill="#000000">
+                <use filter="url(#filter-2)" xlink:href="#text-1"></use>
+                <use filter="url(#filter-3)" xlink:href="#text-1"></use>
+            </g>
+            <g id="A:3-B:2" fill-opacity="1" fill="#000000">
+                <use filter="url(#filter-5)" xlink:href="#text-4"></use>
+                <use filter="url(#filter-6)" xlink:href="#text-4"></use>
+            </g>
+            <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="581" y="123" width="196" height="196" rx="8"></rect>
+            <text id="Machine-B" font-family="Helvetica" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="980.283203" y="71">Machine B</tspan>
+            </text>
+            <text id="Machine-A" font-family="Helvetica" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="582.431641" y="71">Machine A</tspan>
+            </text>
+            <polygon id="Path-1-Copy-2" fill="#F6A623" points="326 201.290861 501.290861 201 501.290861 181 541.290861 220.497767 501.290861 261 501.290861 241 326 241.290861"></polygon>
+            <text id="Incoming-request" font-family="Helvetica" font-size="36" font-weight="normal" fill="#000000">
+                <tspan x="211.423828" y="182">Incoming request</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

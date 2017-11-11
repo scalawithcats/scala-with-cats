@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1761px" height="360px" viewBox="0 0 1761 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->
+    <title>simple-counter4</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="simple-counter4">
+            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1761" height="360"></rect>
+            <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="980" y="123" width="196" height="196" rx="8"></rect>
+            <text id="6" font-family="FiraMono-Regular, Fira Mono" font-size="80" font-weight="normal" fill="#000000">
+                <tspan x="655" y="248">6</tspan>
+            </text>
+            <text id="5" font-family="FiraMono-Regular, Fira Mono" font-size="80" font-weight="normal" fill="#000000">
+                <tspan x="1054" y="248">5</tspan>
+            </text>
+            <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="581" y="123" width="196" height="196" rx="8"></rect>
+            <text id="Machine-B" font-family="Helvetica" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="980.283203" y="71">Machine B</tspan>
+            </text>
+            <text id="Machine-A" font-family="Helvetica" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="582.431641" y="71">Machine A</tspan>
+            </text>
+            <polygon id="Path-1-Copy-2" fill="#F6A623" points="326 201.290861 501.290861 201 501.290861 181 541.290861 220.497767 501.290861 261 501.290861 241 326 241.290861"></polygon>
+            <text id="Incoming-request" font-family="Helvetica" font-size="36" font-weight="normal" fill="#000000">
+                <tspan x="211.423828" y="182">Incoming request</tspan>
+            </text>
+            <text id="Incoming-request" font-family="Helvetica" font-size="36" font-weight="normal" fill="#000000">
+                <tspan x="211.423828" y="182">Incoming request</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

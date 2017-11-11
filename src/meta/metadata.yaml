@@ -12,7 +12,7 @@ filenameStem: "scala-with-cats"
 # Used by Grunt to create a ZIP of source code:
 exercisesRepo: null # "git@github.com:underscoreio/advanced-scala-code.git"
 tocDepth: 3
-copyright: "2014-16"
+copyright: "2014-17"
 # Enable pandoc-crossref (must be installed on user's computer)
 # There's no distinction here between section and chapter prefixes.
 # We disable all prefixes for consistency and write them by hand:
@@ -97,12 +97,12 @@ pages:
   - case-studies/validation/kleisli.md
   - case-studies/validation/conclusions.md
 
-  # - case-studies/crdt/index.md
-  # - case-studies/crdt/eventual-consistency.md
-  # - case-studies/crdt/g-counter.md
-  # - case-studies/crdt/generalisation.md
-  # - case-studies/crdt/abstraction.md
-  # - case-studies/crdt/summary.md
+  - case-studies/crdt/index.md
+  - case-studies/crdt/eventual-consistency.md
+  - case-studies/crdt/g-counter.md
+  - case-studies/crdt/generalisation.md
+  - case-studies/crdt/abstraction.md
+  - case-studies/crdt/summary.md
 
   # - case-studies/parser/index.md
   # - case-studies/parser/intro.md

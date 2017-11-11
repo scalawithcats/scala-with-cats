@@ -177,7 +177,7 @@ case class Cat(
   favoriteFoods: List[String]
 )
 
-val tupleToCat: ((String, Int, List[String])) => Cat =
+val tupleToCat: (String, Int, List[String]) => Cat =
   Cat.apply _
 
 val catToTuple: Cat => (String, Int, List[String]) =

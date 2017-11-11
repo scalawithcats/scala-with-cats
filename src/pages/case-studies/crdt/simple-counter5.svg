@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1761px" height="660px" viewBox="0 0 1761 660" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->
+    <title>simple-counter5</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="simple-counter5">
+            <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1761" height="660"></rect>
+            <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="981" y="422" width="196" height="196" rx="8"></rect>
+            <text id="11" font-family="FiraMono-Regular, Fira Mono" font-size="80" font-weight="normal" fill="#000000">
+                <tspan x="632" y="548">11</tspan>
+            </text>
+            <text id="11" font-family="FiraMono-Regular, Fira Mono" font-size="80" font-weight="normal" fill="#000000">
+                <tspan x="1031" y="547">11</tspan>
+            </text>
+            <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="582" y="422" width="196" height="196" rx="8"></rect>
+            <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(885.401085, 374.401085) rotate(-315.000000) translate(-885.401085, -374.401085) " points="777.755655 354.691946 953.046515 354.401085 953.046515 334.401085 993.046515 373.898852 953.046515 414.401085 953.046515 394.401085 777.755655 394.691946"></polygon>
+            <polygon id="Path-1-Copy-2" fill="#F6A623" transform="translate(878.401085, 374.401085) rotate(-225.000000) translate(-878.401085, -374.401085) " points="770.755655 354.691946 946.046515 354.401085 946.046515 334.401085 986.046515 373.898852 946.046515 414.401085 946.046515 394.401085 770.755655 394.691946"></polygon>
+            <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="981" y="122" width="196" height="196" rx="8"></rect>
+            <text id="6" font-family="FiraMono-Regular, Fira Mono" font-size="80" font-weight="normal" fill="#000000">
+                <tspan x="656" y="247">6</tspan>
+            </text>
+            <text id="5" font-family="FiraMono-Regular, Fira Mono" font-size="80" font-weight="normal" fill="#000000">
+                <tspan x="1055" y="247">5</tspan>
+            </text>
+            <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="582" y="122" width="196" height="196" rx="8"></rect>
+            <text id="Machine-B" font-family="Helvetica" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="981.283203" y="70">Machine B</tspan>
+            </text>
+            <text id="Machine-A" font-family="Helvetica" font-size="42" font-weight="normal" fill="#000000">
+                <tspan x="583.431641" y="70">Machine A</tspan>
+            </text>
+            <text id="Add-counters" font-family="Helvetica" font-size="36" font-weight="normal" fill="#000000">
+                <tspan x="775.433594" y="382">Add counters</tspan>
+            </text>
+            <text id="Incorrect-result!" font-family="Helvetica" font-size="36" font-weight="normal" fill="#000000">
+                <tspan x="1318.95996" y="529">Incorrect result!</tspan>
+            </text>
+            <g id="Group" transform="translate(1272.679455, 519.679455) rotate(-315.000000) translate(-1272.679455, -519.679455) translate(1235.679455, 482.179455)" fill="#FF0000">
+                <rect id="Rectangle" x="0" y="26.5477272" width="73.7436867" height="20.6482323"></rect>
+                <rect id="Rectangle" transform="translate(36.871843, 37.240562) rotate(-90.000000) translate(-36.871843, -37.240562) " x="0" y="28.0226009" width="73.7436867" height="18.4359217"></rect>
+            </g>
+            <polygon id="Path-1-Copy-2" fill="#F6A623" points="326 201.290861 501.290861 201 501.290861 181 541.290861 220.497767 501.290861 261 501.290861 241 326 241.290861"></polygon>
+            <text id="Incoming-request" font-family="Helvetica" font-size="36" font-weight="normal" fill="#000000">
+                <tspan x="211.423828" y="182">Incoming request</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

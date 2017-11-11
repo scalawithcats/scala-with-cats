@@ -5,140 +5,114 @@ Then we'll attempt to generalise properties
 to see if we can find a general pattern.
 
 The data structure we will look at is called a *GCounter*.
-It is a distributed *increment-only* counter.
-It can be used, for example,
-for counting the number of visitors to a site
+It is a distributed *increment-only* counter
+that can be used, for example,
+to count the number of visitors to a web site
 where requests are served by many web servers.
 
 ### Simple Counters
 
 To see why a straightforward counter won't work,
-imagine we have two servers storing a count of visitors.
+imagine we have two servers storing a simple count of visitors.
 Let's call the machines `A` and `B`.
-Each machine is storing just an integer counter
-and the counters all start at zero.
+Each machine is storing an integer counter
+and the counters all start at zero
+as shown in Figure [@fig:crdt:simple-counter1].
 
-```
-A: 0
-B: 0
-```
+![Simple counters: initial state](src/pages/case-studies/crdt/simple-counter1.pdf+svg){#fig:crdt:simple-counter1}
 
-`A` serves three visitors, and `B` two.
+Now imagine we receive some web traffic.
+Our load balancer distributes five incoming requests
+to `A` and `B`, `A` serving three visitors and `B` two.
+The machines have inconsistent views of the system state
+that they need to *reconcile* to achieve consistency.
+One reconciliation strategy with simple counters
+is to exchange counts and add them
+as shown in Figure [@fig:crdt:simple-counter3].
 
-```
-A: 3
-B: 2
-```
+![Simple counters: first round of requests and reconciliation](src/pages/case-studies/crdt/simple-counter3.pdf+svg){#fig:crdt:simple-counter3}
 
-Now the machines want to merge their counters
-so they each have an up-to-date view of the total number of visitors.
-At this point we know the machines should add together their counters,
-because we know the history of their interactions.
-However, there is nothing in the data the machines store that records this.
-Nonetheless, let's use addition as our strategy for merging counters and see what happens.
+So far so good, but things will start to fall apart shortly.
+Suppose `A` serves a single visitor.
+The machines attempt to reconcile state again using addition
+leading to the answer shown in Figure [@fig:crdt:simple-counter5].
 
-```
-A: 5
-B: 5
-```
-
-Now `A` serves a single visitor.
-
-```
-A: 6
-B: 5
-```
-
-The machines attempt to merge counters again.
-If they use addition as the merging algorithm they will end up with
-
-```
-A: 11
-B: 11
-```
+![Simple counters: second round of requests and (incorrect) reconciliation](src/pages/case-studies/crdt/simple-counter5.pdf+svg){#fig:crdt:simple-counter5}
 
 This is clearly wrong!
 There have only been six visitors in total.
-Do we need to store the complete history of interactions
-to be able to compute the correct value?
-It turns out we do not, so let's look at the GCounter now
-to see how it solves this problem in an elegant way.
+The problem is that simple counters
+don't give us enough information about
+the history of interactions between the machines.
+Fortunately we don't need to store the *complete* history
+to get the correct answer---just a summary of it.
+Let's look at the GCounter see how it solves this problem.
 
 ### GCounters
 
 The first clever idea in the GCounter is
 to have each machine storing a *separate* counter
-for every machine (including itself) that it knows about.
+for every machine it knows about (including itself).
 In the previous example we had two machines, `A` and `B`.
-In this situation both machines would store a counter for `A`
-and a counter for `B`.
+In this situation both machines
+would store a counter for `A` and a counter for `B`
+as shown in Figure [@fig:crdt:g-counter1].
 
-```
-Machine A   Machine B
-A: 0        A: 0
-B: 0        B: 0
-```
+![GCounter: initial state](src/pages/case-studies/crdt/g-counter1.pdf+svg){#fig:crdt:g-counter1}
 
-The rule with these counters is that
-a given machine is only allowed to increment it's own counter.
-If `A` serves 3 visitors and `B` serves two visitors the counters will look like
+The rule with GCounters is that
+a given machine is only allowed to increment its own counter.
+If `A` serves three visitors and `B` serves two visitors
+the counters look as shown in Figure [@fig:crdt:g-counter2].
 
-```
-Machine A   Machine B
-A: 3        A: 0
-B: 0        B: 2
-```
+![GCounter: first round of web requests](src/pages/case-studies/crdt/g-counter2.pdf+svg){#fig:crdt:g-counter2}
 
-Now when two machines merge their counters
-the rule is to take the largest value stored for a given machine.
-Given the state above, when `A` and `B` merge counters the result will be
+When two machines reconcile their counters
+the rule is to take the largest value stored for each machine.
+In our example, the result of the first merge
+will be as shown in Figure [@fig:crdt:g-counter3].
 
-```
-Machine A   Machine B
-A: 3        A: 3
-B: 2        B: 2
-```
+![GCounter: first reconciliation](src/pages/case-studies/crdt/g-counter3.pdf+svg){#fig:crdt:g-counter3}
 
-as `3` is the largest value stored for the `A` counter,
-and `2` is the largest value stored for the `B` counter.
-The combination of only allowing machines to increment their counter
-and choosing the maximum value on merging
-means we get the correct answer
+Subsequent incoming web requests are handled using the
+increment-own-counter rule and
+subsequent merges are handled using the
+take-maximum-value rule,
+producing the same correct values for each machine
+as shown in Figure [@fig:crdt:g-counter5].
+
+![GCounter: second reconciliation](src/pages/case-studies/crdt/g-counter5.pdf+svg){#fig:crdt:g-counter5}
+
+GCounters allow each machine to keep
+an accurate account of the state of the whole system
 without storing the complete history of interactions.
-
-If a machine wants to calculate the current value of the counter
-(given its current knowledge of other machines' state)
-it simply sums up all the per-machine counter.
-Given the state
-
-```
-Machine A   Machine B
-A: 3        A: 3
-B: 2        B: 2
-```
-
-each machine would report the current values as `3 + 2 = 5`.
+If a machine wants to calculate
+the total traffic for the whole web site.
+it simply sums up all the per-machine counters.
+The result is accurate or near-accurate
+depending on how recently we performed a reconciliation.
+Over time, regardless of network outages,
+the system will always converge on a consistent state.
 
 ### Exercise: GCounter Implementation
 
-We can implement a GCounter with the interface
+We can implement a GCounter with the following interface,
+where we represent machine IDs as `Strings`.
 
 ```tut:book:silent
 final case class GCounter(counters: Map[String, Int]) {
   def increment(machine: String, amount: Int) =
     ???
 
-  def get: Int =
+  def merge(that: GCounter): GCounter =
     ???
 
-  def merge(that: GCounter): GCounter =
+  def total: Int =
     ???
 }
 ```
 
-where we represent machine IDs as `Strings`.
-
-Finish the implementation.
+Finish the implementation!
 
 <div class="solution">
 Hopefully the description above was clear enough that
@@ -146,18 +120,19 @@ you can get to an implementation like the below.
 
 ```tut:book:silent
 final case class GCounter(counters: Map[String, Int]) {
-  def increment(machine: String, amount: Int) =
-    GCounter(counters + (machine -> (amount + counters.getOrElse(machine, 0))))
-
-  def get: Int =
-    counters.values.sum
+  def increment(machine: String, amount: Int) = {
+    val value = amount + counters.getOrElse(machine, 0)
+    GCounter(counters + (machine -> value))
+  }
 
   def merge(that: GCounter): GCounter =
-    GCounter(that.counters ++ {
-      for((k, v) <- counters) yield {
-        k -> (v max that.counters.getOrElse(k,0))
-      }
+    GCounter(that.counters ++ this.counters.map {
+      case (k, v) =>
+        k -> (v max that.counters.getOrElse(k, 0))
     })
+
+  def total: Int =
+    counters.values.sum
 }
 ```
 </div>
