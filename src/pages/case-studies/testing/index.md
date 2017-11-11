@@ -1,6 +1,6 @@
 # Case Study: Testing Asynchronous Code {#sec:case-studies:testing}
 
-We'll start with a simple case study:
+We'll start with a straightforward case study:
 how to simplify unit tests for asynchronous code
 by making them synchronous.
 
@@ -123,7 +123,7 @@ package cats
 type Id[A] = A
 ```
 
-`Id` allows us to abstract over them in `UptimeClient`.
+`Id` allows us to abstract over the return types in `UptimeClient`.
 Implement this now:
 
 - write a trait definition for `UptimeClient`
@@ -133,7 +133,7 @@ Implement this now:
   `RealUptimeClient` and `TestUptimeClient`,
   that bind `F` to `Future` and `Id` respectively;
 
-- write out the method header for `getUptime`
+- write out the method signature for `getUptime`
   in each case to verify that it compiles.
 
 <div class="solution">
@@ -199,9 +199,9 @@ Let's turn our attention to `UptimeService`.
 We need to rewrite it to abstract over
 the two types of `UptimeClient`.
 We'll do this in two stages:
-first we'll get the class and method headers compiling,
-then we'll turn our attention to the method bodies.
-Starting with the method headers:
+first we'll rewrite the class and method signatures,
+then the method bodies.
+Starting with the method signatures:
 
 - comment out the body of `getTotalUptime`
   (replace it with `???` to make everything compile);
@@ -332,10 +332,9 @@ def testTotalUptime() = {
 testTotalUptime()
 ```
 
-## Conclusions
+## Summary
 
-This case study provides a nice
-introduction to how Cats can help us
+This case study provides an example of how Cats can help us
 abstract over different computational scenarios.
 We used the `Applicative` type class
 to abstract over asynchronous and synchronous code.
