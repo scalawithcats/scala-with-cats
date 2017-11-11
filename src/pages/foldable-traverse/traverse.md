@@ -1,4 +1,4 @@
-## *Traverse* {#sec:traverse}
+## Traverse {#sec:traverse}
 
 `foldLeft` and `foldRight` are flexible iteration methods
 but they require us to do a lot of work
@@ -59,7 +59,7 @@ and combine the results into a list.
 This sounds simple, but the code is fairly unwieldy
 because of the need to create and combine `Futures` at every iteration.
 We can improve on things greatly using `Future.traverse`,
-which is tailor made for this pattern:
+which is tailor-made for this pattern:
 
 ```tut:book:silent
 val allUptimes: Future[List[Int]] =
@@ -75,17 +75,15 @@ If we ignore distractions like `CanBuildFrom` and `ExecutionContext`,
 the implementation of `Future.traverse` in the standard library looks like this:
 
 ```scala
-object Future {
-  def traverse[A, B](values: List[A])
-      (func: A => Future[B]): Future[List[B]] =
-    values.foldLeft(Future(List.empty[A])) { (accum, host) =>
-      val item = func(host)
-      for {
-        accum <- accum
-        item  <- item
-      } yield accum :+ item
-    }
-}
+def traverse[A, B](values: List[A])
+    (func: A => Future[B]): Future[List[B]] =
+  values.foldLeft(Future(List.empty[A])) { (accum, host) =>
+    val item = func(host)
+    for {
+      accum <- accum
+      item  <- item
+    } yield accum :+ item
+  }
 ```
 
 This is essentially the same as our example code above.
@@ -124,10 +122,10 @@ but the real `Future.traverse` and `Future.sequence`
 work with any standard Scala collection.
 
 Cats' `Traverse` type class generalises these patterns
-to work with any type of `Applicative` effect:
+to work with any type of `Applicative`:
 `Future`, `Option`, `Validated`, and so on.
 We'll approach `Traverse` in the next sections in two steps:
-first we'll generalise over the effect type,
+first we'll generalise over the `Applicative`,
 then we'll generalise over the sequence type.
 We'll end up with an extremely valuable tool that trivialises
 many operations involving sequences and other data types.
@@ -272,7 +270,7 @@ The arguments to `listTraverse` are of types `List[Int]` and `Int => Option[Int]
 so the return type is `Option[List[Int]]`.
 Again, `Option` is a monad,
 so the semigroupal `combine` function follows from `flatMap`.
-The semantics are therefore fail fast error handling:
+The semantics are therefore fail-fast error handling:
 if all inputs are even, we get a list of outputs.
 Otherwise we get `None`:
 

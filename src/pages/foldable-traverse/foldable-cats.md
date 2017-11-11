@@ -1,8 +1,8 @@
-### *Foldable* in Cats
+### Foldable in Cats
 
 Cats' `Foldable` abstracts `foldLeft` and `foldRight` into a type class.
 Instances of `Foldable` define these two methods
-and inherit a host of derived methods for free.
+and inherit a host of derived methods.
 Cats provides out-of-the-box instances of `Foldable`
 for a handful of Scala data types:
 `List`, `Vector`, `Stream`, and `Option`.
@@ -24,7 +24,7 @@ Foldable[List].foldLeft(ints, 0)(_ + _)
 
 Other sequences like `Vector` and `Stream` work in the same way.
 Here is an example using `Option`,
-which is treated like a sequence of 0 or 1 elements:
+which is treated like a sequence of zero or one elements:
 
 ```tut:book:silent
 import cats.instances.option._
@@ -102,7 +102,7 @@ provide stack safe implementations of `foldRight`:
 
 We've called out `Stream` because it is an exception to this rule.
 Whatever data type we're using, though,
-it's useful to know that `Eval` has our backs.
+it's useful to know that `Eval` has our back.
 </div>
 
 #### Folding with Monoids
@@ -205,6 +205,6 @@ We typically don't need to worry about this distinction. It's a feature!
 We call the method we want and the compiler uses a `Foldable` when needed
 to ensure our code works as expected.
 If we need a stack-safe implementation of `foldRight`,
-simply using `Eval` as the accumulator is enough to
+using `Eval` as the accumulator is enough to
 force the compiler to select the method from Cats.
 </div>

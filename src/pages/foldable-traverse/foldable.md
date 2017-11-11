@@ -1,4 +1,4 @@
-## *Foldable* {#sec:foldable}
+## Foldable {#sec:foldable}
 
 The `Foldable` type class captures the `foldLeft` and `foldRight` methods
 we're used to in sequences like `Lists`, `Vectors`, and `Streams`.
@@ -8,7 +8,7 @@ We can also invent new sequences and plug them into our code.
 
 ### Folds and Folding
 
-Let's start with a quick recap on the general concept of folding.
+Let's start with a quick recap of the general concept of folding.
 We supply an *accumulator* value and a *binary function*
 to combine it with each item in the sequence:
 
@@ -23,12 +23,11 @@ show(Nil)
 show(List(1, 2, 3))
 ```
 
-The view provided by `Foldable` is recursive.
-Our binary function is called repeatedly
-for each item in the sequence,
-result from each call becoming the accumulator for the next.
+The `foldLeft` method works recursively down the sequence.
+Our binary function is called repeatedly for each item,
+the result of each call becoming the accumulator for the next.
 When we reach the end of the sequence,
-the final accumulator becomes our result.
+the final accumulator becomes our final result.
 
 Depending on the operation we're performing,
 the order in which we fold may be important.
@@ -44,16 +43,16 @@ Figure [@fig:foldable-traverse:fold] illustrates each direction.
 `foldLeft` and `foldRight` are equivalent
 if our binary operation is commutative.
 For example, we can sum a `List[Int]` by folding in either direction,
-using `0` as our accumulator and `+` as our operation:
+using `0` as our accumulator and addition as our operation:
 
 ```tut:book
 List(1, 2, 3).foldLeft(0)(_ + _)
 List(1, 2, 3).foldRight(0)(_ + _)
 ```
 
-If provide a non-commutative operator
+If we provide a non-commutative operator
 the order of evaluation makes a difference.
-For example, if we fold using `-`,
+For example, if we fold using subtraction,
 we get different results in each direction:
 
 ```tut:book
@@ -89,7 +88,7 @@ List(1, 2, 3).foldRight(Nil)(_ :: _)
 ```
 </div>
 
-### Exercise: Scaf-fold-ing other methods
+### Exercise: Scaf-fold-ing Other Methods
 
 `foldLeft` and `foldRight` are very general methods.
 We can use them to implement many of the other

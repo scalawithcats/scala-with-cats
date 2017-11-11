@@ -1,7 +1,7 @@
-### *Traverse* in Cats
+### Traverse in Cats
 
 Our `listTraverse` and `listSequence` methods
-work with any type of `Applicative` effect,
+work with any type of `Applicative`,
 but they only work with one type of sequence: `List`.
 We can generalise over different sequence types using a type class,
 which brings us to Cats' `Traverse`.

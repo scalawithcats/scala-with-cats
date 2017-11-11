@@ -28,4 +28,4 @@ We can reduce `folds` of many lines down to a single `foo.traverse`.
 we've finished all of the theory in this book.
 There's plenty more to come, though,
 as we put everything we've learned into practice
-in a series of in-depth case studies in part 2!
+in a series of in-depth case studies in Part II!
