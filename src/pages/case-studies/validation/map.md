@@ -44,7 +44,7 @@ val parseInt: Check[List[String], String, Int] =
 However, splitting our input and output types
 raises another issue.
 Up until now we have operated under the assumption
-that a `Check` always returns its input when succesful.
+that a `Check` always returns its input when successful.
 We used this in `and` and `or`
 to ignore the output of the left and right rules
 and simply return the original input on success:
@@ -89,9 +89,9 @@ Making this change gives us the following code:
 ```tut:book:silent
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.semigroup._ // |+| syntax
-import cats.syntax.apply._ // |@| syntax
-import cats.data.Validated._   // Valid and Invalid
+import cats.syntax.semigroup._ // for |+|
+import cats.syntax.apply._     // for |@|
+import cats.data.Validated._   // for Valid and Invalid
 ```
 
 ```tut:book:silent
@@ -141,8 +141,7 @@ object wrapper {
 We'll use `Check` to represent
 a structure we build from a `Predicate`
 that also allows transformation of its input.
-Implement `Check` with the following interface.
-using the same ADT strategy we used for `Predicate`:
+Implement `Check` with the following interface:
 
 ```scala
 sealed trait Check[E, A, B] {
@@ -201,7 +200,7 @@ The method is simple enough to declare
 but it's not so obvious what it means
 or how we should implement `apply`.
 The general shape of `flatMap` is
-shown in Figure [@fig:validation:generic-flatmap]:
+shown in Figure [@fig:validation:generic-flatmap].
 
 ![Type chart for flatMap](src/pages/monads/generic-flatmap.pdf+svg){#fig:validation:generic-flatmap}
 
@@ -211,11 +210,8 @@ How do we relate `F` in the figure to `Check` in our code?
 To unify the types we need to fix two of the type parameters.
 The idiomatic choices are the error type `E` and the input type `A`.
 This gives us the relationships
-shown in Figure [@fig:validation:check-flatmap]:
-
-![Type chart for flatMap applied to Check](src/pages/case-studies/validation/flatmap.pdf+svg){#fig:validation:check-flatmap}
-
-In words, the semantics of applying a `FlatMap` are:
+shown in Figure [@fig:validation:check-flatmap].
+In other words, the semantics of applying a `FlatMap` are:
 
 - given an input of type `A`, convert to `F[B]`;
 
@@ -224,6 +220,8 @@ In words, the semantics of applying a `FlatMap` are:
 - return to the *original* input of type `A`
   and apply it to the chosen check to generate
   the final result of type `F[C]`.
+
+![Type chart for flatMap applied to Check](src/pages/case-studies/validation/flatmap.pdf+svg){#fig:validation:check-flatmap}
 
 This is quite an odd method.
 We can implement it, but it is hard to find a use for it.
@@ -322,7 +320,7 @@ object wrapper {
 We now have two algebraic data types, `Predicate` and `Check`,
 and a host of combinators with their
 associated case class implementations.
-Check the following solution
+Look at the following solution
 for a complete definition of each ADT.
 
 <div class="solution">

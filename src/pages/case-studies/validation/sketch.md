@@ -14,7 +14,7 @@ Our first goal requires us to
 associate useful error messages with a check failure.
 The output of a check could be either the value being checked,
 if it passed the check, or some kind of error message.
-We can abstactly represent this as a value in a context,
+We can abstractly represent this as a value in a context,
 where the context is the possibility of an error message
 as shown in Figure [@fig:validation:result].
 

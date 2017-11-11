@@ -18,10 +18,7 @@ Imagine we have the following sequence of operations:
 
 - We then sequence some transformations on the monad using `flatMap`.
 
-We can illustrate this as shown in Figure [@sec:validation:kleisli]:
-
-![Sequencing monadic transforms](src/pages/case-studies/validation/kleisli.pdf+svg){#sec:validation:kleisli}
-
+We can illustrate this as shown in Figure [@sec:validation:kleisli].
 We can also write out this example using the monad API as follows:
 
 ```scala
@@ -31,6 +28,8 @@ val bToC: B => F[C] = ???
 def example[A, C](a: A): F[C] =
   aToB(a).flatMap(bToC)
 ```
+
+![Sequencing monadic transforms](src/pages/case-studies/validation/kleisli.pdf+svg){#sec:validation:kleisli}
 
 Recall that `Check` is, in the abstract,
 allowing us to compose functions of type `A => F[B]`.
@@ -53,14 +52,12 @@ The abstract concept of composing functions
 of type `A => F[B]` has a name: a *Kleisli*.
 
 Cats contains a data type [`cats.data.Kleisli`][cats.data.Kleisli]
-that wraps a function just `Check` does.
+that wraps a function just as `Check` does.
 `Kleisli` has all the methods of `Check` plus some additional ones.
 If `Kleisli` seems familiar to you, then congratulations.
 You've seen through its disguise and recognised it as another
-concept from earlier in the book.
-`Kleisli` is just another name for the `Reader` monad![^kleisli]
-
-[^kleisli]: `Kleisli` is in fact a generalisation of `Reader`. It is directly equivalent to the monad transformer variant of `Reader`, `ReaderT`. Alternatively `Reader` is a specialisation of `Kleisli` to the `Id` monad.
+concept from earlier in the book:
+`Kleisli` is just another name for `ReaderT`.
 
 Here is a simple example using `Kleisli`
 to transform an integer into a list of integers
@@ -142,7 +139,7 @@ sealed trait Predicate[E, A] {
 ```
 </div>
 
-Now rewrite our username and rmail validation example
+Now rewrite our username and email validation example
 in terms of `Kleisli` and `Predicate`.
 Here are few tips in case you get stuck:
 

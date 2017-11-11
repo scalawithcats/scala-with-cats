@@ -17,7 +17,7 @@ that allows for internationalization or standard error codes.
 We could attempt to build some kind of `ErrorMessage` type
 that holds all the information we can think of.
 However, we can't predict the user's requirements.
-Instead let's *let the user specify what they want*.
+Instead let's let the user specify what they want.
 We can do this by adding a second type parameter to `Check`:
 
 ```tut:book:silent
@@ -35,7 +35,7 @@ trait Check[E, A] {
 }
 ```
 
-If you think back to Essential Scala,
+As we said in [Essential Scala][link-essential-scala],
 there are two functional programming patterns
 that we should consider when defining a trait:
 
@@ -64,19 +64,17 @@ trait Check[E, A] {
 }
 ```
 
-You should very quickly run into a problem:
-what do you do when *both* checks fail?
+The problem is: what do you do when *both* checks fail?
 The correct thing to do is to return both errors,
 but we don't currently have any way to combine `Es`.
 We need a *type class* that abstracts over
 the concept of "accumulating" errors
 as shown in Figure [@fig:validation:error-semigroup]
-
-![Combining error messages](src/pages/case-studies/validation/error-semigroup.pdf+svg){#fig:validation:error-semigroup}
-
 What type class do we know that looks like this?
 What method or operator should we use
 to implement the `•` operation?
+
+![Combining error messages](src/pages/case-studies/validation/error-semigroup.pdf+svg){#fig:validation:error-semigroup}
 
 <div class="solution">
 We need a `Semigroup` for `E`.
@@ -347,7 +345,7 @@ Implement an `or` combinator to compliment `and`.
 <div class="solution">
 This reuses the same technique for `and`.
 We have to do a bit more work in the `apply` method.
-Note that it's ok to short-circuit in this case
+Note that it's OK to short-circuit in this case
 because the choice of rules
 is implicit in the semantics of "or".
 

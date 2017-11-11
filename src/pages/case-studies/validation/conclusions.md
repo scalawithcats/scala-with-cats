@@ -1,4 +1,4 @@
-## Conclusions
+## Summary
 
 This case study has been an exercise in
 removing rather than building abstractions.
@@ -7,6 +7,7 @@ Once we realised we were conflating two concepts,
 we separated out `Predicate`
 leaving us with something that could be implemented with `Kleisli`.
 
+<!--
 `Predicate` is very much like a stripped down version
 of the matchers found in testing libraries like ScalaTest and Specs2.
 One next step would be to develop
@@ -64,17 +65,15 @@ By doing so we could errors as a `List[List[Either[E, E]]]`,
 with the outer list representing disjunction,
 the inner list representing conjunction,
 and the `Either` representing negation.
+-->
 
-Finally, we made several design choices
-that reasonable people could disagree with.
+We made several design choices above
+that reasonable developers may disagree with.
 Should the method that converts a `Predicate` to a function
 really be called `run` instead of, say, `toFunction`?
 Should `Predicate` be a subtype of `Function` to begin with?
-The name `run` makes sense if
-you have experienced monad transformers and other similar abstractions,
-but is not clear if you don't have this experience.
-Many functional programmers come to prefer avoiding subtyping,
-as it plays poorly with implicit resolution and type inference,
+Many functional programmers prefer to avoid subtyping
+because it plays poorly with implicit resolution and type inference,
 but there could be an argument to use it here.
 As always the best decisions depend on the context
 in which the library will be used.
