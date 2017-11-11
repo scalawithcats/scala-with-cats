@@ -2,7 +2,7 @@
 
 In this section we explore our first type classes, **monoid** and **semigroup**.
 These allow us to add or combine values.
-There are instances for `Ints`, `Strings`, `Lists`, `Options`, and many, many more.
+There are instances for `Ints`, `Strings`, `Lists`, `Options`, and many more.
 Let's start by looking at a few simple types and operations
 to see what common principles we can extract.
 
@@ -81,7 +81,7 @@ Once again, concatenation is associative:
 
 Note that we used `++` above instead of the more usual `+`
 to suggest a parallel with sequences.
-We can do exactly the same with other types of sequence,
+We can do the same with other types of sequence,
 using concatenation as the binary operator
 and the empty sequence as our identity.
 
@@ -105,9 +105,6 @@ trait Monoid[A] {
   def empty: A
 }
 ```
-
-<div class="callout callout-warning">
-*Monoid laws*
 
 In addition to providing the `combine` and `empty` operations,
 monoids must formally obey several *laws*.
@@ -143,17 +140,17 @@ they can yield unpredictable results
 when used with the rest of Cats' machinery.
 Most of the time we can rely on the instances provided by Cats
 and assume the library authors know what they're doing.
-</div>
 
 ## Definition of a Semigroup
 
-A semigroup is simply the `combine` part of a monoid.
+A semigroup is just the `combine` part of a monoid.
 While many semigroups are also monoids,
 there are some data types for which we cannot define an `empty` element.
 For example, we have just seen that
 sequence concatenation and integer addition are monoids.
-However, if we restrict ourselves to non-empty sequences and positive integers,
-we lose access to an `empty` element.
+However, if we restrict ourselves
+to non-empty sequences and positive integers,
+we are no longer able to define a sensible `empty` element.
 Cats has a [`NonEmptyList`][cats.data.NonEmptyList] data type
 that has an implementation of `Semigroup` but no implementation of `Monoid`.
 

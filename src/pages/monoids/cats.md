@@ -1,10 +1,11 @@
 ## Monoids in Cats
 
-Now we've seen what a monoid is, let's look at their implementation in Cats.
+Now we've seen what monoids are,
+let's look at their implementation in Cats.
 Once again we'll look at the three main aspects of the implementation:
 the *type class*, the *instances*, and the *interface*.
 
-### The *Monoid* Type Class
+### The Monoid Type Class
 
 The monoid type class is `cats.kernel.Monoid`,
 which is aliased as [`cats.Monoid`][cats.kernel.Monoid].
@@ -38,12 +39,14 @@ are part of the main Cats project and
 are defined directly in the [`cats`][cats.package] package.
 </div>
 
-### Obtaining Instances
+### Monoid Instances {#sec:monoid-instances}
 
 `Monoid` follows the standard Cats pattern for the user interface:
-the companion object has an `apply` method that returns the type class instance.
-So if we wanted the monoid instance for `String`,
-and we have the correct implicits in scope, we can write the following:
+the companion object has an `apply` method
+that returns the type class instance for a particular type.
+For example, if we want the monoid instance for `String`,
+and we have the correct implicits in scope,
+we can write the following:
 
 ```tut:book:silent
 import cats.Monoid
@@ -73,10 +76,10 @@ import cats.Semigroup
 Semigroup[String].combine("Hi ", "there")
 ```
 
-### Default Instances
-
-The type class instances for `Monoid` are organised under `cats.instances`
-in the standard way described in [Chapter 1](#importing-default-instances).
+The type class instances for `Monoid`
+are organised under `cats.instances`
+in the standard way described
+in [Chapter 1](#importing-default-instances).
 For example, if we want to pull in instances for `Int`
 we import from [`cats.instances.int`][cats.instances.int]:
 
@@ -109,7 +112,7 @@ Monoid[Option[Int]].combine(a, b)
 Refer back to [Chapter 1](#importing-default-instances)
 for a more comprehensive list of imports.
 
-### *Monoid* Syntax {#sec:monoid-syntax}
+### Monoid Syntax {#sec:monoid-syntax}
 
 Cats provides syntax for the `combine` method
 in the form of the `|+|` operator.
