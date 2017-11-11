@@ -115,6 +115,8 @@ pages:
 
   - solutions.md
   - links.md
+
+  - parts/part4.md
 previewPages:
   - preview/prologue.md
 
