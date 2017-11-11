@@ -16,6 +16,11 @@ inconvenient to use in for comprehensions.
 We had to insert calls to `.right`
 in every generator clause:
 
+```tut:book:silent
+val either1: Either[String, Int] = Right(10)
+val either2: Either[String, Int] = Right(32)
+```
+
 ```tut:book
 for {
   a <- either1.right
