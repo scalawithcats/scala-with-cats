@@ -107,8 +107,8 @@
 [link-iterator-pattern]: https://www.cs.ox.ac.uk/jeremy.gibbons/publications/iterator.pdf
 [link-json]: http://json.org/
 [link-kind-projector]: https://github.com/non/kind-projector
-[link-mapreduce-monoid]: http://arxiv.org/abs/1304.7544
-[link-mapreduce]: http://research.google.com/archive/mapreduce.html
+[link-map-reduce-monoid]: http://arxiv.org/abs/1304.7544
+[link-map-reduce]: http://research.google.com/archive/map-reduce.html
 [link-monads-burritos]: http://blog.plover.com/prog/burritos.html
 [link-monocle]: http://julien-truffaut.github.io/Monocle/
 [link-parallel-collections]: http://docs.scala-lang.org/overviews/parallel-collections/overview.html

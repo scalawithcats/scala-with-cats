@@ -1,4 +1,4 @@
-# Case Study: Pygmy Hadoop {#map-reduce}
+# Case Study: Map-Reduce {#map-reduce}
 
 <!--
 TODO:
@@ -34,9 +34,9 @@ a simple-but-powerful parallel processing framework
 using `Monoids`, `Functors`, and a host of other goodies.
 
 If you have used Hadoop or otherwise worked in "big data"
-you will have heard of [MapReduce][link-mapreduce],
+you will have heard of [MapReduce][link-map-reduce],
 which is a programming model for doing parallel data processing
-across clusters tens or hundreds of machines (aka "nodes").
+across clusters of machines (aka "nodes").
 As the name suggests, the model is built around a *map* phase,
 which is the same `map` function we know
 from Scala and the `Functor` type class, and a *reduce* phase,
@@ -51,7 +51,7 @@ Recall the general signature for `map` is
 to apply a function `A => B` to a `F[A]`,
 returning a `F[B]`:
 
-![Type chart: functor map](src/pages/functors/generic-map.pdf+svg){#fig:mapreduce:functor-type-chart}
+![Type chart: functor map](src/pages/functors/generic-map.pdf+svg){#fig:map-reduce:functor-type-chart}
 
 `map` transforms each individual element in a sequence independently.
 We can easily parallelize `map` because
@@ -62,19 +62,21 @@ assuming we don't use side-effects not reflected in the types).
 
 What about `fold`?
 We can implement this step with an instance of `Foldable`.
-Not every functor also has an instance of foldable,
-but we can implement a map reduce system
+Not every functor also has an instance of foldable
+but we can implement a map-reduce system
 on top of any data type that has both of these type classes.
 Our reduction step becomes a `foldLeft`
 over the results of the distributed `map`.
 
-![Type chart: fold](src/pages/foldable-traverse/generic-foldleft.pdf+svg){#fig:mapreduce:foldleft-type-chart}
+![Type chart: fold](src/pages/foldable-traverse/generic-foldleft.pdf+svg){#fig:map-reduce:foldleft-type-chart}
 
-If you remember from our discussion of `Foldable`,
-then depending on the reduction operation we use,
-the order of combination can have effect on the final result.
-To remain correct we need to ensure
-our reduction operation is *associative*:
+By distributing the reduce step
+we lose control over the order of traversal.
+Our overall reduction may not be entirely left-to-right---we
+may reduce left-to-right across several subsequences
+and then combine the results.
+To ensure correctness we need
+a reduction operation that is *associative*:
 
 ```scala
 reduce(a1, reduce(a2, a3)) == reduce(reduce(a1, a2), a3)
@@ -82,14 +84,14 @@ reduce(a1, reduce(a2, a3)) == reduce(reduce(a1, a2), a3)
 
 If we have associativity,
 we can arbitrarily distribute work
-between our nodes provided we preserve the ordering
-on the sequence of elements we're processing.
+between our nodes provided the subsequences
+at every node stay in the same order as the initial dataset.
 
 Our fold operation requires us to seed the computation
 with an element of type `B`.
-Since our fold may be split
+Since fold may be split
 into an arbitrary number of parallel steps,
-the seed should not effect the result of the computation.
+the seed should not affect the result of the computation.
 This naturally requires the seed to be an *identity* element:
 
 ```scala
@@ -105,7 +107,7 @@ What does this pattern sound like?
 That's right, we've come full circle back to `Monoid`,
 the first type class we discussed in this book.
 We are not the first to recognise the importance of monoids.
-The [monoid design pattern for map-reduce jobs][link-mapreduce-monoid]
+The [monoid design pattern for map-reduce jobs][link-map-reduce-monoid]
 is at the core of recent big data systems
 such as Twitter's [Summingbird][link-summingbird].
 
@@ -113,18 +115,6 @@ In this project we're going to implement
 a very simple single-machine map-reduce.
 We'll start by implementing a method called `foldMap`
 to model the data-flow we need.
-
-<!--
-TODO: Remove this?
-
-We'll then parallelize `foldMap`
-and see how we can introduce error handling
-using monads, applicative functors,
-and a new tool called natural transformations.
-Finally we'll ground our discussion
-by looking at some of more interesting monoids
-that are applicable for processing large data sets.
--->
 
 ## Implementing *foldMap*
 
@@ -134,7 +124,7 @@ on top of `foldLeft` and `foldRight`.
 However, rather than use `Foldable`,
 we will re-implement `foldMap` here ourselves
 as it will provide useful insight into
-the structure of map reduce.
+the structure of map-reduce.
 
 Start by writing out the signature of `foldMap`.
 It should accept the following parameters:
@@ -149,7 +139,7 @@ to complete the type signature.
 ```tut:book:silent
 import cats.Monoid
 
-/** Single-threaded map reduce function.
+/** Single-threaded map-reduce function.
   * Maps `func` over `values`
   * and reduces using a `Monoid[B]`.
   */
@@ -166,7 +156,7 @@ to the steps required:
 2. map over the list to produce a sequence of items of type `B`;
 3. use the `Monoid` to reduce the items to a single `B`.
 
-![*foldMap* algorithm](src/pages/case-studies/mapreduce/fold-map.pdf+svg){#fig:map-reduce:fold-map}
+![*foldMap* algorithm](src/pages/case-studies/map-reduce/fold-map.pdf+svg){#fig:map-reduce:fold-map}
 
 Here's some sample output for reference:
 
@@ -238,17 +228,16 @@ in a map-reduce cluster as shown in Figure [@fig:map-reduce:parallel-fold-map]:
    producing a local result for each batch;
 5. we reduce the results for each batch to a single final result.
 
-![*parallelFoldMap* algorithm](src/pages/case-studies/mapreduce/parallel-fold-map.pdf+svg){#fig:map-reduce:parallel-fold-map}
+![*parallelFoldMap* algorithm](src/pages/case-studies/map-reduce/parallel-fold-map.pdf+svg){#fig:map-reduce:parallel-fold-map}
 
 Scala provides some simple tools
 to distribute work amongst threads.
-We could simply use the
-[parallel collections library][link-parallel-collections]
+We could use the [parallel collections library][link-parallel-collections]
 to implement a solution,
 but let's challenge ourselves by diving a bit deeper
 and implementing the algorithm ourselves using `Futures`.
 
-### *Futures*, Thread Pools, and *ExecutionContexts*
+### *Futures*, Thread Pools, and ExecutionContexts
 
 We already know a fair amount about
 the monadic nature of `Futures`.
@@ -333,7 +322,7 @@ import scala.concurrent.duration._
 ```
 
 ```tut:book
-Await.result(Future(1), 1.second) // wait forever until a result arrives
+Await.result(Future(1), 1.second) // wait for the result
 ```
 
 There are also `Monad` and `Monoid` implementations for `Future`
@@ -536,52 +525,18 @@ Our algorithm followed three steps:
 2. perform a local map-reduce on each batch;
 3. combine the results using monoid addition.
 
-### Batching Strategies in the Real World
-
-The main bottleneck in real map-reduce
-is network communication between the nodes.
-To counter this, systems like Hadoop
-provide mechanisms for pre-batching data
-to limit the communication required
-to distribute work.
-
-Our toy system is designed to emulate
-this real-world batching behaviour.
-However, in reality we are
-running all of our work on a single machine
-where communcation between nodes is negligable.
-We don't actually need to pre-batch data
+Our toy system emulates the batching behaviour
+of real-world map-reduce systems such as Hadoop.
+However, in reality we are running all of our work
+on a single machine where communcation between nodes is negligable.
+We don't actually need to batch data
 to gain efficient parallel processing of a list.
-We can simply map:
-
-```tut:book:silent
-val future1: Future[Vector[Int]] =
-  (1 to 1000).toVector.
-    traverse(item => Future(item + 1))
-```
-
-and reduce using a `Monoid`:
-
-```tut:book:silent
-val future2: Future[Int] =
-  future1.map(_.combineAll)
-```
-
-```tut:book
-Await.result(future2, 1.second)
-```
-
-### Reduction using *Monoids*
+We can simply map using a `Functor` and reduce using a `Monoid`.
 
 Regardless of the batching strategy,
 mapping and reducing with `Monoids`
-is a powerful and general framework.
-The core idea of monoid addition
-underlies [Summingbird][link-summingbird],
-Twitter's framework that powers
-all their internal data processing jobs.
-
-Monoids are not restricted to simple tasks
+is a powerful and general framework
+that isn't limited to simple tasks
 like addition and string concatenation.
 Most of the tasks data scientists perform
 in their day-to-day analyses can be cast as monoids.
