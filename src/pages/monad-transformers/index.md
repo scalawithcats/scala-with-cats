@@ -1,4 +1,4 @@
-# Monad Transformers
+# Monad Transformers {#sec:monad-transformers}
 
 Monads are [like burritos][link-monads-burritos],
 which means that once you acquire a taste,
@@ -11,7 +11,7 @@ Imagine we are interacting with a database.
 We want to look up a user record.
 The user may or may not be present, so we return an `Option[User]`.
 Our communication with the database could fail for many reasons
-(network issues, authentication problems, database problems, and so on),
+(network issues, authentication problems, and so on),
 so this result is wrapped up in an `Either`,
 giving us a final result of `Either[Error, Option[User]]`.
 
@@ -37,12 +37,20 @@ def lookupUserName(id: Long): Either[Error, Option[String]] =
 
 This quickly becomes very tedious.
 
+## Exercise: Composing Monads
+
 A question arises.
 Given two arbitrary monads,
 can we combine them in some way to make a single monad?
 That is, do monads *compose*?
-We can try to write the code
-but we'll soon find it impossible to implement `flatMap`:
+We can try to write the code but we soon hit problems:
+
+```tut:book:silent
+import cats.Monad
+import cats.syntax.applicative._ // for pure
+import cats.syntax.flatMap._     // for flatMap
+import scala.language.higherKinds
+```
 
 ```scala
 // Hypothetical example. This won't actually compile:
@@ -55,29 +63,49 @@ def compose[M1[_] : Monad, M2[_] : Monad] = {
 
     def flatMap[A, B](fa: Composed[A])
         (f: A => Composed[B]): Composed[B] =
-      // This is impossible to implement in general
-      // without knowing something about M1 or M2:
+      // Problem! How do we write flatMap?
       ???
   }
 }
 ```
 
-We can't compose monads in general.
-However, some monad instances can be made to compose with instance-specific glue code.
-For these special cases we can use *monad transformers* to compose them.
-Monad transformers allow us to squash together monads,
-creating one monad where we previously had two or more.
-With this transformed monad we can avoid nested calls to `flatMap`.
+It is impossible to write a general definition of `flatMap`
+without knowing something about `M1` or `M2`.
+However, if we *do* know something about one or other monad,
+we can typically complete this code.
+For example, if we fix `M2` above to be `Option`,
+a definition of `flatMap` comes to light:
+
+```scala
+def flatMap[A, B](fa: Composed[A])
+    (f: A => Composed[B]): Composed[B] =
+  fa.flatMap(_.fold(None.pure[M])(f))
+```
+
+Notice that the definition above makes use of `None`---an
+`Option`-specific concept that
+doesn't appear in the general `Monad` interface.
+We need this extra detail to combine `Option` with other monads.
+Similarly, there are things about other monads
+that help us write composed `flatMap` methods for them.
+This is the idea behind monad transformers:
+Cats defines transformers for a variety of monads,
+each providing the extra knowledge we need
+to compose that monad with others.
+Let's look at some examples.
 
 ## A Transformative Example
 
-Cats provides a library of monad transformers for common use cases:
-`EitherT` for composing `Either` with other monads,
-`OptionT` for composing `Option`, and so on.
+Cats provides transformers for many monads,
+each named with a `T` suffix:
+`EitherT` composes `Either` with other monads,
+`OptionT` composes `Option`, and so on.
+
 Here's an example that uses `OptionT`
-to squash `List` and `Option` into a single monad.
-Where we might use `List[Option[A]]` we can use `OptionT[List, A]`,
-aliased in this example to `ListOption[A]`, instead:
+to compose `List` and `Option`.
+We can use can `OptionT[List, A]`,
+aliased to `ListOption[A]` for convenience,
+to transform a `List[Option[A]]` into a single monad:
 
 ```tut:book:silent
 import cats.data.OptionT
@@ -85,9 +113,7 @@ import cats.data.OptionT
 type ListOption[A] = OptionT[List, A]
 ```
 
-`ListOption` is a monad that combines
-the properties of `List` and `Option`.
-Note how we build it from the inside out:
+Note how we build `ListOption` from the inside out:
 we pass `List`, the type of the outer monad,
 as a parameter to `OptionT`,
 the transformer for the inner monad.
@@ -108,8 +134,8 @@ val result1: ListOption[Int] = OptionT(List(Option(10)))
 val result2: ListOption[Int] = 32.pure[ListOption]
 ```
 
-The `map` and `flatMap` methods combine
-the corresponding methods of `List` and `Option`
+The `map` and `flatMap` methods
+combine the corresponding methods of `List` and `Option`
 into single operations:
 
 ```tut:book
@@ -120,7 +146,7 @@ result1.flatMap { (x: Int) =>
 }
 ```
 
-This is the basics of using monad transformers.
+This is the basis of all monad transformers.
 The combined `map` and `flatMap` methods
 allow us to use both component monads
 without having to recursively unpack
@@ -128,9 +154,9 @@ and repack values at each stage in the computation.
 Now let's look at the API in more depth.
 
 <div class="callout callout-warning">
-*Complexity of imports*
+*Complexity of Imports*
 
-Note the imports in the code samples above---they
+The imports in the code samples above
 hint at how everything bolts together.
 
 We import [`cats.syntax.applicative`][cats.syntax.applicative]
@@ -153,10 +179,9 @@ Notice we're not importing
 This is because `OptionT` is a concrete data type
 with its own explicit `map` and `flatMap` methods.
 It wouldn't cause problems if we imported the syntax---the
-compiler would simply ignore it
-in favour of the explicit methods.
+compiler would ignore it in favour of the explicit methods.
 
-Remember that we're subjecting ourselves to this shenanigans
+Remember that we're subjecting ourselves to these shenanigans
 because we're stubbornly refusing to use the universal Cats import,
 [`cats.implicits`][cats.implicits].
 If we did use that import,
@@ -197,10 +222,11 @@ Concretely, some of the available instances are:
 <div class="callout callout-info">
 *Kleisli Arrows*
 
-Last chapter, in the section on the `Reader` monad,
-we mentioned that `Reader` was a specialisation
-of a more general concept called a "kleisli arrow"
-(aka [`cats.data.Kleisli`][cats.data.Kleisli]).
+In Section [@sec:monads:reader]
+we mentioned that the `Reader` monad was a specialisation
+of a more general concept called a "kleisli arrow",
+represented in Cats as
+[`cats.data.Kleisli`][cats.data.Kleisli].
 
 We can now reveal that `Kleisli` and `ReaderT`
 are, in fact, the same thing!
@@ -235,7 +261,8 @@ so we want to use the `OptionT` monad transformer.
 We need to use `Either` as the first type parameter.
 However, `Either` itself has two type parameters
 and monads only have one.
-We need a *type alias* to make everything the correct shape:
+We need a type alias
+to convert the type constructor to the correct shape:
 
 ```tut:book:silent
 import cats.instances.either._
@@ -398,7 +425,7 @@ and other useful methods.
 
 ### Usage Patterns
 
-Widespread use of monad tranformers is sometimes difficult
+Widespread use of monad transformers is sometimes difficult
 because they fuse monads together in predefined ways.
 Without careful thought,
 we can end up having to unpack and repack monads
@@ -477,12 +504,12 @@ to determine whether monad transformers are a good fit.
 
 ## Exercise: Monads: Transform and Roll Out
 
-The Autobots, well known robots in disguise,
+The Autobots, well-known robots in disguise,
 frequently send messages during battle
 requesting the power levels of their team mates.
 This helps them coordinate strategies
 and launch devastating attacks.
-The message sending method looks like this[^transformers]:
+The message sending method looks like this:
 
 ```scala
 def getPowerLevel(autobot: String): Response[Int] =
@@ -491,7 +518,7 @@ def getPowerLevel(autobot: String): Response[Int] =
 
 Transmissions take time in Earth's viscous atmosphere,
 and messages are occasionally lost
-due to satellite malfunction or sabotage by pesky Decepticons.
+due to satellite malfunction or sabotage by pesky Decepticons[^transformers].
 `Responses` are therefore represented as a stack of monads:
 
 ```tut:book
@@ -499,7 +526,7 @@ type Response[A] = Future[Either[String, A]]
 ```
 
 [^transformers]: It is a well known fact
-that autobot neural nets are implemented in Scala.
+that Autobot neural nets are implemented in Scala.
 Decepticon brains are, of course, dynamically typed.
 
 Optimus Prime is getting tired of

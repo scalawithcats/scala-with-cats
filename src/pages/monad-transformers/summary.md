@@ -8,27 +8,7 @@ Each monad transformer, such as `FutureT`, `OptionT` or `EitherT`,
 provides the code needed to merge its related monad with other monads.
 The transformer is a data structure that wraps a monad stack,
 equipping it with `map` and `flatMap` methods
-that unpack and repack the whole stack:
-
-```tut:book:silent
-import cats.data.EitherT
-import cats.instances.option._
-import cats.syntax.applicative._
-
-type OptionEither[A] = EitherT[Option, String, A]
-```
-
-```tut:book
-val wrappedA = 10.pure[OptionEither]
-val wrappedB = 32.pure[OptionEither]
-
-val wrappedResult = for {
-  x <- wrappedA
-  y <- wrappedB
-} yield x + y
-
-val result = wrappedResult.value
-```
+that unpack and repack the whole stack.
 
 The type signatures of monad transformers are written from the inside out,
 so an `EitherT[Option, String, A]` is a wrapper for an `Option[Either[String, A]]`.
