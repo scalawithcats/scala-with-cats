@@ -95,10 +95,11 @@
 [link-bnf]: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_Form
 [link-catalysts]: https://github.com/typelevel/catalysts
 [link-cats]: http://typelevel.org/cats
+[link-cats-infographic]: https://github.com/tpolecat/cats-infographic
 [link-crdt-survey]: https://hal.inria.fr/inria-00609399v2/document
 [link-don-stewart-so]: http://stackoverflow.com/questions/27852709/enterprise-patterns-with-functional-programming/27860072#27860072
 [link-don-stewart]: https://donsbot.wordpress.com
-[link-essential-scala]: http://underscore.io/training/courses/essential-scala
+[link-essential-scala]: http://underscore.io/books/essential-scala
 [link-github]: https://github.com/underscoreio/advanced-scala
 [link-hadoop]: http://hadoop.apache.org
 [link-hyperloglog]: http://en.wikipedia.org/wiki/HyperLogLog
@@ -122,6 +123,7 @@
 [link-si2712]: https://issues.scala-lang.org/browse/SI-2712
 [link-si-6680]: https://issues.scala-lang.org/browse/SI-6680
 [link-simulacrum]: https://github.com/mpilquist/simulacrum
+[link-so-future]: https://www.reddit.com/r/scala/comments/3zofjl/why_is_future_totally_unusable/
 [link-so-implicit-scope]: https://stackoverflow.com/questions/5598085/where-does-scala-look-for-implicits
 [link-so-tree-tailrecm]: https://stackoverflow.com/questions/44504790/cats-non-tail-recursive-tailrecm-method-for-monads
 [link-stochastic-gradient-descent]: http://en.wikipedia.org/wiki/Stochastic_gradient_descent
