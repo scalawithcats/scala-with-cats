@@ -2,16 +2,16 @@
 
 In previous chapters we saw
 how functors and monads let us
-transform values using `map` and `flatMap`.
+sequence operations using `map` and `flatMap`.
 While functors and monads are
 both immensely useful abstractions,
-there are certain types of transformation
+there are certain types of program flow
 that they cannot represent.
 
 One such example is form validation.
 When we validate a form we want to
 return *all* the errors to the user,
-not simply stop on the first error we encounter.
+not stop on the first error we encounter.
 If we model this with a monad like `Either`,
 we fail fast and lose errors.
 For example, the code below
@@ -39,36 +39,8 @@ If we have several long-running independent tasks,
 it makes sense to execute them concurrently.
 However, monadic comprehension
 only allows us to run them in sequence.
-Even on a multicore CPU,
-the code below runs in sequence
-as you can see from the timestamps:
-
-```tut:book:silent
-import scala.concurrent._
-import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
-
-lazy val timestamp0 = System.currentTimeMillis
-
-def getTimestamp: Long = {
-  val timestamp = System.currentTimeMillis - timestamp0
-  Thread.sleep(100)
-  timestamp
-}
-
-val timestamps = for {
-  a <- Future(getTimestamp)
-  b <- Future(getTimestamp)
-  c <- Future(getTimestamp)
-} yield (a, b, c)
-```
-
-```tut:book
-Await.result(timestamps, 1.second)
-```
-
 `map` and `flatMap` aren't quite capable
-of capturing what we want here because
+of capturing what we want because
 they make the assumption that each computation
 is *dependent* on the previous one:
 
@@ -88,9 +60,9 @@ that support this pattern:
 
   - `Semigroupal` encompasses
     the notion of composing pairs of contexts.
-    Cats provides an `apply` syntax that
-    combines `Semigroupals` and `Functors` to allow users
-    to join values within a context using arbitrary functions.
+    Cats provides a [`cats.syntax.apply`][cats.syntax.apply] module
+    that makes use of `Semigroupal` and `Functor`
+    to allow users to sequence functions with multiple arguments.
 
   - `Applicative` extends `Semigroupal` and `Functor`.
     It provides a way of applying functions to parameters within a context.

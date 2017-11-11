@@ -1,14 +1,14 @@
-## *Semigroupal* Applied to Different Types
+## Semigroupal Applied to Different Types
 
 `Semigroupal` doesn't always provide the behaviour we expect,
 particularly for types that also have instances of `Monad`.
 We have seen the behaviour of the `Semigroupal` for `Option`.
 Let's look at some examples for other types.
 
-### *Semigroupal* Applied to *Future*
+**Future**
 
-The semantics for `Future` are pretty much what we'd expect,
-providing parallel as opposed to sequential execution:
+The semantics for `Future`
+provide parallel as opposed to sequential execution:
 
 ```tut:book:silent
 import scala.language.higherKinds
@@ -52,44 +52,35 @@ val futureCat = (
 Await.result(futureCat, 1.second)
 ```
 
-### *Semigroupal* Applied to *List*
+**List**
 
-There is a `Semigroupal` instance for `List`.
-What value do you think the following expression will produce?
+Combining `Lists` with `Semigroupal`
+produces some potentially unexpected results.
+We might expect code like the following to *zip* the lists,
+but we actually get the cartesian product of their elements:
 
 ```tut:book:silent
 import cats.Semigroupal
 import cats.instances.list._
-
-Semigroupal[List].product(List(1, 2), List(3, 4))
 ```
-
-There are at least two reasonable answers:
-
- 1. `product` could *zip* the lists,
-    returning `List((1, 3), (2, 4))`;
-
- 2. `product` could compute the *cartesian product*,
-    taking every element from the first list
-    and combining it with every element from the second
-    returning `List((1, 3), (1, 4), (2, 3), (2, 4))`.
-
-Let's run the code to find out which is correct:
 
 ```tut:book
 Semigroupal[List].product(List(1, 2), List(3, 4))
 ```
 
-We get the cartesian product!
-This is perhaps surprising:
-zipping lists tends to be a more common operation.
+This is perhaps surprising.
+Zipping lists tends to be a more common operation.
+We'll see why we get this behaviour in a moment.
 
-### *Semigroupal* Applied to *Either*
+**Either**
 
-What about `Either`?
 We opened this chapter with a discussion of
 fail-fast versus accumulating error-handling.
-Which behaviour will `product` produce?
+We might expect `product` applied to `Either`
+to accumulate errors instead of fail fast.
+Again, perhaps surprisingly,
+we find that `product` implements
+the same fail-fast behaviour as `flatMap`:
 
 ```tut:book:silent
 import cats.instances.either._
@@ -104,20 +95,53 @@ Semigroupal[ErrorOr].product(
 )
 ```
 
-Surprisingly, we still get fail-fast semantics.
-The `product` method sees the first failure and stops,
-despite knowing that the second parameter is also a failure.
+In this example `product` sees the first failure and stops,
+even though it is possible to examine the second parameter
+and see that it is also a failure.
 
-### *Semigroupal* Applied to Monads
+### Semigroupal Applied to Monads
 
-The reason for these surprising results is that,
-like `Option`, `List` and `Either` are both monads.
+The reason for the surprising results
+for `List` and `Either` is that they are both monads.
 To ensure consistent semantics,
 Cats' `Monad` (which extends `Semigroupal`)
 provides a standard definition of `product`
 in terms of `map` and `flatMap`.
+This gives what we might think of as
+unexpected and less useful behaviour for a number of data types.
+The consistency of semantics is important
+for higher level abstractions,
+but we don't know about those yet.
 
-Try writing this implementation now:
+Even our results for `Future` are a trick of the light.
+`flatMap` provides sequential ordering,
+so `product` provides the same.
+The parallel execution we observe
+occurs because our constituent `Futures`
+start running before we call `product`.
+This is equivalent to the classic
+create-then-flatMap pattern:
+
+```tut:book:silent
+val a = Future("Future 1")
+val b = Future("Future 2")
+
+for {
+  x <- a
+  y <- b
+} yield (x, y)
+```
+
+So why bother with `Semigroupal` at all?
+The answer is that we can create useful data types that
+have instances of `Semigroupal` (and `Applicative`) but not `Monad`.
+This frees us to implement `product` in different ways.
+We'll examine this further in a moment
+when we look at an alternative data type for error handling.
+
+#### Exercise: The Product of Monads
+
+Implement `product` in terms of `flatMap`:
 
 ```tut:book:silent
 import cats.Monad
@@ -170,38 +194,4 @@ product[ErrorOr, Int, Int](
 )
 ```
 
-Even our results for `Future` are a trick of the light.
-`flatMap` provides sequential ordering,
-so `product` provides the same.
-The only reason we get parallel execution
-is because our constituent `Futures`
-start running before we call `product`.
-This is equivalent to the classic
-create-then-flatMap pattern:
-
-```tut:book:silent
-val a = Future("Future 1")
-val b = Future("Future 2")
-
-for {
-  x <- a
-  y <- b
-} yield (x, y)
-```
 </div>
-
-We can implement `product` in terms of the monad operations,
-and Cats enforces this implementation for all monads.
-This gives what we might think of as
-unexpected and less useful behaviour
-for a number of data types.
-The consistency of semantics is actually
-useful for higher level abstractions,
-but we don't know about those yet.
-
-So why bother with `Semigroupal` at all?
-The answer is that we can create useful data types that
-have instances of `Semigroupal` (and `Applicative`) but not `Monad`.
-This frees us to implement `product` in different ways.
-Let's examing this further by looking at
-a new data type for error handling.

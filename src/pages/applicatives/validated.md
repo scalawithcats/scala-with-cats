@@ -1,4 +1,4 @@
-## *Validated*
+## Validated
 
 By now we are familiar with
 the fail-fast error handling behaviour of `Either`.
@@ -38,7 +38,7 @@ Between the two we have support for
 both of the common types of error handling:
 fail-fast and accumulating.
 
-### Creating Instances of *Validated*
+### Creating Instances of Validated
 
 `Validated` has two subtypes,
 `Validated.Valid` and `Validated.Invalid`,
@@ -92,7 +92,7 @@ type ErrorsOr[A] = Validated[List[String], A]
 List("Badness").raiseError[ErrorsOr, Int]
 ```
 
-Finally, there are a variety of helper methods
+Finally, there are helper methods
 to create instances of `Validated` from different sources.
 We can create them from `Exceptions`,
 as well as instances of `Try`, `Either`, and `Option`:
@@ -109,7 +109,7 @@ Validated.fromEither[String, Int](Left("Badness"))
 Validated.fromOption[String, Int](None, "Badness")
 ```
 
-### Combining Instances of *Validated*
+### Combining Instances of Validated
 
 We can combine instances of `Validated`
 using any of the methods or syntax
@@ -126,8 +126,7 @@ type AllErrorsOr[A] = Validated[String, A]
 ```
 
 `Validated` accumulates errors using a `Semigroup`,
-so we need one of those in scope to summon the `Semigroupal`
-(sorry if this sounds complicated).
+so we need one of those in scope to summon the `Semigroupal`.
 If no `Semigroup` is visible at the call site,
 we get an annoyingly unhelpful compilation error:
 
@@ -139,7 +138,7 @@ Once we import a `Semigroup` for the error type,
 everything works as expected:
 
 ```tut:book:silent
-import cats.instances.string._
+import cats.instances.string._ // Semigroup for String
 ```
 
 ```tut:book
@@ -194,7 +193,7 @@ import cats.data.NonEmptyVector
 ).tupled
 ```
 
-### Methods of *Validated*
+### Methods of Validated
 
 `Validated` comes with a suite of methods
 that closely resemble those available for `Either`,
@@ -277,9 +276,9 @@ If all the rules pass our parser we should return a `User`.
 If any rules fail we should return
 a `List` of the error messages.
 
-To implement this complete example
+To implement this example
 we'll need to combine rules
-in sequence and in parallel
+in sequence and in parallel.
 We'll use `Either` to combine computations
 in sequence using fail-fast semantics,
 and `Validated` to combine them

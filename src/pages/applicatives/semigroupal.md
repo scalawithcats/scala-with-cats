@@ -1,7 +1,7 @@
-## *Semigroupal* {#semigroupal}
+## Semigroupal {#semigroupal}
 
 `Semigroupal` is a type class that
-allows us to combine effectful contexts[^semigroupal-name].
+allows us to combine contexts[^semigroupal-name].
 If we have two objects of type `F[A]` and `F[B]`,
 a `Semigroupal[F]` allows us to combine them to form an `F[(A, B)]`.
 Its definition in Cats is:
@@ -12,10 +12,13 @@ trait Semigroupal[F[_]] {
 }
 ```
 
-As we discussed above,
-the parameters `fa` and `fb` are independent of one another.
-This gives us a lot more flexibility when
-defining instances of `Semigroupal` than we do when defining `Monads`.
+As we discussed at the beginning of this chapter,
+the parameters `fa` and `fb` are independent of one another:
+we can compute them in either order before passing them to `product`.
+This is in contrast to `flatMap`,
+which imposes a strict order on its parameters.
+This gives us more freedom when defining
+instances of `Semigroupal` than we get when defining `Monads`.
 
 [^semigroupal-name]: It
 is also the winner of Underscore's 2017 award for
@@ -78,7 +81,7 @@ and `imap2` through `imap22`,
 that require instances of `Contravariant` and `Invariant` respectively.
 
 <!--
-### *Semigroupal* Laws
+### Semigroupal Laws
 
 There is only one law for `Semigroupal`:
 the `product` method must be associative:
@@ -88,7 +91,7 @@ product(a, product(b, c)) == product(product(a, b), c)
 ```
 -->
 
-## *Apply* Syntax
+## Apply Syntax
 
 Cats provides a convenient *apply syntax*
 that provides a shorthand for the methods described above.
@@ -127,7 +130,7 @@ case class Cat(name: String, born: Int, color: String)
 (
   Option("Garfield"),
   Option(1978),
-  Option("Orange and black")
+  Option("Orange & black")
 ).mapN(Cat.apply)
 ```
 
@@ -173,16 +176,14 @@ case class Cat(
   yearOfBirth: Int,
   favoriteFoods: List[String]
 )
-```
 
-```tut:book
-val tupleToCat =
+val tupleToCat: ((String, Int, List[String])) => Cat =
   Cat.apply _
 
-val catToTuple = (cat: Cat) =>
-  (cat.name, cat.yearOfBirth, cat.favoriteFoods)
+val catToTuple: Cat => (String, Int, List[String]) =
+  cat => (cat.name, cat.yearOfBirth, cat.favoriteFoods)
 
-implicit val catMonoid = (
+implicit val catMonoid: Monoid[Cat] = (
   Monoid[String],
   Monoid[Int],
   Monoid[List[String]]

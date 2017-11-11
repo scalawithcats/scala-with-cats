@@ -1,4 +1,4 @@
-## *Apply* and *Applicative*
+## Apply and Applicative
 
 Semigroupals aren't mentioned frequently
 in the wider functional programming literature.
@@ -6,7 +6,7 @@ They provide a subset of the functionality of a related type class
 called an *applicative functor* ("applicative" for short).
 
 `Semigroupal` and `Applicative` effectively provide
-alternative encodings of the notion of "zipping" or joining values.
+alternative encodings of the same notion of joining contexts.
 Both encodings are introduced in
 the [same 2008 paper][link-applicative-programming]
 by Conor McBride and Ross Paterson[^semigroupal-monoidal].
@@ -55,16 +55,22 @@ as `Monoid` is related to `Semigroup`.
 ### The Hierarchy of Sequencing Type Classes
 
 With the introduction of `Apply` and `Applicative`,
-we can zoom out and see a a whole family of type classes
+we can zoom out and see a whole family of type classes
 that concern themselves with sequencing computations in different ways.
-Figure [@fig:applicatives:hierarchy] shows the big picture.
+Figure [@fig:applicatives:hierarchy] shows
+the relationship between the type classes covered in this book[^cats-infographic].
 
 ![Monad type class hierarchy](src/pages/applicatives/hierarchy.png){#fig:applicatives:hierarchy}
 
+[^cats-infographic]: See
+[Rob Norris' infographic][link-cats-infographic]
+for a the complete picture.
+
 Each type class in the hierarchy
-represents a particular set of sequencing semantics.
-It introduces its characteristic methods
-and defines the functionality from its supertypes in terms of them:
+represents a particular set of sequencing semantics,
+introduces a set of characteristic methods,
+and defines the functionality of its supertypes
+in terms of them:
 
 - every monad is an applicative;
 - every applicative a semigroupal;
@@ -93,7 +99,7 @@ To illustrate this let's consider two hypothetical data types:
 What can we say about these two data types
 without knowing more about their implementation?
 
-We know strictly more about `Foo` than `Bar`,
+We know strictly more about `Foo` than `Bar`:
 `Monad` is a subtype of `Applicative`,
 so we can guarantee properties of `Foo` (namely `flatMap`)
 that we cannot guarantee with `Bar`.
@@ -113,13 +119,13 @@ They are flexible enough to model a wide range of behaviours
 and restrictive enough to give strong guarantees about those behaviours.
 However, there are situations where monads
 aren't the right tool for the job.
-Sometimes we want thai food,
+Sometimes we want Thai food,
 and burritos just won't satisfy.
 
 Whereas monads impose a strict *sequencing*
 on the computations they model,
 applicatives and semigroupals impose no such restriction.
-This puts them in another sweet spot in the hierarchy.
+This puts them in a different sweet spot in the hierarchy.
 We can use them to represent
 classes of parallel / independent computations
 that monads cannot.
