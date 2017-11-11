@@ -1,7 +1,7 @@
 # Functors
 
 In this chapter we will investigate **functors**,
-which are an abstraction that allows us to
+an abstraction that allows us to
 represent sequences of operations within a context
 such as a `List`, an `Option`,
 or any one of a thousand other possibilities.
@@ -10,44 +10,41 @@ but special cases of functors such as
 **monads** and **applicative functors**
 are some of the most commonly used abstractions in Cats.
 
-## Examples of Functors
+## Examples of Functors {#sec:functors:examples}
 
 Informally, a functor is anything with a `map` method.
 You probably know lots of types that have this:
-`Option`, `List`, `Either`, and `Future`, to name a few.
+`Option`, `List`, and `Either`, to name a few.
 
-Let's start as we did with monoids by looking at
-a few types and operations
-and seeing what general principles we can abstract.
-
-**Sequences**
-
-The `map` method is perhaps the most commonly used method on `List`.
-If we have a `List[A]` and a function `A => B`, `map` will create a `List[B]`.
+We typically first encounter `map` when iterating over `Lists`.
+However, to understand functors
+we need to think of the method in another way.
+Rather than traversing the list, we should think of it as
+transforming all of the values inside in one go.
+We specify the function to apply,
+and `map` ensures it is applied to every item.
+The values change but the structure of the list remains the same:
 
 ```tut:book
-List(1, 2, 3).map(x => (x % 2) == 0)
+List(1, 2, 3).map(n => n + 1)
 ```
 
-In general, the `map` method for a `List` works like this:
-We start with a `List[A]` of length `n`,
-we supply a function from `A` to `B`,
-and we end up with a `List[B]` of length `n`.
-The elements are changed
-but the ordering and length of the list are preserved.
-This is illustrated in Figure [@fig:functors:list-type-chart].
+Similarly, when we `map` over an `Option`,
+we transform the contents but leave
+the `Some` or `None` context unchanged.
+The same principle applies to `Either`
+with its `Left` and `Right` contexts.
+This general notion of transformation,
+along with the common pattern of type signatures
+shown in Figure [@fig:functors:list-option-either-type-chart],
+is what connects the behaviour of `map`
+across different data types.
 
-![Type chart: mapping over a List](src/pages/functors/list-map.pdf+svg){#fig:functors:list-type-chart}
+![Type chart: mapping over List, Option, and Either](src/pages/functors/list-option-either-map.pdf+svg){#fig:functors:list-option-either-type-chart}
 
-We often think of `map` as a pattern of iteration.
-However, there is another way of looking at it:
-we're applying a function to the data within a context.
-The context is a `List`.
-and there may be many data items within that list,
-but if we blur our eyes we can think of `map` as a way
-to specify a sequence of operations
-without worrying about the fact
-that we may have an arbitrary number of pieces of data:
+Because `map` leaves the structure of the context unchanged,
+we can call it repeatedly to sequence multiple computations
+on the contents of an initial data structure:
 
 ```tut:book
 List(1, 2, 3).
@@ -56,144 +53,156 @@ List(1, 2, 3).
   map(n => n + "!")
 ```
 
-There are some properties of `map`
-that we rely on without even thinking about them.
-For example, we expect the two snippets below
-to produce the same output:
+We should think of `map` not as an iteration pattern,
+but as a way of sequencing computations
+on values ignoring some complication
+dictated by the relevant data type:
 
-```tut:book
-List(1, 2, 3).map(_ * 2).map(_ + 4)
-
-List(1, 2, 3).map(x => (x * 2) + 4)
-```
-
-These properties are important because
-they allow us apply operations together
-or in separate steps
-without worrying about how we're dividing the work.
-
-**Options**
-
-We can do the same thing with an `Option`.
-If we have a `Option[A]` and a function `A => B`,
-`map` will create a `Option[B]`:
-
-```tut:book
-Option(1).map(_.toString)
-```
-
-In general, the `map` method for an `Option` works
-similarly to that for a `List`.
-We start with an `Option[A]`
-that is either a `Some[A]` or a `None`,
-we supply a function from `A` to `B`,
-and the result is either a `Some[B]` or a `None`.
-Again, the structure is preserved:
-if we start with a `Some` we end up with a `Some`, and a `None` always maps to a `None`.
-This is shown in Figure [@fig:functors:option-type-chart].
-
-![Type chart: mapping over an Option](src/pages/functors/option-map.pdf+svg){#fig:functors:option-type-chart}
-
-Again, we can think of `map` as a way of sequencing operations.
-We specify the operations as a chain of calls to `map`.
-If we start with a `Some`, the operations are applied in order:
-
-```tut:book
-Option(123).
-  map(n => n + 1).
-  map(n => n * 2).
-  map(n => n + "!")
-```
-
-If we start with a `None`, well... we end up with a `None`.
-We can still think of this as
-applying the operations in the order we specified them,
-but we start with no data and we end up with no data:
-
-```tut:book
-Option.empty[Int].
-  map(n => n + 1).
-  map(n => n * 2).
-  map(n => n + "!")
-```
-
-We expect `map` on `Option` to obey the same laws as `map` on `List`,
-allowing us to specify a transformation as a single function
-or an equivalent sequence of smaller steps:
-
-```tut:book
-Option(123).map(_ * 2).map(_ + 4)
-
-Option(123).map(x => (x * 2) + 4)
-```
+- `Option`---the value may or may not be present;
+- `Either`---there may be a value or an error;
+- `List`---there may be zero or more values.
 
 ## More Examples of Functors {#sec:functors:more-examples}
 
-Let's expand how we think about `map`
-by taking some other examples into account:
+The `map` methods of `List`, `Option`, and `Either`
+apply functions eagerly.
+However, the idea of sequencing computations
+is more general than this.
+Let's investigate the behaviour of some other functors
+that apply the pattern in different ways.
 
 **Futures**
 
-`Future` is also a functor
-with a `map` method[^future-error-handling].
-If we start with a `Future[A]`
-and call map supplying a function `A => B`,
-we end up with a `Future[B]`:
+`Future` is a functor that
+sequences asynchronous computations by queueing them
+and applying them as their predecessors complete.
+The type signuture of its `map` method,
+shown in Figure [@fig:functors:future-type-chart],
+has the same shape as the signatures above.
+However, the behaviour is very different.
 
-[^future-error-handling]: Some functional purists disagree with this
-because the exception handling in Scala futures breaks the functor laws.
-We're going to ignore this detail
-because *real* programs don't do exceptions.
+![Type chart: mapping over a Future](src/pages/functors/future-map.pdf+svg){#fig:functors:future-type-chart}
+
+When we work with a `Future` we have no guarantees
+about its internal state.
+The wrapped computation may be
+ongoing, complete, or rejected.
+If the `Future` is complete,
+our mapping function can be called immediately.
+If not, some underlying thread pool queues
+the function call and comes back to it later.
+We don't know *when* our functions will be called,
+but we do know *what order* they will be called in.
+In this way, `Future` provides
+the same sequencing behaviour
+seen in `List`, `Option`, and `Either`:
 
 ```tut:book:silent
 import scala.concurrent.{Future, Await}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+
+val future: Future[String] =
+  Future(123).
+    map(n => n + 1).
+    map(n => n * 2).
+    map(n => n + "!")
 ```
 
 ```tut:book
-val future1 = Future("Hello world!")
-val future2 = future1.map(_.length)
+Await.result(future, 1.second)
 ```
 
-Of course, with `Futures` we have to use
-`Await.result` to extract the final result:
+<div class="callout callout-info">
+*Futures and Referential Transparency*
+
+Note that Scala's `Futures` aren't a great example
+of pure functional programming
+because they aren't *referentially transparent*.
+`Future` always computes and caches a result
+and there's no way for us to tweak this behaviour.
+This means we can get unpredictable results
+when we use `Future` to wrap side-effecting computations.
+For example:
+
+```tut:book:silent
+import scala.util.Random
+
+val future1 = {
+  // Initialize a random number generator with a fixed seed:
+  val r = new Random(0L)
+
+  // nextInt has the side-effect of moving to
+  // the next random number in the sequence:
+  val x = Future(r.nextInt)
+
+  for {
+    a <- x
+    b <- x
+  } yield (a, b)
+}
+
+val future2 = {
+  val r = new Random(0L)
+
+  for {
+    a <- Future(r.nextInt)
+    b <- Future(r.nextInt)
+  } yield (a, b)
+}
+```
 
 ```tut:book
-Await.result(future1, 1.second)
-Await.result(future2, 1.second)
+val result1 = Await.result(future1, 1.second)
+val result2 = Await.result(future2, 1.second)
 ```
 
-The general pattern looks like Figure [@fig:functors:future-type-chart]. Seem familiar?
+Ideally we would like `result1` and `result2`
+to contain the same value.
+However, the computation for `future1` calls `nextInt` once
+and the computation for `future2` calls it twice.
+Because `nextInt` returns a different result every time
+we get a different result in each case.
 
-![Type chart: mapping over a Future](src/pages/functors/future-map.pdf+svg){#fig:functors:future-type-chart}
+This kind of discrepancy makes it hard to reason about
+programs involving `Futures` and side-effects.
+There also are other problematic aspects of `Future's` behaviour,
+such as the way it always starts computations immediately
+rather than allowing the user to dictate when the program should run.
+For more information
+see [this excellent Stack Overflow answer][link-so-future]
+by Rob Norris.
+</div>
+
+If `Future` isn't referentially transparent,
+perhaps we should look at another similar data-type that is.
+You should recognise this one...
 
 **Functions (?!)**
 
-Can we `map` over functions of a single argument?
-It turns out we can, although we have to
-tweak the types a little to make it work.
-All of the examples above have had the following general shape:
-
- - start with `F[A]`;
- - supply a function `A => B`;
- - get back `F[B]`.
-
-A `Function1` has two types: the parameter type and the result type.
-To coerce them to the correct shape
-we can fix the parameter type and let the result type vary:
+It turns out that single argument functions are also functors.
+To see this we have to tweak the types a little.
+A function `A => B` has two type parameters:
+the parameter type `A` and the result type `B`.
+To coerce them to the correct shape we can
+fix the parameter type and let the result type vary:
 
  - start with `X => A`;
  - supply a function `A => B`;
  - get back `X => B`.
 
-We can see this with our trusty type chart
-in Figure [@fig:functors:function-type-chart].
+If we alias `X => A` as `MyFunc[A]`,
+we see the same pattern of types
+we saw with the other examples in this chapter.
+We also see this in Figure [@fig:functors:function-type-chart]:
+
+ - start with `MyFunc[A]`;
+ - supply a function `A => B`;
+ - get back `MyFunc[B]`.
 
 ![Type chart: mapping over a Function1](src/pages/functors/function-map.pdf+svg){#fig:functors:function-type-chart}
 
-In other words, "mapping" over a `Function1`
-is just function composition:
+In other words, "mapping" over a `Function1` is function composition:
 
 ```tut:book:silent
 import cats.instances.function._
@@ -209,7 +218,7 @@ val func2: Double => Double =
 ```
 
 ```tut:book
-(func1 map func2)(1)     // composition using calling map
+(func1 map func2)(1)     // composition using map
 (func1 andThen func2)(1) // composition using andThen
 func2(func1(1))          // composition written out by hand
 ```
@@ -217,14 +226,14 @@ func2(func1(1))          // composition written out by hand
 How does this relate to our general pattern
 of sequencing operations?
 If we think about it,
-function composition *is* sequencing operations.
+function composition *is* sequencing.
 We start with a function that performs a single operation
 and every time we use `map` we append another operation to the chain.
 Calling `map` doesn't actually *run* any of the operations,
 but if we can pass an argument to the final function
 all of the operations are run in sequence.
-We can think of this as lazily queueing up operations,
-ready to apply them later:
+We can think of this as lazily queueing up operations
+similar to `Future`:
 
 ```tut:book:silent
 val func =
@@ -239,7 +248,7 @@ func(123)
 ```
 
 <div class="callout callout-warning">
-**Partial unification**
+*Partial Unification*
 
 For the above examples to work
 we need to add the following compiler option to `build.sbt`:
@@ -263,19 +272,25 @@ in Section [@sec:functors:partial-unification].
 
 ## Definition of a Functor
 
-Every type we've looked at so far is an example of a functor,
-a type class that encapsulates sequencing computations.
+Every example we've looked at so far is a functor:
+a class that encapsulates sequencing computations.
 Formally, a functor is a type `F[A]`
 with an operation `map` with type `(A => B) => F[B]`.
-The general type chart is shown in Figure [@fig:functors:functor-type-chart].
+The general type chart is shown in
+Figure [@fig:functors:functor-type-chart].
 
 ![Type chart: generalised functor map](src/pages/functors/generic-map.pdf+svg){#fig:functors:functor-type-chart}
 
-Intuitively, a functor represents
-some data (the `A` type) in a context (the `F` type).
-The `map` operation modifies the data within
-but retains the structure of the surrounding context.
-A simplified version of the definition from Cats is:
+Cats encodes `Functor` as a type class,
+[`cats.Functor`][cats.Functor],
+so the method looks a little different.
+It accepts the initial `F[A]` as a parameter
+alongside the transformation function.
+Here's a simplified version of the definition:
+
+```scala
+package cats
+```
 
 ```tut:book:silent
 import scala.language.higherKinds
@@ -291,7 +306,7 @@ it's time to take a brief detour to discuss
 We'll explain that `scala.language` import as well.
 
 <div class="callout callout-warning">
-*Functor laws*
+*Functor Laws*
 
 Functors guarantee the same semantics
 whether we sequence many small operations one by one,
@@ -341,18 +356,6 @@ math.abs    // function, takes one parameter
 math.abs(x) // value, produced using a value parameter
 ```
 
-<div class="callout callout-warning">
-*Kind notation*
-
-We sometimes use "kind notation" to describe
-the shape of types and their constructors.
-Regular types have a kind `*`.
-`List` has kind `* => *` to indicate that it
-produces a type given a single parameter.
-`Either` has kind `* => * => *`
-because it accepts two parameters, and so on.
-</div>
-
 In Scala we declare type constructors using underscores.
 Once we've declared them, however,
 we refer to them as simple identifiers:
@@ -382,16 +385,15 @@ val f2 = f andThen f
 Armed with this knowledge of type constructors,
 we can see that the Cats definition of `Functor`
 allows us to create instances for any single-parameter type constructor,
-such as `List`, `Option`, `Future`,
-or any function from a fixed parameter type to a variable result type.
+such as `List`, `Option`, `Future`, or a type alias such as `MyFunc`.
 
 <div class="callout callout-info">
-*Language feature imports*
+*Language Feature Imports*
 
 Higher kinded types are considered an advanced language feature in Scala.
 Whenever we declare a type constructor with `A[_]` syntax,
 we need to "enable" the higher kinded type language feature
-to suppress a load of warnings from the compiler.
+to suppress warnings from the compiler.
 We can either do this with a "language import" as above:
 
 ```scala

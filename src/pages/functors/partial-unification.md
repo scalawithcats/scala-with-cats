@@ -71,10 +71,9 @@ This infamous limitation,
 known as [SI-2712][link-si2712],
 prevented the compiler "unifying" type constructors
 of different arities.
-This compiler limitation is now fixed.
-However, in some versions of the Scala,
-the fix must be enabled via
-a compiler flag in `build.sbt`:
+This compiler limitation is now fixed,
+although we have to enable the fix
+via a compiler flag in `build.sbt`:
 
 ```scala
 scalacOptions += "-Ypartial-unification"

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1761px" height="1160px" viewBox="0 0 1761 1160" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->
+    <title>list-option-either-map</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="729" cy="140" r="80"></circle>
+        <polygon id="path-2" points="1039.59509 194 986.694414 221.811529 996.797543 162.905765 954 121.188471 1013.14475 112.594235 1039.59509 59 1066.04542 112.594235 1125.19017 121.188471 1082.39263 162.905765 1092.49576 221.811529"></polygon>
+        <polygon id="path-3" points="851 120 891 120 891 100 931 139.497767 891 180 891 160 851 160"></polygon>
+        <ellipse id="path-4" cx="63.5614334" cy="63.6424051" rx="63.5614334" ry="63.6424051"></ellipse>
+        <polygon id="path-5" points="249.35438 126.64159 205.606941 149.649143 213.961958 100.918365 178.569536 66.407036 227.48066 59.2973113 249.35438 14.9605848 271.2281 59.2973113 320.139224 66.407036 284.746802 100.918365 293.101819 149.649143"></polygon>
+        <path d="M20.058808,155.768753 C34.6818214,171.893119 55.675188,182 79,182 C123.18278,182 159,145.735065 159,101 C159,77.7454802 149.321446,56.7797646 133.820422,42.0071389 L20.058808,155.768753 Z" id="path-6"></path>
+        <mask id="mask-7" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="138.941192" height="139.992861" fill="white">
+            <use xlink:href="#path-6"></use>
+        </mask>
+        <path d="M23.9260115,158.058837 C9.15850523,143.544644 -1.42108547e-14,123.341864 -1.42108547e-14,101 C-1.42108547e-14,56.81722 35.81722,21 80,21 C102.341864,21 122.544644,30.1585052 137.058837,44.9260115 L23.9260115,158.058837 Z" id="path-8"></path>
+        <path d="M1093.55806,143.194146 L1087,181.430593 L1139.90067,153.619064 L1192.80135,181.430593 L1182.69822,122.524828 L1225.49576,80.807534 L1166.35101,72.2132988 L1165.75221,71 L1093.55806,143.194146 Z" id="path-9"></path>
+        <mask id="mask-10" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="138.495759" height="110.430593" fill="white">
+            <use xlink:href="#path-9"></use>
+        </mask>
+        <path d="M1091.9778,151.007053 L1096.79754,122.905765 L1054,81.1884705 L1113.14475,72.5942353 L1139.59509,19 L1166.04542,72.5942353 L1169.83933,73.1455217 L1091.9778,151.007053 Z" id="path-11"></path>
+        <circle id="path-12" cx="729" cy="140" r="80"></circle>
+        <polygon id="path-13" points="1039.59509 194 986.694414 221.811529 996.797543 162.905765 954 121.188471 1013.14475 112.594235 1039.59509 59 1066.04542 112.594235 1125.19017 121.188471 1082.39263 162.905765 1092.49576 221.811529"></polygon>
+        <polygon id="path-14" points="851 120 891 120 891 100 931 139.497767 891 180 891 160 851 160"></polygon>
+        <circle id="path-15" cx="80" cy="80" r="80"></circle>
+        <circle id="path-16" cx="100" cy="100" r="80"></circle>
+        <circle id="path-17" cx="120" cy="120" r="80"></circle>
+        <circle id="path-18" cx="727" cy="143" r="80"></circle>
+        <polygon id="path-19" points="1037.59509 197 984.694414 224.811529 994.797543 165.905765 952 124.188471 1011.14475 115.594235 1037.59509 62 1064.04542 115.594235 1123.19017 124.188471 1080.39263 165.905765 1090.49576 224.811529"></polygon>
+        <polygon id="path-20" points="85.5950865 135 32.6944138 162.811529 42.7975432 103.905765 -1.17239551e-13 62.1884705 59.1447501 53.5942353 85.5950865 0 112.045423 53.5942353 171.190173 62.1884705 128.39263 103.905765 138.495759 162.811529"></polygon>
+        <polygon id="path-21" points="101.595086 155 48.6944138 182.811529 58.7975432 123.905765 16 82.1884705 75.1447501 73.5942353 101.595086 20 128.045423 73.5942353 187.190173 82.1884705 144.39263 123.905765 154.495759 182.811529"></polygon>
+        <polygon id="path-22" points="119.595086 178 66.6944138 205.811529 76.7975432 146.905765 34 105.188471 93.1447501 96.5942353 119.595086 43 146.045423 96.5942353 205.190173 105.188471 162.39263 146.905765 172.495759 205.811529"></polygon>
+        <polygon id="path-23" points="849 123 889 123 889 103 929 142.497767 889 183 889 163 849 163"></polygon>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="list-option-either-map">
+            <g id="either-map" transform="translate(0.000000, 800.000000)">
+                <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1760" height="360"></rect>
+                <g id="Oval-1-Copy-2">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <circle stroke="#000000" stroke-width="4" cx="729" cy="140" r="78"></circle>
+                </g>
+                <g id="Star-1-Copy-2">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <path stroke="#000000" stroke-width="4" d="M989.350676,218.155498 L998.76876,163.243855 L998.946504,162.207525 L998.193567,161.473592 L958.297922,122.58495 L1013.43235,114.573449 L1014.47288,114.422251 L1014.93822,113.479367 L1039.59509,63.5191029 L1064.25195,113.479367 L1064.71729,114.422251 L1065.75783,114.573449 L1120.89225,122.58495 L1080.99661,161.473592 L1080.24367,162.207525 L1080.42141,163.243855 L1089.8395,218.155498 L1040.52577,192.229737 L1039.59509,191.740449 L1038.6644,192.229737 L989.350676,218.155498 Z"></path>
+                </g>
+                <g id="Path-1-Copy-3">
+                    <use fill="#000000" fill-rule="evenodd" xlink:href="#path-3"></use>
+                    <path stroke="#000000" stroke-width="4" d="M853,122 L891,122 L893,122 L893,120 L893,104.785615 L928.171517,139.515525 L893,175.128649 L893,160 L893,158 L891,158 L853,158 L853,122 Z"></path>
+                </g>
+                <polygon id="Path-1-Copy-4" fill="#F6A623" points="1181 120 1221 120 1221 100 1261 139.497767 1221 180 1221 160 1181 160"></polygon>
+                <text id="Either[E,-A]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                    <tspan x="173.8" y="314">Either[E, A]</tspan>
+                </text>
+                <text id="map-copy-2" font-family="FiraMono-Bold, Fira Mono" font-size="64" font-weight="bold" fill="#F6A623">
+                    <tspan x="498.4" y="156">map</tspan>
+                </text>
+                <text id="Either[E,-B]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                    <tspan x="1305.8" y="314">Either[E, B]</tspan>
+                </text>
+                <text id="A-=&gt;-B-Copy-2" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                    <tspan x="825.4" y="314">A =&gt; B</tspan>
+                </text>
+                <g id="Group-10" transform="translate(160.000000, 55.000000)">
+                    <g id="Group-2" transform="translate(185.877133, 20.322785)">
+                        <g id="Oval-1">
+                            <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-4"></use>
+                            <ellipse stroke="#000000" stroke-width="4" cx="63.5614334" cy="63.6424051" rx="61.5614334" ry="61.6424051"></ellipse>
+                        </g>
+                    </g>
+                    <polygon id="Polygon-2" stroke="#000000" stroke-width="4" points="62.6292391 20.3227848 124.986348 65.6855911 101.168052 139.084153 24.0904264 139.084153 0.272130176 65.6855911"></polygon>
+                    <path d="M181.069966,0.534810127 L122.3157,168.46519" id="Line" stroke="#000000" stroke-width="4" stroke-linecap="square"></path>
+                </g>
+                <g id="Group-11" transform="translate(1300.000000, 59.000000)">
+                    <g id="Star-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-5"></use>
+                        <path stroke="#000000" stroke-width="4" d="M208.263062,145.992517 L215.933195,101.256338 L216.110827,100.220295 L215.358236,99.4864396 L182.866378,67.8034659 L227.768357,61.2765109 L228.808998,61.1252432 L229.274257,60.1821902 L249.35438,19.4809775 L269.434503,60.1821902 L269.899762,61.1252432 L270.940403,61.2765109 L315.842382,67.8034659 L283.350524,99.4864396 L282.597933,100.220295 L282.775565,101.256338 L290.445698,145.992517 L250.285321,124.871464 L249.35438,124.381865 L248.423439,124.871464 L208.263062,145.992517 Z"></path>
+                    </g>
+                    <polygon id="Polygon-2" stroke="#000000" stroke-width="4" points="62.0450793 20.2025316 124.090159 65.2969189 100.391047 138.26117 23.6991115 138.26117 9.45910017e-14 65.2969189"></polygon>
+                    <path d="M179.100993,0.53164557 L120.640728,167.468354" id="Line" stroke="#000000" stroke-width="4" stroke-linecap="square"></path>
+                </g>
+            </g>
+            <g id="option-map" transform="translate(1.000000, 403.000000)">
+                <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1760" height="360"></rect>
+                <g id="Group-4" transform="translate(279.000000, 38.000000)">
+                    <use id="Combined-Shape" stroke="#9B9B9B" mask="url(#mask-7)" stroke-width="8" fill="#FFFFFF" stroke-dasharray="10,5" xlink:href="#path-6"></use>
+                    <g id="Combined-Shape">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-8"></use>
+                        <path stroke="#000000" stroke-width="4" d="M23.9314248,155.224996 C9.96856716,140.794787 2,121.532404 2,101 C2,57.9217895 36.9217895,23 80,23 C100.532404,23 119.794787,30.9685672 134.224996,44.9314248 L23.9314248,155.224996 Z"></path>
+                    </g>
+                    <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="1022" y="2" width="196" height="196" rx="8"></rect>
+                </g>
+                <g id="Group-3" transform="translate(259.000000, 38.000000)">
+                    <use id="Combined-Shape" stroke="#9B9B9B" mask="url(#mask-10)" stroke-width="8" fill="#FFFFFF" stroke-dasharray="10,5" xlink:href="#path-9"></use>
+                    <g id="Combined-Shape">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-11"></use>
+                        <path stroke="#000000" stroke-width="4" d="M1095.01263,145.143795 L1098.76876,123.243855 L1098.9465,122.207525 L1098.19357,121.473592 L1058.29792,82.5849501 L1113.43235,74.5734493 L1114.47288,74.4222508 L1114.93822,73.4793667 L1139.59509,23.5191029 L1164.25195,73.4793667 L1164.71729,74.4222508 L1165.60516,74.551265 L1095.01263,145.143795 Z"></path>
+                    </g>
+                    <rect id="Rectangle-1" stroke="#000000" stroke-width="4" x="2" y="2" width="196" height="196" rx="8"></rect>
+                </g>
+                <g id="Oval-1">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-12"></use>
+                    <circle stroke="#000000" stroke-width="4" cx="729" cy="140" r="78"></circle>
+                </g>
+                <g id="Star-1">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-13"></use>
+                    <path stroke="#000000" stroke-width="4" d="M989.350676,218.155498 L998.76876,163.243855 L998.946504,162.207525 L998.193567,161.473592 L958.297922,122.58495 L1013.43235,114.573449 L1014.47288,114.422251 L1014.93822,113.479367 L1039.59509,63.5191029 L1064.25195,113.479367 L1064.71729,114.422251 L1065.75783,114.573449 L1120.89225,122.58495 L1080.99661,161.473592 L1080.24367,162.207525 L1080.42141,163.243855 L1089.8395,218.155498 L1040.52577,192.229737 L1039.59509,191.740449 L1038.6644,192.229737 L989.350676,218.155498 Z"></path>
+                </g>
+                <g id="Path-1">
+                    <use fill="#000000" fill-rule="evenodd" xlink:href="#path-14"></use>
+                    <path stroke="#000000" stroke-width="4" d="M853,122 L891,122 L893,122 L893,120 L893,104.785615 L928.171517,139.515525 L893,175.128649 L893,160 L893,158 L891,158 L853,158 L853,122 Z"></path>
+                </g>
+                <polygon id="Path-1" fill="#F6A623" points="1181 120 1221 120 1221 100 1261 139.497767 1221 180 1221 160 1181 160"></polygon>
+                <text id="Option[A]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                    <tspan x="255.6" y="314">Option[A]</tspan>
+                </text>
+                <text id="map" font-family="FiraMono-Bold, Fira Mono" font-size="64" font-weight="bold" fill="#F6A623">
+                    <tspan x="498.4" y="156">map</tspan>
+                </text>
+                <text id="Option[B]" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                    <tspan x="1279.6" y="314">Option[B]</tspan>
+                </text>
+                <text id="A-=&gt;-B" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                    <tspan x="825.4" y="314">A =&gt; B</tspan>
+                </text>
+            </g>
+            <g id="list-map">
+                <rect id="Background" fill="#FFFFFF" x="0" y="0" width="1761" height="360"></rect>
+                <g id="Group-2-Copy" transform="translate(259.000000, 40.000000)">
+                    <g id="Oval-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-15"></use>
+                        <circle stroke="#000000" stroke-width="4" cx="80" cy="80" r="78"></circle>
+                    </g>
+                    <g id="Oval-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-16"></use>
+                        <circle stroke="#000000" stroke-width="4" cx="100" cy="100" r="78"></circle>
+                    </g>
+                    <g id="Oval-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-17"></use>
+                        <circle stroke="#000000" stroke-width="4" cx="120" cy="120" r="78"></circle>
+                    </g>
+                </g>
+                <g id="Oval-1-Copy">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-18"></use>
+                    <circle stroke="#000000" stroke-width="4" cx="727" cy="143" r="78"></circle>
+                </g>
+                <g id="Star-1-Copy">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-19"></use>
+                    <path stroke="#000000" stroke-width="4" d="M987.350676,221.155498 L996.76876,166.243855 L996.946504,165.207525 L996.193567,164.473592 L956.297922,125.58495 L1011.43235,117.573449 L1012.47288,117.422251 L1012.93822,116.479367 L1037.59509,66.5191029 L1062.25195,116.479367 L1062.71729,117.422251 L1063.75783,117.573449 L1118.89225,125.58495 L1078.99661,164.473592 L1078.24367,165.207525 L1078.42141,166.243855 L1087.8395,221.155498 L1038.52577,195.229737 L1037.59509,194.740449 L1036.6644,195.229737 L987.350676,221.155498 Z"></path>
+                </g>
+                <g id="Group-Copy" transform="translate(1299.000000, 40.000000)">
+                    <g id="Star-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-20"></use>
+                        <path stroke="#000000" stroke-width="4" d="M35.3506758,159.155498 L44.7687599,104.243855 L44.9465044,103.207525 L44.1935666,102.473592 L4.29792228,63.5849501 L59.4323467,55.5734493 L60.4728811,55.4222508 L60.9382223,54.4793667 L85.5950865,4.51910292 L110.251951,54.4793667 L110.717292,55.4222508 L111.757826,55.5734493 L166.892251,63.5849501 L126.996606,102.473592 L126.243669,103.207525 L126.421413,104.243855 L135.839497,159.155498 L86.5257687,133.229737 L85.5950865,132.740449 L84.6644042,133.229737 L35.3506758,159.155498 Z"></path>
+                    </g>
+                    <g id="Star-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-21"></use>
+                        <path stroke="#000000" stroke-width="4" d="M51.3506758,179.155498 L60.7687599,124.243855 L60.9465044,123.207525 L60.1935666,122.473592 L20.2979223,83.5849501 L75.4323467,75.5734493 L76.4728811,75.4222508 L76.9382223,74.4793667 L101.595086,24.5191029 L126.251951,74.4793667 L126.717292,75.4222508 L127.757826,75.5734493 L182.892251,83.5849501 L142.996606,122.473592 L142.243669,123.207525 L142.421413,124.243855 L151.839497,179.155498 L102.525769,153.229737 L101.595086,152.740449 L100.664404,153.229737 L51.3506758,179.155498 Z"></path>
+                    </g>
+                    <g id="Star-1">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-22"></use>
+                        <path stroke="#000000" stroke-width="4" d="M69.3506758,202.155498 L78.7687599,147.243855 L78.9465044,146.207525 L78.1935666,145.473592 L38.2979223,106.58495 L93.4323467,98.5734493 L94.4728811,98.4222508 L94.9382223,97.4793667 L119.595086,47.5191029 L144.251951,97.4793667 L144.717292,98.4222508 L145.757826,98.5734493 L200.892251,106.58495 L160.996606,145.473592 L160.243669,146.207525 L160.421413,147.243855 L169.839497,202.155498 L120.525769,176.229737 L119.595086,175.740449 L118.664404,176.229737 L69.3506758,202.155498 Z"></path>
+                    </g>
+                </g>
+                <g id="Path-1-Copy">
+                    <use fill="#000000" fill-rule="evenodd" xlink:href="#path-23"></use>
+                    <path stroke="#000000" stroke-width="4" d="M851,125 L889,125 L891,125 L891,123 L891,107.785615 L926.171517,142.515525 L891,178.128649 L891,163 L891,161 L889,161 L851,161 L851,125 Z"></path>
+                </g>
+                <polygon id="Path-1-Copy-2" fill="#F6A623" points="1179 123 1219 123 1219 103 1259 142.497767 1219 183 1219 163 1179 163"></polygon>
+                <text id="List[A]-Copy" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                    <tspan x="270.8" y="317">List[A]</tspan>
+                </text>
+                <text id="map-copy" font-family="FiraMono-Bold, Fira Mono" font-size="64" font-weight="bold" fill="#F6A623">
+                    <tspan x="496.4" y="159">map</tspan>
+                </text>
+                <text id="List[B]-Copy" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                    <tspan x="1314.8" y="317">List[B]</tspan>
+                </text>
+                <text id="A-=&gt;-B-Copy" font-family="FiraMono-Regular, Fira Mono" font-size="42" font-weight="normal" fill="#000000">
+                    <tspan x="823.4" y="317">A =&gt; B</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>

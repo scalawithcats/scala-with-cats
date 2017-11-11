@@ -1,4 +1,4 @@
-## *Contravariant* and *Invariant* Functors {#contravariant-invariant}
+## *Contravariant* and Invariant Functors {#contravariant-invariant}
 
 As we have seen, we can think of `Functor's` `map` method as
 "appending" a transformation to a chain.
@@ -8,12 +8,25 @@ and one representing building a *bidirectional*
 chain of operations. These are called *contravariant*
 and *invariant functors* respectively.
 
-### Contravariant functors and the *contramap* method {#contravariant}
+<div class="callout callout-info">
+*Note: This Section is Optional!*
+
+You don't need to know about contravariant and invariant functors to understand monads,
+which are the most important pattern in this book and the focus of the next chapter.
+However, contravariant and invariant do come in handy in
+our discussion of `Semigroupal` and `Applicative` in Chapter [@sec:applicatives].
+
+If you want to move on to monads now,
+feel free to skip straight to Chapter [@sec:monads].
+Come back here before you read Chapter [@sec:applicatives].
+</div>
+
+### Contravariant Functors and the *contramap* Method {#contravariant}
 
 The first of our type classes, the *contravariant functor*,
 provides an operation called `contramap`
-that represents "prepending" a transformation to a chain.
-This is illustrated in Figure [@fig:functors:contramap-type-chart].
+that represents "prepending" an operation to a chain.
+The general type signature is shown in Figure [@fig:functors:contramap-type-chart].
 
 ![Type chart: the contramap method](src/pages/functors/generic-contramap.pdf+svg){#fig:functors:contramap-type-chart}
 
@@ -277,7 +290,7 @@ However, Julien Truffaut's library
 starting point for further investigation.
 </div>
 
-#### Transformative Thinking with Imap
+#### Transformative Thinking with *imap*
 
 Implement the `imap` method for `Codec` above.
 
@@ -364,7 +377,7 @@ decode[Box[Double]]("123.4")
 ```
 
 <div class="callout callout-warning">
-*What's with the names?*
+*What's With the Names?*
 
 What's the relationship between the terms
 "contravariance", "invariance", and "covariance"

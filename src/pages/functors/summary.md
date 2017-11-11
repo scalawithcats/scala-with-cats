@@ -31,13 +31,12 @@ Functors for collections are extremely important, as they transform each element
 This allows us to parallelise or distribute
 transformations on large collections,
 a technique leveraged heavily in
-"map reduce" frameworks like [Hadoop][link-hadoop].
+"map-reduce" frameworks like [Hadoop][link-hadoop].
 We will investigate this approach in more detail in the
-[Pygmy Hadoop](#map-reduce) case study later in the book.
+[Map-reduce](#map-reduce) case study later in the book.
 
 The `Contravariant` and `Invariant` type classes
-are more situationally useful.
-We won't be doing much more work with them,
-although we will revisit them
-to discuss the [`Semigroupal`](#semigroupal)
-type class later in the book.
+are less widely applicable but are still useful
+for building data types that represent transformations.
+We will revisit them to discuss the [`Semigroupal`](#semigroupal)
+type class later in Chapter [@sec:applicatives].

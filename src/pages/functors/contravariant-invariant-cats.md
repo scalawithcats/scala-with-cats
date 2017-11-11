@@ -1,4 +1,4 @@
-## *Contravariant* and *Invariant* in Cats
+## *Contravariant* and Invariant in Cats
 
 Let's look at the implementation of
 contravariant and invariant functors in Cats,
@@ -20,7 +20,7 @@ trait Invariant[F[_]] {
 }
 ```
 
-### *Contravariant* in Cats
+### Contravariant in Cats
 
 We can summon instances of `Contravariant`
 using the `Contravariant.apply` method.
@@ -55,7 +55,7 @@ import cats.syntax.contravariant._
 showString.contramap[Symbol](_.name).show('dave)
 ```
 
-### *Invariant* in Cats
+### Invariant in Cats
 
 Among other types,
 Cats provides an instance of `Invariant` for `Monoid`.

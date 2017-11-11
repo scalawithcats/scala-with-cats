@@ -4,7 +4,7 @@ Let's look at the implementation of functors in Cats.
 We'll examine the aspects we did for monoids:
 the *type class*, the *instances*, and the *syntax*.
 
-### The *Functor* Type Class
+### The Functor Type Class
 
 The functor type class is [`cats.Functor`][cats.Functor].
 We obtain instances using the standard `Functor.apply`
@@ -39,7 +39,7 @@ val liftedFunc = Functor[Option].lift(func)
 liftedFunc(Option(1))
 ```
 
-### *Functor* Syntax
+### Functor Syntax
 
 The main method provided by the syntax for `Functor` is `map`.
 It's difficult to demonstrate this with `Options` and `Lists`
