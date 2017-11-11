@@ -1,14 +1,14 @@
 ---
 # Used by Pandoc to print covers:
-title: "Advanced Scala"
-subtitle: "with Cats"
-author: Noel Welsh and Dave Gurnell
-date: "Early Access, May 2017"
+title: "Scala with Cats"
+subtitle: null
+author: "Noel Welsh and Dave Gurnell"
+date: "November 2017"
 # Used by Pandoc to generate the PDF cover...
 # see src/css/book.css for HTML/ePub covers:
 coverColor: "D62A7C"
 # Used by Grunt to name output files:
-filenameStem: "advanced-scala"
+filenameStem: "scala-with-cats"
 # Used by Grunt to create a ZIP of source code:
 exercisesRepo: null # "git@github.com:underscoreio/advanced-scala-code.git"
 tocDepth: 3
@@ -28,7 +28,6 @@ secPrefixTemplate: "$$i$$"
 pages:
   - intro/preface.md
   - intro/versions.md
-  - intro/early-access.md
   - intro/conventions.md
   - intro/contributors.md
   - intro/backers.md
@@ -98,12 +97,12 @@ pages:
   - case-studies/validation/kleisli.md
   - case-studies/validation/conclusions.md
 
-  - case-studies/crdt/index.md
-  - case-studies/crdt/eventual-consistency.md
-  - case-studies/crdt/g-counter.md
-  - case-studies/crdt/generalisation.md
-  - case-studies/crdt/abstraction.md
-  - case-studies/crdt/summary.md
+  # - case-studies/crdt/index.md
+  # - case-studies/crdt/eventual-consistency.md
+  # - case-studies/crdt/g-counter.md
+  # - case-studies/crdt/generalisation.md
+  # - case-studies/crdt/abstraction.md
+  # - case-studies/crdt/summary.md
 
   # - case-studies/parser/index.md
   # - case-studies/parser/intro.md
@@ -117,30 +116,4 @@ pages:
   - links.md
 
   - parts/part4.md
-previewPages:
-  - preview/prologue.md
-
-  - intro/foreword.md
-  - intro/early-access.md
-  - intro/conventions.md
-
-  - type-classes/index.md
-  - type-classes/anatomy.md
-  - type-classes/cats.md
-  - type-classes/equal.md
-  - type-classes/summary.md
-
-  - monoids/index.md
-  - monoids/cats.md
-  - monoids/instance-selection.md
-  - monoids/summary.md
-
-  - functors/index.md
-  - functors/cats.md
-  # - functors/summary.md
-
-  - solutions.md
-  - links.md
-
-  - preview/epilogue.md
 ...
