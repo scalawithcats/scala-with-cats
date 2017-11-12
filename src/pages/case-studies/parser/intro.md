@@ -16,10 +16,10 @@ To get you started we have implemented a basic framework for parser combinators,
 
 ~~~ bash
 > sbt 'project parser' '~test'
-[info] Loading project definition from /Users/noel/dev/advanced-scala-code/project
-[info] Set current project to advanced-scala (in build file:/Users/noel/dev/advanced-scala-code/)
-[info] Set current project to parser (in build file:/Users/noel/dev/advanced-scala-code/)
-[info] Compiling 1 Scala source to /Users/noel/dev/advanced-scala-code/parser/target/scala-2.10/classes...
+[info] Loading project definition from /Users/noel/dev/scala-with-cats-code/project
+[info] Set current project to scala-with-cats (in build file:/Users/noel/dev/scala-with-cats-code/)
+[info] Set current project to parser (in build file:/Users/noel/dev/scala-with-cats-code/)
+[info] Compiling 1 Scala source to /Users/noel/dev/scala-with-cats-code/parser/target/scala-2.10/classes...
 scala.NotImplementedError: an implementation is missing
 ~~~
 

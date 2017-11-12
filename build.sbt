@@ -1,4 +1,4 @@
-name              in ThisBuild := "advanced-scala"
+name              in ThisBuild := "scala-with-cats"
 organization      in ThisBuild := "io.underscore"
 version           in ThisBuild := "0.0.1"
 
