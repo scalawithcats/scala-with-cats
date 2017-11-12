@@ -20,7 +20,7 @@ when we want to change performance and durability tradeoffs.
 There are a number of ways we can implement this.
 One approach is to define a `GCounter` type class
 with dependencies on `Monoid` and `BoundedSemiLattice`.
-We defined this as a type class that takes
+We define this as a type class that takes
 a type constructor with *two* type parameters
 represent the key and value types of the map abstraction.
 
@@ -111,6 +111,7 @@ implicit def mapInstance[K, V]: GCounter[Map, K, V] =
       map.values.toList.combineAll
   }
 ```
+</div>
 
 You should be able to use your instance as follows:
 
@@ -134,6 +135,8 @@ is a bit unsatisfying.
 Although the structure of the implementation
 will be the same for most instances we define,
 we won't get any code reuse.
+
+## Abstracting a Key Value Store
 
 One solution is to capture
 the idea of a key-value store within a type class,
@@ -181,7 +184,7 @@ implicit val mapInstance: KeyValueStore[Map] =
 ```
 </div>
 
-With our type class in place we can write syntax
+With our type class in place we can implement syntax
 to enhance data types for which we have instances:
 
 ```tut:book:silent
@@ -228,7 +231,8 @@ implicit def gcounterInstance[F[_,_], K, V]
 ```
 
 The complete code for this case study is quite long,
-but most of it is boilerplate.
+but most of it is boilerplate setting up syntax
+for operations on the type class.
 We can cut down on this using compiler plugins
 such as [Simulacrum][link-simulacrum]
 and [Kind Projector][link-kind-projector].

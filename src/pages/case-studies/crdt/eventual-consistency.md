@@ -27,7 +27,7 @@ This means that at any particular point in time
 machines are allowed to have differing views of data.
 However, if all machines can communicate
 and there are no further updates
-they will evenutally all have the same view of data.
+they will eventually all have the same view of data.
 
 Eventually consistent systems require
 less communication between machines

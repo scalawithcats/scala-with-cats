@@ -33,14 +33,14 @@ as shown in Figure [@fig:crdt:simple-counter3].
 ![Simple counters: first round of requests and reconciliation](src/pages/case-studies/crdt/simple-counter3.pdf+svg){#fig:crdt:simple-counter3}
 
 So far so good, but things will start to fall apart shortly.
-Suppose `A` serves a single visitor.
+Suppose `A` serves a single visitor,
+which means we've seen six visitors in total.
 The machines attempt to reconcile state again using addition
 leading to the answer shown in Figure [@fig:crdt:simple-counter5].
 
 ![Simple counters: second round of requests and (incorrect) reconciliation](src/pages/case-studies/crdt/simple-counter5.pdf+svg){#fig:crdt:simple-counter5}
 
 This is clearly wrong!
-There have only been six visitors in total.
 The problem is that simple counters
 don't give us enough information about
 the history of interactions between the machines.
@@ -87,11 +87,11 @@ GCounters allow each machine to keep
 an accurate account of the state of the whole system
 without storing the complete history of interactions.
 If a machine wants to calculate
-the total traffic for the whole web site.
-it simply sums up all the per-machine counters.
+the total traffic for the whole web site,
+it sums up all the per-machine counters.
 The result is accurate or near-accurate
 depending on how recently we performed a reconciliation.
-Over time, regardless of network outages,
+Eventually, regardless of network outages,
 the system will always converge on a consistent state.
 
 ### Exercise: GCounter Implementation
@@ -116,7 +116,7 @@ Finish the implementation!
 
 <div class="solution">
 Hopefully the description above was clear enough that
-you can get to an implementation like the below.
+you can get to an implementation like the one below.
 
 ```tut:book:silent
 final case class GCounter(counters: Map[String, Int]) {

@@ -2,11 +2,11 @@
 
 In this case study we've seen how we can use type classes
 to model a simple CRDT, the GCounter, in Scala.
-Our implementation gives us a lot of flexibility and code reuse.
-We are not tied to the data type we "count",
+Our implementation gives us a lot of flexibility and code reuse:
+we aren't tied to the data type we "count",
 nor to the data type that maps machine IDs to counters.
 
-The focus in this exercise has been
+The focus in this case study has been
 on using the tools that Scala provides,
 not on exploring CRDTs.
 There are many other CRDTs,

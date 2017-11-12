@@ -1,6 +1,6 @@
 ## Generalisation
 
-We've now created a distributed, eventually consistentm,
+We've now created a distributed, eventually consistent,
 increment-only counter.
 This is a useful achievement but we don't want to stop here.
 In this section we will attempt to abstract the operations
@@ -31,7 +31,7 @@ We also rely on associativity to ensure
 the specific sequence of `merges` gives the correct value.
 
 In `total` we implicitly rely
-on associativity and commutivity
+on associativity and commutativity
 to ensure we get the correct value
 no matter what arbitrary order we choose
 to sum the per-machine counters.
@@ -40,7 +40,7 @@ which allows us to skip machines
 for which we do not store a counter.
 
 The properties of `merge` are a bit more interesting.
-We rely on commutivity to ensure that
+We rely on commutativity to ensure that
 machine `A` merging with machine `B`
 yields the same result as
 machine `B` merging with machine `A`.
@@ -52,6 +52,8 @@ called *idempotency*,
 to ensure that if two machines hold the same data
 in a per-machine counter,
 merging data will not lead to an incorrect result.
+Idempotent operations are ones that return
+the same result again and again if they are executed multiple times.
 Formally, a binary operation `max` is idempotent if
 the following relationship holds:
 
@@ -86,7 +88,7 @@ This investigation demonstrates
 the powers of thinking about properties or laws of abstractions.
 Now we have identified these properties
 we can substitute the natural numbers used in our GCounter
-with any data type with operations meeting these properties.
+with any data type with operations satisfying these properties.
 A simple example is a set,
 with the binary operation being union
 and the identity element the empty set.
@@ -127,15 +129,19 @@ because a bounded semilattice is a monoid
 ### Exercise: BoundedSemiLattice Instances
 
 Implement `BoundedSemiLattice` type class instances
-for non-negative `Ints` and for `Sets`.
+for `Ints` and for `Sets`.
+The instance for `Int` will
+technically only hold for non-negative numbers,
+but you don't need to model non-negativity
+explicitly in the types.
 
 <div class="solution">
-It's natural to place the instance
+It's common to place the instances
 in the companion object of `BoundedSemiLattice`
 so they are in the implicit scope without importing them.
 
 Implementing the instance for `Set`
-is good practice with using implicit methods.
+provides good practice with implicit methods.
 
 ```tut:book:invisible:reset
 import cats.Monoid
@@ -182,7 +188,8 @@ to simplify your implementation.
 This is a good example of how
 type class abstractions work at multiple levels in our code.
 We're using monoids to design a large component---our CRDTs---but
-they are also useful in the small, making our code simpler.
+they are also useful in the small, simplifying our code
+and making it shorter and clearer.
 
 <div class="solution">
 Here's a working implementation.
