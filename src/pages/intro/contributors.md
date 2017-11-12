@@ -3,6 +3,8 @@
 We'd like to thank our colleagues at Underscore,
 our friends at Typelevel,
 and everyone who helped contribute to this book.
+Special thanks to Jenny Clements for her fantastic artwork
+and Richard Dallaway for his proof reading expertise.
 Here is an alphabetical list of contributors:
 
 Alessandro Marrella,
@@ -18,6 +20,7 @@ Ghislain Vaillant,
 Gregor Ihmor,
 Jason Scott,
 Javier Arrieta,
+Jenny Clements,
 Jonathon Ferguson,
 ltbs,
 Marc Prud'hommeaux,
