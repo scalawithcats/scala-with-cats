@@ -55,7 +55,7 @@ import cats.Eq
 Now let's grab an instance for `Int`:
 
 ```tut:book:silent
-import cats.instances.int._
+import cats.instances.int._ // for Eq
 
 val eqInt = Eq[Int]
 ```
@@ -79,7 +79,7 @@ We can also import the interface syntax in [`cats.syntax.eq`][cats.syntax.eq]
 to use the `===` and `=!=` methods:
 
 ```tut:book:silent
-import cats.syntax.eq._
+import cats.syntax.eq._ // for === and =!=
 ```
 
 ```tut:book
@@ -93,15 +93,15 @@ Again, comparing values of different types causes a compiler error:
 123 === "123"
 ```
 
-### Comparing Options
+### Comparing Options {#sec:type-classes:comparing-options}
 
 Now for a more interesting example---`Option[Int]`.
 To compare values of type `Option[Int]`
 we need to import instances of `Eq` for `Option` as well as `Int`:
 
 ```tut:book:silent
-import cats.instances.int._
-import cats.instances.option._
+import cats.instances.int._    // for Eq
+import cats.instances.option._ // for Eq
 ```
 
 Now we can try some comparisons:
@@ -129,12 +129,12 @@ Option(1) === Option.empty[Int]
 or using special syntax from [`cats.syntax.option`][cats.syntax.option]:
 
 ```tut:book:silent
-import cats.syntax.option._
+import cats.syntax.option._ // for some and none
 ```
 
 ```tut:book
-1.some === None
-1.some =!= None
+1.some === none[Int]
+1.some =!= none[Int]
 ```
 
 ### Comparing Custom Types
@@ -144,7 +144,7 @@ which accepts a function of type `(A, A) => Boolean` and returns an `Eq[A]`:
 
 ```tut:book:silent
 import java.util.Date
-import cats.instances.long._
+import cats.instances.long._ // for Eq
 ```
 
 ```tut:book:silent
@@ -190,7 +190,7 @@ We'll bring instances of `Eq` into scope as we need them below:
 
 ```tut:book:silent
 import cats.Eq
-import cats.syntax.eq._
+import cats.syntax.eq._ // for ===
 ```
 
 Our `Cat` class is the same as ever:
@@ -203,14 +203,15 @@ We bring the `Eq` instances for `Int` and `String`
 into scope for the implementation of `Eq[Cat]`:
 
 ```tut:book:silent
-implicit val catEqual = Eq.instance[Cat] { (cat1, cat2) =>
-  import cats.instances.int._
-  import cats.instances.string._
+import cats.instances.int._    // for Eq
+import cats.instances.string._ // for Eq
 
-  (cat1.name  === cat2.name ) &&
-  (cat1.age   === cat2.age  ) &&
-  (cat1.color === cat2.color)
-}
+implicit val catEqual: Eq[Cat] =
+  Eq.instance[Cat] { (cat1, cat2) =>
+    (cat1.name  === cat2.name ) &&
+    (cat1.age   === cat2.age  ) &&
+    (cat1.color === cat2.color)
+  }
 ```
 
 Finally, we test things out in a sample application:
@@ -224,7 +225,7 @@ cat1 =!= cat2
 ```
 
 ```tut:book:silent
-import cats.instances.option._
+import cats.instances.option._ // for Eq
 ```
 
 ```tut:book

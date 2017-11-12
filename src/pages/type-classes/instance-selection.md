@@ -201,24 +201,6 @@ a value of type `Some[Int]`,
 our type class instance for `Option` will not be used.
 We can solve this problem with
 a type annotation like `Some(1) : Option[Int]`
-or by using "smart constructors" that construct values
-with the type of the base trait in an algebraic data type.
-For example, the Scala standard library
-`Option.apply` and `Option.empty` constructors for `Option`:
-
-```tut:book
-Option(1)
-Option.empty[Int]
-```
-
-Cats also provides `some` and `none` extension methods
-via the `cats.syntax.option` import:
-
-```tut:book:silent
-import cats.syntax.option._
-```
-
-```tut:book
-1.some
-none[Int]
-```
+or by using "smart constructors"
+like the `Option.apply`, `Option.empty`, `some`, and `none` methods
+we saw in Section [@sec:type-classes:comparing-options].

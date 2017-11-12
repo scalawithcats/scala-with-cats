@@ -124,8 +124,8 @@ or more conveniently using `pure`:
 
 ```tut:book:silent
 import cats.Monad
-import cats.instances.list._
-import cats.syntax.applicative._
+import cats.instances.list._     // for Monad
+import cats.syntax.applicative._ // for pure
 ```
 
 ```tut:book
@@ -265,8 +265,6 @@ We need a type alias
 to convert the type constructor to the correct shape:
 
 ```tut:book:silent
-import cats.instances.either._
-
 // Alias Either to a type constructor with one parameter:
 type ErrorOr[A] = Either[String, A]
 
@@ -277,6 +275,10 @@ type ErrorOrOption[A] = OptionT[ErrorOr, A]
 `ErrorOrOption` is a monad, just like `ListOption`.
 We can use `pure`, `map`, and `flatMap` as usual
 to create and transform instances:
+
+```tut:book:silent
+import cats.instances.either._ // for Monad
+```
 
 ```tut:book
 val a = 10.pure[ErrorOrOption]
@@ -323,13 +325,13 @@ and our `map` and `flatMap` methods
 cut through three layers of abstraction:
 
 ```tut:book:silent
+import cats.instances.future._ // for Monad
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import cats.instances.future._
 ```
 
-```tut:book
+```tut:book:silent
 val futureEitherOr: FutureEitherOption[Int] =
   for {
     a <- 10.pure[FutureEitherOption]
@@ -342,13 +344,14 @@ val futureEitherOr: FutureEitherOption[Int] =
 
 If you frequently find yourself
 defining multiple type aliases when building monad stacks,
-you may want to try the [Kind Projector][link-kind-projector] compiler plugin.
+you may want to try
+the [Kind Projector][link-kind-projector] compiler plugin.
 Kind Projector enhances Scala's type syntax
 to make it easier to define partially applied type constructors.
 For example:
 
 ```tut:book
-import cats.instances.option._
+import cats.instances.option._ // for Monad
 
 123.pure[EitherT[Option, String, ?]]
 ```
@@ -362,7 +365,7 @@ needed to keep our code readable.
 
 As we saw above, we can create transformed monad stacks
 using the relevant monad transformer's `apply` method
-or the usual `pure` syntax:
+or the usual `pure` syntax[^eithert-monad-error]:
 
 ```tut:book
 // Create using apply:
@@ -371,6 +374,11 @@ val errorStack1 = OptionT[ErrorOr, Int](Right(Some(10)))
 // Create using pure:
 val errorStack2 = 32.pure[ErrorOrOption]
 ```
+
+[^eithert-monad-error]: Cats provides an instance
+of `MonadError` for `EitherT`,
+allowing us to create instances
+using `raiseError` as well as `pure`.
 
 Once we've finished with a monad transformer stack,
 we can unpack it using its `value` method.
@@ -567,8 +575,8 @@ Include the `name` in the message for good effect.
 
 <div class="solution">
 ```tut:book:silent
-import cats.instances.future._
-import cats.syntax.flatMap._
+import cats.instances.future._ // for Monad
+import cats.syntax.flatMap._   // for flatMap
 import scala.concurrent.ExecutionContext.Implicits.global
 
 type Response[A] = EitherT[Future, String, A]

@@ -13,7 +13,7 @@ Here is an example using `List`:
 
 ```tut:book:silent
 import cats.Foldable
-import cats.instances.list._
+import cats.instances.list._ // for Foldable
 
 val ints = List(1, 2, 3)
 ```
@@ -27,7 +27,7 @@ Here is an example using `Option`,
 which is treated like a sequence of zero or one elements:
 
 ```tut:book:silent
-import cats.instances.option._
+import cats.instances.option._ // for Foldable
 
 val maybeInt = Option(123)
 ```
@@ -73,7 +73,7 @@ Using `Foldable` forces us to use stack safe operations,
 which fixes the overflow exception:
 
 ```tut:book:silent
-import cats.instances.stream._
+import cats.instances.stream._ // for Foldable
 ```
 
 ```tut:book:silent
@@ -130,7 +130,7 @@ Cats provides two methods that make use of `Monoids`:
 For example, we can use `combineAll` to sum over a `List[Int]`:
 
 ```tut:book:silent
-import cats.instances.int._ // Monoid for Int
+import cats.instances.int._ // for Monoid
 ```
 
 ```tut:book
@@ -141,7 +141,7 @@ Alternatively, we can use `foldMap`
 to convert each `Int` to a `String` and concatenate them:
 
 ```tut:book:silent
-import cats.instances.string._ // Monoid for String
+import cats.instances.string._ // for Monoid
 ```
 
 ```tut:book
@@ -152,7 +152,7 @@ Finally, we can compose `Foldables`
 to support deep traversal of nested sequences:
 
 ```tut:book:silent
-import cats.instances.vector._ // Monoid of Vector
+import cats.instances.vector._ // for Monoid
 
 val ints = List(Vector(1, 2, 3), Vector(4, 5, 6))
 ```
@@ -169,7 +169,7 @@ In each case, the first argument to the method on `Foldable`
 becomes the receiver of the method call:
 
 ```tut:book:silent
-import cats.syntax.foldable._
+import cats.syntax.foldable._ // for combineAll and foldMap
 ```
 
 ```tut:book

@@ -162,14 +162,14 @@ Here's some sample output for reference:
 
 ```tut:book:invisible
 import cats.Monoid
-import cats.syntax.semigroup._
+import cats.syntax.semigroup._ // for |+|
 
 def foldMap[A, B: Monoid](values: Vector[A])(func: A => B): B =
   values.foldLeft(Monoid[B].empty)(_ |+| func(_))
 ```
 
 ```tut:book:silent
-import cats.instances.int._
+import cats.instances.int._ // for Monoid
 ```
 
 ```tut:book
@@ -177,7 +177,7 @@ foldMap(Vector(1, 2, 3))(identity)
 ```
 
 ```tut:book:silent
-import cats.instances.string._
+import cats.instances.string._ // for Monoid
 ```
 
 ```tut:book
@@ -195,9 +195,9 @@ as described in Section [@sec:monoid-syntax]:
 
 ```tut:book:silent
 import cats.Monoid
-import cats.instances.int._
-import cats.instances.string._
-import cats.syntax.semigroup._
+import cats.instances.int._    // for Monoid
+import cats.instances.string._ // for Monoid
+import cats.syntax.semigroup._ // for |+|
 
 def foldMap[A, B : Monoid](values: Vector[A])(func: A => B): B =
   values.map(func).foldLeft(Monoid[B].empty)(_ |+| _)
@@ -303,9 +303,9 @@ Future.sequence(List(Future(1), Future(2), Future(3)))
 or an instance of `Traverse`:
 
 ```tut:book:silent
-import cats.instances.future._ // Applicative for Future
-import cats.instances.list._   // Traverse for List
-import cats.syntax.traverse._  // foo.sequence syntax
+import cats.instances.future._ // for Applicative
+import cats.instances.list._   // for Traverse
+import cats.syntax.traverse._  // for sequence
 ```
 
 ```tut:book
@@ -329,13 +329,11 @@ There are also `Monad` and `Monoid` implementations for `Future`
 available from `cats.instances.future`:
 
 ```tut:book:silent
-import cats.Monad
-import cats.instances.future._
+import cats.{Monad, Monoid}
+import cats.instances.int._    // for Monoid
+import cats.instances.future._ // for Monad and Monoid
 
 Monad[Future].pure(42)
-
-import cats.Monoid
-import cats.instances.int._
 
 Monoid[Future[Int]].combine(Future(1), Future(2))
 ```
@@ -412,10 +410,13 @@ def parallelFoldMap[A, B: Monoid]
     iterable.foldLeft(Monoid[B].empty)(_ |+| _)
   }
 }
+
+val result: Future[Int] =
+  parallelFoldMap((1 to 1000000).toVector)(identity)
 ```
 
 ```tut:book
-Await.result(parallelFoldMap((1 to 1000000).toVector)(identity), 1.second)
+Await.result(result, 1.second)
 ```
 
 We can re-use our definition of `foldMap` for a more concise solution.
@@ -441,10 +442,13 @@ def parallelFoldMap[A, B: Monoid]
     iterable.foldLeft(Monoid[B].empty)(_ |+| _)
   }
 }
+
+val result: Future[Int] =
+  parallelFoldMap((1 to 1000000).toVector)(identity)
 ```
 
 ```tut:book
-Await.result(parallelFoldMap((1 to 1000000).toVector)(identity), 1.second)
+Await.result(result, 1.second)
 ```
 </div>
 

@@ -30,7 +30,7 @@ object MyApp extends App {
 }
 ```
 
-Most code passes through [tut] to ensure it compiles.
+Most code passes through [tut][link-tut] to ensure it compiles.
 tut uses the Scala console behind the scenes,
 so we sometimes show console-style output as comments:
 

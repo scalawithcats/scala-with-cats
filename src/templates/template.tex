@@ -303,23 +303,21 @@ $endfor$
 % this command also creates an internal command to insert the image
 \newcommand{\partimage}[2][]{\gdef\@partimage{\includegraphics[#1]{#2}}}
 
-% UNCOMMENT THIS TO RE-ENABLE CAT PICTURES
-%
 % redefine the amsbook part code to include the \@partimage insertion command
-% \def\@part[#1]#2{%
-%   \ifnum \c@secnumdepth >-2\relax \refstepcounter{part}%
-%     \addcontentsline{toc}{part}{\partname\ \thepart.
-%         \protect\enspace\protect\noindent#1}%
-%   \else
-%     \addcontentsline{toc}{part}{#1}\fi
-%   \begingroup\centering
-%   \ifnum \c@secnumdepth >-2\relax
-%        {\fontsize{24pt}{30pt} \bfseries \partname\ \thepart}
-%        \vskip 20\p@ \fi
-%        \fontsize{30pt}{36pt} \bfseries#1
-%        \vfil\@partimage\vfil
-%   \endgroup
-%   \newpage\thispagestyle{empty}}
+\def\@part[#1]#2{%
+  \ifnum \c@secnumdepth >-2\relax \refstepcounter{part}%
+    \addcontentsline{toc}{part}{\partname\ \thepart.
+        \protect\enspace\protect\noindent#1}%
+  \else
+    \addcontentsline{toc}{part}{#1}\fi
+  \begingroup\centering
+  \ifnum \c@secnumdepth >-2\relax
+       {\fontsize{24pt}{30pt} \bfseries \partname\ \thepart}
+       \vskip 20\p@ \fi
+       \fontsize{30pt}{36pt} \bfseries#1
+       \vfil\@partimage\vfil
+  \endgroup
+  \newpage\thispagestyle{empty}}
 
 \makeatother
 
@@ -421,6 +419,8 @@ $endif$
 $date$
 
 Copyright $copyright$ $author$.
+
+Artwork by \href{http://miasandelle.com}{Jenny Clements}.
 
 Published by \href{http://underscore.io}{Underscore Consulting LLP}, Brighton, UK.
 

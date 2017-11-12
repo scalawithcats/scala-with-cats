@@ -7,8 +7,8 @@ if we had the `-Ypartial-unification` compiler flag enabled:
 
 ```tut:book:silent
 import cats.Functor
-import cats.instances.function._
-import cats.syntax.functor._
+import cats.instances.function._ // for Functor
+import cats.syntax.functor._     // for map
 
 val func1 = (x: Int)    => x.toDouble
 val func2 = (y: Double) => y * 2
@@ -101,7 +101,7 @@ including `Functors` for
 types such as `Function1` and `Either`:
 
 ```tut:book:silent
-import cats.instances.either._
+import cats.instances.either._ // for Functor
 ```
 
 ```tut:book
@@ -145,7 +145,7 @@ If we try this for real, however,
 our code won't compile:
 
 ```tut:book:silent
-import cats.syntax.contravariant._
+import cats.syntax.contravariant._ // for contramap
 ```
 
 ```tut:book:fail

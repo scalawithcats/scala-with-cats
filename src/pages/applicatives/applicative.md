@@ -14,11 +14,13 @@ by Conor McBride and Ross Paterson[^semigroupal-monoidal].
 [^semigroupal-monoidal]: Semigroupal is referred to as "monoidal" in the paper.
 
 Cats models applicatives using two type classes.
-The first, `Apply`, extends `Semigroupal` and `Functor`
+The first, [`cats.Apply`][cats.Apply],
+extends `Semigroupal` and `Functor`
 and adds an `ap` method that applies a parameter
 to a function within a context.
-The second, `Applicative` extends `Apply`,
-adds the `pure` method introduced in Chapter [@sec:monads].
+The second, [`cats.Applicative`][cats.Applicative],
+extends `Apply`, adds the `pure` method
+introduced in Chapter [@sec:monads].
 Here's a simplified definition in code:
 
 ```scala

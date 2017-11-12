@@ -24,9 +24,9 @@ We'll also have an `UptimeService` that maintains a list of servers
 and allows the user to poll them for their total uptime:
 
 ```tut:book:silent
-import cats.instances.future._
-import cats.instances.list._
-import cats.syntax.traverse._
+import cats.instances.future._ // for Applicative
+import cats.instances.list._   // for Traverse
+import cats.syntax.traverse._  // for traverse
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class UptimeService(client: UptimeClient) {
@@ -245,7 +245,7 @@ We can write this as an implicit parameter:
 
 ```tut:book:silent
 import cats.Applicative
-import cats.syntax.functor._
+import cats.syntax.functor._ // for map
 ```
 
 ```tut:book:silent
@@ -289,11 +289,10 @@ allowing the rest of the code to operate
 synchronously without worrying about monads or applicatives:
 
 ```tut:book:invisible:reset
-import cats.Id
-import cats.Applicative
-import cats.instances.list._
-import cats.syntax.functor._
-import cats.syntax.traverse._
+import cats.{Id, Applicative}
+import cats.instances.list._  // for Traverse
+import cats.syntax.functor._  // for map
+import cats.syntax.traverse._ // for traverse
 import scala.concurrent.Future
 import scala.language.higherKinds
 

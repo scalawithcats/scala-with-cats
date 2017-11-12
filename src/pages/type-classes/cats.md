@@ -72,8 +72,8 @@ and so on...                                     See the [`cats.instances`][cats
 Let's import the instances of `Show` for `Int` and `String`:
 
 ```tut:book:silent
-import cats.instances.int._
-import cats.instances.string._
+import cats.instances.int._    // for Show
+import cats.instances.string._ // for Show
 
 val showInt:    Show[Int]    = Show.apply[Int]
 val showString: Show[String] = Show.apply[String]
@@ -98,7 +98,7 @@ This adds an extension method called `show`
 to any type for which we have an instance of `Show` in scope:
 
 ```tut:book:silent
-import cats.syntax.show._
+import cats.syntax.show._ // for show
 ```
 
 ```tut:book
@@ -198,9 +198,9 @@ and the interface syntax:
 
 ```tut:book:silent
 import cats.Show
-import cats.instances.int._
-import cats.instances.string._
-import cats.syntax.show._
+import cats.instances.int._    // for Show
+import cats.instances.string._ // for Show
+import cats.syntax.show._      // for show
 ```
 
 Our definition of `Cat` remains the same:

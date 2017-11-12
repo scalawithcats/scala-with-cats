@@ -308,7 +308,7 @@ We `flatMap` at each stage,
 ignoring the intermediate results as we saw in the example:
 
 ```tut:book:silent
-import cats.syntax.applicative._
+import cats.syntax.applicative._ // for pure
 
 def evalAll(input: List[String]): CalcState[Int] =
   input.foldLeft(0.pure[CalcState]) { (a, b) =>

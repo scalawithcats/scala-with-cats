@@ -144,8 +144,8 @@ is equivalent to `Applicative.pure`:
 
 ```tut:book:silent
 import cats.Applicative
-import cats.instances.future._
-import cats.syntax.applicative._
+import cats.instances.future._   // for Applicative
+import cats.syntax.applicative._ // for pure
 
 List.empty[Int].pure[Future]
 ```
@@ -168,7 +168,7 @@ def oldCombine(
 is now equivalent to `Semigroupal.combine`:
 
 ```tut:book:silent
-import cats.syntax.apply._
+import cats.syntax.apply._ // for mapN
 
 // Combining accumulator and hostname using an Applicative:
 def newCombine(
@@ -212,7 +212,7 @@ as shown in the following exercises.
 What is the result of the following?
 
 ```tut:book:silent
-import cats.instances.vector._
+import cats.instances.vector._ // for Applicative
 
 listSequence(List(Vector(1, 2), Vector(3, 4)))
 ```
@@ -252,7 +252,7 @@ listSequence(List(Vector(1, 2), Vector(3, 4), Vector(5, 6)))
 Here's an example that uses `Options`:
 
 ```tut:book:silent
-import cats.instances.option._
+import cats.instances.option._ // for Applicative
 
 def process(inputs: List[Int]) =
   listTraverse(inputs)(n => if(n % 2 == 0) Some(n) else None)
@@ -286,7 +286,7 @@ Finally, here is an example that uses `Validated`:
 
 ```tut:book:silent
 import cats.data.Validated
-import cats.instances.list._ // for Monoid[List]
+import cats.instances.list._ // for Monoid
 
 type ErrorsOr[A] = Validated[List[String], A]
 

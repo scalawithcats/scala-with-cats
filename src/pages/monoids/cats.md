@@ -50,7 +50,7 @@ we can write the following:
 
 ```tut:book:silent
 import cats.Monoid
-import cats.instances.string._
+import cats.instances.string._ // for Monoid
 ```
 
 ```tut:book
@@ -85,7 +85,7 @@ we import from [`cats.instances.int`][cats.instances.int]:
 
 ```tut:book:silent
 import cats.Monoid
-import cats.instances.int._
+import cats.instances.int._ // for Monoid
 ```
 
 ```tut:book
@@ -98,8 +98,8 @@ and [`cats.instances.option`][cats.instances.option]:
 
 ```tut:book:silent
 import cats.Monoid
-import cats.instances.int._
-import cats.instances.option._
+import cats.instances.int._    // for Monoid
+import cats.instances.option._ // for Monoid
 ```
 
 ```tut:book
@@ -120,8 +120,8 @@ Because `combine` technically comes from `Semigroup`,
 we access the syntax by importing from [`cats.syntax.semigroup`][cats.syntax.semigroup]:
 
 ```tut:book:silent
-import cats.syntax.semigroup._
-import cats.instances.string._
+import cats.instances.string._ // for Monoid
+import cats.syntax.semigroup._ // for |+|
 ```
 
 ```tut:book
@@ -129,7 +129,7 @@ val stringResult = "Hi " |+| "there" |+| Monoid[String].empty
 ```
 
 ```tut:book:silent
-import cats.instances.int._
+import cats.instances.int._ // for Monoid
 ```
 
 ```tut:book
@@ -155,8 +155,8 @@ although there's not a compelling use case for this yet:
 
 ```tut:book:silent
 import cats.Monoid
-import cats.instances.int._
-import cats.syntax.semigroup._
+import cats.instances.int._    // for Monoid
+import cats.syntax.semigroup._ // for |+|
 
 def add(items: List[Int]): Int =
   items.foldLeft(Monoid[Int].empty)(_ |+| _)
@@ -177,8 +177,8 @@ We can write this as a generic method that accepts an implicit `Monoid` as a par
 
 ```tut:book:silent
 import cats.Monoid
-import cats.instances.int._
-import cats.syntax.semigroup._
+import cats.instances.int._    // for Monoid
+import cats.syntax.semigroup._ // for |+|
 
 def add[A](items: List[A])(implicit monoid: Monoid[A]): A =
   items.foldLeft(monoid.empty)(_ |+| _)
@@ -194,7 +194,7 @@ def add[A: Monoid](items: List[A]): A =
 We can use this code to add values of type `Int` and `Option[Int]` as requested:
 
 ```tut:book:silent
-import cats.instances.int._
+import cats.instances.int._ // for Monoid
 ```
 
 ```tut:book
@@ -202,7 +202,7 @@ add(List(1, 2, 3))
 ```
 
 ```tut:book:silent
-import cats.instances.option._
+import cats.instances.option._ // for Monoid
 ```
 
 ```tut:book

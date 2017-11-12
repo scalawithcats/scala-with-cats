@@ -49,7 +49,7 @@ In Scala 2.12+ we can either omit this import
 or leave it in place without breaking anything:
 
 ```tut:book:silent
-import cats.syntax.either._
+import cats.syntax.either._ // for map and flatMap
 
 for {
   a <- either1
@@ -64,7 +64,7 @@ we can also import the `asLeft` and `asRight` extension methods
 from [`cats.syntax.either`][cats.syntax.either]:
 
 ```tut:book:silent
-import cats.syntax.either._
+import cats.syntax.either._ // for asRight
 ```
 
 ```tut:book

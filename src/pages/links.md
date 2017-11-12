@@ -1,8 +1,8 @@
 [scala.Option]: http://www.scala-lang.org/api/current/scala/Option.html
 
-[tut]: https://github.com/tpolecat/tut
-
 [cats.package]: http://typelevel.org/cats/api/cats/
+[cats.Apply]: http://typelevel.org/cats/api/cats/Apply.html
+[cats.Applicative]: http://typelevel.org/cats/api/cats/Applicative.html
 [cats.Eval]: http://typelevel.org/cats/api/cats/Eval.html
 [cats.Contravariant]: http://typelevel.org/cats/api/cats/Contravariant.html
 [cats.Invariant]: http://typelevel.org/cats/api/cats/Invariant.html
@@ -10,8 +10,10 @@
 [cats.Id]: http://typelevel.org/cats/api/cats/Id.html
 [cats.Monoid]: http://typelevel.org/cats/api/cats/kernel/Monoid.html
 [cats.Monad]: http://typelevel.org/cats/api/cats/Monad.html
+[cats.MonadError]: http://typelevel.org/cats/api/cats/MonadError.html
 [cats.Show]: http://typelevel.org/cats/api/cats/Show.html
 [cats.Semigroup]: http://typelevel.org/cats/api/cats/kernel/Semigroup.html
+[cats.Semigroupal]: http://typelevel.org/cats/api/cats/kernel/Semigroupal.html
 [cats.Traverse]: http://typelevel.org/cats/api/cats/Traverse.html
 [cats.data]: http://typelevel.org/cats/api/cats/data/
 [cats.data.IdT]: http://typelevel.org/cats/api/cats/data/IdT.html
@@ -36,6 +38,7 @@
 [cats.instances.list]: http://typelevel.org/cats/api/cats/instances/package$$list$
 [cats.instances.option]: http://typelevel.org/cats/api/cats/instances/package$$option$
 [cats.instances.map]: http://typelevel.org/cats/api/cats/instances/package$$map$
+[cats.instances.try_]: http://typelevel.org/cats/api/cats/instances/package$$try_$
 [cats.kernel.package]: http://typelevel.org/cats/api/cats/kernel/
 [cats.kernel.Eq]: http://typelevel.org/cats/api/cats/kernel/Eq.html
 [cats.kernel.Monoid]: http://typelevel.org/cats/api/cats/kernel/Monoid.html

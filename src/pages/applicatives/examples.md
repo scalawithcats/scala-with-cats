@@ -11,13 +11,12 @@ The semantics for `Future`
 provide parallel as opposed to sequential execution:
 
 ```tut:book:silent
-import scala.language.higherKinds
+import cats.Semigroupal
+import cats.instances.future._ // for Semigroupal
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
-
-import cats.Semigroupal
-import cats.instances.future._
+import scala.language.higherKinds
 
 val futurePair = Semigroupal[Future].
   product(Future("Hello"), Future(123))
@@ -33,7 +32,7 @@ by the time we call `product`.
 We can use apply syntax to zip fixed numbers of `Futures`:
 
 ```tut:book:silent
-import cats.syntax.apply._
+import cats.syntax.apply._ // for mapN
 
 case class Cat(
   name: String,
@@ -61,7 +60,7 @@ but we actually get the cartesian product of their elements:
 
 ```tut:book:silent
 import cats.Semigroupal
-import cats.instances.list._
+import cats.instances.list._ // for Semigroupal
 ```
 
 ```tut:book
@@ -83,7 +82,7 @@ we find that `product` implements
 the same fail-fast behaviour as `flatMap`:
 
 ```tut:book:silent
-import cats.instances.either._
+import cats.instances.either._ // for Semigroupal
 
 type ErrorOr[A] = Either[Vector[String], A]
 ```
@@ -155,8 +154,8 @@ We can implement `product`
 in terms of `map` and `flatMap` like so:
 
 ```tut:book:silent
-import cats.syntax.flatMap._
-import cats.syntax.functor._
+import cats.syntax.flatMap._ // for flatMap
+import cats.syntax.functor._ // for map
 
 def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
   x.flatMap(a => y.map(b => (a, b)))
@@ -176,7 +175,7 @@ The semantics of `flatMap` are what give rise
 to the behaviour for `List` and `Either`:
 
 ```tut:book:silent
-import cats.instances.list._
+import cats.instances.list._ // for Semigroupal
 ```
 
 ```tut:book

@@ -65,7 +65,7 @@ through three steps:
 
 ```tut:book:silent
 import cats.data.Kleisli
-import cats.instances.list._
+import cats.instances.list._ // for Monad
 ```
 
 These steps each transform an input `Int`
@@ -174,8 +174,8 @@ def checkPred[A](pred: Predicate[Errors, A]): Check[A, A] =
 // Foreword declarations
 
 import cats.Semigroup
-import cats.syntax.apply._
-import cats.syntax.monoid._
+import cats.syntax.apply._     // for mapN
+import cats.syntax.semigroup._ // for |+|
 import cats.data.Validated
 import cats.data.Validated.{Valid, Invalid}
 
@@ -241,11 +241,8 @@ simplifies things, but the process is still complex:
 
 ```tut:book:silent
 import cats.data.{Kleisli, NonEmptyList, Validated}
-import cats.instances.either._
-import cats.instances.function._
-import cats.instances.list._
-import cats.syntax.apply._
-import cats.syntax.validated._
+import cats.instances.either._   // for Semigroupal
+import cats.instances.list._     // for Monad
 ```
 
 Here is the preamble we suggested in
@@ -318,8 +315,10 @@ val checkRight: Check[String, String] =
   checkPred(longerThan(3) and contains('.'))
 
 val joinEmail: Check[(String, String), String] =
-  check { case (l, r) =>
-    (checkLeft(l), checkRight(r)).mapN(_+"@"+_) }
+  check {
+    case (l, r) =>
+      (checkLeft(l), checkRight(r)).mapN(_ + "@" + _)
+  }
 
 val checkEmail: Check[String, String] =
   splitEmail andThen joinEmail

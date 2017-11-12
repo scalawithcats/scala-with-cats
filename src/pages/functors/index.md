@@ -205,8 +205,8 @@ We also see this in Figure [@fig:functors:function-type-chart]:
 In other words, "mapping" over a `Function1` is function composition:
 
 ```tut:book:silent
-import cats.instances.function._
-import cats.syntax.functor._
+import cats.instances.function._ // for Functor
+import cats.syntax.functor._     // for map
 ```
 
 ```tut:book:silent

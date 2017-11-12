@@ -1,6 +1,6 @@
 ## Semigroupal {#semigroupal}
 
-`Semigroupal` is a type class that
+[`cats.Semigroupal`][cats.Semigroupal] is a type class that
 allows us to combine contexts[^semigroupal-name].
 If we have two objects of type `F[A]` and `F[B]`,
 a `Semigroupal[F]` allows us to combine them to form an `F[(A, B)]`.
@@ -33,7 +33,7 @@ Let's join some `Options` as an example:
 
 ```tut:book:silent
 import cats.Semigroupal
-import cats.instances.option._ // Semigroupal for Option
+import cats.instances.option._ // for Semigroupal
 ```
 
 ```tut:book
@@ -58,7 +58,7 @@ For example, the methods `tuple2` through `tuple22`
 generalise `product` to different arities:
 
 ```tut:book:silent
-import cats.instances.option._ // Semigroupal for Option
+import cats.instances.option._ // for Semigroupal
 ```
 
 ```tut:book
@@ -99,8 +99,8 @@ We import the syntax from [`cats.syntax.apply`][cats.syntax.apply].
 Here's an example:
 
 ```tut:book:silent
-import cats.instances.option._
-import cats.syntax.apply._
+import cats.instances.option._ // for Semigroupal
+import cats.syntax.apply._     // for tupled and mapN
 ```
 
 The `tupled` method is implicitly added to the tuple of `Options`.
@@ -165,11 +165,11 @@ Here's an example:
 
 ```tut:book:silent
 import cats.Monoid
-import cats.instances.boolean._
-import cats.instances.int._
-import cats.instances.list._
-import cats.instances.string._
-import cats.syntax.apply._
+import cats.instances.boolean._ // for Monoid
+import cats.instances.int._     // for Monoid
+import cats.instances.list._    // for Monoid
+import cats.instances.string._  // for Monoid
+import cats.syntax.apply._      // for imapN
 
 case class Cat(
   name: String,
@@ -194,7 +194,7 @@ Our `Monoid` allows us to create "empty" `Cats`,
 and add `Cats` together using the syntax from Chapter [@sec:monoids]:
 
 ```tut:book:silent
-import cats.syntax.monoid._
+import cats.syntax.monoid._ // for |+|
 
 val garfield   = Cat("Garfield", 1978, List("Lasagne"))
 val heathcliff = Cat("Heathcliff", 1988, List("Junk Food"))

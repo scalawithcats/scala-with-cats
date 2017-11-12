@@ -19,7 +19,7 @@ fails on the first call to `parseInt`
 and doesn't go any further:
 
 ```tut:book:silent
-import cats.syntax.either._
+import cats.syntax.either._ // for catchOnly
 
 def parseInt(str: String): Either[String, Int] =
   Either.catchOnly[NumberFormatException](str.toInt).

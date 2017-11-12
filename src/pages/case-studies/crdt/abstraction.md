@@ -89,14 +89,13 @@ in the companion object for `GCounter`
 to place it in glocal implicit scope:
 
 ```tut:book:silent
-import cats.syntax.semigroup._
-import cats.syntax.foldable._
+import cats.instances.list._   // for Monoid
+import cats.instances.map._    // for Monoid
+import cats.syntax.semigroup._ // for |+|
+import cats.syntax.foldable._  // for combineAll
 
 implicit def mapInstance[K, V]: GCounter[Map, K, V] =
   new GCounter[Map, K, V] {
-    import cats.instances.list._
-    import cats.instances.map._
-
     def increment(map: Map[K, V])(key: K, value: V)
         (implicit m: Monoid[V]): Map[K, V] = {
       val total = map.getOrElse(key, m.empty) |+| value
@@ -116,7 +115,7 @@ implicit def mapInstance[K, V]: GCounter[Map, K, V] =
 You should be able to use your instance as follows:
 
 ```tut:book:silent
-import cats.instances.int._
+import cats.instances.int._ // for Monoid
 
 val g1 = Map("a" -> 7, "b" -> 3)
 val g2 = Map("a" -> 2, "b" -> 5)
@@ -126,7 +125,7 @@ val counter = GCounter[Map, String, Int]
 
 ```tut:book
 val merged = counter.merge(g1, g2)
-val total = counter.total(merged)
+val total  = counter.total(merged)
 ```
 
 The implementation strategy
@@ -210,8 +209,6 @@ instances of `KeyValueStore` and `Monoid`
 using an `implicit def`:
 
 ```tut:book:silent
-import cats.instances.list._
-
 implicit def gcounterInstance[F[_,_], K, V]
     (implicit kvs: KeyValueStore[F], km: Monoid[F[K, V]]) =
   new GCounter[F, K, V] {

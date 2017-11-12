@@ -15,8 +15,8 @@ the [`cats.instances`][cats.instances] package:
 ```tut:book:silent
 import scala.language.higherKinds
 import cats.Functor
-import cats.instances.list._
-import cats.instances.option._
+import cats.instances.list._   // for Functor
+import cats.instances.option._ // for Functor
 ```
 
 ```tut:book
@@ -54,8 +54,8 @@ Scala's `Function1` type doesn't have a `map` method
 so there are no naming conflicts:
 
 ```tut:book:silent
-import cats.instances.function._
-import cats.syntax.functor._
+import cats.instances.function._ // for Functor
+import cats.syntax.functor._     // for map
 ```
 
 ```tut:book:silent
@@ -80,8 +80,8 @@ def doMath[F[_]](start: F[Int])
     (implicit functor: Functor[F]): F[Int] =
   start.map(n => n + 1 * 2)
 
-import cats.instances.option._
-import cats.instances.list._
+import cats.instances.option._ // for Functor
+import cats.instances.list._   // for Functor
 ```
 
 ```tut:book
@@ -203,7 +203,6 @@ with the same pattern of `Branch` and `Leaf` nodes:
 
 ```tut:book:silent
 import cats.Functor
-import cats.syntax.functor._
 
 implicit val treeFunctor: Functor[Tree] =
   new Functor[Tree] {
@@ -240,13 +239,9 @@ object Tree {
 
 Now we can use our `Functor` properly:
 
-```tut:book:silent
-import Tree._
-```
-
 ```tut:book
-leaf(100).map(_ * 2)
+Tree.leaf(100).map(_ * 2)
 
-branch(leaf(10), leaf(20)).map(_ * 2)
+Tree.branch(Tree.leaf(10), Tree.leaf(20)).map(_ * 2)
 ```
 </div>

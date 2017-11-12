@@ -44,8 +44,8 @@ def getUptime(hostname: String): Future[Int] =
 
 ```tut:book:silent
 import cats.Traverse
-import cats.instances.future._
-import cats.instances.list._
+import cats.instances.future._ // for Applicative
+import cats.instances.list._   // for Traverse
 ```
 
 ```tut:book
@@ -70,7 +70,7 @@ There are also syntax versions of the methods,
 imported via [`cats.syntax.traverse`][cats.syntax.traverse]:
 
 ```tut:book:silent
-import cats.syntax.traverse._
+import cats.syntax.traverse._ // for sequence and traverse
 ```
 
 ```tut:book

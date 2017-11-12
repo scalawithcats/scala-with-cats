@@ -12,18 +12,29 @@ and the semigroup syntax to give us the `|+|` operator:
 
 ```tut:book:silent
 import cats.Monoid
-import cats.instances.all._
-import cats.syntax.semigroup._
+import cats.instances.string._ // for Monoid
+import cats.syntax.semigroup._ // for |+|
 ```
 
-With these three things in scope,
+```tut:book
+"Scala" |+| " with " |+| "Cats"
+```
+
+With the correct instances in scope,
 we can set about adding anything we want:
+
+```tut:book:silent
+import cats.instances.int._    // for Monoid
+import cats.instances.option._ // for Monoid
+```
 
 ```tut:book
 Option(1) |+| Option(2)
 ```
 
 ```tut:book:silent
+import cats.instances.map._ // for Monoid
+
 val map1 = Map("a" -> 1, "b" -> 2)
 val map2 = Map("b" -> 3, "d" -> 4)
 ```
@@ -33,6 +44,9 @@ map1 |+| map2
 ```
 
 ```tut:book:silent
+import cats.instances.tuple._  // for Monoid
+
+
 val tuple1 = ("hello", 123)
 val tuple2 = ("world", 321)
 ```

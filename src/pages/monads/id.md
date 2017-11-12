@@ -6,8 +6,8 @@ by writing a method that abstracted over different monads:
 ```tut:book:silent
 import scala.language.higherKinds
 import cats.Monad
-import cats.syntax.functor._
-import cats.syntax.flatMap._
+import cats.syntax.functor._ // for map
+import cats.syntax.flatMap._ // for flatMap
 
 def sumSquare[F[_] : Monad](a: F[Int], b: F[Int]): F[Int] =
   for {
@@ -70,8 +70,8 @@ val b = Monad[Id].flatMap(a)(_ + 1)
 ```
 
 ```tut:book:silent
-import cats.syntax.flatMap._
-import cats.syntax.functor._
+import cats.syntax.functor._ // for map
+import cats.syntax.flatMap._ // for flatMap
 ```
 
 ```tut:book

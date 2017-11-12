@@ -162,7 +162,7 @@ We use `pure` to lift a `Boolean` to a `DbReader[Boolean]`
 when the username is not found:
 
 ```tut:book:silent
-import cats.syntax.applicative._ // for `pure`
+import cats.syntax.applicative._ // for pure
 
 def checkLogin(
   userId: Int,

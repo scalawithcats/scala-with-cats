@@ -90,7 +90,7 @@ Making this change gives us the following code:
 import cats.Semigroup
 import cats.data.Validated
 import cats.syntax.semigroup._ // for |+|
-import cats.syntax.apply._     // for |@|
+import cats.syntax.apply._     // for mapN
 import cats.data.Validated._   // for Valid and Invalid
 ```
 
@@ -239,7 +239,6 @@ From here we can just follow the types to implement `apply`.
 ```tut:book:silent
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.either._
 ```
 
 ```tut:book:silent
@@ -330,10 +329,10 @@ including some tidying and repackaging of the code:
 ```tut:book:silent:reset
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.semigroup._ // |+| syntax
-import cats.syntax.apply._ // |@| syntax
-import cats.syntax.validated._ // .valid and .invalid syntax
-import cats.data.Validated._   // Valid and Invalid patterns
+import cats.data.Validated._   // for Valid and Invalid
+import cats.syntax.semigroup._ // for |+|
+import cats.syntax.apply._     // for mapN
+import cats.syntax.validated._ // for valid and invalid
 ```
 
 Here is our complete implementation of `Predicate`,
@@ -387,8 +386,8 @@ object wrapper {
     def apply[E, A](f: A => Validated[E, A]): Predicate[E, A] =
       Pure(f)
 
-    def lift[E, A](error: E, func: A => Boolean): Predicate[E, A] =
-      Pure(a => if(func(a)) a.valid else error.invalid)
+    def lift[E, A](err: E, fn: A => Boolean): Predicate[E, A] =
+      Pure(a => if(fn(a)) a.valid else err.invalid)
   }
 }; import wrapper._
 ```
@@ -421,7 +420,8 @@ object wrapper {
       check: Check[E, A, B],
       func: B => C) extends Check[E, A, C] {
 
-      def apply(a: A)(implicit s: Semigroup[E]): Validated[E, C] =
+      def apply(a: A)
+          (implicit s: Semigroup[E]): Validated[E, C] =
         check(a) map func
     }
 
@@ -429,7 +429,8 @@ object wrapper {
       check: Check[E, A, B],
       func: B => Check[E, A, C]) extends Check[E, A, C] {
 
-      def apply(a: A)(implicit s: Semigroup[E]): Validated[E, C] =
+      def apply(a: A)
+          (implicit s: Semigroup[E]): Validated[E, C] =
         check(a).withEither(_.flatMap(b => func(b)(a).toEither))
     }
 
@@ -437,28 +438,32 @@ object wrapper {
       check: Check[E, A, B],
       next: Check[E, B, C]) extends Check[E, A, C] {
 
-      def apply(a: A)(implicit s: Semigroup[E]): Validated[E, C] =
-        check(a).withEither { _.flatMap (b => next(b).toEither) }
+      def apply(a: A)
+          (implicit s: Semigroup[E]): Validated[E, C] =
+        check(a).withEither(_.flatMap(b => next(b).toEither))
     }
 
     final case class Pure[E, A, B](
       func: A => Validated[E, B]) extends Check[E, A, B] {
 
-      def apply(a: A)(implicit s: Semigroup[E]): Validated[E, B] =
+      def apply(a: A)
+          (implicit s: Semigroup[E]): Validated[E, B] =
         func(a)
     }
 
     final case class PurePredicate[E, A](
       pred: Predicate[E, A]) extends Check[E, A, A] {
 
-      def apply(a: A)(implicit s: Semigroup[E]): Validated[E, A] =
+      def apply(a: A)
+          (implicit s: Semigroup[E]): Validated[E, A] =
         pred(a)
     }
 
     def apply[E, A](pred: Predicate[E, A]): Check[E, A, A] =
       PurePredicate(pred)
 
-    def apply[E, A, B](func: A => Validated[E, B]): Check[E, A, B] =
+    def apply[E, A, B]
+        (func: A => Validated[E, B]): Check[E, A, B] =
       Pure(func)
   }
 }; import wrapper._
@@ -496,10 +501,7 @@ Implement checks for some of the examples given in the introduction:
 You might find the following predicates useful:
 
 ```tut:book:silent
-import cats.data.{NonEmptyList, OneAnd, Validated}
-import cats.instances.list._
-import cats.syntax.apply._
-import cats.syntax.validated._
+import cats.data.{NonEmptyList, Validated}
 ```
 
 ```tut:book:silent
@@ -542,10 +544,9 @@ In later sections we'll make some changes
 that make the library easier to use.
 
 ```tut:book:silent
-import cats.data.{NonEmptyList, OneAnd, Validated}
-import cats.instances.list._
-import cats.syntax.apply._
-import cats.syntax.validated._
+import cats.data.{NonEmptyList, Validated}
+import cats.syntax.apply._     // for mapN
+import cats.syntax.validated._ // for valid and invalid
 ```
 
 Here's the implementation of `checkUsername`:
@@ -586,7 +587,8 @@ val checkRight: Check[Errors, String, String] =
 
 val joinEmail: Check[Errors, (String, String), String] =
   Check { case (l, r) =>
-    (checkLeft(l), checkRight(r)).mapN(_+"@"+_) }
+    (checkLeft(l), checkRight(r)).mapN(_ + "@" + _)
+  }
 
 val checkEmail: Check[Errors, String, String] =
   splitEmail andThen joinEmail

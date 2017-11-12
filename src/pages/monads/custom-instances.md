@@ -194,8 +194,8 @@ Regardless of which version of `tailRecM` we define,
 we can use our `Monad` to `flatMap` and `map` on `Trees`:
 
 ```tut:book:silent
-import cats.syntax.functor._
-import cats.syntax.flatMap._
+import cats.syntax.functor._ // for map
+import cats.syntax.flatMap._ // for flatMap
 ```
 
 ```tut:book

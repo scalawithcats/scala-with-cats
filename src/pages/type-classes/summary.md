@@ -9,13 +9,10 @@ We have now seen the general patterns in Cats type classes:
  - The type classes themselves are generic traits
    in the [`cats`][cats.package] package.
 
- - Each type class has a companion object with:
-
-    - an `apply` method for materializing instances;
-
-    - typically, one or more *construction* methods for creating instances;
-
-    - other relevant helper methods.
+ - Each type class has a companion object with,
+   an `apply` method for materializing instances,
+   one or more *construction* methods for creating instances,
+   and a collection of other relevant helper methods.
 
  - Default instances are provided via objects
    in the [`cats.instances`][cats.instances] package,

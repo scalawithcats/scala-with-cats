@@ -191,10 +191,10 @@ which significantly simplifies
 the process of merging and maximising counters:
 
 ```tut:book:silent
-import cats.syntax.semigroup._
-import cats.syntax.foldable._
-import cats.instances.list._
-import cats.instances.map._
+import cats.instances.list._   // for Monoid
+import cats.instances.map._    // for Monoid
+import cats.syntax.semigroup._ // for |+|
+import cats.syntax.foldable._  // for combineAll
 
 final case class GCounter[A](counters: Map[String,A]) {
   def increment(machine: String, amount: A)

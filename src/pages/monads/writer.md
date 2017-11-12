@@ -34,7 +34,7 @@ We can create a `Writer` from values of each type as follows:
 
 ```tut:book:silent
 import cats.data.Writer
-import cats.instances.vector._
+import cats.instances.vector._ // for Monoid
 ```
 
 ```tut:book
@@ -67,8 +67,8 @@ To do this we must have a `Monoid[W]` in scope
 so Cats knows how to produce an empty log:
 
 ```tut:book:silent
-import cats.instances.vector._   // `Monoid` for `Vector`
-import cats.syntax.applicative._ // `pure` method
+import cats.instances.vector._   // for Monoid
+import cats.syntax.applicative._ // for pure
 
 type Logged[A] = Writer[Vector[String], A]
 ```
@@ -82,7 +82,7 @@ we can create a `Writer[Unit]` using the `tell` syntax
 from [`cats.syntax.writer`][cats.syntax.writer]:
 
 ```tut:book:silent
-import cats.syntax.writer._
+import cats.syntax.writer._ // for tell
 ```
 
 ```tut:book
@@ -95,7 +95,7 @@ or we can use the `writer` syntax
 from [`cats.syntax.writer`][cats.syntax.writer]:
 
 ```tut:book:silent
-import cats.syntax.writer._
+import cats.syntax.writer._ // for writer
 ```
 
 ```tut:book
@@ -253,7 +253,7 @@ so we can use it with `pure` syntax:
 
 ```tut:book:silent
 import cats.data.Writer
-import cats.syntax.applicative._
+import cats.syntax.applicative._ // for pure
 
 type Logged[A] = Writer[Vector[String], A]
 ```
@@ -265,7 +265,7 @@ type Logged[A] = Writer[Vector[String], A]
 We'll import the `tell` syntax as well:
 
 ```tut:book:silent
-import cats.syntax.writer._
+import cats.syntax.writer._ // for tell
 ```
 
 ```tut:book
@@ -277,7 +277,7 @@ the `Semigroup` instance for `Vector`.
 We need this to `map` and `flatMap` over `Logged`:
 
 ```tut:book:silent
-import cats.instances.vector._
+import cats.instances.vector._ // for Monoid
 ```
 
 ```tut:book

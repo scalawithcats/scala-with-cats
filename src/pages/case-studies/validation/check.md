@@ -83,8 +83,8 @@ the `combine` method or its associated `|+|` syntax:
 
 ```tut:book:silent
 import cats.Semigroup
-import cats.instances.list._
-import cats.syntax.monoid._
+import cats.instances.list._ // for Semigroup
+import cats.syntax.monoid._  // for |+|
 
 val semigroup = Semigroup[List[String]]
 ```
@@ -131,8 +131,8 @@ we'll call this implementation `CheckF`:
 
 ```tut:book:silent
 import cats.Semigroup
-import cats.syntax.either._
-import cats.syntax.semigroup._
+import cats.syntax.either._    // for asLeft and asRight
+import cats.syntax.semigroup._ // for |+|
 ```
 
 ```tut:book:silent
@@ -157,7 +157,7 @@ Let's test the behaviour we get.
 First we'll setup some checks:
 
 ```tut:book:silent
-import cats.instances.list._ // Semigroup for List
+import cats.instances.list._ // for Semigroup
 ```
 
 ```tut:book
@@ -216,9 +216,9 @@ We'll call this implementation `Check`:
 
 ```tut:book:invisible:reset
 import cats.Semigroup
-import cats.instances.list._
-import cats.syntax.either._
-import cats.syntax.monoid._
+import cats.instances.list._ // for Semigroup
+import cats.syntax.either._  // for asLeft and asRight
+import cats.syntax.monoid._  // for |+|
 ```
 
 ```tut:book:silent
@@ -309,8 +309,8 @@ Here's the complete implementation:
 ```tut:book:silent
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.semigroup._
-import cats.syntax.apply._
+import cats.syntax.semigroup._ // for |+|
+import cats.syntax.apply._     // for mapN
 ```
 
 ```tut:book:silent
@@ -352,9 +352,9 @@ is implicit in the semantics of "or".
 ```tut:book:silent
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.semigroup._
-import cats.syntax.apply._
-import cats.data.Validated._   // Valid and Invalid
+import cats.syntax.semigroup._ // for |+|
+import cats.syntax.apply._     // for mapN
+import cats.data.Validated._   // for Valid and Invalid
 ```
 
 ```tut:book:silent

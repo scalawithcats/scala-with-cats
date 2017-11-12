@@ -9,7 +9,7 @@ chain of operations. These are called *contravariant*
 and *invariant functors* respectively.
 
 <div class="callout callout-info">
-*Note: This Section is Optional!*
+*This Section is Optional!*
 
 You don't need to know about contravariant and invariant functors to understand monads,
 which are the most important pattern in this book and the focus of the next chapter.

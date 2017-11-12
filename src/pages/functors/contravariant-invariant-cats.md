@@ -48,7 +48,7 @@ More conveniently, we can use
 which provides a `contramap` extension method:
 
 ```tut:book:silent
-import cats.syntax.contravariant._
+import cats.syntax.contravariant._ // for contramap
 ```
 
 ```tut:book
@@ -94,9 +94,9 @@ provided by `cats.syntax.invariant`:
 
 ```tut:book:silent
 import cats.Monoid
-import cats.instances.string._ // Monoid for String
-import cats.syntax.invariant._ // imap extension method
-import cats.syntax.semigroup._ // |+| operator
+import cats.instances.string._ // for Monoid
+import cats.syntax.invariant._ // for imap
+import cats.syntax.semigroup._ // for |+|
 
 implicit val symbolMonoid: Monoid[Symbol] =
   Monoid[String].imap(Symbol.apply)(_.name)

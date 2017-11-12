@@ -159,7 +159,7 @@ def sumWithMonoid[A](list: List[A])
     (implicit monoid: Monoid[A]): A =
   list.foldRight(monoid.empty)(monoid.combine)
 
-import cats.instances.int._
+import cats.instances.int._ // for Monoid
 ```
 
 ```tut:book

@@ -21,7 +21,7 @@ is therefore free to accumulate errors:
 ```tut:book:silent
 import cats.Semigroupal
 import cats.data.Validated
-import cats.instances.list._ // Semigroup for List
+import cats.instances.list._ // for Monoid
 
 type AllErrorsOr[A] = Validated[List[String], A]
 ```
@@ -67,7 +67,7 @@ the `valid` and `invalid` extension methods
 from `cats.syntax.validated`:
 
 ```tut:book:silent
-import cats.syntax.validated._
+import cats.syntax.validated._ // for valid and invalid
 ```
 
 ```tut:book
@@ -81,8 +81,8 @@ and [`cats.syntax.applicativeError`][cats.syntax.applicativeError]
 respectively:
 
 ```tut:book:silent
-import cats.syntax.applicative._      // pure method
-import cats.syntax.applicativeError._ // raiseError method
+import cats.syntax.applicative._      // for pure
+import cats.syntax.applicativeError._ // for raiseError
 
 type ErrorsOr[A] = Validated[List[String], A]
 ```
@@ -138,7 +138,7 @@ Once we import a `Semigroup` for the error type,
 everything works as expected:
 
 ```tut:book:silent
-import cats.instances.string._ // Semigroup for String
+import cats.instances.string._ // for Semigroup
 ```
 
 ```tut:book
@@ -152,7 +152,7 @@ or any of the other `Semigroupal` methods
 to accumulate errors as we like:
 
 ```tut:book:silent
-import cats.syntax.apply._
+import cats.syntax.apply._ // for tupled
 ```
 
 ```tut:book
@@ -167,7 +167,7 @@ for accumulating errors.
 We commonly use `Lists` or `Vectors` instead:
 
 ```tut:book:silent
-import cats.instances.vector._
+import cats.instances.vector._ // for Semigroupal
 ```
 
 ```tut:book
@@ -219,7 +219,7 @@ using the `toEither` and `toValidated` methods.
 Note that `toValidated` comes from [`cats.syntax.either`]:
 
 ```tut:book
-import cats.syntax.either._ // toValidated method
+import cats.syntax.either._ // for toValidated
 
 "Badness".invalid[Int]
 "Badness".invalid[Int].toEither
@@ -354,7 +354,7 @@ and we use `leftMap` to
 turn it into an error message:
 
 ```tut:book:silent
-import cats.syntax.either._
+import cats.syntax.either._ // for catchOnly
 
 type NumFmtExn = NumberFormatException
 
@@ -451,8 +451,8 @@ We can do this by switching from `Either` to `Validated`
 and using apply syntax:
 
 ```tut:book:silent
-import cats.instances.list._
-import cats.syntax.apply._
+import cats.instances.list._ // for Semigroupal
+import cats.syntax.apply._   // for mapN
 
 def readUser(data: FormData): FailSlow[User] =
   (

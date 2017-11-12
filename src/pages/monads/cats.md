@@ -18,8 +18,8 @@ Here are some examples using `pure` and `flatMap`, and `map` directly:
 
 ```tut:book:silent
 import cats.Monad
-import cats.instances.option._
-import cats.instances.list._
+import cats.instances.option._ // for Monad
+import cats.instances.list._   // for Monad
 ```
 
 ```tut:book
@@ -43,7 +43,7 @@ Cats provides instances for all the monads in the standard library
 (`Option`, `List`, `Vector` and so on) via [`cats.instances`][cats.instances]:
 
 ```tut:book:silent
-import cats.instances.option._
+import cats.instances.option._ // for Monad
 ```
 
 ```tut:book
@@ -51,7 +51,7 @@ Monad[Option].flatMap(Option(1))(a => Option(a*2))
 ```
 
 ```tut:book:silent
-import cats.instances.list._
+import cats.instances.list._ // for Monad
 ```
 
 ```tut:book
@@ -59,7 +59,7 @@ Monad[List].flatMap(List(1, 2, 3))(a => List(a, a*10))
 ```
 
 ```tut:book:silent
-import cats.instances.vector._
+import cats.instances.vector._ // for Monad
 ```
 
 ```tut:book
@@ -75,7 +75,7 @@ To work around this, Cats requires us to have an `ExecutionContext` in scope
 when we summon a `Monad` for `Future`:
 
 ```tut:book:silent
-import cats.instances.future._
+import cats.instances.future._ // for Monad
 import scala.concurrent._
 import scala.concurrent.duration._
 ```
@@ -127,9 +127,9 @@ We can use `pure` to construct instances of a monad.
 We'll often need to specify the type parameter to disambiguate the particular instance we want.
 
 ```tut:book:silent
-import cats.syntax.applicative._
-import cats.instances.option._
-import cats.instances.list._
+import cats.instances.option._   // for Monad
+import cats.instances.list._     // for Monad
+import cats.syntax.applicative._ // for pure
 ```
 
 ```tut:book
@@ -145,16 +145,16 @@ performs a calculation on parameters
 that come wrapped in a monad of the user's choice:
 
 ```tut:book:silent
-import scala.language.higherKinds
 import cats.Monad
-import cats.syntax.functor._
-import cats.syntax.flatMap._
+import cats.syntax.functor._ // for map
+import cats.syntax.flatMap._ // for flatMap
+import scala.language.higherKinds
 
 def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
   a.flatMap(x => b.map(y => x*x + y*y))
 
-import cats.instances.option._
-import cats.instances.list._
+import cats.instances.option._ // for Monad
+import cats.instances.list._   // for Monad
 ```
 
 ```tut:book
