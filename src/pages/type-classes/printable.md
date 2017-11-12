@@ -17,12 +17,12 @@ Let's define a `Printable` type class to work around these problems:
 
  3. Define an object `Printable` with two generic interface methods:
 
-    - `format` accepts a value of type `A`
-      and a `Printable` of the corresponding type.
-      It uses the relevant `Printable` to convert the `A` to a `String`.
+    `format` accepts a value of type `A`
+    and a `Printable` of the corresponding type.
+    It uses the relevant `Printable` to convert the `A` to a `String`.
 
-    - `print` accepts the same parameters as `format` and returns `Unit`.
-      It prints the `A` value to the console using `println`.
+    `print` accepts the same parameters as `format` and returns `Unit`.
+    It prints the `A` value to the console using `println`.
 
 <div class="solution">
 These steps define the three main components of our type class.
@@ -66,34 +66,30 @@ object Printable {
 
 The code above forms a general purpose printing library
 that we can use in multiple applications.
-Let's define an "application" now that uses the library:
+Let's define an "application" now that uses the library.
 
- 1. Define a data type to represent a well-known type of furry animal:
+First we'll define a data type to represent a well-known type of furry animal:
 
-    ```scala
-    final case class Cat(
-      name: String,
-      age: Int,
-      color: String
-    )
-    ```
+```scala
+final case class Cat(name: String, age: Int, color: String)
+```
 
- 2. Create an implementation of `Printable` for `Cat`
-    that returns content in the following format:
+Next we'll create an implementation of `Printable` for `Cat`
+that returns content in the following format:
 
-    ```
-    NAME is a AGE year-old COLOR cat.
-    ```
+```ruby
+NAME is a AGE year-old COLOR cat.
+```
 
- 3. Finally, use the type class on the console or in a short demo app:
-    create a `Cat` and print it to the console:
+Finally, use the type class on the console or in a short demo app:
+create a `Cat` and print it to the console:
 
-    ```scala
-    // Define a cat:
-    val cat = Cat(/* ... */)
+```scala
+// Define a cat:
+val cat = Cat(/* ... */)
 
-    // Print the cat!
-    ```
+// Print the cat!
+```
 
 <div class="solution">
 This is a standard use of the type class pattern.
@@ -193,23 +189,3 @@ import java.util.Date
 new Date().print
 ```
 </div>
-
-### Take Home Points
-
-In this section we revisited the concept of a **type class**,
-which allows us to add new functionality to existing types.
-
-The Scala implementation of a type class has **three parts**:
-
- - the *type class* itself, a generic trait;
- - *instances* for each type we care about; and
- - one or more generic *interface* methods.
-
-Interface methods can be defined in **interface objects** or **interface syntax**.
-**Implicit classes** are the most common way of implementing syntax.
-
-In the next section we will take a first look at Cats.
-We will examine the standard code layout Cats uses
-to organize its type classes,
-and see how to select type classes, instances,
-and syntax for use in our code.

@@ -46,24 +46,24 @@ def getUptime(hostname: String): Future[Int] =
 import cats.Traverse
 import cats.instances.future._ // for Applicative
 import cats.instances.list._   // for Traverse
+
+val totalUptime: Future[List[Int]] =
+  Traverse[List].traverse(hostnames)(getUptime)
 ```
 
 ```tut:book
-Await.result(
-  Traverse[List].traverse(hostnames)(getUptime),
-  1.second
-)
+Await.result(totalUptime, 1.second)
 ```
 
 ```tut:book:silent
 val numbers = List(Future(1), Future(2), Future(3))
+
+val numbers2: Future[List[Int]] =
+  Traverse[List].sequence(numbers)
 ```
 
 ```tut:book
-Await.result(
-  Traverse[List].sequence(numbers),
-  1.second
-)
+Await.result(numbers2, 1.second)
 ```
 
 There are also syntax versions of the methods,

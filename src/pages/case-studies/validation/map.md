@@ -601,8 +601,8 @@ that depends on `checkUsername` and `checkEmail`:
 final case class User(username: String, email: String)
 
 def createUser(
-  username: String,
-  email: String): Validated[Errors, User] =
+      username: String,
+      email: String): Validated[Errors, User] =
   (checkUsername(username), checkEmail(email)).mapN(User)
 ```
 

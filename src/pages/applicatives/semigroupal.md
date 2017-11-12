@@ -194,7 +194,7 @@ Our `Monoid` allows us to create "empty" `Cats`,
 and add `Cats` together using the syntax from Chapter [@sec:monoids]:
 
 ```tut:book:silent
-import cats.syntax.monoid._ // for |+|
+import cats.syntax.semigroup._ // for |+|
 
 val garfield   = Cat("Garfield", 1978, List("Lasagne"))
 val heathcliff = Cat("Heathcliff", 1988, List("Junk Food"))

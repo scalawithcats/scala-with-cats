@@ -60,7 +60,7 @@ for which we have an instance of `Monoid`:
 
 ```tut:book:silent
 def addAll[A](values: List[A])
-    (implicit monoid: Monoid[A]): A =
+      (implicit monoid: Monoid[A]): A =
   values.foldRight(monoid.empty)(_ |+| _)
 ```
 

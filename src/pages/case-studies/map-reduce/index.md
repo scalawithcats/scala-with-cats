@@ -140,8 +140,7 @@ to complete the type signature.
 import cats.Monoid
 
 /** Single-threaded map-reduce function.
-  * Maps `func` over `values`
-  * and reduces using a `Monoid[B]`.
+  * Maps `func` over `values` and reduces using a `Monoid[B]`.
   */
 def foldMap[A, B: Monoid](values: Vector[A])(func: A => B): B =
   ???
@@ -365,8 +364,8 @@ Here is the type signature:
 
 ```tut:book:silent
 def parallelFoldMap[A, B : Monoid]
-    (values: Vector[A])
-    (func: A => B): Future[B] = ???
+      (values: Vector[A])
+      (func: A => B): Future[B] = ???
 ```
 
 Use the techniques described above to
@@ -387,8 +386,8 @@ into a separate line of code:
 import scala.concurrent.duration.Duration
 
 def parallelFoldMap[A, B: Monoid]
-    (values: Vector[A])
-    (func: A => B): Future[B] = {
+      (values: Vector[A])
+      (func: A => B): Future[B] = {
   // Calculate the number of items to pass to each CPU:
   val numCores  = Runtime.getRuntime.availableProcessors
   val groupSize = (1.0 * values.size / numCores).ceil.toInt
@@ -427,8 +426,8 @@ shortening the entire algorithm as follows:
 
 ```tut:book:silent
 def parallelFoldMap[A, B: Monoid]
-    (values: Vector[A])
-    (func: A => B): Future[B] = {
+      (values: Vector[A])
+      (func: A => B): Future[B] = {
   val numCores  = Runtime.getRuntime.availableProcessors
   val groupSize = (1.0 * values.size / numCores).ceil.toInt
 
@@ -473,9 +472,9 @@ import cats.instances.int._    // for Monoid
 import cats.instances.future._ // for Applicative and Monad
 import cats.instances.vector._ // for Foldable and Traverse
 
-import cats.syntax.monoid._   // for |+|
-import cats.syntax.foldable._ // for combineAll and foldMap
-import cats.syntax.traverse._ // for traverse
+import cats.syntax.semigroup._ // for |+|
+import cats.syntax.foldable._  // for combineAll and foldMap
+import cats.syntax.traverse._  // for traverse
 
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -487,8 +486,8 @@ delegating as much of the method body to Cats as possible:
 
 ```tut:book:silent
 def parallelFoldMap[A, B: Monoid]
-    (values: Vector[A])
-    (func: A => B): Future[B] = {
+      (values: Vector[A])
+      (func: A => B): Future[B] = {
   val numCores  = Runtime.getRuntime.availableProcessors
   val groupSize = (1.0 * values.size / numCores).ceil.toInt
 

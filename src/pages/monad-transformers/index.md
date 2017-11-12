@@ -54,7 +54,7 @@ import scala.language.higherKinds
 
 ```scala
 // Hypothetical example. This won't actually compile:
-def compose[M1[_] : Monad, M2[_] : Monad] = {
+def compose[M1[_]: Monad, M2[_]: Monad] = {
   type Composed[A] = M1[M2[A]]
 
   new Monad[Composed] {
@@ -483,7 +483,7 @@ def parseNumber(str: String): Logged[Option[Int]] =
   }
 
 // Consumers use monad transformers locally to simplify composition:
-def addNumbers(a: String,b: String, c: String): Logged[Option[Int]] = {
+def addAll(a: String, b: String, c: String): Logged[Option[Int]] = {
   import cats.data.OptionT
 
   val result = for {
@@ -498,8 +498,8 @@ def addNumbers(a: String,b: String, c: String): Logged[Option[Int]] = {
 
 ```tut:book
 // This approach doesn't force OptionT on other users' code:
-val result1 = addNumbers("1", "2", "3")
-val result2 = addNumbers("1", "a", "3")
+val result1 = addAll("1", "2", "3")
+val result2 = addAll("1", "a", "3")
 ```
 
 Unfortunately, there aren't one-size-fits-all
@@ -599,10 +599,7 @@ If either ally is unavailable,
 fail with an appropriate error message:
 
 ```tut:book:silent
-def canSpecialMove(
-  ally1: String,
-  ally2: String
-): Response[Boolean] =
+def canSpecialMove(ally1: String, ally2: String): Response[Boolean] =
   ???
 ```
 
@@ -611,10 +608,7 @@ We request the power level from each ally
 and use `map` and `flatMap` to combine the results:
 
 ```tut:book:silent
-def canSpecialMove(
-  ally1: String,
-  ally2: String
-): Response[Boolean] =
+def canSpecialMove(ally1: String, ally2: String): Response[Boolean] =
   for {
     power1 <- getPowerLevel(ally1)
     power2 <- getPowerLevel(ally2)

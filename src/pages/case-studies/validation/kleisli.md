@@ -331,9 +331,8 @@ example works as expected using `Kleisli`:
 final case class User(username: String, email: String)
 
 def createUser(
-  username: String,
-  email: String
-): Either[Errors, User] = (
+      username: String,
+      email: String): Either[Errors, User] = (
   checkUsername.run(username),
   checkEmail.run(email)
 ).mapN(User)

@@ -121,9 +121,9 @@ def findUsername(userId: Int): DbReader[Option[String]] =
   ???
 
 def checkPassword(
-  username: String,
-  password: String
-): DbReader[Boolean] = ???
+      username: String,
+      password: String): DbReader[Boolean] =
+  ???
 ```
 
 <div class="solution">
@@ -136,9 +136,8 @@ def findUsername(userId: Int): DbReader[Option[String]] =
   Reader(db => db.usernames.get(userId))
 
 def checkPassword(
-  username: String,
-  password: String
-): DbReader[Boolean] =
+      username: String,
+      password: String): DbReader[Boolean] =
   Reader(db => db.passwords.get(username).contains(password))
 ```
 
@@ -150,9 +149,9 @@ The type signature should be as follows:
 
 ```tut:book:silent
 def checkLogin(
-  userId: Int,
-  password: String
-): DbReader[Boolean] = ???
+      userId: Int,
+      password: String): DbReader[Boolean] =
+  ???
 ```
 
 <div class="solution">
@@ -165,9 +164,8 @@ when the username is not found:
 import cats.syntax.applicative._ // for pure
 
 def checkLogin(
-  userId: Int,
-  password: String
-): DbReader[Boolean] =
+      userId: Int,
+      password: String): DbReader[Boolean] =
   for {
     username   <- findUsername(userId)
     passwordOk <- username.map { username =>
@@ -234,7 +232,7 @@ or where a program isn't easily represented as a pure function,
 other dependency injection techniques tend to be more appropriate.
 
 <div class="callout callout-warning">
-  *Kleisli arrows*
+  *Kleisli Arrows*
 
   You may have noticed from console output
   that `Reader` is implemented in terms of another type called `Kleisli`.

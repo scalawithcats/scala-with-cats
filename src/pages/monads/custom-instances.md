@@ -54,15 +54,20 @@ Let's write a `Monad` for our `Tree` data type from last chapter.
 Here's the type again:
 
 ```tut:book:silent
-sealed trait Tree[+A]
-final case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
-final case class Leaf[A](value: A) extends Tree[A]
+object wrapper {
+  sealed trait Tree[+A]
 
-def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
-  Branch(left, right)
+  final case class Branch[A](left: Tree[A], right: Tree[A])
+    extends Tree[A]
 
-def leaf[A](value: A): Tree[A] =
-  Leaf(value)
+  final case class Leaf[A](value: A) extends Tree[A]
+
+  def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
+    Branch(left, right)
+
+  def leaf[A](value: A): Tree[A] =
+    Leaf(value)
+}; import wrapper._
 ```
 
 Verify that the code works on instances of `Branch` and `Leaf`,
@@ -158,32 +163,32 @@ implicit val treeMonad = new Monad[Tree] {
       (func: A => Tree[Either[A, B]]): Tree[B] = {
     @tailrec
     def loop(
-      open: List[Tree[Either[A, B]]],
-      closed: List[Tree[B]]
-    ): List[Tree[B]] = open match {
-      case Branch(l, r) :: next =>
-        l match {
-          case Branch(_, _) =>
-            loop(l :: r :: next, closed)
-          case Leaf(Left(value)) =>
-            loop(func(value) :: r :: next, closed)
-          case Leaf(Right(value)) =>
-            loop(r :: next, pure(value) :: closed)
-        }
+          open: List[Tree[Either[A, B]]],
+          closed: List[Tree[B]]): List[Tree[B]] =
+      open match {
+        case Branch(l, r) :: next =>
+          l match {
+            case Branch(_, _) =>
+              loop(l :: r :: next, closed)
+            case Leaf(Left(value)) =>
+              loop(func(value) :: r :: next, closed)
+            case Leaf(Right(value)) =>
+              loop(r :: next, pure(value) :: closed)
+          }
 
-      case Leaf(Left(value)) :: next =>
-        loop(func(value) :: next, closed)
+        case Leaf(Left(value)) :: next =>
+          loop(func(value) :: next, closed)
 
-      case Leaf(Right(value)) :: next =>
-        closed match {
-          case head :: tail =>
-            loop(next, Branch(head, pure(value)) :: tail)
-          case Nil =>
-            loop(next, pure(value) :: closed)
-        }
-      case Nil =>
-        closed
-    }
+        case Leaf(Right(value)) :: next =>
+          closed match {
+            case head :: tail =>
+              loop(next, Branch(head, pure(value)) :: tail)
+            case Nil =>
+              loop(next, pure(value) :: closed)
+          }
+        case Nil =>
+          closed
+      }
 
     loop(List(func(arg)), Nil).head
   }

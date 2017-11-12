@@ -18,7 +18,7 @@ copyright: "2014-17"
 # We disable all prefixes for consistency and write them by hand:
 usePandocCrossref: true
 # Enable pandoc-include (must be installed on user's computer):
-usePandocInclude: true
+usePandocInclude: false
 figPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "$$i$$"
 tblPrefixTemplate: "$$i$$"

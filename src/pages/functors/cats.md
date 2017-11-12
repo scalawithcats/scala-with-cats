@@ -190,9 +190,14 @@ Write a `Functor` for the following binary tree data type.
 Verify that the code works as expected on instances of `Branch` and `Leaf`:
 
 ```tut:book:silent
-sealed trait Tree[+A]
-final case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
-final case class Leaf[A](value: A) extends Tree[A]
+object wrapper {
+  sealed trait Tree[+A]
+
+  final case class Branch[A](left: Tree[A], right: Tree[A])
+    extends Tree[A]
+
+  final case class Leaf[A](value: A) extends Tree[A]
+}; import wrapper._
 ```
 
 <div class="solution">

@@ -83,8 +83,8 @@ the `combine` method or its associated `|+|` syntax:
 
 ```tut:book:silent
 import cats.Semigroup
-import cats.instances.list._ // for Semigroup
-import cats.syntax.monoid._  // for |+|
+import cats.instances.list._   // for Semigroup
+import cats.syntax.semigroup._ // for |+|
 
 val semigroup = Semigroup[List[String]]
 ```
@@ -141,7 +141,7 @@ final case class CheckF[E, A](func: A => Either[E, A]) {
     func(a)
 
   def and(that: CheckF[E, A])
-         (implicit s: Semigroup[E]): CheckF[E, A] =
+        (implicit s: Semigroup[E]): CheckF[E, A] =
     CheckF { a =>
       (this(a), that(a)) match {
         case (Left(e1),  Left(e2))  => (e1 |+| e2).asLeft
@@ -215,9 +215,9 @@ We'll call this implementation `Check`:
 
 ```tut:book:invisible:reset
 import cats.Semigroup
-import cats.instances.list._ // for Semigroup
-import cats.syntax.either._  // for asLeft and asRight
-import cats.syntax.monoid._  // for |+|
+import cats.instances.list._   // for Semigroup
+import cats.syntax.either._    // for asLeft and asRight
+import cats.syntax.semigroup._ // for |+|
 ```
 
 ```tut:book:silent

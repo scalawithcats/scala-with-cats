@@ -205,13 +205,13 @@ import cats.syntax.foldable._  // for combineAll
 
 final case class GCounter[A](counters: Map[String,A]) {
   def increment(machine: String, amount: A)
-      (implicit m: Monoid[A]) = {
+        (implicit m: Monoid[A]) = {
     val value = amount |+| counters.getOrElse(machine, m.empty)
     GCounter(counters + (machine -> value))
   }
 
   def merge(that: GCounter[A])
-      (implicit b: BoundedSemiLattice[A]): GCounter[A] =
+        (implicit b: BoundedSemiLattice[A]): GCounter[A] =
     GCounter(this.counters |+| that.counters)
 
   def total(implicit m: Monoid[A]): A =

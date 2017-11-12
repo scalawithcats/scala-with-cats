@@ -84,6 +84,9 @@ import scala.concurrent.duration._
 val fm = Monad[Future]
 ```
 
+Bringing the `ExecutionContext` into scope
+fixes the implicit resolution required to summon the instance:
+
 ```tut:book:silent
 import scala.concurrent.ExecutionContext.Implicits.global
 ```
@@ -95,13 +98,12 @@ val fm = Monad[Future]
 The `Monad` instance uses the captured `ExecutionContext`
 for subsequent calls to `pure` and `flatMap`:
 
+```tut:book:silent
+val future = fm.flatMap(fm.pure(1))(x => fm.pure(x + 2))
+```
+
 ```tut:book
-Await.result(
-  fm.flatMap(fm.pure(1)) { x =>
-    fm.pure(x + 2)
-  },
-  1.second
-)
+Await.result(future, 1.second)
 ```
 
 In addition to the above,

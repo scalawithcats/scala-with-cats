@@ -171,10 +171,8 @@ is now equivalent to `Semigroupal.combine`:
 import cats.syntax.apply._ // for mapN
 
 // Combining accumulator and hostname using an Applicative:
-def newCombine(
-  accum: Future[List[Int]],
-  host: String
-): Future[List[Int]] =
+def newCombine(accum: Future[List[Int]],
+      host: String): Future[List[Int]] =
   (accum, getUptime(host)).mapN(_ :+ _)
 ```
 
@@ -185,23 +183,24 @@ we can generalise it to to work with any `Applicative`:
 import scala.language.higherKinds
 
 def listTraverse[F[_]: Applicative, A, B]
-    (list: List[A])(func: A => F[B]): F[List[B]] =
+      (list: List[A])(func: A => F[B]): F[List[B]] =
   list.foldLeft(List.empty[B].pure[F]) { (accum, item) =>
     (accum, func(item)).mapN(_ :+ _)
   }
 
 def listSequence[F[_]: Applicative, B]
-    (list: List[F[B]]): F[List[B]] =
+      (list: List[F[B]]): F[List[B]] =
   listTraverse(list)(identity)
 ```
 
 We can use `listTraverse` to re-implement our uptime example:
 
+```tut:book:silent
+val totalUptime = listTraverse(hostnames)(getUptime)
+```
+
 ```tut:book
-Await.result(
-  listTraverse(hostnames)(getUptime),
-  1.second
-)
+Await.result(totalUptime, 1.second)
 ```
 
 or we can use it with with other `Applicative` data types

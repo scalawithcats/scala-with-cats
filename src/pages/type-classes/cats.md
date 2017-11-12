@@ -217,20 +217,3 @@ Finally, we use the `Show` interface syntax to print our instance of `Cat`:
 println(Cat("Garfield", 38, "ginger and black").show)
 ```
 </div>
-
-### Take Home Points
-
-Cats type classes are defined in the [`cats`][cats.package] package.
-For example, the `Show` type class is defined as [`cats.Show`][cats.Show].
-
-Default instances are defined in the
-[`cats.instances`][cats.instances] package.
-There are separate objects in this package for each parameter type
-(as opposed to by type class):
-`cats.instances.int` for `Int`,
-`cats.instances.string` for `String`, and so on.
-
-Interface syntax is defined in the [`cats.syntax`][cats.syntax] package.
-There are separate syntax imports for each type class.
-For example, the syntax for `Show` is defined in
-[`cats.syntax.show`][cats.syntax.show].

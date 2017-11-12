@@ -236,20 +236,3 @@ optionCat1 === optionCat2
 optionCat1 =!= optionCat2
 ```
 </div>
-
-### Take Home Points
-
-In this section we introduced
-a new type class---[`cats.Eq`][cats.kernel.Eq]---that lets us
-perform type-safe equality checks:
-
- - we create an instance `Eq[A]` to
-   implement equality-testing functionality for `A`.
-
- - [`cats.syntax.eq`][cats.syntax.eq] provides two methods of interest:
-   `===` for testing equality and `=!=` for testing inequality.
-
-Because `Eq[A]` is invariant in `A`,
-we have to be precise about the types of the values we use as arguments.
-We sometimes need to manually type expressions in our code
-to help the compiler locate the correct type class instances.

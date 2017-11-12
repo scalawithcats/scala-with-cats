@@ -3,12 +3,24 @@
 % Colors ----------------------------------------
 
 \usepackage[xcolor]{mdframed}
-\definecolor{covercolor}{HTML}{$if(coverColor)$$coverColor$$else$777777$endif$}
+
+$if(blackandwhiteprintable)$
+% \definecolor{primarycolor}{gray}{0.6}
+% \definecolor{successcolor}{gray}{0.6}
+\definecolor{warningcolor}{gray}{0.6}
+\definecolor{dangercolor}{gray}{0.6}
+\definecolor{infocolor}{gray}{0.6}
+\definecolor{titlecolor}{gray}{0.6}
+\definecolor{brandcolor}{gray}{0.6}
+$else$
 % \definecolor{primarycolor}{HTML}{428BCA}
 % \definecolor{successcolor}{HTML}{5CB85C}
 \definecolor{warningcolor}{HTML}{F0AD4E}
 \definecolor{dangercolor}{HTML}{D9534F}
 \definecolor{infocolor}{HTML}{5BC0DE}
+\definecolor{titlecolor}{HTML}{C02440}
+\definecolor{brandcolor}{HTML}{517679}
+$endif$
 
 % Fonts -----------------------------------------
 
@@ -73,6 +85,13 @@ $if(mathfont)$
 $endif$
 \fi
 
+% Cover page ------------------------------------
+
+$if(blackandwhiteprintable)$
+$else$
+\usepackage{pdfpages}
+$endif$
+
 % -----------------------------------------------
 
 % use upquote if available, for straight quotes in verbatim environments
@@ -117,10 +136,6 @@ $if(graphics)$
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
 \makeatother
-% Scale images if necessary, so that they will not overflow the page
-% margins by default, and it is still possible to overwrite the defaults
-% using explicit options in \includegraphics[width, height, ...]{}
-\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
 $endif$
 \ifxetex
   \usepackage[setpagesize=false, % page size defined by xetex
@@ -135,9 +150,15 @@ $endif$
   pdfauthor={$author-meta$},
   pdftitle={$title-meta$},
   colorlinks=true,
+$if(blackandwhiteprintable)$
+  citecolor=black,
+  urlcolor=black,
+  linkcolor=black,
+$else$
   citecolor=$if(citecolor)$$citecolor$$else$blue$endif$,
   urlcolor=$if(urlcolor)$$urlcolor$$else$blue$endif$,
   linkcolor=$if(linkcolor)$$linkcolor$$else$magenta$endif$,
+$endif$
   pdfborder={0 0 0}}
 
 \urlstyle{same} % don't use monospace font for urls
@@ -229,11 +250,26 @@ $endfor$
 
 \usepackage{listings}
 
+$if(blackandwhiteprintable)$
+\definecolor{codebgcolor}{gray}{0.95}
+\definecolor{commentcolor}{gray}{0.4}
+\definecolor{stringcolor}{gray}{0.2}
+\newcommand{\commentstyle}{\tt\color{commentcolor}}
+\newcommand{\keywordstyle}{\tt\bfseries}
+\newcommand{\emphstyle}{\tt\itseries}
+\newcommand{\stringstyle}{\tt\color{stringcolor}}
+$else$
 \definecolor{codebgcolor}{HTML}{F7F7F7}
 \definecolor{commentcolor}{HTML}{8E5A13}
 \definecolor{keywordcolor}{HTML}{234A85}
 \definecolor{literalcolor}{HTML}{0100CB}
 \definecolor{stringcolor}{HTML}{519818}
+\definecolor{emphcolor}{HTML}{007777}
+\newcommand{\commentstyle}{\tt\color{commentcolor}}
+\newcommand{\keywordstyle}{\tt\color{keywordcolor}}
+\newcommand{\emphstyle}{\tt\color{emphcolor}}
+\newcommand{\stringstyle}{\tt\color{stringcolor}}
+$endif$
 
 \makeatletter
 \lst@CCPutMacro\lst@ProcessOther {"2D}{\lst@ttfamily{-{}}{-{}}}
@@ -250,16 +286,16 @@ $endfor$
   breakatwhitespace=false,
   language=scala,
   frame=none,
-  commentstyle=\tt\color{commentcolor},
+  commentstyle=\commentstyle,
   extendedchars=true,
   keepspaces=true,
-  keywordstyle=\tt\color{keywordcolor},
-  emphstyle=\tt\color{cyan},
+  keywordstyle=\keywordstyle,
+  emphstyle=\emphstyle,
   rulecolor=\tt\color{black},
   showspaces=false,
   showstringspaces=false,
   showtabs=false,
-  stringstyle=\tt\color{stringcolor},
+  stringstyle=\stringstyle,
   tabsize=2,
   aboveskip=0em,
   belowskip=0em,
@@ -268,6 +304,7 @@ $endfor$
 \surroundwithmdframed[
   hidealllines=true,
   backgroundcolor=codebgcolor,
+  skipabove=12pt,
   innerleftmargin=6pt,
   innerrightmargin=6pt,
   innertopmargin=10pt,
@@ -282,7 +319,7 @@ $endfor$
     super,this,throw,trait,true,try,%
     type,val,var,while,with,yield},
   moreemph={},
-  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  otherkeywords={},
   sensitive=true,
   morecomment=[l]{//},
   morecomment=[n]{/*}{*/},
@@ -337,78 +374,26 @@ $endif$
 % ===============================================
 
 \begin{document}
+
+\frontmatter
+\pagestyle{empty}
 \pagecolor{white}
 
 % Title page ------------------------------------
 
-\begin{titlepage}
-\pagecolor{covercolor}
-\color{white}
-
-\begin{tikzpicture}[overlay, remember picture]
-\node[anchor=north west, xshift=-.2cm, yshift=.2cm]
-     at (current page.north west)
-     {\includegraphics{$lib-dir$/templates/images/hero-left-overlay-white.pdf}};
-\end{tikzpicture}
-
-\begin{tikzpicture}[overlay, remember picture]
-\node[anchor=south east, xshift=.2cm, yshift=-.2cm]
-     at (current page.south east)
-     {\includegraphics{$lib-dir$/templates/images/hero-right-overlay-white.pdf}};
-\end{tikzpicture}
-
-\begin{center}
-\vspace{1cm}
-
-$if(title)$
-{\fontsize{1.5cm}{1em} \textsf{$title$}}
+$if(blackandwhiteprintable)$
+$else$
+\includepdf[pages={1},noautoscale]{src/covers/pdf-cover.pdf}
+\clearpage
 $endif$
 
-$if(subtitle)$
-\vspace{.25em}
+% This has to come after the title page.
+% Otherwise some weird bug causes the title image to appear really small.
 
-{\fontsize{1cm}{1em} \textsf{$subtitle$}}
-$endif$
-
-\vspace{1cm}
-
-$for(author)$
-{\fontsize{1cm}{1em} \textsf{$author$}}
-$endfor$
-
-\vspace{1em}
-
-$if(date)$
-{\fontsize{.5cm}{1em} \textsf{$date$}}
-$endif$
-\end{center}
-
-\begin{bottompar}
-\begin{center}
-\includegraphics[width=5cm]{$lib-dir$/templates/images/brand.pdf}
-
-\vspace{1cm}
-Copyright $copyright$ $author$.
-\vspace{1cm}
-\end{center}
-\end{bottompar}
-\end{titlepage}
-
-% $if(title)$
-% \maketitle
-% $endif$
-
-\pagecolor{white}
-
-% Abstract --------------------------------------
-
-\sloppy
-
-$if(abstract)$
-\begin{abstract}
-$abstract$
-\end{abstract}
-$endif$
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
 
 % Include-before hook ---------------------------
 
@@ -420,11 +405,11 @@ $endif$
 
 $date$
 
-Copyright $copyright$ $author$.
+Copyright $copyright$ $author$. CC-BY-SA 3.0.
 
-Artwork by \href{http://patreon.com/miasandelle}{Jenny Clements}.
+Artwork by Jenny Clements.
 
-Published by \href{http://underscore.io}{Underscore Consulting LLP}, Brighton, UK.
+Published by Underscore Consulting LLP, Brighton, UK.
 
 \end{center}
 
@@ -439,50 +424,20 @@ $endfor$
 
 % Tables of contents, etc. ----------------------
 
-$if(toc)$
-{
+\clearpage
+\pagestyle{empty}
 \hypersetup{linkcolor=black}
 \setcounter{tocdepth}{$if(toc-depth)$$toc-depth$$else$3$endif$}
 \tableofcontents
-}
-$endif$
-$if(lot)$
-\listoftables
-$endif$
-$if(lof)$
-\listoffigures
-$endif$
 
 % Main document body ----------------------------
 
+\mainmatter
+\pagestyle{headings}
+
+\sloppy
+
 $body$
-
-% Bibliography ----------------------------------
-
-$if(natbib)$
-$if(biblio-files)$
-$if(biblio-title)$
-$if(book-class)$
-\renewcommand\bibname{$biblio-title$}
-$else$
-\renewcommand\refname{$biblio-title$}
-$endif$
-$endif$
-\bibliography{$biblio-files$}
-
-$endif$
-$endif$
-$if(biblatex)$
-\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
-
-$endif$
-
-% Include-after hook ----------------------------
-
-$for(include-after)$
-$include-after$
-
-$endfor$
 
 % The end ---------------------------------------
 

@@ -1,9 +1,13 @@
 ---
 papersize: "a5paper"
+fontsize: "11pt"
 geometry: "margin=.75in"
 solutions:
   chapterHeadingTemplate: "Solutions for: $title"
   chapterHeadingLevel: 1
   solutionHeadingTemplate: "$title $part"
   solutionHeadingLevel: 2
+# Uncomment BOTH of these lines to build a PDF for Lulu:
+# "blackandwhiteprintable": true
+# "links-as-notes": true
 ...

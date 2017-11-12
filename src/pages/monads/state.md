@@ -298,7 +298,8 @@ and thread the resulting `State` monads together using `flatMap`.
 Your function should have the following signature:
 
 ```tut:book:silent
-def evalAll(input: List[String]): CalcState[Int] = ???
+def evalAll(input: List[String]): CalcState[Int] =
+  ???
 ```
 
 <div class="solution">
