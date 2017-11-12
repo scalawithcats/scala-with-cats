@@ -199,15 +199,15 @@ import cats.instances.int._    // for Monoid
 import cats.instances.string._ // for Monoid
 import cats.syntax.semigroup._ // for |+|
 
-def foldMap[A, B : Monoid](values: Vector[A])(func: A => B): B =
-  values.map(func).foldLeft(Monoid[B].empty)(_ |+| _)
+def foldMap[A, B : Monoid](as: Vector[A])(func: A => B): B =
+  as.map(func).foldLeft(Monoid[B].empty)(_ |+| _)
 ```
 
 We can make a slight alteration to this code to do everything in one step:
 
 ```tut:book:silent
-def foldMap[A, B : Monoid](values: Vector[A])(func: A => B): B =
-  values.foldLeft(Monoid[B].empty)(_ |+| func(_))
+def foldMap[A, B : Monoid](as: Vector[A])(func: A => B): B =
+  as.foldLeft(Monoid[B].empty)(_ |+| func(_))
 ```
 </div>
 
@@ -549,7 +549,7 @@ There are monoids for all the following:
 - approximate sets such as the Bloom filter;
 - set cardinality estimators,
   such as the HyperLogLog algorithm;
-- vectors and hence vector operations
+- vectors and vector operations
   like stochastic gradient descent;
 - quantile estimators such as the t-digest
 

@@ -210,11 +210,8 @@ to support encoding and decoding to/from a `String`:
 ```tut:book:silent
 trait Codec[A] {
   def encode(value: A): String
-
   def decode(value: String): A
-
-  def imap[B](dec: A => B, enc: B => A): Codec[B] =
-    ???
+  def imap[B](dec: A => B, enc: B => A): Codec[B] = ???
 }
 ```
 
@@ -223,7 +220,6 @@ trait Codec[A] {
   self =>
 
   def encode(value: A): String
-
   def decode(value: String): A
 
   def imap[B](dec: A => B, enc: B => A): Codec[B] =

@@ -82,8 +82,8 @@ advantages over `Left.apply` and `Right.apply`
 because they return results of type `Either`
 instead of `Left` and `Right`.
 This helps avoid type inference bugs
-caused by over-narrowing.
-The following code provides an example:
+caused by over-narrowing,
+like the bug in the example below:
 
 ```tut:book:fail
 def countPositive(nums: List[Int]) =
@@ -210,7 +210,8 @@ the remaining computations are not run:
 for {
   a <- 1.asRight[String]
   b <- 0.asRight[String]
-  c <- if(b == 0) "DIV0".asLeft[Int] else (a / b).asRight[String]
+  c <- if(b == 0) "DIV0".asLeft[Int]
+       else (a / b).asRight[String]
 } yield c * 100
 ```
 
@@ -234,10 +235,13 @@ to represent errors that may occur in our program:
 ```tut:book:silent
 object wrapper {
   sealed trait LoginError extends Product with Serializable
+
   final case class UserNotFound(username: String)
     extends LoginError
+
   final case class PasswordIncorrect(username: String)
     extends LoginError
+
   case object UnexpectedError extends LoginError
 }; import wrapper._
 ```

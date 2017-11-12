@@ -116,7 +116,7 @@ and `ensure` via [`cats.syntax.monadError`][cats.syntax.monadError]:
 
 ```tut:book:silent
 import cats.syntax.applicative._      // for pure
-import cats.syntax.applicativeError._ // for raise and handleError
+import cats.syntax.applicativeError._ // for raiseError etc
 import cats.syntax.monadError._       // for ensure
 ```
 

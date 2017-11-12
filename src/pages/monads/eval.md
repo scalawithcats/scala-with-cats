@@ -140,7 +140,9 @@ The three behaviours are summarized below:
 Scala              Cats                      Properties
 ------------------ ------------------------- --------------------------
 `val`              `Now`                     eager, memoized
+
 `lazy val`         `Later`                   lazy, memoized
+
 `def`              `Always`                  lazy, not memoized
 ------------------ ------------------------- --------------------------
 

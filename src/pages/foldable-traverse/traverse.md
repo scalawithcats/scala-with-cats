@@ -195,7 +195,7 @@ def listSequence[F[_]: Applicative, B]
   listTraverse(list)(identity)
 ```
 
-We can use this new `listTraverse` to re-implement our uptime example:
+We can use `listTraverse` to re-implement our uptime example:
 
 ```tut:book
 Await.result(

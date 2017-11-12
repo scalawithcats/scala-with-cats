@@ -3,6 +3,7 @@
 [cats.package]: http://typelevel.org/cats/api/cats/
 [cats.Apply]: http://typelevel.org/cats/api/cats/Apply.html
 [cats.Applicative]: http://typelevel.org/cats/api/cats/Applicative.html
+[cats.ApplicativeError]: http://typelevel.org/cats/api/cats/ApplicativeError.html
 [cats.Eval]: http://typelevel.org/cats/api/cats/Eval.html
 [cats.Contravariant]: http://typelevel.org/cats/api/cats/Contravariant.html
 [cats.Invariant]: http://typelevel.org/cats/api/cats/Invariant.html

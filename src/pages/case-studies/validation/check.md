@@ -158,9 +158,7 @@ First we'll setup some checks:
 
 ```tut:book:silent
 import cats.instances.list._ // for Semigroup
-```
 
-```tut:book
 val a: CheckF[List[String], Int] =
   CheckF { v =>
     if(v > 2) v.asRight
@@ -173,7 +171,8 @@ val b: CheckF[List[String], Int] =
     else List("Must be < -2").asLeft
   }
 
-val check = a and b
+val check: CheckF[List[String], Int] =
+  a and b
 ```
 
 Now run the check with some data:
@@ -253,7 +252,7 @@ object wrapper {
 
 Let's see an example:
 
-```tut:book
+```tut:book:silent
 val a: Check[List[String], Int] =
   Pure { v =>
     if(v > 2) v.asRight
@@ -266,7 +265,8 @@ val b: Check[List[String], Int] =
     else List("Must be < -2").asLeft
   }
 
-val check = a and b
+val check: Check[List[String], Int] =
+  a and b
 ```
 
 While the ADT implementation is more verbose

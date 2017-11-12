@@ -89,9 +89,7 @@ and looks for a `Functor` for functions of type `Int => ?`:
 
 ```tut:book:silent
 type F[A] = Int => A
-```
 
-```tut:book
 val functor = Functor[F]
 ```
 
@@ -136,7 +134,7 @@ val func3b: Int => Double =
 ```
 
 ```tut:book:fail:silent
-// Hypothetical example -- will not compile:
+// Hypothetical example. This won't actually compile:
 val func3c: Int => Double =
   func2.contramap(func1)
 ```

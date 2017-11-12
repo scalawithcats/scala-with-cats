@@ -50,24 +50,14 @@ We can import these as shown in the table below.
 Each import provides instances of all Cats' type classes
 for a specific parameter type:
 
-------------------------------------------------------------------------------
-Import                                           Parameter types
------------------------------------------------- -----------------------------
-[`cats.instances.int`][cats.instances.int]       `Int`
+- [`cats.instances.int`][cats.instances.int] provides instances for `Int`
+- [`cats.instances.string`][cats.instances.string] provides instances for `String`
+- [`cats.instances.list`][cats.instances.list] provides instances for `List`
+- [`cats.instances.option`][cats.instances.option] provides instances for `Option`
+- [`cats.instances.all`][cats.instances.all] provides all instances that are shipped out of the box with Cats
 
-[`cats.instances.string`][cats.instances.string] `String`
-
-[`cats.instances.list`][cats.instances.list]     `List`
-
-[`cats.instances.option`][cats.instances.option] `Option`
-
-[`cats.instances.map`][cats.instances.map]       `Map` and subtypes
-
-[`cats.instances.all`][cats.instances.all]       All instances
-
-and so on...                                     See the [`cats.instances`][cats.instances]
-                                                 package for more
-------------------------------------------------------------------------------
+See the [`cats.instances`][cats.instances] package
+for a complete list of available imports.
 
 Let's import the instances of `Show` for `Int` and `String`:
 
@@ -134,7 +124,7 @@ reverting to more specific imports only
 if they encounter naming conflicts
 or problems ambiguous implicits:
 
-```tut:book
+```tut:book:silent
 import cats._
 import cats.implicits._
 ```

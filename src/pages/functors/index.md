@@ -129,7 +129,7 @@ For example:
 import scala.util.Random
 
 val future1 = {
-  // Initialize a random number generator with a fixed seed:
+  // Initialize Random with a fixed seed:
   val r = new Random(0L)
 
   // nextInt has the side-effect of moving to
