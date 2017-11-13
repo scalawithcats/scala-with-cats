@@ -52,9 +52,3 @@ on corner cases or underlying mechanisms.
 Feel free to skip these on your first read-through---come
 back to them later for extra information.
 </div>
-
-<div class="callout callout-danger">
-Warning callouts indicate common pitfalls and gotchas.
-Make sure you read these to avoid problems,
-and come back to them if you're having trouble getting your code to run.
-</div>

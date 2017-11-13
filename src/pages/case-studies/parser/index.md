@@ -1,6 +1,6 @@
 # Case Study: Parser Combinators
 
-<div class="callout callout-danger">
+<div class="callout callout-warning">
   TODO: Add content from parsers workshop
 </div>
 
