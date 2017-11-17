@@ -6,7 +6,7 @@ author: "Noel Welsh and Dave Gurnell"
 date: "November 2017"
 # Used by Pandoc to generate the PDF cover...
 # see src/css/book.css for HTML/ePub covers:
-coverColor: "D62A7C"
+coverColor: "2E5943"
 # Used by Grunt to name output files:
 filenameStem: "scala-with-cats"
 # Used by Grunt to create a ZIP of source code:
