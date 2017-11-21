@@ -201,7 +201,7 @@ val b: CheckF[Nothing, Int] =
 
 We can create checks just fine
 but when we come to combine them
-we get an error we we might expect:
+we get an error we might expect:
 
 ```tut:book:fail
 val check = a and b
