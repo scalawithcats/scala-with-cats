@@ -51,4 +51,4 @@ to the content or structure of the book,
 please raise an issue instead.
 
 [ebook-template]: https://github.com/underscoreio/underscore-ebook-template
-[scala-with-cats]: http://underscore.io/books/advanced-scala/
+[scala-with-cats]: https://underscore.io/books/scala-with-cats
