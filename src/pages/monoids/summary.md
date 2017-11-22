@@ -65,8 +65,8 @@ def addAll[A](values: List[A])
 ```
 
 ```tut:book
-add(List(1, 2, 3)
-add(List(None, Some(1), Some(2)))
+addAll(List(1, 2, 3))
+addAll(List(None, Some(1), Some(2)))
 ```
 
 `Monoids` are a great gateway to Cats.
