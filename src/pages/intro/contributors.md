@@ -33,7 +33,8 @@ Richard Dallaway,
 Rodrigo B. de Oliveira,
 Seoh Char,
 Sergio Magnacco,
-and Toby Weston.
+Toby Weston,
+and Yinka Erinle.
 
 If you spot an error or potential improvement,
 please raise an issue or submit a PR
