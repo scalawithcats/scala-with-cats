@@ -225,8 +225,10 @@ Without this keyword, the compiler won't be able to
 fill in the parameters during implicit resolution.
 
 `implicit` methods with non-`implicit` parameters
-form a different Scala pattern called an *implicit conversion*.
-This is an older programming pattern
+form a different Scala pattern called an *implicit conversion*. 
+This is also different from the previous section on `Interface Syntax`, 
+because in that case the `JsonWriter` is an implicit class with `extension methods`. 
+Implicit conversion is an older programming pattern
 that is frowned upon in modern Scala code.
 Fortunately, the compiler will warn you when you do this.
 You have to manually enable implicit conversions
