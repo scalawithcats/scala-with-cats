@@ -41,6 +41,7 @@
 [cats.instances.map]: http://typelevel.org/cats/api/cats/instances/package$$map$
 [cats.instances.try_]: http://typelevel.org/cats/api/cats/instances/package$$try_$
 [cats.kernel.package]: http://typelevel.org/cats/api/cats/kernel/
+[cats.kernel.CommutativeMonoid]: https://typelevel.org/cats/api/cats/kernel/CommutativeMonoid.html
 [cats.kernel.Eq]: http://typelevel.org/cats/api/cats/kernel/Eq.html
 [cats.kernel.Monoid]: http://typelevel.org/cats/api/cats/kernel/Monoid.html
 [cats.kernel.Semigroup]: http://typelevel.org/cats/api/cats/kernel/Semigroup.html
