@@ -170,7 +170,7 @@ There also are other problematic aspects of `Future's` behaviour,
 such as the way it always starts computations immediately
 rather than allowing the user to dictate when the program should run.
 For more information
-see [this excellent Stack Overflow answer][link-so-future]
+see [this excellent Reddit answer][link-so-future]
 by Rob Norris.
 </div>
 
