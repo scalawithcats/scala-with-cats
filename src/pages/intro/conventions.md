@@ -12,7 +12,7 @@ After their initial introduction they are written in normal roman font.
 Terms from program code, filenames, and file contents,
 are written in `monospace font`.
 Note that we do not distinguish between singular and plural forms.
-For example, might write `String` or `Strings` to refer to `java.util.String`.
+For example, we might write `String` or `Strings` to refer to `java.util.String`.
 
 References to external resources are written as [hyperlinks][link-underscore].
 References to API documentation are written
