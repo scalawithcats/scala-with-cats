@@ -340,7 +340,7 @@ object wrapper {
 </div>
 
 Our implementation is looking pretty good now.
-Implement an `or` combinator to compliment `and`.
+Implement an `or` combinator to complement `and`.
 
 <div class="solution">
 This reuses the same technique for `and`.
