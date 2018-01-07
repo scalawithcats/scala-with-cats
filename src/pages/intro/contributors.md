@@ -41,6 +41,7 @@ Rodrigo B. de Oliveira,
 Seoh Char,
 Sergio Magnacco,
 Toby Weston,
+Victor Osolovskiy,
 and Yinka Erinle.
 
 If you spot an error or potential improvement,
