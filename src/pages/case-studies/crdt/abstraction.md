@@ -3,7 +3,7 @@
 We've created a generic GCounter
 that works with any value
 that has instances of `BoundedSemiLattice`
-and (commutative) `Monoid`.
+and `CommutativeMonoid`.
 However we're still tied to
 a particular representation of the map from machine IDs to values.
 There is no need to have this restriction,
@@ -19,17 +19,17 @@ when we want to change performance and durability tradeoffs.
 
 There are a number of ways we can implement this.
 One approach is to define a `GCounter` type class
-with dependencies on `Monoid` and `BoundedSemiLattice`.
+with dependencies on `CommutativeMonoid` and `BoundedSemiLattice`.
 We define this as a type class that takes
 a type constructor with *two* type parameters
 represent the key and value types of the map abstraction.
 
 ```tut:book:invisible
 import scala.language.higherKinds
-import cats.Monoid
+import cats.kernel.CommutativeMonoid
 
 object wrapper {
-  trait BoundedSemiLattice[A] extends Monoid[A] {
+  trait BoundedSemiLattice[A] extends CommutativeMonoid[A] {
     def combine(a1: A, a2: A): A
     def empty: A
   }
@@ -60,13 +60,13 @@ object wrapper {
 object wrapper {
   trait GCounter[F[_,_],K, V] {
     def increment(f: F[K, V])(k: K, v: V)
-          (implicit m: Monoid[V]): F[K, V]
+          (implicit m: CommutativeMonoid[V]): F[K, V]
 
     def merge(f1: F[K, V], f2: F[K, V])
           (implicit b: BoundedSemiLattice[V]): F[K, V]
 
     def total(f: F[K, V])
-          (implicit m: Monoid[V]): V
+          (implicit m: CommutativeMonoid[V]): V
   }
 
   object GCounter {
@@ -97,7 +97,7 @@ import cats.syntax.foldable._  // for combineAll
 implicit def mapInstance[K, V]: GCounter[Map, K, V] =
   new GCounter[Map, K, V] {
     def increment(map: Map[K, V])(key: K, value: V)
-          (implicit m: Monoid[V]): Map[K, V] = {
+          (implicit m: CommutativeMonoid[V]): Map[K, V] = {
       val total = map.getOrElse(key, m.empty) |+| value
       map + (key -> total)
     }
@@ -107,7 +107,7 @@ implicit def mapInstance[K, V]: GCounter[Map, K, V] =
       map1 |+| map2
 
     def total(map: Map[K, V])
-        (implicit m: Monoid[V]): V =
+        (implicit m: CommutativeMonoid[V]): V =
       map.values.toList.combineAll
   }
 ```
@@ -207,15 +207,15 @@ implicit class KvsOps[F[_,_], K, V](f: F[K, V]) {
 
 Now we can generate `GCounter` instances
 for any data type that has
-instances of `KeyValueStore` and `Monoid`
+instances of `KeyValueStore` and `CommutativeMonoid`
 using an `implicit def`:
 
 ```tut:book:silent
 implicit def gcounterInstance[F[_,_], K, V]
-    (implicit kvs: KeyValueStore[F], km: Monoid[F[K, V]]) =
+    (implicit kvs: KeyValueStore[F], km: CommutativeMonoid[F[K, V]]) =
   new GCounter[F, K, V] {
     def increment(f: F[K, V])(key: K, value: V)
-          (implicit m: Monoid[V]): F[K, V] = {
+          (implicit m: CommutativeMonoid[V]): F[K, V] = {
       val total = f.getOrElse(key, m.empty) |+| value
       f.put(key, total)
     }
@@ -224,7 +224,7 @@ implicit def gcounterInstance[F[_,_], K, V]
           (implicit b: BoundedSemiLattice[V]): F[K, V] =
       f1 |+| f2
 
-    def total(f: F[K, V])(implicit m: Monoid[V]): V =
+    def total(f: F[K, V])(implicit m: CommutativeMonoid[V]): V =
       f.values.combineAll
   }
 ```
