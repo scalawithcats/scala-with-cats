@@ -103,27 +103,25 @@ require a commutative monoid
 and `merge` requires a bounded semilattice
 (or idempotent commutative monoid).
 
-Cats provides a `Monoid`,
-but no commutative monoid
-or bounded semilattice type class[^spire].
-For simplicity of implementation we'll use `Monoid`
-when we really mean a commutative monoid,
-and require the programmer to ensure
-the implementation is commutative.
-We'll implement our own `BoundedSemiLattice` type class.
+Cats provides a type class 
+for both `Monoid` and `CommutativeMonoid`,
+but doesn't provide one 
+for bounded semilattice[^spire].
+That's why we're going to implement
+our own `BoundedSemiLattice` type class.
 
 ```tut:book:silent
-import cats.Monoid
+import cats.kernel.CommutativeMonoid
 
-trait BoundedSemiLattice[A] extends Monoid[A] {
+trait BoundedSemiLattice[A] extends CommutativeMonoid[A] {
   def combine(a1: A, a2: A): A
   def empty: A
 }
 ```
 
 In the implementation above,
-`BoundedSemiLattice[A]` extends `Monoid[A]`
-because a bounded semilattice is a monoid
+`BoundedSemiLattice[A]` extends `CommutativeMonoid[A]`
+because a bounded semilattice is a commutative monoid
 (a commutative idempotent one, to be exact).
 
 ### Exercise: BoundedSemiLattice Instances
@@ -144,12 +142,12 @@ Implementing the instance for `Set`
 provides good practice with implicit methods.
 
 ```tut:book:invisible:reset
-import cats.Monoid
+import cats.kernel.CommutativeMonoid
 ```
 
 ```tut:book:silent
 object wrapper {
-  trait BoundedSemiLattice[A] extends Monoid[A] {
+  trait BoundedSemiLattice[A] extends CommutativeMonoid[A] {
     def combine(a1: A, a2: A): A
     def empty: A
   }
@@ -180,7 +178,7 @@ object wrapper {
 
 ### Exercise: Generic GCounter
 
-Using `Monoid` and `BoundedSemiLattice`, generalise `GCounter`.
+Using `CommutativeMonoid` and `BoundedSemiLattice`, generalise `GCounter`.
 
 When you implement this,
 look for opportunities to use methods and syntax on `Monoid`
@@ -205,7 +203,7 @@ import cats.syntax.foldable._  // for combineAll
 
 final case class GCounter[A](counters: Map[String,A]) {
   def increment(machine: String, amount: A)
-        (implicit m: Monoid[A]) = {
+        (implicit m: CommutativeMonoid[A]): GCounter[A] = {
     val value = amount |+| counters.getOrElse(machine, m.empty)
     GCounter(counters + (machine -> value))
   }
@@ -214,7 +212,7 @@ final case class GCounter[A](counters: Map[String,A]) {
         (implicit b: BoundedSemiLattice[A]): GCounter[A] =
     GCounter(this.counters |+| that.counters)
 
-  def total(implicit m: Monoid[A]): A =
+  def total(implicit m: CommutativeMonoid[A]): A =
     this.counters.values.toList.combineAll
 }
 ```
@@ -222,4 +220,4 @@ final case class GCounter[A](counters: Map[String,A]) {
 
 [^spire]: A closely related library
 called [Spire](https://github.com/non/spire)
-provides both these abstractions.
+already provides that abstractions.
