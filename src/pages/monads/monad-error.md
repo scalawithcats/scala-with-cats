@@ -82,7 +82,7 @@ val success = monadError.pure(42)
 val failure = monadError.raiseError("Badness")
 ```
 
-`handleError` is the compliment of `raiseError`.
+`handleError` is the complement of `raiseError`.
 It allows us to consume an error and (possibly)
 turn it into a success,
 similar to the `recover` method of `Future`:
