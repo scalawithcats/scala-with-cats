@@ -267,16 +267,6 @@ implicit def setUnionMonoid[A]: Monoid[Set[A]] =
 
 We need to define `setUnionMonoid` as a method
 rather than a value so we can accept the type parameter `A`.
-Scala's implicit resolution is fine with this---it is capable of
-determining the correct type parameter
-to create a `Monoid` of the desired type:
-
-```tut:book:silent
-implicit val intMonoid: Monoid[Int] = new Monoid[Int] {
-  def combine(a: Int, b: Int) = a + b
-  def empty = 0
-}
-```
 
 ```tut:book
 val intSetMonoid = Monoid[Set[Int]]

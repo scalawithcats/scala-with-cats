@@ -1,7 +1,7 @@
 ## Versions {-}
 
 This book is written for Scala 2.12.3 and Cats 1.0.0.
-Here is a minimal `built.sbt` containing
+Here is a minimal `build.sbt` containing
 the relevant dependencies and settings[^sbt-version]:
 
 ```scala

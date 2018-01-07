@@ -213,7 +213,23 @@ the valid and invalid sides:
 ```
 
 We can't `flatMap` because `Validated` isn't a monad.
-However, we can convert back and forth
+However, Cats does provide a stand-in for `flatMap` called `andThen`.
+The type signature of `andThen` is
+identical to that of `flatMap`,
+but it has a different name
+because it is not a lawful implementation
+with respect to the monad laws:
+
+```tut:book
+32.valid.andThen { a =>
+  10.valid.map { b =>
+    a + b
+  }
+}
+```
+
+If we want to do more than just `flatMap`,
+we can convert back and forth
 between `Validated` and `Either`
 using the `toEither` and `toValidated` methods.
 Note that `toValidated` comes from [`cats.syntax.either`]:
@@ -225,16 +241,6 @@ import cats.syntax.either._ // for toValidated
 "Badness".invalid[Int].toEither
 "Badness".invalid[Int].toEither.toValidated
 ```
-
-We can even use the `withEither` method
-to temporarily convert to an `Either`
-and convert back again immediately:
-
-```tut:book
-41.valid[String].withEither(_.flatMap(n => Right(n + 1)))
-```
-
-There is also a `withValidated` method in `cats.syntax.either`.
 
 As with `Either`, we can use the `ensure` method
 to fail with a specified error

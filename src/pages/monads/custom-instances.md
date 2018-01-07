@@ -109,25 +109,12 @@ implicit val treeMonad = new Monad[Tree] {
         func(value)
     }
 
- def tailRecM[A, B](arg: A)
+ def tailRecM[A, B](a: A)
      (func: A => Tree[Either[A, B]]): Tree[B] =
-   func(arg) match {
-     case Branch(l, r) =>
-       Branch(
-         flatMap(l) {
-           case Left(l)  => tailRecM(l)(func)
-           case Right(l) => pure(l)
-         },
-         flatMap(r) {
-           case Left(r)  => tailRecM(r)(func)
-           case Right(r) => pure(r)
-         }
-       )
-
-     case Leaf(Left(value)) =>
+   flatMap(func(a)) {
+     case Left(value) =>
        tailRecM(value)(func)
-
-     case Leaf(Right(value)) =>
+     case Right(value) =>
        Leaf(value)
    }
 }
