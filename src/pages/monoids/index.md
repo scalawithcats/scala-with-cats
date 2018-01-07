@@ -267,11 +267,17 @@ implicit def setUnionMonoid[A]: Monoid[Set[A]] =
 
 We need to define `setUnionMonoid` as a method
 rather than a value so we can accept the type parameter `A`.
+The type parameter allows us to use the same definition
+to summon `Monoids` for `Sets` of any type of data:
+
+```tut:book:silent
+val intSetMonoid = Monoid[Set[Int]]
+val strSetMonoid = Monoid[Set[String]]
+```
 
 ```tut:book
-val intSetMonoid = Monoid[Set[Int]]
-
 intSetMonoid.combine(Set(1, 2), Set(2, 3))
+strSetMonoid.combine(Set("A", "B"), Set("B", "C"))
 ```
 
 Set intersection forms a semigroup,
