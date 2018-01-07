@@ -241,14 +241,14 @@ def operand(num: Int): CalcState[Int] =
 ```
 
 The `operator` function is a little more complex.
-We have to pop two operands off the stack and push the result in their place.
+We have to pop two operands off the stack (having the second operand at the top of the stack) and push the result in their place.
 The code can fail if the stack doesn't have enough operands on it,
 but the exercise description allows us to throw an exception in this case:
 
 ```tut:book:silent
 def operator(func: (Int, Int) => Int): CalcState[Int] =
   State[List[Int], Int] {
-    case a :: b :: tail =>
+    case b :: a :: tail =>
       val ans = func(a, b)
       (ans :: tail, ans)
 
