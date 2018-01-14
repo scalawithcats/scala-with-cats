@@ -531,7 +531,7 @@ Our algorithm followed three steps:
 Our toy system emulates the batching behaviour
 of real-world map-reduce systems such as Hadoop.
 However, in reality we are running all of our work
-on a single machine where communcation between nodes is negligable.
+on a single machine where communcation between nodes is negligible.
 We don't actually need to batch data
 to gain efficient parallel processing of a list.
 We can simply map using a `Functor` and reduce using a `Monoid`.
