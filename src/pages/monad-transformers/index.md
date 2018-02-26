@@ -79,7 +79,7 @@ a definition of `flatMap` comes to light:
 ```scala
 def flatMap[A, B](fa: Composed[A])
     (f: A => Composed[B]): Composed[B] =
-  fa.flatMap(_.fold(None.pure[M])(f))
+  fa.flatMap(_.fold(None.pure[M1])(f))
 ```
 
 Notice that the definition above makes use of `None`---an
@@ -103,7 +103,7 @@ each named with a `T` suffix:
 
 Here's an example that uses `OptionT`
 to compose `List` and `Option`.
-We can use can `OptionT[List, A]`,
+We can use `OptionT[List, A]`,
 aliased to `ListOption[A]` for convenience,
 to transform a `List[Option[A]]` into a single monad:
 
