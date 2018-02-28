@@ -277,7 +277,7 @@ implicit val booleanCodec: Codec[Boolean] =
 Note that the `decode` method of our `Codec` type class
 doesn't account for failures.
 If we want to model more sophisticated relationships
-we can look move beyond functors
+we can move beyond functors
 to look at *lenses* and *optics*.
 
 Optics are beyond the scope of this book.
