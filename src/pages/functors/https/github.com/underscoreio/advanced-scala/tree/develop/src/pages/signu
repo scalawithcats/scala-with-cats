@@ -76,7 +76,7 @@ that apply the pattern in different ways.
 `Future` is a functor that
 sequences asynchronous computations by queueing them
 and applying them as their predecessors complete.
-The type signuture of its `map` method,
+The type signature of its `map` method,
 shown in Figure [@fig:functors:future-type-chart],
 has the same shape as the signatures above.
 However, the behaviour is very different.
