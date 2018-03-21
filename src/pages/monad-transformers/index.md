@@ -103,7 +103,7 @@ each named with a `T` suffix:
 
 Here's an example that uses `OptionT`
 to compose `List` and `Option`.
-We can use `OptionT[List, A]`,
+We can use can `OptionT[List, A]`,
 aliased to `ListOption[A]` for convenience,
 to transform a `List[Option[A]]` into a single monad:
 

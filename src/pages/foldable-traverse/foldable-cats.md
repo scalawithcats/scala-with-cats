@@ -109,7 +109,7 @@ it's useful to know that `Eval` has our back.
 
 `Foldable` provides us with
 a host of useful methods defined on top of `foldLeft`.
-Many of these are facsimiles of familiar methods from the standard library:
+Many of these are facimiles of familiar methods from the standard library:
 `find`, `exists`, `forall`, `toList`, `isEmpty`, `nonEmpty`, and so on:
 
 ```tut:book
