@@ -165,11 +165,11 @@ Here's an example:
 
 ```tut:book:silent
 import cats.Monoid
-import cats.instances.boolean._ // for Monoid
-import cats.instances.int._     // for Monoid
-import cats.instances.list._    // for Monoid
-import cats.instances.string._  // for Monoid
-import cats.syntax.apply._      // for imapN
+import cats.instances.int._        // for Monoid
+import cats.instances.invariant._  // for Semigroupal
+import cats.instances.list._       // for Monoid
+import cats.instances.string._     // for Monoid
+import cats.syntax.apply._         // for imapN
 
 case class Cat(
   name: String,
