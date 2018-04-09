@@ -231,7 +231,7 @@ represented in Cats as
 We can now reveal that `Kleisli` and `ReaderT`
 are, in fact, the same thing!
 `ReaderT` is actually a type alias for `Kleisli`.
-Hence why we were creating `Readers` last chapter
+Hence, we were creating `Readers` last chapter
 and seeing `Kleislis` on the console.
 </div>
 
@@ -443,7 +443,7 @@ to operate on them in different contexts.
 We can cope with this in multiple ways.
 One approach involves creating a single "super stack"
 and sticking to it throughout our code base.
-This works if the code simple and largely uniform in nature.
+This works if the code is simple and largely uniform in nature.
 For example, in a web application,
 we could decide that all request handlers are asynchronous
 and all can fail with the same set of HTTP error codes.

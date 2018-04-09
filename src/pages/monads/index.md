@@ -11,7 +11,7 @@ We even have special syntax to support monads: for comprehensions.
 However, despite the ubiquity of the concept,
 the Scala standard library lacks
 a concrete type to encompass "things that can be `flatMapped`".
-This type class is one of the benefits bought to us by Cats.
+This type class is one of the benefits brought to us by Cats.
 
 In this chapter we will take a deep dive into monads.
 We will start by motivating them with a few examples.
