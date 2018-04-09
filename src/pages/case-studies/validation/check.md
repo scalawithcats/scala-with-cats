@@ -295,7 +295,7 @@ Switch your implementation over to this new data type.
 The implementation of `apply` for `And`
 is using the pattern for applicative functors.
 `Either` has an `Applicative` instance,
-but it doesn't have the semantics we want/
+but it doesn't have the semantics we want.
 It fails fast instead of accumulating errors.
 
 If we want to accumulate errors
