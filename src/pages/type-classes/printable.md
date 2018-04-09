@@ -35,7 +35,7 @@ trait Printable[A] {
 ```
 
 Then we define some default *instances* of `Printable`
-and package then in `PrintableInstances`:
+and package them in `PrintableInstances`:
 
 ```tut:book:silent
 object PrintableInstances {
