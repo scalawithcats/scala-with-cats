@@ -526,7 +526,7 @@ def getPowerLevel(autobot: String): Response[Int] =
 
 Transmissions take time in Earth's viscous atmosphere,
 and messages are occasionally lost
-due to satellite malfunction or sabotaged by pesky Decepticons[^transformers].
+due to satellite malfunction or sabotage by pesky Decepticons[^transformers].
 `Responses` are therefore represented as a stack of monads:
 
 ```tut:book
