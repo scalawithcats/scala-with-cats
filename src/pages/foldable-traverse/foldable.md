@@ -41,7 +41,7 @@ Figure [@fig:foldable-traverse:fold] illustrates each direction.
 ![Illustration of foldLeft and foldRight](src/pages/foldable-traverse/fold.pdf+svg){#fig:foldable-traverse:fold}
 
 `foldLeft` and `foldRight` are equivalent
-if our binary operation is commutative.
+if our binary operation is associative.
 For example, we can sum a `List[Int]` by folding in either direction,
 using `0` as our accumulator and addition as our operation:
 
@@ -50,7 +50,7 @@ List(1, 2, 3).foldLeft(0)(_ + _)
 List(1, 2, 3).foldRight(0)(_ + _)
 ```
 
-If we provide a non-commutative operator
+If we provide a non-associative operator
 the order of evaluation makes a difference.
 For example, if we fold using subtraction,
 we get different results in each direction:
