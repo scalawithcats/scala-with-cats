@@ -79,7 +79,7 @@ a definition of `flatMap` comes to light:
 ```scala
 def flatMap[A, B](fa: Composed[A])
     (f: A => Composed[B]): Composed[B] =
-  fa.flatMap(_.fold(None.pure[M1])(f))
+  fa.flatMap(_.fold[Composed[B]](None.pure[M1])(f))
 ```
 
 Notice that the definition above makes use of `None`---an
