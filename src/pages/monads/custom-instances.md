@@ -151,30 +151,24 @@ implicit val treeMonad = new Monad[Tree] {
     @tailrec
     def loop(
           open: List[Tree[Either[A, B]]],
-          closed: List[Tree[B]]): List[Tree[B]] =
+          closed: List[Option[Tree[B]]]): List[Tree[B]] =
       open match {
         case Branch(l, r) :: next =>
-          l match {
-            case Branch(_, _) =>
-              loop(l :: r :: next, closed)
-            case Leaf(Left(value)) =>
-              loop(func(value) :: r :: next, closed)
-            case Leaf(Right(value)) =>
-              loop(r :: next, pure(value) :: closed)
-          }
+          loop(l :: r :: next, None :: closed)
 
         case Leaf(Left(value)) :: next =>
           loop(func(value) :: next, closed)
 
         case Leaf(Right(value)) :: next =>
-          closed match {
-            case head :: tail =>
-              loop(next, Branch(head, pure(value)) :: tail)
-            case Nil =>
-              loop(next, pure(value) :: closed)
-          }
+          loop(next, Some(pure(value)) :: closed)
+
         case Nil =>
-          closed
+          closed.foldLeft(Nil: List[Tree[B]]) { (acc, maybeTree) =>
+            maybeTree.map(_ :: acc).getOrElse {
+              val left :: right :: tail = acc
+              branch(left, right) :: tail
+            }
+          }
       }
 
     loop(List(func(arg)), Nil).head
