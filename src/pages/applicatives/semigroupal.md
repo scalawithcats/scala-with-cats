@@ -50,6 +50,16 @@ Semigroupal[Option].product(None, Some("abc"))
 Semigroupal[Option].product(Some(123), None)
 ```
 
+Note here that even though the name is similar, 
+`Semigroupal` and `Semigroup` might have different
+`Semigroup` instances (say `Semigroup` one more time).
+Combining values with `Semigroup` would result in `Some`:
+
+```tut:book
+Semigroup[Option[String]].combine(None, Some("abc"))
+Semigroup[Option[Int]].combine(Some(123), None)
+```
+
 ### Joining Three or More Contexts
 
 The companion object for `Semigroupal` defines
