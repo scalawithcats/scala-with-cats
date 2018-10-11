@@ -5,3 +5,4 @@ services:
     volumes:
      - .:/source
      - ~/.ivy2:/root/.ivy2
+     - ~/.cache/.coursier:/root/.cache/.coursier
