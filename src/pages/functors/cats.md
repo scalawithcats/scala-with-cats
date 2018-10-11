@@ -227,7 +227,7 @@ Let's use our `Functor` to transform some `Trees`:
 Branch(Leaf(10), Leaf(20)).map(_ * 2)
 ```
 
-Oops! This is falls foul of
+Oops! This falls foul of
 the same invariance problem we discussed in Section [@sec:variance].
 The compiler can find a `Functor` instance for `Tree` but not for `Branch` or `Leaf`.
 Let's add some smart constructors to compensate:

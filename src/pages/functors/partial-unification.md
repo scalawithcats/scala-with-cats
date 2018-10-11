@@ -69,7 +69,7 @@ However, earlier versions of the Scala compiler
 were not able to make this inference.
 This infamous limitation,
 known as [SI-2712][link-si2712],
-prevented the compiler "unifying" type constructors
+prevented the compiler from "unifying" type constructors
 of different arities.
 This compiler limitation is now fixed,
 although we have to enable the fix

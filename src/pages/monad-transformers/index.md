@@ -79,7 +79,7 @@ a definition of `flatMap` comes to light:
 ```scala
 def flatMap[A, B](fa: Composed[A])
     (f: A => Composed[B]): Composed[B] =
-  fa.flatMap(_.fold(None.pure[M])(f))
+  fa.flatMap(_.fold(None.pure[M1])(f))
 ```
 
 Notice that the definition above makes use of `None`---an
@@ -103,7 +103,7 @@ each named with a `T` suffix:
 
 Here's an example that uses `OptionT`
 to compose `List` and `Option`.
-We can use can `OptionT[List, A]`,
+We can use `OptionT[List, A]`,
 aliased to `ListOption[A]` for convenience,
 to transform a `List[Option[A]]` into a single monad:
 
@@ -231,7 +231,7 @@ represented in Cats as
 We can now reveal that `Kleisli` and `ReaderT`
 are, in fact, the same thing!
 `ReaderT` is actually a type alias for `Kleisli`.
-Hence why we were creating `Readers` last chapter
+Hence, we were creating `Readers` last chapter
 and seeing `Kleislis` on the console.
 </div>
 
@@ -443,7 +443,7 @@ to operate on them in different contexts.
 We can cope with this in multiple ways.
 One approach involves creating a single "super stack"
 and sticking to it throughout our code base.
-This works if the code simple and largely uniform in nature.
+This works if the code is simple and largely uniform in nature.
 For example, in a web application,
 we could decide that all request handlers are asynchronous
 and all can fail with the same set of HTTP error codes.

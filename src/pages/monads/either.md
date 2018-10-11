@@ -147,7 +147,7 @@ Either.fromOption[String, Int](None, "Badness")
 ### Transforming Eithers
 
 `cats.syntax.either` also adds
-some useful methods to instances of `Either`.
+some useful methods for instances of `Either`.
 We can use `orElse` and `getOrElse` to extract
 values from the right side or return a default:
 
@@ -301,7 +301,7 @@ Some points to ponder:
   We need to know what went wrong,
   not just that something went wrong.
 
-- In a number of cases we want to collect all the errors,
+- In a number of cases, we want to collect all the errors,
   not just the first one we encountered.
   A typical example is validating a web form.
   It's a far better experience to
