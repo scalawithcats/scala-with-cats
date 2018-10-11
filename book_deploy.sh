@@ -16,7 +16,7 @@ export DEPLOY_BRANCH="feature/cd"
 # 3. Folder inside target of where to place the artifacts:
 export TARGET_DIR=books/scala-with-cats/
 # 4. Commit message prefix (for the "books" repository)
-export COMMIT_PREFIX="deploy scala withcats via travis"
+export COMMIT_PREFIX="deploy scala with cats via travis"
 # End of configuration
 
 if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "${DEPLOY_BRANCH}" ]]; then
