@@ -12,7 +12,7 @@ set -e
 export KEY_FILENAME="book_deploy_rsa"
 # 2. The branch we deploy from.
 #    Only deploy for non-PR commits to this branch.
-export DEPLOY_BRANCH="feature/cd"
+export DEPLOY_BRANCH="develop"
 # 3. Folder inside target of where to place the artifacts:
 export TARGET_DIR=books/scala-with-cats/
 # 4. Commit message prefix (for the "books" repository)
