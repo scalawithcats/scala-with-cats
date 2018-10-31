@@ -169,7 +169,7 @@ into a common constructor based on the instance for `A`:
 - if the option is `Some(aValue)`,
   write `aValue` using the writer for `A`;
 
-- if the option is `None`, write `null`.
+- if the option is `None`, return `JsNull`.
 
 Here is the same code written out as an `implicit def`:
 
