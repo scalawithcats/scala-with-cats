@@ -203,7 +203,7 @@ val totalUptime = listTraverse(hostnames)(getUptime)
 Await.result(totalUptime, 1.second)
 ```
 
-or we can use it with with other `Applicative` data types
+or we can use it with other `Applicative` data types
 as shown in the following exercises.
 
 #### Exercise: Traversing with Vectors
