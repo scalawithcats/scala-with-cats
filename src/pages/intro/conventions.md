@@ -40,7 +40,7 @@ so we sometimes show console-style output as comments:
 
 ### Callout Boxes {-}
 
-We use three types of *callout box* to highlight particular content:
+We use two types of *callout box* to highlight particular content:
 
 <div class="callout callout-info">
 Tip callouts indicate handy summaries, recipes, or best practices.
