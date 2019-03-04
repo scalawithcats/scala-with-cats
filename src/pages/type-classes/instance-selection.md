@@ -127,7 +127,7 @@ def format[A](value: A, writer: JsonWriter[A]): Json =
 ```
 
 Now ask yourself the question:
-"Which of combinations of value and writer can I pass to `format`?"
+"Which combinations of value and writer can I pass to `format`?"
 We can combine `circle` with either writer
 because all `Circles` are `Shapes`.
 Conversely, we can't combine `shape` with `circleWriter`

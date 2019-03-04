@@ -122,7 +122,7 @@ to simplify your imports:
 Most people start their files with the following imports,
 reverting to more specific imports only
 if they encounter naming conflicts
-or problems ambiguous implicits:
+or problems with ambiguous implicits:
 
 ```tut:book:silent
 import cats._
@@ -161,7 +161,7 @@ object Show {
 }
 ```
 
-These allows us to quickly construct instances
+These allow us to quickly construct instances
 with less ceremony than defining them from scratch:
 
 ```tut:book:silent
