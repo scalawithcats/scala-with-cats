@@ -120,7 +120,7 @@ new FunctorOps(foo).map(value => value + 1)
 The `map` method of `FunctorOps` requires
 an implicit `Functor` as a parameter.
 This means this code will only compile
-if we have a `Functor` for `expr1` in scope.
+if we have a `Functor` for `F` in scope.
 If we don't, we get a compiler error:
 
 ```tut:book:silent
