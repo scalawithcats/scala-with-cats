@@ -158,10 +158,10 @@ First we define an `implicit class` containing our extension methods:
 object PrintableSyntax {
   implicit class PrintableOps[A](value: A) {
     def format(implicit p: Printable[A]): String =
-      Printable.format(value)
+      p.format(value)
 
     def print(implicit p: Printable[A]): Unit =
-      Printable.print(value)
+      println(format(p))
   }
 }
 ```
