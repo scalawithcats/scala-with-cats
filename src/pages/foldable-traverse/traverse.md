@@ -77,7 +77,7 @@ the implementation of `Future.traverse` in the standard library looks like this:
 ```scala
 def traverse[A, B](values: List[A])
     (func: A => Future[B]): Future[List[B]] =
-  values.foldLeft(Future(List.empty[A])) { (accum, host) =>
+  values.foldLeft(Future(List.empty[B])) { (accum, host) =>
     val item = func(host)
     for {
       accum <- accum
@@ -203,7 +203,7 @@ val totalUptime = listTraverse(hostnames)(getUptime)
 Await.result(totalUptime, 1.second)
 ```
 
-or we can use it with with other `Applicative` data types
+or we can use it with other `Applicative` data types
 as shown in the following exercises.
 
 #### Exercise: Traversing with Vectors
