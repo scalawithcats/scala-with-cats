@@ -18,7 +18,7 @@ the types of checks we want to perform:
 - A user must be over 18 years old
   or must have parental consent.
 
-- A `String` ID must be parsable as a `Int`
+- A `String` ID must be parsable as an `Int`
   and the `Int` must correspond to a valid record ID.
 
 - A bid in an auction must apply

@@ -6,11 +6,11 @@ We can use it to record messages, errors,
 or additional data about a computation,
 and extract the log alongside the final result.
 
-One common use for `Writers` is
+One common use for `Writer` is
 recording sequences of steps in multi-threaded computations
 where standard imperative logging techniques
 can result in interleaved messages from different contexts.
-With `Writer` the log for the computation is tied to the result,
+With `Writer`, the log for the computation is tied to the result,
 so we can run concurrent computations without mixing logs.
 
 <div class="callout callout-info">
@@ -60,7 +60,7 @@ so we can read types like `WriterT[Id, W, A]` as `Writer[W, A]`:
 type Writer[W, A] = WriterT[Id, W, A]
 ```
 
-For convenience, Cats provides a way of creating `Writers`
+For convenience, Cats provides a way of creating `Writer`
 specifying only the log or the result.
 If we only have a result we can use the standard `pure` syntax.
 To do this we must have a `Monoid[W]` in scope
