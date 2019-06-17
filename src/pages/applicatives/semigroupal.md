@@ -135,8 +135,9 @@ case class Cat(name: String, born: Int, color: String)
 ```
 
 Internally `mapN` uses the `Semigroupal`
-to extract the values from the `Option`
-and the `Functor` to apply the values to the function.
+to join all values into a single `Option`
+and the `Functor` to sequence
+the joined `Option` with supplied function.
 
 It's nice to see that this syntax is type checked.
 If we supply a function that
