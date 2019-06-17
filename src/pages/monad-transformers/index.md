@@ -627,7 +627,7 @@ def tacticalReport(ally1: String, ally2: String): String =
 
 <div class="solution">
 We use the `value` method to unpack the monad stack
-and `Await` and `fold` to unpack the `Future` and `Either`:
+and `Await` to unpack the `Future` and `Either`:
 
 ```tut:book:silent
 import scala.concurrent.Await
