@@ -145,9 +145,9 @@ final case class CheckF[E, A](func: A => Either[E, A]) {
     CheckF { a =>
       (this(a), that(a)) match {
         case (Left(e1),  Left(e2))  => (e1 |+| e2).asLeft
-        case (Left(e),   Right(a))  => e.asLeft
-        case (Right(a),  Left(e))   => e.asLeft
-        case (Right(a1), Right(a2)) => a.asRight
+        case (Left(e),   Right(_))  => e.asLeft
+        case (Right(_),  Left(e))   => e.asLeft
+        case (Right(_), Right(_)) => a.asRight
       }
     }
 }
@@ -234,9 +234,9 @@ object wrapper {
         case And(left, right) =>
           (left(a), right(a)) match {
             case (Left(e1),  Left(e2))  => (e1 |+| e2).asLeft
-            case (Left(e),   Right(a))  => e.asLeft
-            case (Right(a),  Left(e))   => e.asLeft
-            case (Right(a1), Right(a2)) => a.asRight
+            case (Left(e),   Right(_))  => e.asLeft
+            case (Right(_),  Left(e))   => e.asLeft
+            case (Right(_), Right(_)) => a.asRight
           }
       }
   }
