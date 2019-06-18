@@ -298,7 +298,7 @@ is using the pattern for applicative functors.
 but it doesn't have the semantics we want.
 It fails fast instead of accumulating errors.
 
-If we want to accumulate errors
+If we want to accumulate errors,
 `Validated` is a more appropriate abstraction.
 As a bonus, we get more code reuse
 because we can lean on the applicative instance of `Validated`
