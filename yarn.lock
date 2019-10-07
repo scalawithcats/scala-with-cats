@@ -2156,8 +2156,8 @@ tiny-lr-fork@0.0.5:
     qs "~0.5.2"
 
 tough-cookie@~2.3.0:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-2.3.2.tgz#f081f76e4c85720e6c37a5faced737150d84072a"
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-2.3.4.tgz#ec60cee38ac675063ffc97a5c18970578ee83655"
   dependencies:
     punycode "^1.4.1"
 
@@ -2254,9 +2254,10 @@ umd@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/umd/-/umd-3.0.1.tgz#8ae556e11011f63c2596708a8837259f01b3d60e"
 
-"underscore-ebook-template@git+https://github.com/underscoreio/underscore-ebook-template.git#0.6.1":
-  version "0.6.1"
-  resolved "git+https://github.com/underscoreio/underscore-ebook-template.git#edae6e82fde2deef35cbaacb74831af8f559ee86"
+"underscore-ebook-template@git+https://github.com/underscoreio/underscore-ebook-template.git#0.6.2":
+  version "0.6.2"
+  uid ef0479b712dbe372e116cca9ff35575597e6c672
+  resolved "git+https://github.com/underscoreio/underscore-ebook-template.git#ef0479b712dbe372e116cca9ff35575597e6c672"
   dependencies:
     grunt "0.4.5"
     grunt-browserify "3.3.0"
