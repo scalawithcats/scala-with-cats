@@ -18,7 +18,7 @@ Imagine we have the following sequence of operations:
 
 - We then sequence some transformations on the monad using `flatMap`.
 
-We can illustrate this as shown in Figure [@sec:validation:kleisli].
+We can illustrate this as shown in Figure [@fig:validation:kleisli].
 We can also write out this example using the monad API as follows:
 
 ```scala
@@ -29,7 +29,7 @@ def example[A, C](a: A): F[C] =
   aToB(a).flatMap(bToC)
 ```
 
-![Sequencing monadic transforms](src/pages/case-studies/validation/kleisli.pdf+svg){#sec:validation:kleisli}
+![Sequencing monadic transforms](src/pages/case-studies/validation/kleisli.pdf+svg){#fig:validation:kleisli}
 
 Recall that `Check` is, in the abstract,
 allowing us to compose functions of type `A => F[B]`.
