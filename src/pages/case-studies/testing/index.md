@@ -68,7 +68,7 @@ The code doesn't compile
 because we've made a classic error[^warnings].
 We forgot that our application code is asynchronous.
 Our `actual` result is of type `Future[Int]`
-and out `expected` result is of type `Int`.
+and our `expected` result is of type `Int`.
 We can't compare them directly!
 
 [^warnings]: Technically this is a *warning* not an error.
