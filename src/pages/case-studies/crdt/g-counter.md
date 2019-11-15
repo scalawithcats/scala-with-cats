@@ -46,7 +46,7 @@ don't give us enough information about
 the history of interactions between the machines.
 Fortunately we don't need to store the *complete* history
 to get the correct answer---just a summary of it.
-Let's look at the GCounter see how it solves this problem.
+Let's look at how the GCounter solves this problem.
 
 ### GCounters
 
