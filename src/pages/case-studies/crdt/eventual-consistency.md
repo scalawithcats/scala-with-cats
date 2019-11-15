@@ -34,7 +34,7 @@ less communication between machines
 so latency can be lower.
 A partitioned machine can still accept updates
 and reconcile its changes when the network is fixed,
-so systems can also can have better uptime.
+so systems can also have better uptime.
 
 The big question is:
 how do we do this reconciliation between machines?
