@@ -86,7 +86,7 @@ with some minor modifications.
 Here's the complete code for the instance.
 Write this definition
 in the companion object for `GCounter`
-to place it in glocal implicit scope:
+to place it in global implicit scope:
 
 ```tut:book:silent
 import cats.instances.list._   // for Monoid
