@@ -13,12 +13,15 @@ In Cats a type class is represented by a trait with at least one type parameter.
 For example, we can represent generic "serialize to JSON" behaviour
 as follows:
 
-```tut:book:silent
+```scala mdoc:silent
 // Define a very simple JSON AST
+//
+// Note: we would usually declare case classes as final, but a scalac bug
+// interacts poorly with our book generation system if we do. 
 sealed trait Json
-final case class JsObject(get: Map[String, Json]) extends Json
-final case class JsString(get: String) extends Json
-final case class JsNumber(get: Double) extends Json
+case class JsObject(get: Map[String, Json]) extends Json
+case class JsString(get: String) extends Json
+case class JsNumber(get: Double) extends Json
 case object JsNull extends Json
 
 // The "serialize to JSON" behaviour is encoded in this trait
@@ -33,7 +36,7 @@ with `Json` and its subtypes providing supporting code.
 ### Type Class Instances
 
 The *instances* of a type class
-provide implementations for the types we care about,
+provide implementations of the type class for the types we care about,
 including types from the Scala standard library
 and types from our domain model.
 
@@ -41,8 +44,8 @@ In Scala we define instances by creating
 concrete implementations of the type class
 and tagging them with the `implicit` keyword:
 
-```tut:book:silent
-final case class Person(name: String, email: String)
+```scala mdoc:silent
+case class Person(name: String, email: String)
 
 object JsonWriterInstances {
   implicit val stringWriter: JsonWriter[String] =
@@ -78,7 +81,7 @@ There are two common ways of specifying an interface:
 The simplest way of creating an interface
 is to place methods in a singleton object:
 
-```tut:book:silent
+```scala mdoc:silent
 object Json {
   def toJson[A](value: A)(implicit w: JsonWriter[A]): Json =
     w.write(value)
@@ -88,11 +91,11 @@ object Json {
 To use this object, we import any type class instances we care about
 and call the relevant method:
 
-```tut:book:silent
+```scala mdoc:silent
 import JsonWriterInstances._
 ```
 
-```tut:book
+```scala mdoc
 Json.toJson(Person("Dave", "dave@example.com"))
 ```
 
@@ -101,7 +104,7 @@ without providing the implicit parameters.
 It tries to fix this by searching for type class instances
 of the relevant types and inserting them at the call site:
 
-```tut:book:silent
+```scala mdoc:silent
 Json.toJson(Person("Dave", "dave@example.com"))(personWriter)
 ```
 
@@ -115,7 +118,7 @@ Cats refers to this as *"syntax"* for the type class:
 referred to as "type enrichment" or "pimping".
 These are older terms that we don't use anymore.
 
-```tut:book:silent
+```scala mdoc:silent
 object JsonSyntax {
   implicit class JsonWriterOps[A](value: A) {
     def toJson(implicit w: JsonWriter[A]): Json =
@@ -127,19 +130,19 @@ object JsonSyntax {
 We use interface syntax by importing it
 alongside the instances for the types we need:
 
-```tut:book:silent
+```scala mdoc:silent
 import JsonWriterInstances._
 import JsonSyntax._
 ```
 
-```tut:book
+```scala mdoc
 Person("Dave", "dave@example.com").toJson
 ```
 
 Again, the compiler searches for candidates
 for the implicit parameters and fills them in for us:
 
-```tut:book:silent
+```scala mdoc:silent
 Person("Dave", "dave@example.com").toJson(personWriter)
 ```
 
@@ -157,7 +160,7 @@ def implicitly[A](implicit value: A): A =
 We can use `implicitly` to summon any value from implicit scope.
 We provide the type we want and `implicitly` does the rest:
 
-```tut:book
+```scala mdoc
 import JsonWriterInstances._
 
 implicitly[JsonWriter[String]]

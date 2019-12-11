@@ -25,7 +25,7 @@ We specify the function to apply,
 and `map` ensures it is applied to every item.
 The values change but the structure of the list remains the same:
 
-```tut:book
+```scala mdoc
 List(1, 2, 3).map(n => n + 1)
 ```
 
@@ -46,7 +46,7 @@ Because `map` leaves the structure of the context unchanged,
 we can call it repeatedly to sequence multiple computations
 on the contents of an initial data structure:
 
-```tut:book
+```scala mdoc
 List(1, 2, 3).
   map(n => n + 1).
   map(n => n * 2).
@@ -97,7 +97,7 @@ In this way, `Future` provides
 the same sequencing behaviour
 seen in `List`, `Option`, and `Either`:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.concurrent.{Future, Await}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -109,7 +109,7 @@ val future: Future[String] =
     map(n => n + "!")
 ```
 
-```tut:book
+```scala mdoc
 Await.result(future, 1.second)
 ```
 
@@ -125,7 +125,7 @@ This means we can get unpredictable results
 when we use `Future` to wrap side-effecting computations.
 For example:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.util.Random
 
 val future1 = {
@@ -152,7 +152,7 @@ val future2 = {
 }
 ```
 
-```tut:book
+```scala mdoc
 val result1 = Await.result(future1, 1.second)
 val result2 = Await.result(future2, 1.second)
 ```
@@ -204,12 +204,12 @@ We also see this in Figure [@fig:functors:function-type-chart]:
 
 In other words, "mapping" over a `Function1` is function composition:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.function._ // for Functor
 import cats.syntax.functor._     // for map
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 val func1: Int => Double =
   (x: Int) => x.toDouble
 
@@ -217,7 +217,7 @@ val func2: Double => Double =
   (y: Double) => y * 2
 ```
 
-```tut:book
+```scala mdoc
 (func1 map func2)(1)     // composition using map
 (func1 andThen func2)(1) // composition using andThen
 func2(func1(1))          // composition written out by hand
@@ -235,7 +235,7 @@ all of the operations are run in sequence.
 We can think of this as lazily queueing up operations
 similar to `Future`:
 
-```tut:book:silent
+```scala mdoc:silent
 val func =
   ((x: Int) => x.toDouble).
     map(x => x + 1).
@@ -243,7 +243,7 @@ val func =
     map(x => x + "!")
 ```
 
-```tut:book
+```scala mdoc
 func(123)
 ```
 
@@ -292,7 +292,7 @@ Here's a simplified version of the definition:
 package cats
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.language.higherKinds
 
 trait Functor[F[_]] {

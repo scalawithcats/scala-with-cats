@@ -32,12 +32,12 @@ A `Writer[W, A]` carries two values:
 a *log* of type `W` and a *result* of type `A`.
 We can create a `Writer` from values of each type as follows:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.data.Writer
 import cats.instances.vector._ // for Monoid
 ```
 
-```tut:book
+```scala mdoc
 Writer(Vector(
   "It was the best of times",
   "it was the worst of times"
@@ -66,14 +66,14 @@ If we only have a result we can use the standard `pure` syntax.
 To do this we must have a `Monoid[W]` in scope
 so Cats knows how to produce an empty log:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.vector._   // for Monoid
 import cats.syntax.applicative._ // for pure
 
 type Logged[A] = Writer[Vector[String], A]
 ```
 
-```tut:book
+```scala mdoc
 123.pure[Logged]
 ```
 
@@ -81,11 +81,11 @@ If we have a log and no result
 we can create a `Writer[Unit]` using the `tell` syntax
 from [`cats.syntax.writer`][cats.syntax.writer]:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.writer._ // for tell
 ```
 
-```tut:book
+```scala mdoc
 Vector("msg1", "msg2", "msg3").tell
 ```
 
@@ -94,11 +94,11 @@ we can either use `Writer.apply`
 or we can use the `writer` syntax
 from [`cats.syntax.writer`][cats.syntax.writer]:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.writer._ // for writer
 ```
 
-```tut:book
+```scala mdoc
 val a = Writer(Vector("msg1", "msg2", "msg3"), 123)
 val b = 123.writer(Vector("msg1", "msg2", "msg3"))
 ```
@@ -106,7 +106,7 @@ val b = 123.writer(Vector("msg1", "msg2", "msg3"))
 We can extract the result and log from a `Writer`
 using the `value` and `written` methods respectively:
 
-```tut:book
+```scala mdoc
 val aResult: Int =
   a.value
 val aLog: Vector[String] =
@@ -115,7 +115,7 @@ val aLog: Vector[String] =
 
 We can extract both values at the same time using the `run` method:
 
-```tut:book
+```scala mdoc
 val (log, result) = b.run
 ```
 
@@ -128,7 +128,7 @@ For this reason it's good practice to use a log type
 that has an efficient append and concatenate operations,
 such as a `Vector`:
 
-```tut:book
+```scala mdoc
 val writer1 = for {
   a <- 10.pure[Logged]
   _ <- Vector("a", "b", "c").tell
@@ -141,7 +141,7 @@ writer1.run
 In addition to transforming the result with `map` and `flatMap`,
 we can transform the log in a `Writer` with the `mapWritten` method:
 
-```tut:book
+```scala mdoc
 val writer2 = writer1.mapWritten(_.map(_.toUpperCase))
 
 writer2.run
@@ -151,7 +151,7 @@ We can transform both log and result simultaneously using `bimap` or `mapBoth`.
 `bimap` takes two function parameters, one for the log and one for the result.
 `mapBoth` takes a single function that accepts two parameters:
 
-```tut:book
+```scala mdoc
 val writer3 = writer1.bimap(
   log => log.map(_.toUpperCase),
   res => res * 100
@@ -171,7 +171,7 @@ writer4.run
 Finally, we can clear the log with the `reset` method
 and swap log and result with the `swap` method:
 
-```tut:book
+```scala mdoc
 val writer5 = writer1.reset
 
 writer5.run
@@ -191,7 +191,7 @@ and prints out the intermediate steps as it runs.
 The `slowly` helper function ensures this takes a while to run,
 even on the very small examples below:
 
-```tut:book:silent
+```scala mdoc:silent
 def slowly[A](body: => A) =
   try body finally Thread.sleep(100)
 
@@ -204,7 +204,7 @@ def factorial(n: Int): Int = {
 
 Here's the output---a sequence of monotonically increasing values:
 
-```tut:book
+```scala mdoc
 factorial(5)
 ```
 
@@ -213,7 +213,7 @@ the log messages can become interleaved on standard out.
 This makes it difficult to see
 which messages come from which computation:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -251,24 +251,24 @@ for concurrent computations.
 We'll start by defining a type alias for `Writer`
 so we can use it with `pure` syntax:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.data.Writer
 import cats.syntax.applicative._ // for pure
 
 type Logged[A] = Writer[Vector[String], A]
 ```
 
-```tut:book
+```scala mdoc
 42.pure[Logged]
 ```
 
 We'll import the `tell` syntax as well:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.writer._ // for tell
 ```
 
-```tut:book
+```scala mdoc
 Vector("Message").tell
 ```
 
@@ -276,17 +276,17 @@ Finally, we'll import
 the `Semigroup` instance for `Vector`.
 We need this to `map` and `flatMap` over `Logged`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.vector._ // for Monoid
 ```
 
-```tut:book
+```scala mdoc
 41.pure[Logged].map(_ + 1)
 ```
 
 With these in scope, the definition of `factorial` becomes:
 
-```tut:book:silent
+```scala mdoc:silent
 def factorial(n: Int): Logged[Int] =
   for {
     ans <- if(n == 0) {
@@ -302,7 +302,7 @@ When we call `factorial`,
 we now have to `run` the return value
 to extract the log and our factorial:
 
-```tut:book
+```scala mdoc
 val (log, res) = factorial(5).run
 ```
 
@@ -310,7 +310,7 @@ We can run several `factorials` in parallel as follows,
 capturing their logs independently
 without fear of interleaving:
 
-```tut:book
+```scala mdoc
 val Vector((logA, ansA), (logB, ansB)) =
   Await.result(Future.sequence(Vector(
     Future(factorial(3).run),

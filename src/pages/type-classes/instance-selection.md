@@ -58,7 +58,7 @@ For example, we can use a `List[Circle]`
 anywhere we expect a `List[Shape]` because
 `Circle` is a subtype of `Shape`:
 
-```tut:book:silent
+```scala mdoc:silent
 sealed trait Shape
 case class Circle(radius: Double) extends Shape
 ```
@@ -68,7 +68,7 @@ val circles: List[Circle] = ???
 val shapes: List[Shape] = circles
 ```
 
-```tut:book:invisible
+```scala mdoc:invisible
 val circles: List[Circle] = null
 val shapes: List[Shape] = circles
 ```
@@ -88,11 +88,11 @@ is a subtype of `F[A]` if `A` is a subtype of `B`.
 This is useful for modelling types that represent processes,
 like our `JsonWriter` type class above:
 
-```tut:book:invisible
+```scala mdoc:invisible
 trait Json
 ```
 
-```tut:book
+```scala mdoc
 trait JsonWriter[-A] {
   def write(value: A): Json
 }
@@ -113,7 +113,7 @@ val shapeWriter: JsonWriter[Shape] = ???
 val circleWriter: JsonWriter[Circle] = ???
 ```
 
-```tut:book:invisible
+```scala mdoc:invisible
 val shape: Shape = null
 val circle: Circle = null
 
@@ -121,7 +121,7 @@ val shapeWriter: JsonWriter[Shape] = null
 val circleWriter: JsonWriter[Circle] = null
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 def format[A](value: A, writer: JsonWriter[A]): Json =
   writer.write(value)
 ```
@@ -162,7 +162,7 @@ to control type class instance selection to some extent.
 There are two issues that tend to arise.
 Let's imagine we have an algebraic data type like:
 
-```tut:book:silent
+```scala mdoc:silent
 sealed trait A
 final case object B extends A
 final case object C extends A

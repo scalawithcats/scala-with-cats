@@ -10,7 +10,7 @@ Let's look at some examples for other types.
 The semantics for `Future`
 provide parallel as opposed to sequential execution:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Semigroupal
 import cats.instances.future._ // for Semigroupal
 import scala.concurrent._
@@ -22,7 +22,7 @@ val futurePair = Semigroupal[Future].
   product(Future("Hello"), Future(123))
 ```
 
-```tut:book
+```scala mdoc
 Await.result(futurePair, 1.second)
 ```
 
@@ -31,7 +31,7 @@ so they are already calculating results
 by the time we call `product`.
 We can use apply syntax to zip fixed numbers of `Futures`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.apply._ // for mapN
 
 case class Cat(
@@ -47,7 +47,7 @@ val futureCat = (
 ).mapN(Cat.apply)
 ```
 
-```tut:book
+```scala mdoc
 Await.result(futureCat, 1.second)
 ```
 
@@ -58,12 +58,12 @@ produces some potentially unexpected results.
 We might expect code like the following to *zip* the lists,
 but we actually get the cartesian product of their elements:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Semigroupal
 import cats.instances.list._ // for Semigroupal
 ```
 
-```tut:book
+```scala mdoc
 Semigroupal[List].product(List(1, 2), List(3, 4))
 ```
 
@@ -81,13 +81,13 @@ Again, perhaps surprisingly,
 we find that `product` implements
 the same fail-fast behaviour as `flatMap`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.either._ // for Semigroupal
 
 type ErrorOr[A] = Either[Vector[String], A]
 ```
 
-```tut:book
+```scala mdoc
 Semigroupal[ErrorOr].product(
   Left(Vector("Error 1")),
   Left(Vector("Error 2"))
@@ -121,7 +121,7 @@ start running before we call `product`.
 This is equivalent to the classic
 create-then-flatMap pattern:
 
-```tut:book:silent
+```scala mdoc:silent
 val a = Future("Future 1")
 val b = Future("Future 2")
 
@@ -142,7 +142,7 @@ when we look at an alternative data type for error handling.
 
 Implement `product` in terms of `flatMap`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Monad
 
 def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
@@ -153,7 +153,10 @@ def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
 We can implement `product`
 in terms of `map` and `flatMap` like so:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+import cats.Monad
+```
+```scala mdoc:silent
 import cats.syntax.flatMap._ // for flatMap
 import cats.syntax.functor._ // for map
 
@@ -163,7 +166,12 @@ def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
 
 Unsurprisingly, this code is equivalent to a for comprehension:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+import cats.Monad
+import cats.syntax.flatMap._ // for flatMap
+import cats.syntax.functor._ // for map
+```
+```scala mdoc:silent
 def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
   for {
     a <- x
@@ -174,19 +182,30 @@ def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
 The semantics of `flatMap` are what give rise
 to the behaviour for `List` and `Either`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.list._ // for Semigroupal
 ```
 
-```tut:book
+```scala mdoc
 product(List(1, 2), List(3, 4))
 ```
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+import cats.Monad
+import cats.syntax.flatMap._ // for flatMap
+import cats.syntax.functor._ // for map
+import cats.instances.either._
+def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
+  for {
+    a <- x
+    b <- y
+  } yield (a, b)
+```
+```scala mdoc:silent
 type ErrorOr[A] = Either[Vector[String], A]
 ```
 
-```tut:book
+```scala mdoc
 product[ErrorOr, Int, Int](
   Left(Vector("Error 1")),
   Left(Vector("Error 2"))

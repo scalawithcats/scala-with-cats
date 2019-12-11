@@ -12,14 +12,14 @@ method on the companion object.
 As usual, default instances are arranged by type in
 the [`cats.instances`][cats.instances] package:
 
-```tut:book:silent
+```scala mdoc:silent:reset-object
 import scala.language.higherKinds
 import cats.Functor
 import cats.instances.list._   // for Functor
 import cats.instances.option._ // for Functor
 ```
 
-```tut:book
+```scala mdoc
 val list1 = List(1, 2, 3)
 val list2 = Functor[List].map(list1)(_ * 2)
 
@@ -31,7 +31,7 @@ val option2 = Functor[Option].map(option1)(_.toString)
 which converts a function of type `A => B`
 to one that operates over a functor and has type `F[A] => F[B]`:
 
-```tut:book
+```scala mdoc
 val func = (x: Int) => x + 1
 
 val liftedFunc = Functor[Option].lift(func)
@@ -53,19 +53,19 @@ Scala's `Function1` type doesn't have a `map` method
 (it's called `andThen` instead)
 so there are no naming conflicts:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.function._ // for Functor
 import cats.syntax.functor._     // for map
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 val func1 = (a: Int) => a + 1
 val func2 = (a: Int) => a * 2
 val func3 = (a: Int) => a + "!"
 val func4 = func1.map(func2).map(func3)
 ```
 
-```tut:book
+```scala mdoc
 func4(123)
 ```
 
@@ -75,7 +75,7 @@ so we're not working with any particular concrete type.
 We can write a method that applies an equation to a number
 no matter what functor context it's in:
 
-```tut:book:silent
+```scala mdoc:silent
 def doMath[F[_]](start: F[Int])
     (implicit functor: Functor[F]): F[Int] =
   start.map(n => n + 1 * 2)
@@ -84,7 +84,7 @@ import cats.instances.option._ // for Functor
 import cats.instances.list._   // for Functor
 ```
 
-```tut:book
+```scala mdoc
 doMath(Option(20))
 doMath(List(1, 2, 3))
 ```
@@ -123,13 +123,13 @@ This means this code will only compile
 if we have a `Functor` for `F` in scope.
 If we don't, we get a compiler error:
 
-```tut:book:silent
+```scala mdoc:silent
 final case class Box[A](value: A)
 
 val box = Box[Int](123)
 ```
 
-```tut:book:fail
+```scala mdoc:fail
 box.map(value => value + 1)
 ```
 
@@ -140,7 +140,7 @@ Here's an example of a `Functor` for `Option`,
 even though such a thing already exists in [`cats.instances`][cats.instances].
 The implementation is trivial---we simply call `Option's` `map` method:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit val optionFunctor: Functor[Option] =
   new Functor[Option] {
     def map[A, B](value: Option[A])(func: A => B): Option[B] =
@@ -155,7 +155,7 @@ we would need to account for the implicit `ExecutionContext` parameter on `futur
 We can't add extra parameters to `functor.map`
 so we have to account for the dependency when we create the instance:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.concurrent.{Future, ExecutionContext}
 
 implicit def futureFunctor
@@ -189,7 +189,7 @@ Functor[Future](futureFunctor(executionContext))
 Write a `Functor` for the following binary tree data type.
 Verify that the code works as expected on instances of `Branch` and `Leaf`:
 
-```tut:book:silent
+```scala mdoc:silent
 object wrapper {
   sealed trait Tree[+A]
 
@@ -206,7 +206,7 @@ We recurse over the data structure, applying the function to every `Leaf` we fin
 The functor laws intuitively require us to retain the same structure
 with the same pattern of `Branch` and `Leaf` nodes:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Functor
 
 implicit val treeFunctor: Functor[Tree] =
@@ -223,7 +223,7 @@ implicit val treeFunctor: Functor[Tree] =
 
 Let's use our `Functor` to transform some `Trees`:
 
-```tut:book:fail
+```scala mdoc:fail
 Branch(Leaf(10), Leaf(20)).map(_ * 2)
 ```
 
@@ -232,7 +232,7 @@ the same invariance problem we discussed in Section [@sec:variance].
 The compiler can find a `Functor` instance for `Tree` but not for `Branch` or `Leaf`.
 Let's add some smart constructors to compensate:
 
-```tut:book:silent
+```scala mdoc:silent
 object Tree {
   def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
     Branch(left, right)
@@ -244,7 +244,7 @@ object Tree {
 
 Now we can use our `Functor` properly:
 
-```tut:book
+```scala mdoc
 Tree.leaf(100).map(_ * 2)
 
 Tree.branch(Tree.leaf(10), Tree.leaf(20)).map(_ * 2)

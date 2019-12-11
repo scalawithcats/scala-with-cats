@@ -16,12 +16,12 @@ inconvenient to use in for comprehensions.
 We had to insert calls to `.right`
 in every generator clause:
 
-```tut:book:silent
+```scala mdoc:silent
 val either1: Either[String, Int] = Right(10)
 val either2: Either[String, Int] = Right(32)
 ```
 
-```tut:book
+```scala mdoc
 for {
   a <- either1.right
   b <- either2.right
@@ -34,7 +34,7 @@ that the right side represents the success case
 and thus supports `map` and `flatMap` directly.
 This makes for comprehensions much more pleasant:
 
-```tut:book
+```scala mdoc
 for {
   a <- either1
   b <- either2
@@ -48,7 +48,7 @@ in all supported versions of Scala.
 In Scala 2.12+ we can either omit this import
 or leave it in place without breaking anything:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.either._ // for map and flatMap
 
 for {
@@ -63,11 +63,11 @@ In addition to creating instances of `Left` and `Right` directly,
 we can also import the `asLeft` and `asRight` extension methods
 from [`cats.syntax.either`][cats.syntax.either]:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.either._ // for asRight
 ```
 
-```tut:book
+```scala mdoc
 val a = 3.asRight[String]
 val b = 4.asRight[String]
 
@@ -85,7 +85,7 @@ This helps avoid type inference bugs
 caused by over-narrowing,
 like the bug in the example below:
 
-```tut:book:fail
+```scala mdoc:fail
 def countPositive(nums: List[Int]) =
   nums.foldLeft(Right(0)) { (accumulator, num) =>
     if(num > 0) {
@@ -108,7 +108,7 @@ Switching to `asRight` avoids both of these problems.
 and allows us to completely specify the type
 with only one type parameter:
 
-```tut:book:silent
+```scala mdoc:silent
 def countPositive(nums: List[Int]) =
   nums.foldLeft(0.asRight[String]) { (accumulator, num) =>
     if(num > 0) {
@@ -119,7 +119,7 @@ def countPositive(nums: List[Int]) =
   }
 ```
 
-```tut:book
+```scala mdoc
 countPositive(List(1, 2, 3))
 countPositive(List(1, -2, 3))
 ```
@@ -131,7 +131,7 @@ The `catchOnly` and `catchNonFatal` methods
 are great for capturing `Exceptions`
 as instances of `Either`:
 
-```tut:book
+```scala mdoc
 Either.catchOnly[NumberFormatException]("foo".toInt)
 Either.catchNonFatal(sys.error("Badness"))
 ```
@@ -139,7 +139,7 @@ Either.catchNonFatal(sys.error("Badness"))
 There are also methods for creating an `Either`
 from other data types:
 
-```tut:book
+```scala mdoc
 Either.fromTry(scala.util.Try("foo".toInt))
 Either.fromOption[String, Int](None, "Badness")
 ```
@@ -151,11 +151,11 @@ some useful methods for instances of `Either`.
 We can use `orElse` and `getOrElse` to extract
 values from the right side or return a default:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.either._
 ```
 
-```tut:book
+```scala mdoc
 "Error".asLeft[Int].getOrElse(0)
 "Error".asLeft[Int].orElse(2.asRight[String])
 ```
@@ -164,14 +164,14 @@ The `ensure` method allows us
 to check whether the right-hand value
 satisfies a predicate:
 
-```tut:book
+```scala mdoc
 -1.asRight[String].ensure("Must be non-negative!")(_ > 0)
 ```
 
 The `recover` and `recoverWith` methods
 provide similar error handling to their namesakes on `Future`:
 
-```tut:book
+```scala mdoc
 "error".asLeft[Int].recover {
   case str: String => -1
 }
@@ -183,7 +183,7 @@ provide similar error handling to their namesakes on `Future`:
 
 There are `leftMap` and `bimap` methods to complement `map`:
 
-```tut:book
+```scala mdoc
 "foo".asLeft[Int].leftMap(_.reverse)
 6.asRight[String].bimap(_.reverse, _ * 7)
 "bar".asLeft[Int].bimap(_.reverse, _ * 7)
@@ -191,7 +191,7 @@ There are `leftMap` and `bimap` methods to complement `map`:
 
 The `swap` method lets us exchange left for right:
 
-```tut:book
+```scala mdoc
 123.asRight[String]
 123.asRight[String].swap
 ```
@@ -206,7 +206,7 @@ We sequence computations using `flatMap` as usual.
 If one computation fails,
 the remaining computations are not run:
 
-```tut:book
+```scala mdoc
 for {
   a <- 1.asRight[String]
   b <- 0.asRight[String]
@@ -220,7 +220,7 @@ we need to determine
 what type we want to use to represent errors.
 We could use `Throwable` for this:
 
-```tut:book:silent
+```scala mdoc:silent
 type Result[A] = Either[Throwable, A]
 ```
 
@@ -232,7 +232,7 @@ We have (almost) no idea about what type of error occurred.
 Another approach is to define an algebraic data type
 to represent errors that may occur in our program:
 
-```tut:book:silent
+```scala mdoc:silent
 object wrapper {
   sealed trait LoginError extends Product with Serializable
 
@@ -246,7 +246,7 @@ object wrapper {
 }; import wrapper._
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 case class User(username: String, password: String)
 
 type LoginResult = Either[LoginError, User]
@@ -258,7 +258,7 @@ and a catch-all for anything else that we didn't expect.
 We also get the safety of exhaustivity checking
 on any pattern matching we do:
 
-```tut:book:silent
+```scala mdoc:silent
 // Choose error-handling behaviour based on type:
 def handleError(error: LoginError): Unit =
   error match {
@@ -273,7 +273,7 @@ def handleError(error: LoginError): Unit =
   }
 ```
 
-```tut:book
+```scala mdoc
 val result1: LoginResult = User("dave", "passw0rd").asRight
 val result2: LoginResult = UserNotFound("dave").asLeft
 

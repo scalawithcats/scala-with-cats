@@ -110,7 +110,7 @@ for bounded semilattice[^spire].
 That's why we're going to implement
 our own `BoundedSemiLattice` type class.
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.kernel.CommutativeMonoid
 
 trait BoundedSemiLattice[A] extends CommutativeMonoid[A] {
@@ -141,11 +141,11 @@ so they are in the implicit scope without importing them.
 Implementing the instance for `Set`
 provides good practice with implicit methods.
 
-```tut:book:invisible:reset
+```scala mdoc:invisible:reset-object
 import cats.kernel.CommutativeMonoid
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 object wrapper {
   trait BoundedSemiLattice[A] extends CommutativeMonoid[A] {
     def combine(a1: A, a2: A): A
@@ -195,7 +195,7 @@ Note the use of `|+|` in the definition of `merge`,
 which significantly simplifies
 the process of merging and maximising counters:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.list._   // for Monoid
 import cats.instances.map._    // for Monoid
 import cats.syntax.semigroup._ // for |+|

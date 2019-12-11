@@ -1,14 +1,14 @@
 ## Versions {-}
 
-This book is written for Scala 2.12.3 and Cats 1.0.0.
+This book is written for Scala 2.12.9 and Cats 2.0.0.
 Here is a minimal `build.sbt` containing
 the relevant dependencies and settings[^sbt-version]:
 
 ```scala
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.9"
 
 libraryDependencies +=
-  "org.typelevel" %% "cats-core" % "1.0.0"
+  "org.typelevel" %% "cats-core" % "2.0.0"
 
 scalacOptions ++= Seq(
   "-Xfatal-warnings",
@@ -16,7 +16,7 @@ scalacOptions ++= Seq(
 )
 ```
 
-[^sbt-version]: We assume you are using SBT 0.13.13 or newer.
+[^sbt-version]: We assume you are using SBT 1.0.0 or newer.
 
 ### Template Projects {-}
 

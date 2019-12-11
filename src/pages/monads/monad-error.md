@@ -50,7 +50,7 @@ To demonstrate how these parameters fit together,
 here's an example where we
 instantiate the type class for `Either`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.MonadError
 import cats.instances.either._ // for MonadError
 
@@ -77,7 +77,7 @@ are `raiseError` and `handleError`.
 `raiseError` is like the `pure` method for `Monad`
 except that it creates an instance representing a failure:
 
-```tut:book
+```scala mdoc
 val success = monadError.pure(42)
 val failure = monadError.raiseError("Badness")
 ```
@@ -87,7 +87,7 @@ It allows us to consume an error and (possibly)
 turn it into a success,
 similar to the `recover` method of `Future`:
 
-```tut:book
+```scala mdoc
 monadError.handleError(failure) {
   case "Badness" =>
     monadError.pure("It's ok")
@@ -102,11 +102,11 @@ that implements `filter`-like behaviour.
 We test the value of a successful monad with a predicate
 and specify an error to raise if the predicate returns `false`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.either._ // for asRight
 ```
 
-```tut:book
+```scala mdoc
 monadError.ensure(success)("Number too low!")(_ > 1000)
 ```
 
@@ -114,13 +114,19 @@ Cats provides syntax for `raiseError` and `handleError`
 via [`cats.syntax.applicativeError`][cats.syntax.applicativeError]
 and `ensure` via [`cats.syntax.monadError`][cats.syntax.monadError]:
 
-```tut:book:silent
+```scala mdoc:invisible:reset
+import cats.MonadError
+import cats.instances.either._ // for MonadError
+
+type ErrorOr[A] = Either[String, A]
+```
+```scala mdoc:silent
 import cats.syntax.applicative._      // for pure
 import cats.syntax.applicativeError._ // for raiseError etc
 import cats.syntax.monadError._       // for ensure
 ```
 
-```tut:book
+```scala mdoc
 val success = 42.pure[ErrorOr]
 val failure = "Badness".raiseError[ErrorOr, Int]
 success.ensure("Number to low!")(_ > 1000)
@@ -140,7 +146,7 @@ The instance for `Either` is customisable to any error type,
 whereas the instances for `Future` and `Try`
 always represent errors as `Throwables`:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.util.Try
 import cats.instances.try_._ // for MonadError
 
@@ -148,7 +154,7 @@ val exn: Throwable =
   new RuntimeException("It's all gone wrong")
 ```
 
-```tut:book
+```scala mdoc
 exn.raiseError[Try, Int]
 ```
 

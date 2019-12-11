@@ -18,3 +18,5 @@ target/
 project/target
 
 book_deploy_rsa
+
+.history

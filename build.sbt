@@ -1,16 +1,16 @@
+import scala.sys.process._
+
 name              in ThisBuild := "scala-with-cats"
 organization      in ThisBuild := "io.underscore"
 version           in ThisBuild := "0.0.1"
 
-scalaOrganization in ThisBuild := "org.typelevel"
-scalaVersion      in ThisBuild := "2.12.1"
+scalaVersion      in ThisBuild := "2.12.9"
 
 logLevel          in Global    := Level.Warn
 
-tutSettings
-
-tutSourceDirectory := sourceDirectory.value / "pages"
-tutTargetDirectory := target.value          / "pages"
+enablePlugins(MdocPlugin)
+mdocIn  := sourceDirectory.value / "pages"
+mdocOut := target.value          / "pages"
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -21,12 +21,11 @@ scalacOptions ++= Seq(
   "-Xfatal-warnings",
   "-Ywarn-dead-code",
   "-Ypartial-unification",
-  "-Ydelambdafy:inline" // workaround for future deadlock on the 2.12.1 REPL
 )
 
 // resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"))
 
-libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % "1.0.0-RC1")
+libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % "2.0.0")
 
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
 
@@ -36,8 +35,8 @@ lazy val epub = taskKey[Unit]("Build the ePub version of the book")
 lazy val json = taskKey[Unit]("Build the Pandoc JSON AST of the book")
 lazy val all  = taskKey[Unit]("Build all versions of the book")
 
-pdf  := { tutQuick.value ; "grunt pdf"  ! }
-html := { tutQuick.value ; "grunt html" ! }
-epub := { tutQuick.value ; "grunt epub" ! }
-json := { tutQuick.value ; "grunt json" ! }
+pdf  := { mdoc.toTask("").value ; "grunt pdf"  ! }
+html := { mdoc.toTask("").value ; "grunt html" ! }
+epub := { mdoc.toTask("").value ; "grunt epub" ! }
+json := { mdoc.toTask("").value ; "grunt json" ! }
 all  := { pdf.value ; html.value ; epub.value ; json.value }

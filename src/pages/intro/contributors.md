@@ -1,6 +1,6 @@
 ## Acknowledgements {-}
 
-We'd like to thank our colleagues at Underscore,
+We'd like to thank our colleagues at Inner Product and Underscore,
 our friends at Typelevel,
 and everyone who helped contribute to this book.
 Special thanks to Jenny Clements for her fantastic artwork

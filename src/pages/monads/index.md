@@ -61,7 +61,7 @@ Let's ground things by looking at some examples.
 that may or may not return values.
 Here are some examples:
 
-```tut:book:silent
+```scala mdoc:silent
 def parseInt(str: String): Option[Int] =
   scala.util.Try(str.toInt).toOption
 
@@ -73,7 +73,7 @@ Each of these methods may "fail" by returning `None`.
 The `flatMap` method allows us to ignore this
 when we sequence operations:
 
-```tut:book:silent
+```scala mdoc:silent
 def stringDivideBy(aStr: String, bStr: String): Option[Int] =
   parseInt(aStr).flatMap { aNum =>
     parseInt(bStr).flatMap { bNum =>
@@ -101,7 +101,7 @@ allowing us to call `flatMap` again and so the sequence continues.
 This results in the fail-fast error handling behaviour that we know and love,
 where a `None` at any step results in a `None` overall:
 
-```tut:book
+```scala mdoc
 stringDivideBy("6", "2")
 stringDivideBy("6", "0")
 stringDivideBy("6", "foo")
@@ -116,7 +116,7 @@ Plus, if we have both `flatMap` and `map`
 we can use for comprehensions
 to clarify the sequencing behaviour:
 
-```tut:book:silent
+```scala mdoc:silent
 def stringDivideBy(aStr: String, bStr: String): Option[Int] =
   for {
     aNum <- parseInt(aStr)
@@ -132,7 +132,7 @@ we tend to think of it as a pattern for iterating over `Lists`.
 This is reinforced by the syntax of for comprehensions,
 which look very much like imperative for loops:
 
-```tut:book
+```scala mdoc
 for {
   x <- (1 to 3).toList
   y <- (4 to 5).toList
@@ -172,7 +172,7 @@ created from combinations of intermediate `As` and `Bs`.
 `Future` is a monad that sequences computations
 without worrying that they are asynchronous:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -197,7 +197,7 @@ is running each operation *in sequence*.
 This becomes clearer if we expand out the for comprehension
 to show the nested calls to `flatMap`:
 
-```tut:book:silent
+```scala mdoc:silent
 def doSomethingVeryLongRunning: Future[Int] =
   doSomethingLongRunning.flatMap { result1 =>
     doSomethingElseLongRunning.map { result2 =>
@@ -243,7 +243,7 @@ extracting the value from a context and generating
 the next context in the sequence.
 Here is a simplified version of the `Monad` type class in Cats:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.language.higherKinds
 
 trait Monad[F[_]] {
@@ -289,7 +289,7 @@ Every monad is also a functor.
 We can define `map` in the same way for every monad
 using the existing methods, `flatMap` and `pure`:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.language.higherKinds
 
 trait Monad[F[_]] {
@@ -311,7 +311,7 @@ We are passed a `value` of type `F[A]`.
 Given the tools available there's only one thing we can do:
 call `flatMap`:
 
-```tut:book:silent
+```scala mdoc:silent
 trait Monad[F[_]] {
   def pure[A](value: A): F[A]
 
@@ -328,7 +328,7 @@ the `func` parameter of type `A => B`
 and the `pure` function of type `A => F[A]`.
 Combining these gives us our result:
 
-```tut:book:silent
+```scala mdoc:silent
 trait Monad[F[_]] {
   def pure[A](value: A): F[A]
 

@@ -12,12 +12,12 @@ Let's start with a quick recap of the general concept of folding.
 We supply an *accumulator* value and a *binary function*
 to combine it with each item in the sequence:
 
-```tut:book:silent
+```scala mdoc:silent
 def show[A](list: List[A]): String =
   list.foldLeft("nil")((accum, item) => s"$item then $accum")
 ```
 
-```tut:book
+```scala mdoc
 show(Nil)
 
 show(List(1, 2, 3))
@@ -45,7 +45,7 @@ if our binary operation is associative.
 For example, we can sum a `List[Int]` by folding in either direction,
 using `0` as our accumulator and addition as our operation:
 
-```tut:book
+```scala mdoc
 List(1, 2, 3).foldLeft(0)(_ + _)
 List(1, 2, 3).foldRight(0)(_ + _)
 ```
@@ -55,7 +55,7 @@ the order of evaluation makes a difference.
 For example, if we fold using subtraction,
 we get different results in each direction:
 
-```tut:book
+```scala mdoc
 List(1, 2, 3).foldLeft(0)(_ - _)
 List(1, 2, 3).foldRight(0)(_ - _)
 ```
@@ -68,13 +68,13 @@ and `::` as the binary operator. What results do you get in each case?
 <div class="solution">
 Folding from left to right reverses the list:
 
-```tut:book
+```scala mdoc
 List(1, 2, 3).foldLeft(List.empty[Int])((a, i) => i :: a)
 ```
 
 Folding right to left copies the list, leaving the order intact:
 
-```tut:book
+```scala mdoc
 List(1, 2, 3).foldRight(List.empty[Int])((i, a) => i :: a)
 ```
 
@@ -83,7 +83,7 @@ the type of the accumulator to avoid a type error.
 We use `List.empty[Int]` to avoid
 inferring the accumulator type as `Nil.type` or `List[Nothing]`:
 
-```tut:book:fail
+```scala mdoc:fail
 List(1, 2, 3).foldRight(Nil)(_ :: _)
 ```
 </div>
@@ -100,36 +100,36 @@ in terms of `foldRight`.
 <div class="solution">
 Here are the solutions:
 
-```tut:book:silent
+```scala mdoc:silent
 def map[A, B](list: List[A])(func: A => B): List[B] =
   list.foldRight(List.empty[B]) { (item, accum) =>
     func(item) :: accum
   }
 ```
 
-```tut:book
+```scala mdoc
 map(List(1, 2, 3))(_ * 2)
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 def flatMap[A, B](list: List[A])(func: A => List[B]): List[B] =
   list.foldRight(List.empty[B]) { (item, accum) =>
     func(item) ::: accum
   }
 ```
 
-```tut:book
+```scala mdoc
 flatMap(List(1, 2, 3))(a => List(a, a * 10, a * 100))
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 def filter[A](list: List[A])(func: A => Boolean): List[A] =
   list.foldRight(List.empty[A]) { (item, accum) =>
     if(func(item)) item :: accum else accum
   }
 ```
 
-```tut:book
+```scala mdoc
 filter(List(1, 2, 3))(_ % 2 == 1)
 ```
 
@@ -137,7 +137,7 @@ We've provided two definitions of `sum`,
 one using `scala.math.Numeric`
 (which recreates the built-in functionality accurately)...
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.math.Numeric
 
 def sumWithNumeric[A](list: List[A])
@@ -145,14 +145,14 @@ def sumWithNumeric[A](list: List[A])
   list.foldRight(numeric.zero)(numeric.plus)
 ```
 
-```tut:book
+```scala mdoc
 sumWithNumeric(List(1, 2, 3))
 ```
 
 and one using `cats.Monoid`
 (which is more appropriate to the content of this book):
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Monoid
 
 def sumWithMonoid[A](list: List[A])
@@ -162,7 +162,7 @@ def sumWithMonoid[A](list: List[A])
 import cats.instances.int._ // for Monoid
 ```
 
-```tut:book
+```scala mdoc
 sumWithMonoid(List(1, 2, 3))
 ```
 </div>

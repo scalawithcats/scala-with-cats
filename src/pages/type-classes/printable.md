@@ -28,7 +28,7 @@ Let's define a `Printable` type class to work around these problems:
 These steps define the three main components of our type class.
 First we define `Printable`---the *type class* itself:
 
-```tut:book:silent
+```scala mdoc:silent
 trait Printable[A] {
   def format(value: A): String
 }
@@ -37,7 +37,7 @@ trait Printable[A] {
 Then we define some default *instances* of `Printable`
 and package them in `PrintableInstances`:
 
-```tut:book:silent
+```scala mdoc:silent
 object PrintableInstances {
   implicit val stringPrintable = new Printable[String] {
     def format(input: String) = input
@@ -51,7 +51,7 @@ object PrintableInstances {
 
 Finally we define an *interface* object, `Printable`:
 
-```tut:book:silent
+```scala mdoc:silent
 object Printable {
   def format[A](input: A)(implicit p: Printable[A]): String =
     p.format(input)
@@ -71,7 +71,7 @@ Let's define an "application" now that uses the library.
 First we'll define a data type to represent a well-known type of furry animal:
 
 ```scala
-final case class Cat(name: String, age: Int, color: String)
+case class Cat(name: String, age: Int, color: String)
 ```
 
 Next we'll create an implementation of `Printable` for `Cat`
@@ -95,15 +95,15 @@ val cat = Cat(/* ... */)
 This is a standard use of the type class pattern.
 First we define a set of custom data types for our application:
 
-```tut:book:silent
-final case class Cat(name: String, age: Int, color: String)
+```scala mdoc:silent
+case class Cat(name: String, age: Int, color: String)
 ```
 
 Then we define type class instances for the types we care about.
 These either go into the companion object of `Cat`
 or a separate object to act as a namespace:
 
-```tut:book:silent
+```scala mdoc:silent
 import PrintableInstances._
 
 implicit val catPrintable = new Printable[Cat] {
@@ -123,7 +123,7 @@ If we defined the instances in companion objects
 Scala brings them into scope for us automatically.
 Otherwise we use an `import` to access them:
 
-```tut:book
+```scala mdoc
 val cat = Cat("Garfield", 38, "ginger and black")
 
 Printable.print(cat)
@@ -154,7 +154,7 @@ by defining some extension methods to provide better syntax:
 <div class="solution">
 First we define an `implicit class` containing our extension methods:
 
-```tut:book:silent
+```scala mdoc:silent
 object PrintableSyntax {
   implicit class PrintableOps[A](value: A) {
     def format(implicit p: Printable[A]): String =
@@ -170,22 +170,19 @@ With `PrintableOps` in scope,
 we can call the imaginary `print` and `format` methods
 on any value for which Scala can locate an implicit instance of `Printable`:
 
-```tut:book:silent
+```scala mdoc:silent
 import PrintableSyntax._
 ```
 
-```tut:book
+```scala mdoc
 Cat("Garfield", 38, "ginger and black").print
 ```
 
 We get a compile error if we haven't defined an instance of `Printable`
 for the relevant type:
 
-```tut:book:silent
+```scala mdoc:fail
 import java.util.Date
-```
-
-```tut:book:fail
 new Date().print
 ```
 </div>

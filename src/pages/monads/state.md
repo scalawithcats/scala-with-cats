@@ -13,11 +13,11 @@ Boiled down to their simplest form,
 instances of `State[S, A]` represent functions of type `S => (S, A)`.
 `S` is the type of the state and `A` is the type of the result.
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.data.State
 ```
 
-```tut:book
+```scala mdoc
 val a = State[Int, String] { state =>
   (state, s"The state is $state")
 }
@@ -36,7 +36,7 @@ Each method returns an instance of `Eval`,
 which `State` uses to maintain stack safety.
 We call the `value` method as usual to extract the actual result:
 
-```tut:book
+```scala mdoc
 // Get the state and the result:
 val (state, result) = a.run(10).value
 
@@ -55,7 +55,7 @@ The `map` and `flatMap` methods thread the state from one instance to another.
 Each individual instance represents an atomic state transformation,
 and their combination represents a complete sequence of changes:
 
-```tut:book
+```scala mdoc
 val step1 = State[Int, String] { num =>
   val ans = num + 1
   (ans, s"Result of step1: $ans")
@@ -90,7 +90,7 @@ Cats provides several convenience constructors for creating primitive steps:
   - `inspect` extracts the state via a transformation function;
   - `modify` updates the state using an update function.
 
-```tut:book
+```scala mdoc
 val getDemo = State.get[Int]
 getDemo.run(10).value
 
@@ -111,11 +111,11 @@ We can assemble these building blocks using a for comprehension.
 We typically ignore the result of intermediate stages
 that only represent transformations on the state:
 
-```tut:book:silent
+```scala mdoc:silent
 import State._
 ```
 
-```tut:book
+```scala mdoc
 val program: State[Int, (Int, Int, Int)] = for {
   a <- get[Int]
   _ <- set[Int](a + 1)
@@ -183,7 +183,7 @@ Don't worry about error handling for now---if
 the stack is in the wrong configuration,
 it's OK to throw an exception.
 
-```tut:book:reset:silent
+```scala mdoc:reset:silent
 import cats.data.State
 
 type CalcState[A] = State[List[Int], A]
@@ -197,12 +197,12 @@ Each instance represents a functional transformation
 from a stack to a pair of a stack and a result.
 You can ignore any wider context and focus on just that one step:
 
-```tut:book:invisible
+```scala mdoc:invisible
 def someTransformation(input: List[Int]): List[Int] = input
 def someCalculation: Int = 123
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 State[List[Int], Int] { oldStack =>
   val newStack = someTransformation(oldStack)
   val result   = someCalculation
@@ -233,7 +233,7 @@ Let's look at `operand` first.
 All we have to do is push a number onto the stack.
 We also return the operand as an intermediate result:
 
-```tut:book:silent
+```scala mdoc:silent
 def operand(num: Int): CalcState[Int] =
   State[List[Int], Int] { stack =>
     (num :: stack, num)
@@ -245,7 +245,7 @@ We have to pop two operands off the stack (having the second operand at the top 
 The code can fail if the stack doesn't have enough operands on it,
 but the exercise description allows us to throw an exception in this case:
 
-```tut:book:silent
+```scala mdoc:silent
 def operator(func: (Int, Int) => Int): CalcState[Int] =
   State[List[Int], Int] {
     case b :: a :: tail =>
@@ -257,7 +257,7 @@ def operator(func: (Int, Int) => Int): CalcState[Int] =
   }
 ```
 
-```tut:book:invisible
+```scala mdoc:invisible
 def evalOne(sym: String): CalcState[Int] =
   sym match {
     case "+" => operator(_ + _)
@@ -273,7 +273,7 @@ def evalOne(sym: String): CalcState[Int] =
 We call `runA` supplying `Nil` as an initial stack,
 and call `value` to unpack the resulting `Eval` instance:
 
-```tut:book
+```scala mdoc
 evalOne("42").runA(Nil).value
 ```
 
@@ -281,7 +281,7 @@ We can represent more complex programs using `evalOne`, `map`, and `flatMap`.
 Note that most of the work is happening on the stack,
 so we ignore the results of the intermediate steps for `evalOne("1")` and `evalOne("2")`:
 
-```tut:book
+```scala mdoc
 val program = for {
   _   <- evalOne("1")
   _   <- evalOne("2")
@@ -297,7 +297,7 @@ Use `evalOne` to process each symbol,
 and thread the resulting `State` monads together using `flatMap`.
 Your function should have the following signature:
 
-```tut:book:silent
+```scala mdoc:silent
 def evalAll(input: List[String]): CalcState[Int] =
   ???
 ```
@@ -308,7 +308,7 @@ We start with a pure `CalcState` that returns `0` if the list is empty.
 We `flatMap` at each stage,
 ignoring the intermediate results as we saw in the example:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.applicative._ // for pure
 
 def evalAll(input: List[String]): CalcState[Int] =
@@ -321,7 +321,7 @@ def evalAll(input: List[String]): CalcState[Int] =
 
 We can use `evalAll` to conveniently evaluate multi-stage expressions:
 
-```tut:book
+```scala mdoc
 val program = evalAll(List("1", "2", "+", "3", "*"))
 
 program.runA(Nil).value
@@ -333,7 +333,7 @@ we can thread these results together using `flatMap`.
 `evalAll` produces a complex one, but they're both pure functions
 and we can use them in any order as many times as we like:
 
-```tut:book
+```scala mdoc
 val program = for {
   _   <- evalAll(List("1", "2", "+"))
   _   <- evalAll(List("3", "4", "+"))
@@ -352,12 +352,12 @@ We've done all the hard work now.
 All we need to do is split the input into terms
 and call `runA` and `value` to unpack the result:
 
-```tut:book:silent
+```scala mdoc:silent
 def evalInput(input: String): Int =
   evalAll(input.split(" ").toList).runA(Nil).value
 ```
 
-```tut:book
+```scala mdoc
 evalInput("1 2 + 3 4 + *")
 ```
 </div>

@@ -11,14 +11,14 @@ to see what common principles we can extract.
 Addition of `Ints` is a binary operation that is *closed*,
 meaning that adding two `Ints` always produces another `Int`:
 
-```tut:book
+```scala mdoc
 2 + 1
 ```
 
 There is also the *identity* element `0` with the property
 that `a + 0 == 0 + a == a` for any `Int` `a`:
 
-```tut:book
+```scala mdoc
 2 + 0
 
 0 + 2
@@ -29,7 +29,7 @@ For instance, it doesn't matter in what order we add elements
 because we always get the same result.
 This is a property known as *associativity*:
 
-```tut:book
+```scala mdoc
 (1 + 2) + 3
 
 1 + (2 + 3)
@@ -40,7 +40,7 @@ This is a property known as *associativity*:
 The same properties for addition also apply for multiplication,
 provided we use `1` as the identity instead of `0`:
 
-```tut:book
+```scala mdoc
 1 * 3
 
 3 * 1
@@ -48,7 +48,7 @@ provided we use `1` as the identity instead of `0`:
 
 Multiplication, like addition, is associative:
 
-```tut:book
+```scala mdoc
 (1 * 2) * 3
 
 1 * (2 * 3)
@@ -59,13 +59,13 @@ Multiplication, like addition, is associative:
 We can also add `Strings`,
 using string concatenation as our binary operator:
 
-```tut:book
+```scala mdoc
 "One" ++ "two"
 ```
 
 and the empty string as the identity:
 
-```tut:book
+```scala mdoc
 "" ++ "Hello"
 
 "Hello" ++ ""
@@ -73,7 +73,7 @@ and the empty string as the identity:
 
 Once again, concatenation is associative:
 
-```tut:book
+```scala mdoc
 ("One" ++ "Two") ++ "Three"
 
 "One" ++ ("Two" ++ "Three")
@@ -99,7 +99,7 @@ Formally, a monoid for a type `A` is:
 This definition translates nicely into Scala code.
 Here is a simplified version of the definition from Cats:
 
-```tut:book:silent
+```scala mdoc:silent
 trait Monoid[A] {
   def combine(x: A, y: A): A
   def empty: A
@@ -112,7 +112,7 @@ For all values `x`, `y`, and `z`, in `A`,
 `combine` must be associative and
 `empty` must be an identity element:
 
-```tut:book:silent
+```scala mdoc:silent
 def associativeLaw[A](x: A, y: A, z: A)
       (implicit m: Monoid[A]): Boolean = {
   m.combine(x, m.combine(y, z)) ==
@@ -129,7 +129,7 @@ def identityLaw[A](x: A)
 Integer subtraction, for example,
 is not a monoid because subtraction is not associative:
 
-```tut:book
+```scala mdoc
 (1 - 2) - 3
 
 1 - (2 - 3)
@@ -159,7 +159,7 @@ that has an implementation of `Semigroup` but no implementation of `Monoid`.
 A more accurate (though still simplified)
 definition of Cats' [`Monoid`][cats.Monoid] is:
 
-```tut:book:silent
+```scala mdoc:silent:reset-object
 trait Semigroup[A] {
   def combine(x: A, y: A): A
 }
@@ -183,7 +183,7 @@ For each monoid, define the `combine` and `empty` operations
 and convince yourself that the monoid laws hold.
 Use the following definitions as a starting point:
 
-```tut:book:reset:silent
+```scala mdoc:reset:silent
 trait Semigroup[A] {
   def combine(x: A, y: A): A
 }
@@ -202,7 +202,7 @@ object Monoid {
 There are four monoids for `Boolean`!
 First, we have *and* with operator `&&` and identity `true`:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit val booleanAndMonoid: Monoid[Boolean] =
   new Monoid[Boolean] {
     def combine(a: Boolean, b: Boolean) = a && b
@@ -212,7 +212,7 @@ implicit val booleanAndMonoid: Monoid[Boolean] =
 
 Second, we have *or* with operator `||` and identity `false`:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit val booleanOrMonoid: Monoid[Boolean] =
   new Monoid[Boolean] {
     def combine(a: Boolean, b: Boolean) = a || b
@@ -222,7 +222,7 @@ implicit val booleanOrMonoid: Monoid[Boolean] =
 
 Third, we have *exclusive or* with identity `false`:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit val booleanEitherMonoid: Monoid[Boolean] =
   new Monoid[Boolean] {
     def combine(a: Boolean, b: Boolean) =
@@ -235,7 +235,7 @@ implicit val booleanEitherMonoid: Monoid[Boolean] =
 Finally, we have *exclusive nor* (the negation of exclusive or)
 with identity `true`:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit val booleanXnorMonoid: Monoid[Boolean] =
   new Monoid[Boolean] {
     def combine(a: Boolean, b: Boolean) =
@@ -257,7 +257,7 @@ What monoids and semigroups are there for sets?
 <div class="solution">
 *Set union* forms a monoid along with the empty set:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit def setUnionMonoid[A]: Monoid[Set[A]] =
   new Monoid[Set[A]] {
     def combine(a: Set[A], b: Set[A]) = a union b
@@ -270,12 +270,12 @@ rather than a value so we can accept the type parameter `A`.
 The type parameter allows us to use the same definition
 to summon `Monoids` for `Sets` of any type of data:
 
-```tut:book:silent
+```scala mdoc:silent
 val intSetMonoid = Monoid[Set[Int]]
 val strSetMonoid = Monoid[Set[String]]
 ```
 
-```tut:book
+```scala mdoc
 intSetMonoid.combine(Set(1, 2), Set(2, 3))
 strSetMonoid.combine(Set("A", "B"), Set("B", "C"))
 ```
@@ -283,7 +283,7 @@ strSetMonoid.combine(Set("A", "B"), Set("B", "C"))
 Set intersection forms a semigroup,
 but doesn't form a monoid because it has no identity element:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit def setIntersectionSemigroup[A]: Semigroup[Set[A]] =
   new Semigroup[Set[A]] {
     def combine(a: Set[A], b: Set[A]) =
@@ -296,7 +296,7 @@ so they cannot be considered for either monoids or semigroups.
 However, symmetric difference (the union less the intersection)
 does also form a monoid with the empty set:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit def symDiffMonoid[A]: Monoid[Set[A]] =
   new Monoid[Set[A]] {
     def combine(a: Set[A], b: Set[A]): Set[A] =

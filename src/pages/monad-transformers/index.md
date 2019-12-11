@@ -18,7 +18,7 @@ giving us a final result of `Either[Error, Option[User]]`.
 To use this value we must nest `flatMap` calls
 (or equivalently, for-comprehensions):
 
-```tut:invisible
+```scala mdoc:invisible:reset-object
 type Error = String
 
 final case class User(id: Long, name: String)
@@ -26,7 +26,7 @@ final case class User(id: Long, name: String)
 def lookupUser(id: Long): Either[Error, Option[User]] = ???
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 def lookupUserName(id: Long): Either[Error, Option[String]] =
   for {
     optUser <- lookupUser(id)
@@ -45,7 +45,7 @@ can we combine them in some way to make a single monad?
 That is, do monads *compose*?
 We can try to write the code but we soon hit problems:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Monad
 import cats.syntax.applicative._ // for pure
 import cats.syntax.flatMap._     // for flatMap
@@ -107,7 +107,7 @@ We can use `OptionT[List, A]`,
 aliased to `ListOption[A]` for convenience,
 to transform a `List[Option[A]]` into a single monad:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.data.OptionT
 
 type ListOption[A] = OptionT[List, A]
@@ -122,13 +122,13 @@ We can create instances of `ListOption`
 using the `OptionT` constructor,
 or more conveniently using `pure`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Monad
 import cats.instances.list._     // for Monad
 import cats.syntax.applicative._ // for pure
 ```
 
-```tut:book
+```scala mdoc
 val result1: ListOption[Int] = OptionT(List(Option(10)))
 
 val result2: ListOption[Int] = 32.pure[ListOption]
@@ -138,7 +138,7 @@ The `map` and `flatMap` methods
 combine the corresponding methods of `List` and `Option`
 into single operations:
 
-```tut:book
+```scala mdoc
 result1.flatMap { (x: Int) =>
   result2.map { (y: Int) =>
     x + y
@@ -248,7 +248,13 @@ is an alias for `OptionT[List, A]`
 but the result is effectively a `List[Option[A]]`.
 In other words, we build monad stacks from the inside out:
 
-```tut:book:silent
+```scala mdoc:invisible:reset
+import cats.data.OptionT
+import cats.syntax.applicative._ // for pure
+import cats.syntax.flatMap._     // for flatMap
+import scala.language.higherKinds
+```
+```scala mdoc:silent
 type ListOption[A] = OptionT[List, A]
 ```
 
@@ -264,7 +270,7 @@ and monads only have one.
 We need a type alias
 to convert the type constructor to the correct shape:
 
-```tut:book:silent
+```scala mdoc:silent
 // Alias Either to a type constructor with one parameter:
 type ErrorOr[A] = Either[String, A]
 
@@ -276,11 +282,11 @@ type ErrorOrOption[A] = OptionT[ErrorOr, A]
 We can use `pure`, `map`, and `flatMap` as usual
 to create and transform instances:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.either._ // for Monad
 ```
 
-```tut:book
+```scala mdoc
 val a = 10.pure[ErrorOrOption]
 val b = 32.pure[ErrorOrOption]
 
@@ -311,7 +317,7 @@ The three type parameters are as follows:
 This time we create an alias for `EitherT` that
 fixes `Future` and `Error` and allows `A` to vary:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.concurrent.Future
 import cats.data.{EitherT, OptionT}
 
@@ -324,14 +330,14 @@ Our mammoth stack now composes three monads
 and our `map` and `flatMap` methods
 cut through three layers of abstraction:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.future._ // for Monad
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 val futureEitherOr: FutureEitherOption[Int] =
   for {
     a <- 10.pure[FutureEitherOption]
@@ -350,7 +356,7 @@ Kind Projector enhances Scala's type syntax
 to make it easier to define partially applied type constructors.
 For example:
 
-```tut:book
+```scala mdoc
 import cats.instances.option._ // for Monad
 
 123.pure[EitherT[Option, String, ?]]
@@ -367,7 +373,7 @@ As we saw above, we can create transformed monad stacks
 using the relevant monad transformer's `apply` method
 or the usual `pure` syntax[^eithert-monad-error]:
 
-```tut:book
+```scala mdoc
 // Create using apply:
 val errorStack1 = OptionT[ErrorOr, Int](Right(Some(10)))
 
@@ -385,7 +391,7 @@ we can unpack it using its `value` method.
 This returns the untransformed stack.
 We can then manipulate the individual monads in the usual way:
 
-```tut:book
+```scala mdoc
 // Extracting the untransformed monad stack:
 errorStack1.value
 
@@ -398,7 +404,7 @@ We may need more than one call to completely unpack a large stack.
 For example, to `Await` the `FutureEitherOption` stack above,
 we need to call `value` twice:
 
-```tut:book
+```scala mdoc
 futureEitherOr
 
 val intermediate = futureEitherOr.value
@@ -450,7 +456,14 @@ and all can fail with the same set of HTTP error codes.
 We could design a custom ADT representing the errors
 and use a fusion `Future` and `Either` everywhere in our code:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+import cats.data.EitherT
+import cats.instances.list._
+import cats.syntax.applicative._ // for pure
+import cats.syntax.flatMap._     // for flatMap
+import scala.concurrent.Future
+```
+```scala mdoc:silent
 sealed abstract class HttpError
 final case class NotFound(item: String) extends HttpError
 final case class BadRequest(msg: String) extends HttpError
@@ -470,7 +483,7 @@ and untransform them before passing them on.
 This allows each module of code to make its own decisions
 about which transformers to use:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.data.Writer
 
 type Logged[A] = Writer[List[String], A]
@@ -496,7 +509,7 @@ def addAll(a: String, b: String, c: String): Logged[Option[Int]] = {
 }
 ```
 
-```tut:book
+```scala mdoc
 // This approach doesn't force OptionT on other users' code:
 val result1 = addAll("1", "2", "3")
 val result2 = addAll("1", "a", "3")
@@ -529,7 +542,7 @@ and messages are occasionally lost
 due to satellite malfunction or sabotage by pesky Decepticons[^transformers].
 `Responses` are therefore represented as a stack of monads:
 
-```tut:book
+```scala mdoc
 type Response[A] = Future[Either[String, A]]
 ```
 
@@ -548,7 +561,12 @@ and `Either` on the inside,
 so we build from the inside out
 using an `EitherT` of `Future`:
 
-```tut:book:silent
+```scala mdoc:invisible:reset
+import cats.syntax.applicative._ // for pure
+import cats.syntax.flatMap._     // for flatMap
+import scala.language.higherKinds
+```
+```scala mdoc:silent
 import cats.data.EitherT
 import scala.concurrent.Future
 
@@ -560,7 +578,7 @@ Now test the code by implementing `getPowerLevel`
 to retrieve data from a set of imaginary allies.
 Here's the data we'll use:
 
-```tut:book:silent
+```scala mdoc:silent
 val powerLevels = Map(
   "Jazz"      -> 6,
   "Bumblebee" -> 8,
@@ -574,7 +592,16 @@ that they were unreachable.
 Include the `name` in the message for good effect.
 
 <div class="solution">
-```tut:book:silent
+```scala mdoc:silent:reset
+import cats.data.EitherT
+import scala.concurrent.Future
+val powerLevels = Map(
+  "Jazz"      -> 6,
+  "Bumblebee" -> 8,
+  "Hot Rod"   -> 10
+)
+```
+```scala mdoc:silent
 import cats.instances.future._ // for Monad
 import cats.syntax.flatMap._   // for flatMap
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -598,7 +625,7 @@ and checks whether a special move is possible.
 If either ally is unavailable,
 fail with an appropriate error message:
 
-```tut:book:silent
+```scala mdoc:silent
 def canSpecialMove(ally1: String, ally2: String): Response[Boolean] =
   ???
 ```
@@ -607,7 +634,29 @@ def canSpecialMove(ally1: String, ally2: String): Response[Boolean] =
 We request the power level from each ally
 and use `map` and `flatMap` to combine the results:
 
-```tut:book:silent
+```scala mdoc:invisible:reset
+import cats._
+import cats.implicits._
+import cats.data._
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+type Response[A] = EitherT[Future, String, A]
+
+val powerLevels = Map(
+  "Jazz"      -> 6,
+  "Bumblebee" -> 8,
+  "Hot Rod"   -> 10
+)
+
+def getPowerLevel(ally: String): Response[Int] = {
+  powerLevels.get(ally) match {
+    case Some(avg) => EitherT.right(Future(avg))
+    case None      => EitherT.left(Future(s"$ally unreachable"))
+  }
+}
+```
+```scala mdoc:silent
 def canSpecialMove(ally1: String, ally2: String): Response[Boolean] =
   for {
     power1 <- getPowerLevel(ally1)
@@ -620,7 +669,7 @@ Finally, write a method `tacticalReport` that
 takes two ally names and prints a message
 saying whether they can perform a special move:
 
-```tut:book:silent
+```scala mdoc:silent
 def tacticalReport(ally1: String, ally2: String): String =
   ???
 ```
@@ -629,10 +678,38 @@ def tacticalReport(ally1: String, ally2: String): String =
 We use the `value` method to unpack the monad stack
 and `Await` and `fold` to unpack the `Future` and `Either`:
 
-```tut:book:silent
+```scala mdoc:invisible:reset
+import cats._
+import cats.implicits._
+import cats.data._
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+type Response[A] = EitherT[Future, String, A]
+
+val powerLevels = Map(
+  "Jazz"      -> 6,
+  "Bumblebee" -> 8,
+  "Hot Rod"   -> 10
+)
+
+def getPowerLevel(ally: String): Response[Int] = {
+  powerLevels.get(ally) match {
+    case Some(avg) => EitherT.right(Future(avg))
+    case None      => EitherT.left(Future(s"$ally unreachable"))
+  }
+}
+```
+```scala mdoc:silent
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+
+def canSpecialMove(ally1: String, ally2: String): Response[Boolean] =
+  for {
+    power1 <- getPowerLevel(ally1)
+    power2 <- getPowerLevel(ally2)
+  } yield (power1 + power2) > 15
 
 def tacticalReport(ally1: String, ally2: String): String = {
   val stack = canSpecialMove(ally1, ally2).value
@@ -651,7 +728,7 @@ def tacticalReport(ally1: String, ally2: String): String = {
 
 You should be able to use `report` as follows:
 
-```tut:book
+```scala mdoc
 tacticalReport("Jazz", "Bumblebee")
 tacticalReport("Bumblebee", "Hot Rod")
 tacticalReport("Jazz", "Ironhide")

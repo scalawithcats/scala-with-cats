@@ -18,7 +18,7 @@ but *no* instance of `Monad`.
 The implementation of `product`
 is therefore free to accumulate errors:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Semigroupal
 import cats.data.Validated
 import cats.instances.list._ // for Monoid
@@ -26,7 +26,7 @@ import cats.instances.list._ // for Monoid
 type AllErrorsOr[A] = Validated[List[String], A]
 ```
 
-```tut:book
+```scala mdoc
 Semigroupal[AllErrorsOr].product(
   Validated.invalid(List("Error 1")),
   Validated.invalid(List("Error 2"))
@@ -48,7 +48,7 @@ create instances of these types.
 We can create them directly
 using their `apply` methods:
 
-```tut:book
+```scala mdoc
 val v = Validated.Valid(123)
 val i = Validated.Invalid(List("Badness"))
 ```
@@ -57,7 +57,14 @@ However, it is often easier to use
 the `valid` and `invalid` smart constructors,
 which widen the return type to `Validated`:
 
-```tut:book
+```scala mdoc:invisible:reset-object
+import cats.Semigroupal
+import cats.data.Validated
+import cats.instances.list._ // for Monoid
+
+type AllErrorsOr[A] = Validated[List[String], A]
+```
+```scala mdoc
 val v = Validated.valid[List[String], Int](123)
 val i = Validated.invalid[List[String], Int](List("Badness"))
 ```
@@ -66,11 +73,11 @@ As a third option we can import
 the `valid` and `invalid` extension methods
 from `cats.syntax.validated`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.validated._ // for valid and invalid
 ```
 
-```tut:book
+```scala mdoc
 123.valid[List[String]]
 List("Badness").invalid[Int]
 ```
@@ -80,14 +87,14 @@ from [`cats.syntax.applicative`][cats.syntax.applicative]
 and [`cats.syntax.applicativeError`][cats.syntax.applicativeError]
 respectively:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.applicative._      // for pure
 import cats.syntax.applicativeError._ // for raiseError
 
 type ErrorsOr[A] = Validated[List[String], A]
 ```
 
-```tut:book
+```scala mdoc
 123.pure[ErrorsOr]
 List("Badness").raiseError[ErrorsOr, Int]
 ```
@@ -97,7 +104,7 @@ to create instances of `Validated` from different sources.
 We can create them from `Exceptions`,
 as well as instances of `Try`, `Either`, and `Option`:
 
-```tut:book
+```scala mdoc
 Validated.catchOnly[NumberFormatException]("foo".toInt)
 
 Validated.catchNonFatal(sys.error("Badness"))
@@ -121,7 +128,7 @@ As with `Either`, we need to fix the error type
 to create a type constructor with the correct
 number of parameters for `Semigroupal`:
 
-```tut:book:silent
+```scala mdoc:silent
 type AllErrorsOr[A] = Validated[String, A]
 ```
 
@@ -130,18 +137,18 @@ so we need one of those in scope to summon the `Semigroupal`.
 If no `Semigroup` is visible at the call site,
 we get an annoyingly unhelpful compilation error:
 
-```tut:book:fail
+```scala mdoc:fail
 Semigroupal[AllErrorsOr]
 ```
 
 Once we import a `Semigroup` for the error type,
 everything works as expected:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.string._ // for Semigroup
 ```
 
-```tut:book
+```scala mdoc
 Semigroupal[AllErrorsOr]
 ```
 
@@ -151,11 +158,11 @@ we can use apply syntax
 or any of the other `Semigroupal` methods
 to accumulate errors as we like:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.apply._ // for tupled
 ```
 
-```tut:book
+```scala mdoc
 (
   "Error 1".invalid[Int],
   "Error 2".invalid[Int]
@@ -166,11 +173,11 @@ As you can see, `String` isn't an ideal type
 for accumulating errors.
 We commonly use `Lists` or `Vectors` instead:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.vector._ // for Semigroupal
 ```
 
-```tut:book
+```scala mdoc
 (
   Vector(404).invalid[Int],
   Vector(500).invalid[Int]
@@ -182,11 +189,11 @@ the [`NonEmptyList`][cats.data.NonEmptyList]
 and [`NonEmptyVector`][cats.data.NonEmptyVector]
 types that prevent us failing without at least one error:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.data.NonEmptyVector
 ```
 
-```tut:book
+```scala mdoc
 (
   NonEmptyVector.of("Error 1").invalid[Int],
   NonEmptyVector.of("Error 2").invalid[Int]
@@ -202,7 +209,7 @@ We can use `map`, `leftMap`, and `bimap`
 to transform the values inside
 the valid and invalid sides:
 
-```tut:book
+```scala mdoc
 123.valid.map(_ * 100)
 
 "?".invalid.leftMap(_.toString)
@@ -220,7 +227,7 @@ but it has a different name
 because it is not a lawful implementation
 with respect to the monad laws:
 
-```tut:book
+```scala mdoc
 32.valid.andThen { a =>
   10.valid.map { b =>
     a + b
@@ -234,7 +241,7 @@ between `Validated` and `Either`
 using the `toEither` and `toValidated` methods.
 Note that `toValidated` comes from [`cats.syntax.either`]:
 
-```tut:book
+```scala mdoc
 import cats.syntax.either._ // for toValidated
 
 "Badness".invalid[Int]
@@ -246,14 +253,14 @@ As with `Either`, we can use the `ensure` method
 to fail with a specified error
 if a predicate does not hold:
 
-```tut:book
+```scala mdoc
 // 123.valid[String].ensure("Negative!")(_ > 0)
 ```
 
 Finally, we can call `getOrElse` or `fold`
 to extract values from the `Valid` and `Invalid` cases:
 
-```tut:book
+```scala mdoc
 "fail".invalid[Int].getOrElse(0)
 
 "fail".invalid[Int].fold(_ + "!!!", _.toString)
@@ -267,7 +274,7 @@ We receive request data from the client
 in a `Map[String, String]`
 and we want to parse it to create a `User` object:
 
-```tut:book:silent
+```scala mdoc:silent
 case class User(name: String, age: Int)
 ```
 
@@ -312,7 +319,7 @@ reads a `String` from the `Map` given a field name.
 We'll be using `Either` and `Validated`
 so we'll start with some imports:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.data.Validated
 
 type FormData = Map[String, String]
@@ -326,7 +333,7 @@ We'll be using it in sequence
 with rules for parsing `Ints` and checking values,
 so we'll define it to return an `Either`:
 
-```tut:book:silent
+```scala mdoc:silent
 def getValue(name: String)(data: FormData): FailFast[String] =
   data.get(name).
     toRight(List(s"$name field not specified"))
@@ -334,7 +341,7 @@ def getValue(name: String)(data: FormData): FailFast[String] =
 
 We can create and use an instance of `getValue` as follows:
 
-```tut:book
+```scala mdoc
 val getName = getValue("name") _
 
 getName(Map("name" -> "Dade Murphy"))
@@ -344,7 +351,7 @@ In the event of a missing field,
 our instance returns an error message
 containing an appropriate field name:
 
-```tut:book
+```scala mdoc
 getName(Map())
 ```
 </div>
@@ -359,7 +366,7 @@ consume the `NumberFormatException` from `toInt`,
 and we use `leftMap` to
 turn it into an error message:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.either._ // for catchOnly
 
 type NumFmtExn = NumberFormatException
@@ -377,14 +384,14 @@ but it's fine if you leave it out in your code.
 If we provide valid input,
 `parseInt` converts it to an `Int`:
 
-```tut:book
+```scala mdoc
 parseInt("age")("11")
 ```
 
 If we provide erroneous input,
 we get a useful error message:
 
-```tut:book
+```scala mdoc
 parseInt("age")("foo")
 ```
 </div>
@@ -396,7 +403,7 @@ and `nonNegative` to check `Ints`.
 <div class="solution">
 These definitions use the same patterns as above:
 
-```tut:book:silent
+```scala mdoc:silent
 def nonBlank(name: String)(data: String): FailFast[String] =
   Right(data).
     ensure(List(s"$name cannot be blank"))(_.nonEmpty)
@@ -408,7 +415,7 @@ def nonNegative(name: String)(data: Int): FailFast[Int] =
 
 Here are some examples of use:
 
-```tut:book
+```scala mdoc
 nonBlank("name")("Dade Murphy")
 nonBlank("name")("")
 nonNegative("age")(11)
@@ -423,7 +430,7 @@ to create `readName` and `readAge`:
 <div class="solution">
 We use `flatMap` to combine the rules sequentially:
 
-```tut:book:silent
+```scala mdoc:silent
 def readName(data: FormData): FailFast[String] =
   getValue("name")(data).
     flatMap(nonBlank("name"))
@@ -437,7 +444,7 @@ def readAge(data: FormData): FailFast[Int] =
 
 The rules pick up all the error cases we've seen so far:
 
-```tut:book
+```scala mdoc
 readName(Map("name" -> "Dade Murphy"))
 readName(Map("name" -> ""))
 readName(Map())
@@ -456,7 +463,7 @@ to accumulate errors.
 We can do this by switching from `Either` to `Validated`
 and using apply syntax:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.list._ // for Semigroupal
 import cats.syntax.apply._   // for mapN
 
@@ -467,7 +474,7 @@ def readUser(data: FormData): FailSlow[User] =
   ).mapN(User.apply)
 ```
 
-```tut:book
+```scala mdoc
 readUser(Map("name" -> "Dave", "age" -> "37"))
 readUser(Map("age" -> "-1"))
 ```

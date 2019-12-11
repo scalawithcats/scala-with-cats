@@ -6,11 +6,11 @@ provided by the [`cats.Contravariant`][cats.Contravariant]
 and [`cats.Invariant`][cats.Invariant] type classes.
 Here's a simplified version of the code:
 
-```tut:book:invisible
+```scala mdoc:invisible
 import scala.language.higherKinds
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 trait Contravariant[F[_]] {
   def contramap[A, B](fa: F[A])(f: B => A): F[B]
 }
@@ -28,7 +28,7 @@ Cats provides instances for data types that consume parameters,
 including `Eq`, `Show`, and `Function1`.
 Here's an example:
 
-```tut:book:silent:reset
+```scala mdoc:silent:reset
 import cats.Contravariant
 import cats.Show
 import cats.instances.string._
@@ -39,7 +39,7 @@ val showSymbol = Contravariant[Show].
   contramap(showString)((sym: Symbol) => s"'${sym.name}")
 ```
 
-```tut:book
+```scala mdoc
 showSymbol.show('dave)
 ```
 
@@ -47,11 +47,11 @@ More conveniently, we can use
 [`cats.syntax.contravariant`][cats.syntax.contravariant],
 which provides a `contramap` extension method:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.contravariant._ // for contramap
 ```
 
-```tut:book
+```scala mdoc
 showString.contramap[Symbol](_.name).show('dave)
 ```
 
@@ -92,7 +92,7 @@ Here' the code, written out using
 the `imap` extension method
 provided by `cats.syntax.invariant`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Monoid
 import cats.instances.string._ // for Monoid
 import cats.syntax.invariant._ // for imap
@@ -102,7 +102,7 @@ implicit val symbolMonoid: Monoid[Symbol] =
   Monoid[String].imap(Symbol.apply)(_.name)
 ```
 
-```tut:book
+```scala mdoc
 Monoid[Symbol].empty
 
 'a |+| 'few |+| 'words
