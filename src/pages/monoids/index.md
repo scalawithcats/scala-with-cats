@@ -296,6 +296,9 @@ so they cannot be considered for either monoids or semigroups.
 However, symmetric difference (the union less the intersection)
 does also form a monoid with the empty set:
 
+```scala mdoc:invisible:reset-object
+import cats.Monoid
+```
 ```scala mdoc:silent
 implicit def symDiffMonoid[A]: Monoid[Set[A]] =
   new Monoid[Set[A]] {

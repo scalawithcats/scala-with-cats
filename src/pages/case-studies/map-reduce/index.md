@@ -194,8 +194,6 @@ as described in Section [@sec:monoid-syntax]:
 
 ```scala mdoc:reset:silent
 import cats.Monoid
-import cats.instances.int._    // for Monoid
-import cats.instances.string._ // for Monoid
 import cats.syntax.semigroup._ // for |+|
 
 def foldMap[A, B : Monoid](as: Vector[A])(func: A => B): B =
@@ -394,8 +392,6 @@ import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 ```
 ```scala mdoc:silent
-import scala.concurrent.duration.Duration
-
 def parallelFoldMap[A, B: Monoid]
       (values: Vector[A])
       (func: A => B): Future[B] = {
@@ -485,14 +481,11 @@ We'll restate all of the necessary imports for completeness:
 
 ```scala mdoc:silent:reset
 import cats.Monoid
-import cats.Foldable
-import cats.Traverse
 
 import cats.instances.int._    // for Monoid
 import cats.instances.future._ // for Applicative and Monad
 import cats.instances.vector._ // for Foldable and Traverse
 
-import cats.syntax.semigroup._ // for |+|
 import cats.syntax.foldable._  // for combineAll and foldMap
 import cats.syntax.traverse._  // for traverse
 

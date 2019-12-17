@@ -65,7 +65,7 @@ Implement the `contramap` method for `Printable` above.
 Start with the following code template
 and replace the `???` with a working method body:
 
-```scala mdoc:silent:reset-object
+```scala
 trait Printable[A] {
   def format(value: A): String
 

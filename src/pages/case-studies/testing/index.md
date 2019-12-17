@@ -239,7 +239,7 @@ Starting with the method signatures:
 <div class="solution">
 The code should look like this:
 
-```scala mdoc:silent
+```scala
 class UptimeService[F[_]](client: UptimeClient[F]) {
   def getTotalUptime(hostnames: List[String]): F[Int] =
     ???
@@ -272,8 +272,6 @@ We can write this as an implicit parameter:
 
 ```scala mdoc:invisible:reset-object
 import scala.language.higherKinds
-import scala.concurrent.Future
-import cats.Id
 import cats.syntax.traverse._  // for traverse
 import cats.instances.list._
 
@@ -297,7 +295,8 @@ or more tersely as a context bound:
 
 ```scala mdoc:reset-object:invisible
 import scala.language.higherKinds
-import cats.{Applicative,Id}
+import cats.Applicative
+import cats.syntax.functor._
 import cats.syntax.traverse._
 import cats.instances.list._
 

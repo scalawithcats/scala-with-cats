@@ -46,10 +46,7 @@ That is, do monads *compose*?
 We can try to write the code but we soon hit problems:
 
 ```scala mdoc:silent
-import cats.Monad
 import cats.syntax.applicative._ // for pure
-import cats.syntax.flatMap._     // for flatMap
-import scala.language.higherKinds
 ```
 
 ```scala
@@ -123,7 +120,6 @@ using the `OptionT` constructor,
 or more conveniently using `pure`:
 
 ```scala mdoc:silent
-import cats.Monad
 import cats.instances.list._     // for Monad
 import cats.syntax.applicative._ // for pure
 ```
@@ -251,8 +247,6 @@ In other words, we build monad stacks from the inside out:
 ```scala mdoc:invisible:reset
 import cats.data.OptionT
 import cats.syntax.applicative._ // for pure
-import cats.syntax.flatMap._     // for flatMap
-import scala.language.higherKinds
 ```
 ```scala mdoc:silent
 type ListOption[A] = OptionT[List, A]
@@ -459,8 +453,6 @@ and use a fusion `Future` and `Either` everywhere in our code:
 ```scala mdoc:invisible:reset-object
 import cats.data.EitherT
 import cats.instances.list._
-import cats.syntax.applicative._ // for pure
-import cats.syntax.flatMap._     // for flatMap
 import scala.concurrent.Future
 ```
 ```scala mdoc:silent
@@ -561,12 +553,7 @@ and `Either` on the inside,
 so we build from the inside out
 using an `EitherT` of `Future`:
 
-```scala mdoc:invisible:reset
-import cats.syntax.applicative._ // for pure
-import cats.syntax.flatMap._     // for flatMap
-import scala.language.higherKinds
-```
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 import cats.data.EitherT
 import scala.concurrent.Future
 
@@ -603,7 +590,6 @@ val powerLevels = Map(
 ```
 ```scala mdoc:silent
 import cats.instances.future._ // for Monad
-import cats.syntax.flatMap._   // for flatMap
 import scala.concurrent.ExecutionContext.Implicits.global
 
 type Response[A] = EitherT[Future, String, A]
@@ -634,8 +620,7 @@ def canSpecialMove(ally1: String, ally2: String): Response[Boolean] =
 We request the power level from each ally
 and use `map` and `flatMap` to combine the results:
 
-```scala mdoc:invisible:reset
-import cats._
+```scala mdoc:invisible:reset-object
 import cats.implicits._
 import cats.data._
 import scala.concurrent.Future
@@ -679,7 +664,6 @@ We use the `value` method to unpack the monad stack
 and `Await` and `fold` to unpack the `Future` and `Either`:
 
 ```scala mdoc:invisible:reset
-import cats._
 import cats.implicits._
 import cats.data._
 import scala.concurrent.Future

@@ -195,7 +195,7 @@ import cats.syntax.eq._ // for ===
 
 Our `Cat` class is the same as ever:
 
-```scala
+```scala mdoc:silent
 final case class Cat(name: String, age: Int, color: String)
 ```
 
