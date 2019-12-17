@@ -13,16 +13,13 @@ In Cats a type class is represented by a trait with at least one type parameter.
 For example, we can represent generic "serialize to JSON" behaviour
 as follows:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 // Define a very simple JSON AST
-//
-// Note: we would usually declare case classes as final, but a scalac bug
-// interacts poorly with our book generation system if we do. 
 sealed trait Json
-case class JsObject(get: Map[String, Json]) extends Json
-case class JsString(get: String) extends Json
-case class JsNumber(get: Double) extends Json
-case object JsNull extends Json
+final case class JsObject(get: Map[String, Json]) extends Json
+final case class JsString(get: String) extends Json
+final case class JsNumber(get: Double) extends Json
+final case object JsNull extends Json
 
 // The "serialize to JSON" behaviour is encoded in this trait
 trait JsonWriter[A] {

@@ -41,10 +41,10 @@ We call the `value` method as usual to extract the actual result:
 val (state, result) = a.run(10).value
 
 // Get the state, ignore the result:
-val state = a.runS(10).value
+val justTheState = a.runS(10).value
 
 // Get the result, ignore the state:
-val result = a.runA(10).value
+val justTheResult = a.runA(10).value
 ```
 
 ### Composing and Transforming State
@@ -55,6 +55,12 @@ The `map` and `flatMap` methods thread the state from one instance to another.
 Each individual instance represents an atomic state transformation,
 and their combination represents a complete sequence of changes:
 
+```scala mdoc:invisible:reset-object
+import cats.data.State
+val a = State[Int, String] { state =>
+  (state, s"The state is $state")
+}
+```
 ```scala mdoc
 val step1 = State[Int, String] { num =>
   val ans = num + 1
@@ -218,6 +224,11 @@ The stack operation required is different for operators and operands.
 For clarity we'll implement `evalOne` in terms of two helper functions,
 one for each case:
 
+```scala mdoc:invisible:reset-object
+import cats.data.State
+
+type CalcState[A] = State[List[Int], A]
+```
 ```scala
 def evalOne(sym: String): CalcState[Int] =
   sym match {
@@ -322,9 +333,9 @@ def evalAll(input: List[String]): CalcState[Int] =
 We can use `evalAll` to conveniently evaluate multi-stage expressions:
 
 ```scala mdoc
-val program = evalAll(List("1", "2", "+", "3", "*"))
+val multistageProgram = evalAll(List("1", "2", "+", "3", "*"))
 
-program.runA(Nil).value
+multistageProgram.runA(Nil).value
 ```
 
 Because `evalOne` and `evalAll` both return instances of `State`,
@@ -334,13 +345,13 @@ we can thread these results together using `flatMap`.
 and we can use them in any order as many times as we like:
 
 ```scala mdoc
-val program = for {
+val biggerProgram = for {
   _   <- evalAll(List("1", "2", "+"))
   _   <- evalAll(List("3", "4", "+"))
   ans <- evalOne("*")
 } yield ans
 
-program.runA(Nil).value
+biggerProgram.runA(Nil).value
 ```
 
 Complete the exercise by implementing an `evalInput` function that

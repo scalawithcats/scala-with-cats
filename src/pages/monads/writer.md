@@ -251,7 +251,7 @@ for concurrent computations.
 We'll start by defining a type alias for `Writer`
 so we can use it with `pure` syntax:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 import cats.data.Writer
 import cats.syntax.applicative._ // for pure
 
@@ -303,7 +303,7 @@ we now have to `run` the return value
 to extract the log and our factorial:
 
 ```scala mdoc
-val (log, res) = factorial(5).run
+val (factorialLog, res) = factorial(5).run
 ```
 
 We can run several `factorials` in parallel as follows,

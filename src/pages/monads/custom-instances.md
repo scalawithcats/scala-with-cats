@@ -54,20 +54,18 @@ Let's write a `Monad` for our `Tree` data type from last chapter.
 Here's the type again:
 
 ```scala mdoc:silent
-object wrapper {
-  sealed trait Tree[+A]
+sealed trait Tree[+A]
 
-  final case class Branch[A](left: Tree[A], right: Tree[A])
-    extends Tree[A]
+final case class Branch[A](left: Tree[A], right: Tree[A])
+  extends Tree[A]
 
-  final case class Leaf[A](value: A) extends Tree[A]
+final case class Leaf[A](value: A) extends Tree[A]
 
-  def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
-    Branch(left, right)
+def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
+  Branch(left, right)
 
-  def leaf[A](value: A): Tree[A] =
-    Leaf(value)
-}; import wrapper._
+def leaf[A](value: A): Tree[A] =
+  Leaf(value)
 ```
 
 Verify that the code works on instances of `Branch` and `Leaf`,
@@ -130,6 +128,20 @@ It involves an explicit depth first traversal of the tree,
 maintaining an `open` list of nodes to visit
 and a `closed` list of nodes to use to reconstruct the tree:
 
+```scala mdoc:invisible:reset-object
+sealed trait Tree[+A]
+
+final case class Branch[A](left: Tree[A], right: Tree[A])
+  extends Tree[A]
+
+final case class Leaf[A](value: A) extends Tree[A]
+
+def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
+  Branch(left, right)
+
+def leaf[A](value: A): Tree[A] =
+  Leaf(value)
+```
 ```scala mdoc:silent
 import cats.Monad
 

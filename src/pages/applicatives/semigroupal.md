@@ -163,7 +163,7 @@ and [Invariant](#invariant) functors.
 For example, we can combine `Monoids` using `Invariant`.
 Here's an example:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 import cats.Monoid
 import cats.instances.int._        // for Monoid
 import cats.instances.invariant._  // for Semigroupal
@@ -171,7 +171,7 @@ import cats.instances.list._       // for Monoid
 import cats.instances.string._     // for Monoid
 import cats.syntax.apply._         // for imapN
 
-case class Cat(
+final case class Cat(
   name: String,
   yearOfBirth: Int,
   favoriteFoods: List[String]

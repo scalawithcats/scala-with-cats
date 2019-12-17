@@ -106,7 +106,7 @@ import cats.instances.option._ // for Eq
 
 Now we can try some comparisons:
 
-```scala mdoc:fail:book
+```scala mdoc:fail
 Some(1) === None
 ```
 
@@ -188,7 +188,7 @@ In this exercise we'll be using the `Eq` type class
 and the `Eq` interface syntax.
 We'll bring instances of `Eq` into scope as we need them below:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 import cats.Eq
 import cats.syntax.eq._ // for ===
 ```

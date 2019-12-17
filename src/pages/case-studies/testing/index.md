@@ -299,6 +299,7 @@ or more tersely as a context bound:
 import scala.language.higherKinds
 import cats.{Applicative,Id}
 import cats.syntax.traverse._
+import cats.instances.list._
 
 trait UptimeClient[F[_]] {
   def getUptime(hostname: String): F[Int]

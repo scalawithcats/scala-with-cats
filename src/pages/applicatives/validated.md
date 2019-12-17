@@ -128,6 +128,9 @@ As with `Either`, we need to fix the error type
 to create a type constructor with the correct
 number of parameters for `Semigroupal`:
 
+```scala mdoc:invisible:reset-object
+import cats.Validated
+```
 ```scala mdoc:silent
 type AllErrorsOr[A] = Validated[String, A]
 ```

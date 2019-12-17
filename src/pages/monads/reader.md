@@ -92,7 +92,7 @@ Our configuration will consist of two databases:
 a list of valid users and a list of their passwords:
 
 ```scala mdoc:silent
-case class Db(
+final case class Db(
   usernames: Map[Int, String],
   passwords: Map[String, String]
 )
@@ -131,6 +131,14 @@ Remember: the idea is to leave injecting the configuration until last.
 This means setting up functions that accept the config as a parameter
 and check it against the concrete user info we have been given:
 
+```scala mdoc:invisible:reset-object
+import cats.Reader
+final case class Db(
+  usernames: Map[Int, String],
+  passwords: Map[String, String]
+)
+type DbReader[A] = Reader[Db, A]
+```
 ```scala mdoc:silent
 def findUsername(userId: Int): DbReader[Option[String]] =
   Reader(db => db.usernames.get(userId))
@@ -160,6 +168,21 @@ here we use `flatMap` to chain `findUsername` and `checkPassword`.
 We use `pure` to lift a `Boolean` to a `DbReader[Boolean]`
 when the username is not found:
 
+```scala mdoc:invisible:reset-object
+import cats.Reader
+final case class Db(
+  usernames: Map[Int, String],
+  passwords: Map[String, String]
+)
+type DbReader[A] = Reader[Db, A]
+def findUsername(userId: Int): DbReader[Option[String]] =
+  Reader(db => db.usernames.get(userId))
+
+def checkPassword(
+      username: String,
+      password: String): DbReader[Boolean] =
+  Reader(db => db.passwords.get(username).contains(password))
+```
 ```scala mdoc:silent
 import cats.syntax.applicative._ // for pure
 

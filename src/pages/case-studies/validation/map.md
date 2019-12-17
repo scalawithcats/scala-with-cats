@@ -161,6 +161,8 @@ import cats.data.Validated
 
 sealed trait Predicate[E, A] {
   import Predicate._
+  import Validated._
+
   def and(that: Predicate[E, A]): Predicate[E, A] =
     And(this, that)
 
@@ -169,7 +171,6 @@ sealed trait Predicate[E, A] {
 
   def apply(a: A)(implicit s: Semigroup[E]): Validated[E, A] =
     this match {
-      import Validated._
       case Pure(func) =>
         func(a)
 
@@ -379,12 +380,10 @@ including the `and` and `or` combinators and
 a `Predicate.apply` method to create
 a `Predicate` from a function:
 
-```scala mdoc:silent:reset-object
-import cats.Semigroup
-import cats.data.Validated
-
+```scala mdoc:silent
 sealed trait Predicate[E, A] {
   import Predicate._
+  import Validated._
 
   def and(that: Predicate[E, A]): Predicate[E, A] =
     And(this, that)

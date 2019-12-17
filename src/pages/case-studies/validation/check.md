@@ -194,6 +194,7 @@ What happens if we create instances of `CheckF[Nothing, A]`?
 ```scala mdoc:invisible:reset-object
 import cats.Semigroup
 import cats.syntax.semigroup._
+import cats.syntax.either._
 final case class CheckF[E, A](func: A => Either[E, A]) {
   def apply(a: A): Either[E, A] =
     func(a)
