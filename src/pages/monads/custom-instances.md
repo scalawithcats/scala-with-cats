@@ -144,6 +144,7 @@ def leaf[A](value: A): Tree[A] =
 ```
 ```scala mdoc:silent
 import cats.Monad
+import scala.annotation.tailrec
 
 implicit val treeMonad = new Monad[Tree] {
   def pure[A](value: A): Tree[A] =

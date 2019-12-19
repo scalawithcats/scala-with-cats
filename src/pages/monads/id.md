@@ -115,6 +115,16 @@ The `pure` operation creates an `Id[A]` from an `A`.
 But `A` and `Id[A]` are the same type!
 All we have to do is return the initial value:
 
+```scala mdoc:invisible:reset-object
+import cats.{Id,Monad}
+import cats.syntax.functor._ 
+import cats.syntax.flatMap._
+def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
+  for {
+    x <- a
+    y <- b
+  } yield x*x + y*y
+```
 ```scala mdoc:silent
 def pure[A](value: A): Id[A] =
   value

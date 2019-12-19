@@ -39,7 +39,7 @@ We can probably guess in this case
 but in general we don't have sufficient information to work this out.
 We can solve this problem by wrapping all messages in a type as follows:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 sealed trait Structure[E]
 
 final case class Or[E](messages: List[Structure[E]])

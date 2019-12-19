@@ -58,7 +58,6 @@ the `valid` and `invalid` smart constructors,
 which widen the return type to `Validated`:
 
 ```scala mdoc:invisible:reset-object
-import cats.Semigroupal
 import cats.data.Validated
 import cats.instances.list._ // for Monoid
 
@@ -129,7 +128,9 @@ to create a type constructor with the correct
 number of parameters for `Semigroupal`:
 
 ```scala mdoc:invisible:reset-object
-import cats.Validated
+import cats.data.Validated
+import cats.Semigroupal
+import cats.syntax.validated._
 ```
 ```scala mdoc:silent
 type AllErrorsOr[A] = Validated[String, A]

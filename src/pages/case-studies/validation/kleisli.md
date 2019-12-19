@@ -170,7 +170,7 @@ def checkPred[A](pred: Predicate[Errors, A]): Check[A, A] =
 ```
 
 <div class="solution">
-```scala mdoc:invisible:reset
+```scala mdoc:invisible:reset-object
 // Foreword declarations
 
 import cats.Semigroup
@@ -179,58 +179,56 @@ import cats.syntax.semigroup._ // for |+|
 import cats.data.Validated
 import cats.data.Validated.{Valid, Invalid}
 
-object wrapper {
-  sealed trait Predicate[E, A] {
-    import Predicate._
+sealed trait Predicate[E, A] {
+  import Predicate._
 
-    def and(that: Predicate[E, A]): Predicate[E, A] =
-      And(this, that)
+  def and(that: Predicate[E, A]): Predicate[E, A] =
+    And(this, that)
 
-    def or(that: Predicate[E, A]): Predicate[E, A] =
-      Or(this, that)
+  def or(that: Predicate[E, A]): Predicate[E, A] =
+    Or(this, that)
 
-    def run(implicit s: Semigroup[E]): A => Either[E, A] =
-      (a: A) => this(a).toEither
+  def run(implicit s: Semigroup[E]): A => Either[E, A] =
+    (a: A) => this(a).toEither
 
-    def apply(a: A)(implicit s: Semigroup[E]): Validated[E, A] =
-      this match {
-        case Pure(func) =>
-          func(a)
+  def apply(a: A)(implicit s: Semigroup[E]): Validated[E, A] =
+    this match {
+      case Pure(func) =>
+        func(a)
 
-        case And(left, right) =>
-          (left(a), right(a)).mapN((_, _) => a)
+      case And(left, right) =>
+        (left(a), right(a)).mapN((_, _) => a)
 
-        case Or(left, right) =>
-          left(a) match {
-            case Valid(a1)   => Valid(a)
-            case Invalid(e1) =>
-              right(a) match {
-                case Valid(a2)   => Valid(a)
-                case Invalid(e2) => Invalid(e1 |+| e2)
-              }
-          }
-      }
-  }
+      case Or(left, right) =>
+        left(a) match {
+          case Valid(_)   => Valid(a)
+          case Invalid(e1) =>
+            right(a) match {
+              case Valid(_)   => Valid(a)
+              case Invalid(e2) => Invalid(e1 |+| e2)
+            }
+        }
+    }
+}
 
-  object Predicate {
-    final case class And[E, A](
-      left: Predicate[E, A],
-      right: Predicate[E, A]) extends Predicate[E, A]
+object Predicate {
+  final case class And[E, A](
+    left: Predicate[E, A],
+    right: Predicate[E, A]) extends Predicate[E, A]
 
-    final case class Or[E, A](
-      left: Predicate[E, A],
-      right: Predicate[E, A]) extends Predicate[E, A]
+  final case class Or[E, A](
+    left: Predicate[E, A],
+    right: Predicate[E, A]) extends Predicate[E, A]
 
-    final case class Pure[E, A](
-      func: A => Validated[E, A]) extends Predicate[E, A]
+  final case class Pure[E, A](
+    func: A => Validated[E, A]) extends Predicate[E, A]
 
-    def apply[E, A](f: A => Validated[E, A]): Predicate[E, A] =
-      Pure(f)
+  def apply[E, A](f: A => Validated[E, A]): Predicate[E, A] =
+    Pure(f)
 
-    def lift[E, A](error: E, func: A => Boolean): Predicate[E, A] =
-      Pure(a => if(func(a)) Valid(a) else Invalid(error))
-  }
-}; import wrapper._
+  def lift[E, A](error: E, func: A => Boolean): Predicate[E, A] =
+    Pure(a => if(func(a)) Valid(a) else Invalid(error))
+}
 ```
 
 Working around limitations of type inference
@@ -240,9 +238,8 @@ Working out when to convert between
 simplifies things, but the process is still complex:
 
 ```scala mdoc:silent
-import cats.data.{Kleisli, NonEmptyList, Validated}
+import cats.data.{Kleisli, NonEmptyList}
 import cats.instances.either._   // for Semigroupal
-import cats.instances.list._     // for Monad
 ```
 
 Here is the preamble we suggested in
@@ -304,7 +301,7 @@ val splitEmail: Check[String, (String, String)] =
     case Array(name, domain) =>
       Right((name, domain))
 
-    case other =>
+    case _ =>
       Left(error("Must contain a single @ character"))
   })
 

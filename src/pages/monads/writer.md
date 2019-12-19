@@ -213,13 +213,10 @@ the log messages can become interleaved on standard out.
 This makes it difficult to see
 which messages come from which computation:
 
-```scala mdoc:silent
-import scala.concurrent._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
-```
-
 ```scala
+import scala.concurrent._
+import scala.concurrent.duration._
+
 Await.result(Future.sequence(Vector(
   Future(factorial(3)),
   Future(factorial(3))
@@ -253,6 +250,7 @@ so we can use it with `pure` syntax:
 
 ```scala mdoc:silent:reset-object
 import cats.data.Writer
+import cats.instances.vector._
 import cats.syntax.applicative._ // for pure
 
 type Logged[A] = Writer[Vector[String], A]
@@ -286,6 +284,10 @@ import cats.instances.vector._ // for Monoid
 
 With these in scope, the definition of `factorial` becomes:
 
+```scala mdoc:invisible
+def slowly[A](body: => A) =
+  try body finally Thread.sleep(100)
+```
 ```scala mdoc:silent
 def factorial(n: Int): Logged[Int] =
   for {
@@ -303,13 +305,18 @@ we now have to `run` the return value
 to extract the log and our factorial:
 
 ```scala mdoc
-val (factorialLog, res) = factorial(5).run
+val (log, res) = factorial(5).run
 ```
 
 We can run several `factorials` in parallel as follows,
 capturing their logs independently
 without fear of interleaving:
 
+```scala mdoc:invisible
+import scala.concurrent._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+```
 ```scala mdoc
 val Vector((logA, ansA), (logB, ansB)) =
   Await.result(Future.sequence(Vector(

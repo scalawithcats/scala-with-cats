@@ -18,7 +18,7 @@ and runs our program in the order specified.
 We can create a `Reader[A, B]` from a function `A => B`
 using the `Reader.apply` constructor:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 import cats.data.Reader
 ```
 
@@ -132,7 +132,7 @@ This means setting up functions that accept the config as a parameter
 and check it against the concrete user info we have been given:
 
 ```scala mdoc:invisible:reset-object
-import cats.Reader
+import cats.data.Reader
 final case class Db(
   usernames: Map[Int, String],
   passwords: Map[String, String]
@@ -169,7 +169,7 @@ We use `pure` to lift a `Boolean` to a `DbReader[Boolean]`
 when the username is not found:
 
 ```scala mdoc:invisible:reset-object
-import cats.Reader
+import cats.data.Reader
 final case class Db(
   usernames: Map[Int, String],
   passwords: Map[String, String]

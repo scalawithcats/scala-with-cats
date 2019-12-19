@@ -112,10 +112,10 @@ sealed trait Predicate[E, A] {
 
       case Or(left, right) =>
         left(a) match {
-          case Valid(a1)   => Valid(a)
+          case Valid(_)   => Valid(a)
           case Invalid(e1) =>
             right(a) match {
-              case Valid(a2)   => Valid(a)
+              case Valid(_)   => Valid(a)
               case Invalid(e2) => Invalid(e1 |+| e2)
             }
         }
@@ -158,6 +158,7 @@ you should be able to create code similar to the below:
 ```scala mdoc:invisible:reset-object
 import cats.Semigroup
 import cats.data.Validated
+import cats.implicits._
 
 sealed trait Predicate[E, A] {
   import Predicate._
@@ -179,10 +180,10 @@ sealed trait Predicate[E, A] {
 
       case Or(left, right) =>
         left(a) match {
-          case Valid(a1)   => Valid(a)
+          case Valid(_)   => Valid(a)
           case Invalid(e1) =>
             right(a) match {
-              case Valid(a2)   => Valid(a)
+              case Valid(_)   => Valid(a)
               case Invalid(e2) => Invalid(e1 |+| e2)
             }
         }
@@ -404,10 +405,10 @@ sealed trait Predicate[E, A] {
 
       case Or(left, right) =>
         left(a) match {
-          case Valid(a1)   => Valid(a)
+          case Valid(_)   => Valid(a)
           case Invalid(e1) =>
             right(a) match {
-              case Valid(a2)   => Valid(a)
+              case Valid(_)   => Valid(a)
               case Invalid(e2) => Invalid(e1 |+| e2)
             }
         }
@@ -443,7 +444,6 @@ using inheritance:
 ```scala mdoc:silent
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.semigroup._ // for |+|
 import cats.syntax.apply._     // for mapN
 import cats.syntax.validated._ // for valid and invalid
 ```
@@ -589,7 +589,6 @@ In later sections we'll make some changes
 that make the library easier to use.
 
 ```scala mdoc:silent
-import cats.data.{NonEmptyList, Validated}
 import cats.syntax.apply._     // for mapN
 import cats.syntax.validated._ // for valid and invalid
 ```
@@ -619,7 +618,7 @@ val splitEmail: Check[Errors, String, (String, String)] =
     case Array(name, domain) =>
       (name, domain).validNel[String]
 
-    case other =>
+    case _ =>
       "Must contain a single @ character".
         invalidNel[(String, String)]
   })

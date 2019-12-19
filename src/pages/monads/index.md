@@ -116,6 +116,13 @@ Plus, if we have both `flatMap` and `map`
 we can use for comprehensions
 to clarify the sequencing behaviour:
 
+```scala mdoc:invisible:reset-object
+def parseInt(str: String): Option[Int] =
+  scala.util.Try(str.toInt).toOption
+
+def divide(a: Int, b: Int): Option[Int] =
+  if(b == 0) None else Some(a / b)
+```
 ```scala mdoc:silent
 def stringDivideBy(aStr: String, bStr: String): Option[Int] =
   for {
@@ -289,7 +296,7 @@ Every monad is also a functor.
 We can define `map` in the same way for every monad
 using the existing methods, `flatMap` and `pure`:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 import scala.language.higherKinds
 
 trait Monad[F[_]] {
@@ -311,7 +318,7 @@ We are passed a `value` of type `F[A]`.
 Given the tools available there's only one thing we can do:
 call `flatMap`:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 trait Monad[F[_]] {
   def pure[A](value: A): F[A]
 
@@ -328,7 +335,7 @@ the `func` parameter of type `A => B`
 and the `pure` function of type `A => F[A]`.
 Combining these gives us our result:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 trait Monad[F[_]] {
   def pure[A](value: A): F[A]
 
