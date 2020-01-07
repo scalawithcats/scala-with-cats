@@ -6,7 +6,7 @@ by providing implementations of three methods:
 a method we haven't seen yet called `tailRecM`.
 Here is an implementation of `Monad` for `Option` as an example:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 import cats.Monad
 import scala.annotation.tailrec
 

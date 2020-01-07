@@ -119,6 +119,7 @@ All we have to do is return the initial value:
 import cats.{Id,Monad}
 import cats.syntax.functor._ 
 import cats.syntax.flatMap._
+import scala.language.higherKinds
 def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
   for {
     x <- a

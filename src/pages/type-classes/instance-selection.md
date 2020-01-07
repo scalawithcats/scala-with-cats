@@ -162,7 +162,7 @@ to control type class instance selection to some extent.
 There are two issues that tend to arise.
 Let's imagine we have an algebraic data type like:
 
-```scala mdoc:silent
+```scala
 sealed trait A
 final case object B extends A
 final case object C extends A

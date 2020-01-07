@@ -117,7 +117,8 @@ We can assemble these building blocks using a for comprehension.
 We typically ignore the result of intermediate stages
 that only represent transformations on the state:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
+import cats.data.State
 import State._
 ```
 
@@ -319,6 +320,32 @@ We start with a pure `CalcState` that returns `0` if the list is empty.
 We `flatMap` at each stage,
 ignoring the intermediate results as we saw in the example:
 
+```scala mdoc:invisible:reset-object
+import cats.data.State
+
+type CalcState[A] = State[List[Int], A]
+def operand(num: Int): CalcState[Int] =
+  State[List[Int], Int] { stack =>
+    (num :: stack, num)
+  }
+def operator(func: (Int, Int) => Int): CalcState[Int] =
+  State[List[Int], Int] {
+    case b :: a :: tail =>
+      val ans = func(a, b)
+      (ans :: tail, ans)
+
+    case _ =>
+      sys.error("Fail!")
+  }
+def evalOne(sym: String): CalcState[Int] =
+  sym match {
+    case "+" => operator(_ + _)
+    case "-" => operator(_ - _)
+    case "*" => operator(_ * _)
+    case "/" => operator(_ / _)
+    case num => operand(num.toInt)
+  }
+```
 ```scala mdoc:silent
 import cats.syntax.applicative._ // for pure
 

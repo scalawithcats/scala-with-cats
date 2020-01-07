@@ -182,7 +182,6 @@ without worrying that they are asynchronous:
 ```scala mdoc:silent
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
 
 def doSomethingLongRunning: Future[Int] = ???
 def doSomethingElseLongRunning: Future[Int] = ???
@@ -204,6 +203,12 @@ is running each operation *in sequence*.
 This becomes clearer if we expand out the for comprehension
 to show the nested calls to `flatMap`:
 
+```scala mdoc:invisible:reset-object
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+def doSomethingLongRunning: Future[Int] = ???
+def doSomethingElseLongRunning: Future[Int] = ???
+```
 ```scala mdoc:silent
 def doSomethingVeryLongRunning: Future[Int] =
   doSomethingLongRunning.flatMap { result1 =>
@@ -318,7 +323,7 @@ We are passed a `value` of type `F[A]`.
 Given the tools available there's only one thing we can do:
 call `flatMap`:
 
-```scala mdoc:silent:reset-object
+```scala
 trait Monad[F[_]] {
   def pure[A](value: A): F[A]
 
@@ -335,7 +340,10 @@ the `func` parameter of type `A => B`
 and the `pure` function of type `A => F[A]`.
 Combining these gives us our result:
 
-```scala mdoc:silent:reset-object
+```scala mdoc:invisible:reset-object
+import scala.language.higherKinds
+```
+```scala mdoc
 trait Monad[F[_]] {
   def pure[A](value: A): F[A]
 

@@ -300,6 +300,7 @@ Finally, here is an example that uses `Validated`:
 import cats.Applicative
 import cats.syntax.applicative._ // for pure
 import cats.syntax.apply._ // for mapN
+import scala.language.higherKinds
 def listTraverse[F[_]: Applicative, A, B]
       (list: List[A])(func: A => F[B]): F[List[B]] =
   list.foldLeft(List.empty[B].pure[F]) { (accum, item) =>

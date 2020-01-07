@@ -322,6 +322,6 @@ val Vector((logA, ansA), (logB, ansB)) =
   Await.result(Future.sequence(Vector(
     Future(factorial(3).run),
     Future(factorial(5).run)
-  )), 5.seconds)
+  )), 10.seconds)
 ```
 </div>

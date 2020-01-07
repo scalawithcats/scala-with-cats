@@ -98,6 +98,9 @@ using one of the evaluation models defined above.
 `Eval.now` captures a value *right now*.
 Its semantics are similar to a `val`---eager and memoized:
 
+```scala mdoc:invisible:reset-object
+import cats.Eval
+```
 ```scala mdoc
 val x = Eval.now {
   println("Computing X")
@@ -220,6 +223,9 @@ factorial(50000)
 
 We can rewrite the method using `Eval` to make it stack safe:
 
+```scala mdoc:invisible:reset-object
+import cats.Eval
+```
 ```scala mdoc:silent
 def factorial(n: BigInt): Eval[BigInt] =
   if(n == 1) {
@@ -243,6 +249,9 @@ which takes an existing instance of `Eval` and defers its evaluation.
 The `defer` method is trampolined like `map` and `flatMap`,
 so we can use it as a quick way to make an existing operation stack safe:
 
+```scala mdoc:invisible:reset-object
+import cats.Eval
+```
 ```scala mdoc:silent
 def factorial(n: BigInt): Eval[BigInt] =
   if(n == 1) {
@@ -285,7 +294,7 @@ This is essentially our original method
 with every occurrence of `B` replaced with `Eval[B]`,
 and a call to `Eval.defer` to protect the recursive call:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 import cats.Eval
 
 def foldRightEval[A, B](as: List[A], acc: Eval[B])

@@ -169,6 +169,11 @@ The compiler will "do the right thing" by
 rewriting our comprehension in terms of `flatMap` and `map`
 and inserting the correct implicit conversions to use our `Monad`:
 
+```scala mdoc:invisible:reset-object
+import cats.Monad
+import cats.implicits._
+import scala.language.higherKinds
+```
 ```scala mdoc:silent
 def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
   for {

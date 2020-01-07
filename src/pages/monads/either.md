@@ -16,7 +16,7 @@ inconvenient to use in for comprehensions.
 We had to insert calls to `.right`
 in every generator clause:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 val either1: Either[String, Int] = Right(10)
 val either2: Either[String, Int] = Right(32)
 ```
@@ -173,11 +173,11 @@ provide similar error handling to their namesakes on `Future`:
 
 ```scala mdoc
 "error".asLeft[Int].recover {
-  case str: String => -1
+  case _: String => -1
 }
 
 "error".asLeft[Int].recoverWith {
-  case str: String => Right(-1)
+  case _: String => Right(-1)
 }
 ```
 

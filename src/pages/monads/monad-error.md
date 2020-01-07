@@ -92,7 +92,7 @@ monadError.handleError(failure) {
   case "Badness" =>
     monadError.pure("It's ok")
 
-  case other =>
+  case _ =>
     monadError.raiseError("It's not ok")
 }
 ```
@@ -101,10 +101,6 @@ There is also a third useful method called `ensure`
 that implements `filter`-like behaviour.
 We test the value of a successful monad with a predicate
 and specify an error to raise if the predicate returns `false`:
-
-```scala mdoc:silent
-import cats.syntax.either._ // for asRight
-```
 
 ```scala mdoc
 monadError.ensure(success)("Number too low!")(_ > 1000)
@@ -115,7 +111,6 @@ via [`cats.syntax.applicativeError`][cats.syntax.applicativeError]
 and `ensure` via [`cats.syntax.monadError`][cats.syntax.monadError]:
 
 ```scala mdoc:invisible:reset
-import cats.MonadError
 import cats.instances.either._ // for MonadError
 
 type ErrorOr[A] = Either[String, A]

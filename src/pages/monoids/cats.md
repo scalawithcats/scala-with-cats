@@ -153,7 +153,7 @@ def add(items: List[Int]): Int =
 We can alternatively write the fold using `Monoids`,
 although there's not a compelling use case for this yet:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 import cats.Monoid
 import cats.instances.int._    // for Monoid
 import cats.syntax.semigroup._ // for |+|
@@ -175,9 +175,8 @@ Now there is a use case for `Monoids`.
 We need a single method that adds `Ints` and instances of `Option[Int]`.
 We can write this as a generic method that accepts an implicit `Monoid` as a parameter:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 import cats.Monoid
-import cats.instances.int._    // for Monoid
 import cats.syntax.semigroup._ // for |+|
 
 def add[A](items: List[A])(implicit monoid: Monoid[A]): A =

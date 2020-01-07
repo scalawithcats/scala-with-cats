@@ -121,12 +121,10 @@ Leave the rest of the code in `Predicate` the same.
 Here's an abbreviated definition of `run`.
 Like `apply`, the method must accept an implicit `Semigroup`:
 
-```scala mdoc:silent
+```scala
 import cats.Semigroup
 import cats.data.Validated
-```
 
-```scala mdoc:silent
 sealed trait Predicate[E, A] {
   def run(implicit s: Semigroup[E]): A => Either[E, A] =
     (a: A) => this(a).toEither

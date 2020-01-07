@@ -7,7 +7,7 @@ and address annoyances using Scala's built-in `==` operator.
 
 Almost every Scala developer has written code like this before:
 
-```scala mdoc
+```scala mdoc:reset-object
 List(1, 2, 3).map(Option(_)).filter(item => item == 1)
 ```
 
