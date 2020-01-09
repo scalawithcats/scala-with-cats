@@ -18,7 +18,7 @@ when writing transformer types for deeply nested monads.
 With this look at monad transformers,
 we have now covered everything we need to know about monads
 and the sequencing of computations using `flatMap`.
-In the next chapter we will switch tack
+In the next chapter we will switch track
 and discuss two new type classes, `Semigroupal` and `Applicative`,
 that support new kinds of operation such as `zipping`
 independent values within a context.
