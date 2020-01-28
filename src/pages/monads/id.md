@@ -4,7 +4,6 @@ In the previous section we demonstrated Cats' `flatMap` and `map` syntax
 by writing a method that abstracted over different monads:
 
 ```scala mdoc:silent
-import scala.language.higherKinds
 import cats.Monad
 import cats.syntax.functor._ // for map
 import cats.syntax.flatMap._ // for flatMap
@@ -119,7 +118,6 @@ All we have to do is return the initial value:
 import cats.{Id,Monad}
 import cats.syntax.functor._ 
 import cats.syntax.flatMap._
-import scala.language.higherKinds
 def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
   for {
     x <- a

@@ -24,8 +24,7 @@ We define this as a type class that takes
 a type constructor with *two* type parameters
 represent the key and value types of the map abstraction.
 
-```scala mdoc:invisible
-import scala.language.higherKinds
+```scala mdoc:reset-object:invisible
 import cats.kernel.CommutativeMonoid
 
 trait BoundedSemiLattice[A] extends CommutativeMonoid[A] {
@@ -53,7 +52,6 @@ object BoundedSemiLattice {
     }
 }
 ```
-
 ```scala mdoc:silent
 trait GCounter[F[_,_],K, V] {
   def increment(f: F[K, V])(k: K, v: V)
@@ -90,7 +88,7 @@ import cats.instances.map._    // for Monoid
 import cats.syntax.semigroup._ // for |+|
 import cats.syntax.foldable._  // for combineAll
 
-implicit def mapInstance[K, V]: GCounter[Map, K, V] =
+implicit def mapGCounterInstance[K, V]: GCounter[Map, K, V] =
   new GCounter[Map, K, V] {
     def increment(map: Map[K, V])(key: K, value: V)
           (implicit m: CommutativeMonoid[V]): Map[K, V] = {
@@ -162,7 +160,7 @@ the companion object for `KeyValueStore`
 to place it in global implicit scope:
 
 ```scala mdoc:silent
-implicit val mapInstance: KeyValueStore[Map] =
+implicit val mapKeyValueStoreInstance: KeyValueStore[Map] =
   new KeyValueStore[Map] {
     def put[K, V](f: Map[K, V])(k: K, v: V): Map[K, V] =
       f + (k -> v)

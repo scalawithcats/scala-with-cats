@@ -5,7 +5,7 @@ Instances of `Foldable` define these two methods
 and inherit a host of derived methods.
 Cats provides out-of-the-box instances of `Foldable`
 for a handful of Scala data types:
-`List`, `Vector`, `Stream`, and `Option`.
+`List`, `Vector`, `LazyList`, and `Option`.
 
 We can summon instances as usual using `Foldable.apply`
 and call their implementations of `foldLeft` directly.
@@ -22,7 +22,7 @@ val ints = List(1, 2, 3)
 Foldable[List].foldLeft(ints, 0)(_ + _)
 ```
 
-Other sequences like `Vector` and `Stream` work in the same way.
+Other sequences like `Vector` and `LazyList` work in the same way.
 Here is an example using `Option`,
 which is treated like a sequence of zero or one elements:
 
@@ -48,15 +48,15 @@ def foldRight[A, B](fa: F[A], lb: Eval[B])
 
 Using `Eval` means folding is always *stack safe*,
 even when the collection's default definition of `foldRight` is not.
-For example, the default implementation of `foldRight` for `Stream` is not stack safe.
-The longer the stream, the larger the stack requirements for the fold.
-A sufficiently large stream will trigger a `StackOverflowError`:
+For example, the default implementation of `foldRight` for `LazyList` is not stack safe.
+The longer the lazy list, the larger the stack requirements for the fold.
+A sufficiently large lazy list will trigger a `StackOverflowError`:
 
 ```scala mdoc:silent
 import cats.Eval
 import cats.Foldable
 
-def bigData = (1 to 100000).toStream
+def bigData = (1 to 100000).to(LazyList)
 ```
 
 ```scala mdoc:fail:invisible
@@ -73,12 +73,12 @@ Using `Foldable` forces us to use stack safe operations,
 which fixes the overflow exception:
 
 ```scala mdoc:silent
-import cats.instances.stream._ // for Foldable
+import cats.instances.lazyList._ // for Foldable
 ```
 
 ```scala mdoc:silent
 val eval: Eval[Long] =
-  Foldable[Stream].
+  Foldable[LazyList].
     foldRight(bigData, Eval.now(0L)) { (num, eval) =>
       eval.map(_ + num)
     }
@@ -199,7 +199,6 @@ List(1, 2, 3).foldLeft(0)(_ + _)
 whereas the following generic code will use `Foldable`:
 
 ```scala mdoc:silent
-import scala.language.higherKinds
 ```
 
 ```scala mdoc

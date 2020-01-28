@@ -16,7 +16,6 @@ import cats.instances.future._ // for Semigroupal
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.language.higherKinds
 
 val futurePair = Semigroupal[Future].
   product(Future("Hello"), Future(123))
@@ -155,7 +154,6 @@ in terms of `map` and `flatMap` like so:
 
 ```scala mdoc:invisible:reset-object
 import cats.Monad
-import scala.language.higherKinds
 ```
 ```scala mdoc:silent
 import cats.syntax.flatMap._ // for flatMap
@@ -171,7 +169,6 @@ Unsurprisingly, this code is equivalent to a for comprehension:
 import cats.Monad
 import cats.syntax.flatMap._ // for flatMap
 import cats.syntax.functor._ // for map
-import scala.language.higherKinds
 ```
 ```scala mdoc:silent
 def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
@@ -197,7 +194,6 @@ import cats.Monad
 import cats.syntax.flatMap._ // for flatMap
 import cats.syntax.functor._ // for map
 import cats.instances.either._
-import scala.language.higherKinds
 def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
   for {
     a <- x

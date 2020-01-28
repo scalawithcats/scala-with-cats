@@ -106,7 +106,7 @@ setDemo.run(10).value
 val pureDemo = State.pure[Int, String]("Result")
 pureDemo.run(10).value
 
-val inspectDemo = State.inspect[Int, String](_ + "!")
+val inspectDemo = State.inspect[Int, String](x => s"${x}!")
 inspectDemo.run(10).value
 
 val modifyDemo = State.modify[Int](_ + 1)

@@ -7,8 +7,11 @@ and address annoyances using Scala's built-in `==` operator.
 
 Almost every Scala developer has written code like this before:
 
-```scala mdoc:reset-object
+```scala
 List(1, 2, 3).map(Option(_)).filter(item => item == 1)
+// warning: Option[Int] and Int are unrelated: they will most likely never compare equal
+// res: List[Option[Int]] = List()
+
 ```
 
 Ok, many of you won't have made such a simple mistake as this,
@@ -48,7 +51,7 @@ provided there is an instance `Eq[A]` in scope:
 
 Let's look at a few examples. First we import the type class:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 import cats.Eq
 ```
 

@@ -4,8 +4,9 @@ name              in ThisBuild := "scala-with-cats"
 organization      in ThisBuild := "io.underscore"
 version           in ThisBuild := "0.0.1"
 
-scalaVersion      in ThisBuild := "2.12.9"
+scalaVersion      in ThisBuild := "2.13.1"
 
+useSuperShell     in ThisBuild := false
 logLevel          in Global    := Level.Warn
 
 enablePlugins(MdocPlugin)
@@ -13,21 +14,21 @@ mdocIn  := sourceDirectory.value / "pages"
 mdocOut := target.value          / "pages"
 
 scalacOptions ++= Seq(
-  "-deprecation",
-  "-encoding", "UTF-8",
-  "-unchecked",
-  "-feature",
-  "-Xlint",
-  "-Xfatal-warnings",
-  "-Ywarn-dead-code",
-  "-Ypartial-unification",
+//   "-deprecation",
+//   "-encoding", "UTF-8",
+//   "-unchecked",
+//   "-feature",
+//   "-Xlint",
+//   "-Xfatal-warnings",
+//   "-Ywarn-dead-code",
+  "-Yrepl-class-based"
 )
 
 // resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"))
 
 libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % "2.0.0")
 
-addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
+addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
 
 lazy val pdf  = taskKey[Unit]("Build the PDF version of the book")
 lazy val html = taskKey[Unit]("Build the HTML version of the book")

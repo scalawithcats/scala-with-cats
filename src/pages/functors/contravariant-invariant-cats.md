@@ -7,7 +7,6 @@ and [`cats.Invariant`][cats.Invariant] type classes.
 Here's a simplified version of the code:
 
 ```scala mdoc:invisible
-import scala.language.higherKinds
 ```
 
 ```scala mdoc:silent
@@ -40,7 +39,7 @@ val showSymbol = Contravariant[Show].
 ```
 
 ```scala mdoc
-showSymbol.show('dave)
+showSymbol.show(Symbol("dave"))
 ```
 
 More conveniently, we can use
@@ -52,7 +51,7 @@ import cats.syntax.contravariant._ // for contramap
 ```
 
 ```scala mdoc
-showString.contramap[Symbol](_.name).show('dave)
+showString.contramap[Symbol](_.name).show(Symbol("dave"))
 ```
 
 ### Invariant in Cats
@@ -105,5 +104,5 @@ implicit val symbolMonoid: Monoid[Symbol] =
 ```scala mdoc
 Monoid[Symbol].empty
 
-'a |+| 'few |+| 'words
+Symbol("a") |+| Symbol("few") |+| Symbol("words")
 ```

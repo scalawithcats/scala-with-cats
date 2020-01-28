@@ -150,7 +150,6 @@ that come wrapped in a monad of the user's choice:
 import cats.Monad
 import cats.syntax.functor._ // for map
 import cats.syntax.flatMap._ // for flatMap
-import scala.language.higherKinds
 
 def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
   a.flatMap(x => b.map(y => x*x + y*y))
@@ -172,7 +171,6 @@ and inserting the correct implicit conversions to use our `Monad`:
 ```scala mdoc:invisible:reset-object
 import cats.Monad
 import cats.implicits._
-import scala.language.higherKinds
 ```
 ```scala mdoc:silent
 def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =

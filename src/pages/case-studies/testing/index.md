@@ -143,7 +143,6 @@ Here's the implementation:
 import scala.concurrent.Future
 ```
 ```scala mdoc:silent
-import scala.language.higherKinds
 import cats.Id
 
 trait UptimeClient[F[_]] {
@@ -164,7 +163,6 @@ we don't need to refer to the type in `TestUptimeClient`
 as `Id[Int]`---we can simply write `Int` instead:
 
 ```scala mdoc:reset-object:invisible
-import scala.language.higherKinds
 import scala.concurrent.Future
 import cats.Id
 
@@ -199,7 +197,6 @@ except we no longer need
 the call to `Future.successful`:
 
 ```scala mdoc:reset-object:invisible
-import scala.language.higherKinds
 import scala.concurrent.Future
 import cats.Id
 
@@ -271,7 +268,6 @@ to `UptimeService`.
 We can write this as an implicit parameter:
 
 ```scala mdoc:invisible:reset-object
-import scala.language.higherKinds
 import cats.syntax.traverse._  // for traverse
 import cats.instances.list._
 
@@ -294,7 +290,6 @@ class UptimeService[F[_]](client: UptimeClient[F])
 or more tersely as a context bound:
 
 ```scala mdoc:reset-object:invisible
-import scala.language.higherKinds
 import cats.Applicative
 import cats.syntax.functor._
 import cats.syntax.traverse._
@@ -335,7 +330,6 @@ import cats.instances.list._  // for Traverse
 import cats.syntax.functor._  // for map
 import cats.syntax.traverse._ // for traverse
 import scala.concurrent.Future
-import scala.language.higherKinds
 
 trait UptimeClient[F[_]] {
   def getUptime(hostname: String): F[Int]

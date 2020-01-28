@@ -256,7 +256,6 @@ the next context in the sequence.
 Here is a simplified version of the `Monad` type class in Cats:
 
 ```scala mdoc:silent
-import scala.language.higherKinds
 
 trait Monad[F[_]] {
   def pure[A](value: A): F[A]
@@ -302,7 +301,6 @@ We can define `map` in the same way for every monad
 using the existing methods, `flatMap` and `pure`:
 
 ```scala mdoc:silent:reset-object
-import scala.language.higherKinds
 
 trait Monad[F[_]] {
   def pure[A](a: A): F[A]
@@ -341,7 +339,6 @@ and the `pure` function of type `A => F[A]`.
 Combining these gives us our result:
 
 ```scala mdoc:invisible:reset-object
-import scala.language.higherKinds
 ```
 ```scala mdoc
 trait Monad[F[_]] {

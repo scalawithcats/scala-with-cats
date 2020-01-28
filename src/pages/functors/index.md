@@ -50,7 +50,7 @@ on the contents of an initial data structure:
 List(1, 2, 3).
   map(n => n + 1).
   map(n => n * 2).
-  map(n => n + "!")
+  map(n => s"${n}!")
 ```
 
 We should think of `map` not as an iteration pattern,
@@ -106,7 +106,7 @@ val future: Future[String] =
   Future(123).
     map(n => n + 1).
     map(n => n * 2).
-    map(n => n + "!")
+    map(n => s"${n}!")
 ```
 
 ```scala mdoc
@@ -240,7 +240,7 @@ val func =
   ((x: Int) => x.toDouble).
     map(x => x + 1).
     map(x => x * 2).
-    map(x => x + "!")
+    map(x => s"${x}!")
 ```
 
 ```scala mdoc
@@ -293,7 +293,6 @@ package cats
 ```
 
 ```scala mdoc:silent
-import scala.language.higherKinds
 
 trait Functor[F[_]] {
   def map[A, B](fa: F[A])(f: A => B): F[B]
@@ -397,7 +396,6 @@ to suppress warnings from the compiler.
 We can either do this with a "language import" as above:
 
 ```scala
-import scala.language.higherKinds
 ```
 
 or by adding the following to `scalacOptions` in `build.sbt`:

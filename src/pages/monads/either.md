@@ -21,7 +21,7 @@ val either1: Either[String, Int] = Right(10)
 val either2: Either[String, Int] = Right(32)
 ```
 
-```scala mdoc
+```scala
 for {
   a <- either1.right
   b <- either2.right

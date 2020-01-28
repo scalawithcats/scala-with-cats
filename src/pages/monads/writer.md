@@ -286,7 +286,7 @@ With these in scope, the definition of `factorial` becomes:
 
 ```scala mdoc:invisible
 def slowly[A](body: => A) =
-  try body finally Thread.sleep(100)
+  try body finally Thread.sleep(10)
 ```
 ```scala mdoc:silent
 def factorial(n: Int): Logged[Int] =
@@ -312,16 +312,25 @@ We can run several `factorials` in parallel as follows,
 capturing their logs independently
 without fear of interleaving:
 
-```scala mdoc:invisible
-import scala.concurrent._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
+```scala
+Await.result(Future.sequence(Vector(
+  Future(factorial(3)),
+  Future(factorial(3))
+)), 5.seconds)
+// fact 0 1
+// fact 0 1
+// fact 1 1
+// fact 1 1
+// fact 2 2
+// fact 2 2
+// fact 3 6
+// fact 3 6
+// res14: scala.collection.immutable.Vector[Int] =
+//   Vector(120, 120)
 ```
-```scala mdoc
-val Vector((logA, ansA), (logB, ansB)) =
-  Await.result(Future.sequence(Vector(
-    Future(factorial(3).run),
-    Future(factorial(5).run)
-  )), 10.seconds)
-```
+
+<!--
+HACK: There is a deadlock in the REPL that prevents the code above from working
+(see https://github.com/scala/bug/issues/9076) so i gone done hacked it.
+-->
 </div>

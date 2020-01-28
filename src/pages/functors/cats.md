@@ -13,7 +13,6 @@ As usual, default instances are arranged by type in
 the [`cats.instances`][cats.instances] package:
 
 ```scala mdoc:silent:reset-object
-import scala.language.higherKinds
 import cats.Functor
 import cats.instances.list._   // for Functor
 import cats.instances.option._ // for Functor
@@ -61,7 +60,7 @@ import cats.syntax.functor._     // for map
 ```scala mdoc:silent
 val func1 = (a: Int) => a + 1
 val func2 = (a: Int) => a * 2
-val func3 = (a: Int) => a + "!"
+val func3 = (a: Int) => s"${a}!"
 val func4 = func1.map(func2).map(func3)
 ```
 
