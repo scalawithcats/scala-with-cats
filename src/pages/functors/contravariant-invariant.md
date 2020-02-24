@@ -390,11 +390,11 @@ If `B` is a subtype of `A`,
 we can always convert a `B` to an `A`.
 
 Equivalently we could say that `B` is a subtype of `A`
-if there exists a function `A => B`.
+if there exists a function `B => A`.
 A standard covariant functor captures exactly this.
 If `F` is a covariant functor,
-wherever we have an `F[A]` and a conversion `A => B`
-we can always convert to an `F[B]`.
+wherever we have an `F[B]` and a conversion `B => A`
+we can always convert to an `F[A]`.
 
 A contravariant functor captures the opposite case.
 If `F` is a contravariant functor,
