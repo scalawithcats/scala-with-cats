@@ -7,8 +7,11 @@ and address annoyances using Scala's built-in `==` operator.
 
 Almost every Scala developer has written code like this before:
 
-```tut:book
+```scala
 List(1, 2, 3).map(Option(_)).filter(item => item == 1)
+// warning: Option[Int] and Int are unrelated: they will most likely never compare equal
+// res: List[Option[Int]] = List()
+
 ```
 
 Ok, many of you won't have made such a simple mistake as this,
@@ -48,13 +51,13 @@ provided there is an instance `Eq[A]` in scope:
 
 Let's look at a few examples. First we import the type class:
 
-```tut:book:silent
+```scala mdoc:silent:reset-object
 import cats.Eq
 ```
 
 Now let's grab an instance for `Int`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.int._ // for Eq
 
 val eqInt = Eq[Int]
@@ -62,7 +65,7 @@ val eqInt = Eq[Int]
 
 We can use `eqInt` directly to test for equality:
 
-```tut:book
+```scala mdoc
 eqInt.eqv(123, 123)
 eqInt.eqv(123, 234)
 ```
@@ -71,25 +74,25 @@ Unlike Scala's `==` method,
 if we try to compare objects of different types using `eqv`
 we get a compile error:
 
-```tut:book:fail
+```scala mdoc:fail
 eqInt.eqv(123, "234")
 ```
 
 We can also import the interface syntax in [`cats.syntax.eq`][cats.syntax.eq]
 to use the `===` and `=!=` methods:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.eq._ // for === and =!=
 ```
 
-```tut:book
+```scala mdoc
 123 === 123
 123 =!= 234
 ```
 
 Again, comparing values of different types causes a compiler error:
 
-```tut:book:fail
+```scala mdoc:fail
 123 === "123"
 ```
 
@@ -99,14 +102,14 @@ Now for a more interesting example---`Option[Int]`.
 To compare values of type `Option[Int]`
 we need to import instances of `Eq` for `Option` as well as `Int`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.int._    // for Eq
 import cats.instances.option._ // for Eq
 ```
 
 Now we can try some comparisons:
 
-```tut:fail:book
+```scala mdoc:fail
 Some(1) === None
 ```
 
@@ -115,24 +118,24 @@ We have `Eq` instances in scope for `Int` and `Option[Int]`
 but the values we are comparing are of type `Some[Int]`.
 To fix the issue we have to re-type the arguments as `Option[Int]`:
 
-```tut:book
+```scala mdoc
 (Some(1) : Option[Int]) === (None : Option[Int])
 ```
 
 We can do this in a friendlier fashion using
 the `Option.apply` and `Option.empty` methods from the standard library:
 
-```tut:book
+```scala mdoc
 Option(1) === Option.empty[Int]
 ```
 
 or using special syntax from [`cats.syntax.option`][cats.syntax.option]:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.option._ // for some and none
 ```
 
-```tut:book
+```scala mdoc
 1.some === none[Int]
 1.some =!= none[Int]
 ```
@@ -142,24 +145,24 @@ import cats.syntax.option._ // for some and none
 We can define our own instances of `Eq` using the `Eq.instance` method,
 which accepts a function of type `(A, A) => Boolean` and returns an `Eq[A]`:
 
-```tut:book:silent
+```scala mdoc:silent
 import java.util.Date
 import cats.instances.long._ // for Eq
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 implicit val dateEq: Eq[Date] =
   Eq.instance[Date] { (date1, date2) =>
     date1.getTime === date2.getTime
   }
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 val x = new Date() // now
 val y = new Date() // a bit later than now
 ```
 
-```tut:book
+```scala mdoc
 x === x
 x === y
 ```
@@ -168,13 +171,13 @@ x === y
 
 Implement an instance of `Eq` for our running `Cat` example:
 
-```tut:book:silent
+```scala mdoc:silent
 final case class Cat(name: String, age: Int, color: String)
 ```
 
 Use this to compare the following pairs of objects for equality and inequality:
 
-```tut:book:silent
+```scala mdoc:silent
 val cat1 = Cat("Garfield",   38, "orange and black")
 val cat2 = Cat("Heathcliff", 33, "orange and black")
 
@@ -188,21 +191,21 @@ In this exercise we'll be using the `Eq` type class
 and the `Eq` interface syntax.
 We'll bring instances of `Eq` into scope as we need them below:
 
-```tut:book:silent
+```scala mdoc:silent:reset-object
 import cats.Eq
 import cats.syntax.eq._ // for ===
 ```
 
 Our `Cat` class is the same as ever:
 
-```scala
+```scala mdoc:silent
 final case class Cat(name: String, age: Int, color: String)
 ```
 
 We bring the `Eq` instances for `Int` and `String`
 into scope for the implementation of `Eq[Cat]`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.int._    // for Eq
 import cats.instances.string._ // for Eq
 
@@ -216,7 +219,7 @@ implicit val catEqual: Eq[Cat] =
 
 Finally, we test things out in a sample application:
 
-```tut:book
+```scala mdoc
 val cat1 = Cat("Garfield",   38, "orange and black")
 val cat2 = Cat("Heathcliff", 32, "orange and black")
 
@@ -224,11 +227,11 @@ cat1 === cat2
 cat1 =!= cat2
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.option._ // for Eq
 ```
 
-```tut:book
+```scala mdoc
 val optionCat1 = Option(cat1)
 val optionCat2 = Option.empty[Cat]
 

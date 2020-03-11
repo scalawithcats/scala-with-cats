@@ -27,14 +27,14 @@ trait Show[A] {
 The type classes in Cats are defined in the [`cats`][cats.package] package.
 We can import `Show` directly from this package:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Show
 ```
 
 The companion object of every Cats type class has an `apply` method
 that locates an instance for any type we specify:
 
-```tut:book:fail
+```scala mdoc:fail
 val showInt = Show.apply[Int]
 ```
 
@@ -61,7 +61,7 @@ for a complete list of available imports.
 
 Let's import the instances of `Show` for `Int` and `String`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.int._    // for Show
 import cats.instances.string._ // for Show
 
@@ -72,7 +72,7 @@ val showString: Show[String] = Show.apply[String]
 That's better! We now have access to two instances of `Show`,
 and can use them to print `Ints` and `Strings`:
 
-```tut:book
+```scala mdoc
 val intAsString: String =
   showInt.show(123)
 
@@ -87,11 +87,11 @@ importing the *interface syntax* from [`cats.syntax.show`][cats.syntax.show].
 This adds an extension method called `show`
 to any type for which we have an instance of `Show` in scope:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.show._ // for show
 ```
 
-```tut:book
+```scala mdoc
 val shownInt = 123.show
 
 val shownString = "abc".show
@@ -124,7 +124,7 @@ reverting to more specific imports only
 if they encounter naming conflicts
 or problems with ambiguous implicits:
 
-```tut:book:silent
+```scala mdoc:silent:reset-object
 import cats._
 import cats.implicits._
 ```
@@ -134,7 +134,7 @@ import cats.implicits._
 We can define an instance of `Show`
 simply by implementing the trait for a given type:
 
-```tut:book:silent
+```scala mdoc:silent
 import java.util.Date
 
 implicit val dateShow: Show[Date] =
@@ -142,6 +142,9 @@ implicit val dateShow: Show[Date] =
     def show(date: Date): String =
       s"${date.getTime}ms since the epoch."
   }
+```
+```scala mdoc
+new Date().show
 ```
 
 However, Cats also provides
@@ -164,7 +167,11 @@ object Show {
 These allow us to quickly construct instances
 with less ceremony than defining them from scratch:
 
-```tut:book:silent
+```scala mdoc:reset:invisible
+import cats.Show
+import java.util.Date
+```
+```scala mdoc:silent
 implicit val dateShow: Show[Date] =
   Show.show(date => s"${date.getTime}ms since the epoch.")
 ```
@@ -186,7 +193,7 @@ the `Show` type class,
 the instances for `Int` and `String`,
 and the interface syntax:
 
-```tut:book:silent
+```scala mdoc:reset:silent
 import cats.Show
 import cats.instances.int._    // for Show
 import cats.instances.string._ // for Show
@@ -195,15 +202,15 @@ import cats.syntax.show._      // for show
 
 Our definition of `Cat` remains the same:
 
-```tut:book:silent
-final case class Cat(name: String, age: Int, color: String)
+```scala mdoc:silent
+case class Cat(name: String, age: Int, color: String)
 ```
 
 In the companion object we replace our `Printable` with an instance of `Show`
 using one of the definition helpers discussed above:
 
-```tut:book:silent
-implicit val catShow = Show.show[Cat] { cat =>
+```scala mdoc:silent
+implicit val catShow: Show[Cat] = Show.show[Cat] { cat =>
   val name  = cat.name.show
   val age   = cat.age.show
   val color = cat.color.show
@@ -213,7 +220,7 @@ implicit val catShow = Show.show[Cat] { cat =>
 
 Finally, we use the `Show` interface syntax to print our instance of `Cat`:
 
-```tut:book
+```scala mdoc
 println(Cat("Garfield", 38, "ginger and black").show)
 ```
 </div>

@@ -18,11 +18,11 @@ and runs our program in the order specified.
 We can create a `Reader[A, B]` from a function `A => B`
 using the `Reader.apply` constructor:
 
-```tut:book:silent
+```scala mdoc:silent:reset-object
 import cats.data.Reader
 ```
 
-```tut:book
+```scala mdoc
 case class Cat(name: String, favoriteFood: String)
 
 val catName: Reader[Cat, String] =
@@ -33,7 +33,7 @@ We can extract the function again
 using the `Reader's` `run` method
 and call it using `apply` as usual:
 
-```tut:book
+```scala mdoc
 catName.run(Cat("Garfield", "lasagne"))
 ```
 
@@ -52,12 +52,12 @@ and then call `run` to inject the config at the end.
 The `map` method simply extends the computation in the `Reader`
 by passing its result through a function:
 
-```tut:book:silent
+```scala mdoc:silent
 val greetKitty: Reader[Cat, String] =
   catName.map(name => s"Hello ${name}")
 ```
 
-```tut:book
+```scala mdoc
 greetKitty.run(Cat("Heathcliff", "junk food"))
 ```
 
@@ -66,7 +66,7 @@ It allows us to combine readers that depend on the same input type.
 To illustrate this, let's extend our greeting example
 to also feed the cat:
 
-```tut:book:silent
+```scala mdoc:silent
 val feedKitty: Reader[Cat, String] =
   Reader(cat => s"Have a nice bowl of ${cat.favoriteFood}")
 
@@ -77,7 +77,7 @@ val greetAndFeed: Reader[Cat, String] =
   } yield s"$greet. $feed."
 ```
 
-```tut:book
+```scala mdoc
 greetAndFeed(Cat("Garfield", "lasagne"))
 greetAndFeed(Cat("Heathcliff", "junk food"))
 ```
@@ -91,8 +91,8 @@ of a simple login system.
 Our configuration will consist of two databases:
 a list of valid users and a list of their passwords:
 
-```tut:book:silent
-case class Db(
+```scala mdoc:silent
+final case class Db(
   usernames: Map[Int, String],
   passwords: Map[String, String]
 )
@@ -106,7 +106,7 @@ This will make the rest of our code shorter.
 Our type alias fixes the `Db` type
 but leaves the result type flexible:
 
-```tut:book:silent
+```scala mdoc:silent
 type DbReader[A] = Reader[Db, A]
 ```
 </div>
@@ -116,7 +116,7 @@ look up the username for an `Int` user ID, and
 look up the password for a `String` username.
 The type signatures should be as follows:
 
-```tut:book:silent
+```scala mdoc:silent
 def findUsername(userId: Int): DbReader[Option[String]] =
   ???
 
@@ -131,7 +131,15 @@ Remember: the idea is to leave injecting the configuration until last.
 This means setting up functions that accept the config as a parameter
 and check it against the concrete user info we have been given:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+import cats.data.Reader
+final case class Db(
+  usernames: Map[Int, String],
+  passwords: Map[String, String]
+)
+type DbReader[A] = Reader[Db, A]
+```
+```scala mdoc:silent
 def findUsername(userId: Int): DbReader[Option[String]] =
   Reader(db => db.usernames.get(userId))
 
@@ -147,7 +155,7 @@ Finally create a `checkLogin` method
 to check the password for a given user ID.
 The type signature should be as follows:
 
-```tut:book:silent
+```scala mdoc:silent
 def checkLogin(
       userId: Int,
       password: String): DbReader[Boolean] =
@@ -160,7 +168,22 @@ here we use `flatMap` to chain `findUsername` and `checkPassword`.
 We use `pure` to lift a `Boolean` to a `DbReader[Boolean]`
 when the username is not found:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+import cats.data.Reader
+final case class Db(
+  usernames: Map[Int, String],
+  passwords: Map[String, String]
+)
+type DbReader[A] = Reader[Db, A]
+def findUsername(userId: Int): DbReader[Option[String]] =
+  Reader(db => db.usernames.get(userId))
+
+def checkPassword(
+      username: String,
+      password: String): DbReader[Boolean] =
+  Reader(db => db.passwords.get(username).contains(password))
+```
+```scala mdoc:silent
 import cats.syntax.applicative._ // for pure
 
 def checkLogin(
@@ -179,7 +202,7 @@ def checkLogin(
 
 You should be able to use `checkLogin` as follows:
 
-```tut:book:silent
+```scala mdoc:silent
 val users = Map(
   1 -> "dade",
   2 -> "kate",
@@ -195,7 +218,7 @@ val passwords = Map(
 val db = Db(users, passwords)
 ```
 
-```tut:book
+```scala mdoc
 checkLogin(1, "zerocool").run(db)
 checkLogin(4, "davinci").run(db)
 ```

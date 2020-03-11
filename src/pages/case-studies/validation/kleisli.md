@@ -63,7 +63,7 @@ Here is a simple example using `Kleisli`
 to transform an integer into a list of integers
 through three steps:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.data.Kleisli
 import cats.instances.list._ // for Monad
 ```
@@ -71,7 +71,7 @@ import cats.instances.list._ // for Monad
 These steps each transform an input `Int`
 into an output of type `List[Int]`:
 
-```tut:book:silent
+```scala mdoc:silent
 val step1: Kleisli[List, Int, Int] =
   Kleisli(x => List(x + 1, x - 1))
 
@@ -85,7 +85,7 @@ val step3: Kleisli[List, Int, Int] =
 We can combine the steps into a single pipeline
 that combines the underlying `Lists` using `flatMap`:
 
-```tut:book:silent
+```scala mdoc:silent
 val pipeline = step1 andThen step2 andThen step3
 ```
 
@@ -94,7 +94,7 @@ and returns eight outputs,
 each produced by a different combination
 of transformations from `step1`, `step2`, and `step3`:
 
-```tut:book
+```scala mdoc
 pipeline.run(20)
 ```
 
@@ -121,12 +121,10 @@ Leave the rest of the code in `Predicate` the same.
 Here's an abbreviated definition of `run`.
 Like `apply`, the method must accept an implicit `Semigroup`:
 
-```tut:book:silent
+```scala
 import cats.Semigroup
 import cats.data.Validated
-```
 
-```tut:book:silent
 sealed trait Predicate[E, A] {
   def run(implicit s: Semigroup[E]): A => Either[E, A] =
     (a: A) => this(a).toEither
@@ -170,7 +168,7 @@ def checkPred[A](pred: Predicate[Errors, A]): Check[A, A] =
 ```
 
 <div class="solution">
-```tut:book:invisible:reset
+```scala mdoc:invisible:reset-object
 // Foreword declarations
 
 import cats.Semigroup
@@ -179,58 +177,56 @@ import cats.syntax.semigroup._ // for |+|
 import cats.data.Validated
 import cats.data.Validated.{Valid, Invalid}
 
-object wrapper {
-  sealed trait Predicate[E, A] {
-    import Predicate._
+sealed trait Predicate[E, A] {
+  import Predicate._
 
-    def and(that: Predicate[E, A]): Predicate[E, A] =
-      And(this, that)
+  def and(that: Predicate[E, A]): Predicate[E, A] =
+    And(this, that)
 
-    def or(that: Predicate[E, A]): Predicate[E, A] =
-      Or(this, that)
+  def or(that: Predicate[E, A]): Predicate[E, A] =
+    Or(this, that)
 
-    def run(implicit s: Semigroup[E]): A => Either[E, A] =
-      (a: A) => this(a).toEither
+  def run(implicit s: Semigroup[E]): A => Either[E, A] =
+    (a: A) => this(a).toEither
 
-    def apply(a: A)(implicit s: Semigroup[E]): Validated[E, A] =
-      this match {
-        case Pure(func) =>
-          func(a)
+  def apply(a: A)(implicit s: Semigroup[E]): Validated[E, A] =
+    this match {
+      case Pure(func) =>
+        func(a)
 
-        case And(left, right) =>
-          (left(a), right(a)).mapN((_, _) => a)
+      case And(left, right) =>
+        (left(a), right(a)).mapN((_, _) => a)
 
-        case Or(left, right) =>
-          left(a) match {
-            case Valid(a1)   => Valid(a)
-            case Invalid(e1) =>
-              right(a) match {
-                case Valid(a2)   => Valid(a)
-                case Invalid(e2) => Invalid(e1 |+| e2)
-              }
-          }
-      }
-  }
+      case Or(left, right) =>
+        left(a) match {
+          case Valid(_)   => Valid(a)
+          case Invalid(e1) =>
+            right(a) match {
+              case Valid(_)   => Valid(a)
+              case Invalid(e2) => Invalid(e1 |+| e2)
+            }
+        }
+    }
+}
 
-  object Predicate {
-    final case class And[E, A](
-      left: Predicate[E, A],
-      right: Predicate[E, A]) extends Predicate[E, A]
+object Predicate {
+  final case class And[E, A](
+    left: Predicate[E, A],
+    right: Predicate[E, A]) extends Predicate[E, A]
 
-    final case class Or[E, A](
-      left: Predicate[E, A],
-      right: Predicate[E, A]) extends Predicate[E, A]
+  final case class Or[E, A](
+    left: Predicate[E, A],
+    right: Predicate[E, A]) extends Predicate[E, A]
 
-    final case class Pure[E, A](
-      func: A => Validated[E, A]) extends Predicate[E, A]
+  final case class Pure[E, A](
+    func: A => Validated[E, A]) extends Predicate[E, A]
 
-    def apply[E, A](f: A => Validated[E, A]): Predicate[E, A] =
-      Pure(f)
+  def apply[E, A](f: A => Validated[E, A]): Predicate[E, A] =
+    Pure(f)
 
-    def lift[E, A](error: E, func: A => Boolean): Predicate[E, A] =
-      Pure(a => if(func(a)) Valid(a) else Invalid(error))
-  }
-}; import wrapper._
+  def lift[E, A](error: E, func: A => Boolean): Predicate[E, A] =
+    Pure(a => if(func(a)) Valid(a) else Invalid(error))
+}
 ```
 
 Working around limitations of type inference
@@ -239,16 +235,15 @@ Working out when to convert between
 `Predicates`, functions, and `Validated`, and `Either`
 simplifies things, but the process is still complex:
 
-```tut:book:silent
-import cats.data.{Kleisli, NonEmptyList, Validated}
+```scala mdoc:silent
+import cats.data.{Kleisli, NonEmptyList}
 import cats.instances.either._   // for Semigroupal
-import cats.instances.list._     // for Monad
 ```
 
 Here is the preamble we suggested in
 the main text of the case study:
 
-```tut:book:silent
+```scala mdoc:silent
 type Errors = NonEmptyList[String]
 
 def error(s: String): NonEmptyList[String] =
@@ -268,7 +263,7 @@ def checkPred[A](pred: Predicate[Errors, A]): Check[A, A] =
 Our base predicate definitions are
 essenitally unchanged:
 
-```tut:book:silent
+```scala mdoc:silent
 def longerThan(n: Int): Predicate[Errors, String] =
   Predicate.lift(
     error(s"Must be longer than $n characters"),
@@ -295,7 +290,7 @@ are slightly different in that
 we make use of `check()` and `checkPred()`
 in different situations:
 
-```tut:book:silent
+```scala mdoc:silent
 val checkUsername: Check[String, String] =
   checkPred(longerThan(3) and alphanumeric)
 
@@ -304,7 +299,7 @@ val splitEmail: Check[String, (String, String)] =
     case Array(name, domain) =>
       Right((name, domain))
 
-    case other =>
+    case _ =>
       Left(error("Must contain a single @ character"))
   })
 
@@ -327,7 +322,7 @@ val checkEmail: Check[String, String] =
 Finally, we can see that our `createUser`
 example works as expected using `Kleisli`:
 
-```tut:book:silent
+```scala mdoc:silent
 final case class User(username: String, email: String)
 
 def createUser(
@@ -338,9 +333,9 @@ def createUser(
 ).mapN(User)
 ```
 
-```tut:book
+```scala mdoc
 createUser("Noel", "noel@underscore.io")
-createUser("", "dave@underscore@io")
+createUser("", "dave@underscore.io@io")
 ```
 </div>
 

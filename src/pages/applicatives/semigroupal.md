@@ -31,12 +31,12 @@ While `Semigroup` allows us to join values,
 `Semigroupal` allows us to join contexts.
 Let's join some `Options` as an example:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Semigroupal
 import cats.instances.option._ // for Semigroupal
 ```
 
-```tut:book
+```scala mdoc
 Semigroupal[Option].product(Some(123), Some("abc"))
 ```
 
@@ -45,7 +45,7 @@ we end up with a tuple of the values within.
 If either parameter evaluates to `None`,
 the entire result is `None`:
 
-```tut:book
+```scala mdoc
 Semigroupal[Option].product(None, Some("abc"))
 Semigroupal[Option].product(Some(123), None)
 ```
@@ -57,11 +57,11 @@ a set of methods on top of `product`.
 For example, the methods `tuple2` through `tuple22`
 generalise `product` to different arities:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.option._ // for Semigroupal
 ```
 
-```tut:book
+```scala mdoc
 Semigroupal.tuple3(Option(1), Option(2), Option(3))
 Semigroupal.tuple3(Option(1), Option(2), Option.empty[Int])
 ```
@@ -70,7 +70,7 @@ The methods `map2` through `map22`
 apply a user-specified function
 to the values inside 2 to 22 contexts:
 
-```tut:book
+```scala mdoc
 Semigroupal.map3(Option(1), Option(2), Option(3))(_ + _ + _)
 
 Semigroupal.map2(Option(1), Option.empty[Int])(_ + _)
@@ -98,7 +98,7 @@ that provides a shorthand for the methods described above.
 We import the syntax from [`cats.syntax.apply`][cats.syntax.apply].
 Here's an example:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.option._ // for Semigroupal
 import cats.syntax.apply._     // for tupled and mapN
 ```
@@ -107,14 +107,14 @@ The `tupled` method is implicitly added to the tuple of `Options`.
 It uses the `Semigroupal` for `Option` to zip the values inside the
 `Options`, creating a single `Option` of a tuple:
 
-```tut:book
+```scala mdoc
 (Option(123), Option("abc")).tupled
 ```
 
 We can use the same trick on tuples of up to 22 values.
 Cats defines a separate `tupled` method for each arity:
 
-```tut:book
+```scala mdoc
 (Option(123), Option("abc"), Option(true)).tupled
 ```
 
@@ -122,11 +122,11 @@ In addition to `tupled`, Cats' apply syntax provides
 a method called `mapN` that accepts an implicit `Functor`
 and a function of the correct arity to combine the values:
 
-```tut:book:silent
+```scala mdoc:silent
 case class Cat(name: String, born: Int, color: String)
 ```
 
-```tut:book
+```scala mdoc
 (
   Option("Garfield"),
   Option(1978),
@@ -143,15 +143,15 @@ If we supply a function that
 accepts the wrong number or types of parameters,
 we get a compile error:
 
-```tut:book
+```scala mdoc
 val add: (Int, Int) => Int = (a, b) => a + b
 ```
 
-```tut:book:fail
+```scala mdoc:fail
 (Option(1), Option(2), Option(3)).mapN(add)
 ```
 
-```tut:book:fail
+```scala mdoc:fail
 (Option("cats"), Option(true)).mapN(add)
 ```
 
@@ -163,7 +163,7 @@ and [Invariant](#invariant) functors.
 For example, we can combine `Monoids` using `Invariant`.
 Here's an example:
 
-```tut:book:silent
+```scala mdoc:silent:reset-object
 import cats.Monoid
 import cats.instances.int._        // for Monoid
 import cats.instances.invariant._  // for Semigroupal
@@ -171,7 +171,7 @@ import cats.instances.list._       // for Monoid
 import cats.instances.string._     // for Monoid
 import cats.syntax.apply._         // for imapN
 
-case class Cat(
+final case class Cat(
   name: String,
   yearOfBirth: Int,
   favoriteFoods: List[String]
@@ -193,13 +193,13 @@ implicit val catMonoid: Monoid[Cat] = (
 Our `Monoid` allows us to create "empty" `Cats`,
 and add `Cats` together using the syntax from Chapter [@sec:monoids]:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.semigroup._ // for |+|
 
 val garfield   = Cat("Garfield", 1978, List("Lasagne"))
 val heathcliff = Cat("Heathcliff", 1988, List("Junk Food"))
 ```
 
-```tut:book
+```scala mdoc
 garfield |+| heathcliff
 ```

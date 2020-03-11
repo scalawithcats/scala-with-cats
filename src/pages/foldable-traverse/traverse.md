@@ -15,7 +15,7 @@ These methods provide `Future`-specific implementations of the traverse pattern.
 As an example, suppose we have a list of server hostnames
 and a method to poll a host for its uptime:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -38,7 +38,7 @@ We need to reduce the results to a single `Future`
 to get something we can block on.
 Let's start by doing this manually using a fold:
 
-```tut:book:silent
+```scala mdoc:silent
 val allUptimes: Future[List[Int]] =
   hostnames.foldLeft(Future(List.empty[Int])) {
     (accum, host) =>
@@ -50,7 +50,7 @@ val allUptimes: Future[List[Int]] =
   }
 ```
 
-```tut:book
+```scala mdoc
 Await.result(allUptimes, 1.second)
 ```
 
@@ -61,12 +61,25 @@ because of the need to create and combine `Futures` at every iteration.
 We can improve on things greatly using `Future.traverse`,
 which is tailor-made for this pattern:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+import scala.concurrent._
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+
+val hostnames = List(
+  "alpha.example.com",
+  "beta.example.com",
+  "gamma.demo.com"
+)
+def getUptime(hostname: String): Future[Int] =
+  Future(hostname.length * 60) // just for demonstration
+```
+```scala mdoc:silent
 val allUptimes: Future[List[Int]] =
   Future.traverse(hostnames)(getUptime)
 ```
 
-```tut:book
+```scala mdoc
 Await.result(allUptimes, 1.second)
 ```
 
@@ -136,13 +149,13 @@ If we squint, we'll see that we can rewrite `traverse`
 in terms of an `Applicative`.
 Our accumulator from the example above:
 
-```tut:book:silent
+```scala mdoc:silent
 Future(List.empty[Int])
 ```
 
 is equivalent to `Applicative.pure`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Applicative
 import cats.instances.future._   // for Applicative
 import cats.syntax.applicative._ // for pure
@@ -152,7 +165,7 @@ List.empty[Int].pure[Future]
 
 Our combinator, which used to be this:
 
-```tut:book:silent
+```scala mdoc:silent
 def oldCombine(
   accum : Future[List[Int]],
   host  : String
@@ -167,7 +180,7 @@ def oldCombine(
 
 is now equivalent to `Semigroupal.combine`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.apply._ // for mapN
 
 // Combining accumulator and hostname using an Applicative:
@@ -179,8 +192,7 @@ def newCombine(accum: Future[List[Int]],
 By substituting these snippets back into the definition of `traverse`
 we can generalise it to to work with any `Applicative`:
 
-```tut:book:silent
-import scala.language.higherKinds
+```scala mdoc:silent
 
 def listTraverse[F[_]: Applicative, A, B]
       (list: List[A])(func: A => F[B]): F[List[B]] =
@@ -195,11 +207,11 @@ def listSequence[F[_]: Applicative, B]
 
 We can use `listTraverse` to re-implement our uptime example:
 
-```tut:book:silent
+```scala mdoc:silent
 val totalUptime = listTraverse(hostnames)(getUptime)
 ```
 
-```tut:book
+```scala mdoc
 Await.result(totalUptime, 1.second)
 ```
 
@@ -210,7 +222,7 @@ as shown in the following exercises.
 
 What is the result of the following?
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.vector._ // for Applicative
 
 listSequence(List(Vector(1, 2), Vector(3, 4)))
@@ -226,14 +238,14 @@ so its semigroupal `combine` function is based on `flatMap`.
 We'll end up with a `Vector` of `Lists`
 of all the possible combinations of `List(1, 2)` and `List(3, 4)`:
 
-```tut:book
+```scala mdoc
 listSequence(List(Vector(1, 2), Vector(3, 4)))
 ```
 </div>
 
 What about a list of three parameters?
 
-```tut:book:silent
+```scala mdoc:silent
 listSequence(List(Vector(1, 2), Vector(3, 4), Vector(5, 6)))
 ```
 
@@ -241,7 +253,7 @@ listSequence(List(Vector(1, 2), Vector(3, 4), Vector(5, 6)))
 With three items in the input list, we end up with combinations of three `Ints`:
 one from the first item, one from the second, and one from the third:
 
-```tut:book
+```scala mdoc
 listSequence(List(Vector(1, 2), Vector(3, 4), Vector(5, 6)))
 ```
 </div>
@@ -250,7 +262,7 @@ listSequence(List(Vector(1, 2), Vector(3, 4), Vector(5, 6)))
 
 Here's an example that uses `Options`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.option._ // for Applicative
 
 def process(inputs: List[Int]) =
@@ -259,7 +271,7 @@ def process(inputs: List[Int]) =
 
 What is the return type of this method? What does it produce for the following inputs?
 
-```tut:book:silent
+```scala mdoc:silent
 process(List(2, 4, 6))
 process(List(1, 2, 3))
 ```
@@ -273,7 +285,7 @@ The semantics are therefore fail-fast error handling:
 if all inputs are even, we get a list of outputs.
 Otherwise we get `None`:
 
-```tut:book
+```scala mdoc
 process(List(2, 4, 6))
 process(List(1, 2, 3))
 ```
@@ -283,7 +295,17 @@ process(List(1, 2, 3))
 
 Finally, here is an example that uses `Validated`:
 
-```tut:book:silent
+```scala mdoc:invisible:reset
+import cats.Applicative
+import cats.syntax.applicative._ // for pure
+import cats.syntax.apply._ // for mapN
+def listTraverse[F[_]: Applicative, A, B]
+      (list: List[A])(func: A => F[B]): F[List[B]] =
+  list.foldLeft(List.empty[B].pure[F]) { (accum, item) =>
+    (accum, func(item)).mapN(_ :+ _)
+  }
+```
+```scala mdoc:silent
 import cats.data.Validated
 import cats.instances.list._ // for Monoid
 
@@ -301,7 +323,7 @@ def process(inputs: List[Int]): ErrorsOr[List[Int]] =
 
 What does this method produce for the following inputs?
 
-```tut:book:silent
+```scala mdoc:silent
 process(List(2, 4, 6))
 process(List(1, 2, 3))
 ```
@@ -313,7 +335,7 @@ The semantics for semigroupal `combine` on validated are accumulating error hand
 so the result is either a list of even `Ints`,
 or a list of errors detailing which `Ints` failed the test:
 
-```tut:book
+```scala mdoc
 process(List(2, 4, 6))
 process(List(1, 2, 3))
 ```

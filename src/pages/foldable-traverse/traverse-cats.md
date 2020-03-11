@@ -27,7 +27,7 @@ We can summon instances as usual using `Traverse.apply`
 and use the `traverse` and `sequence` methods
 as described in the previous section:
 
-```tut:book:invisible
+```scala mdoc:invisible
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -42,7 +42,7 @@ def getUptime(hostname: String): Future[Int] =
   Future(hostname.length * 60)
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Traverse
 import cats.instances.future._ // for Applicative
 import cats.instances.list._   // for Traverse
@@ -51,29 +51,29 @@ val totalUptime: Future[List[Int]] =
   Traverse[List].traverse(hostnames)(getUptime)
 ```
 
-```tut:book
+```scala mdoc
 Await.result(totalUptime, 1.second)
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 val numbers = List(Future(1), Future(2), Future(3))
 
 val numbers2: Future[List[Int]] =
   Traverse[List].sequence(numbers)
 ```
 
-```tut:book
+```scala mdoc
 Await.result(numbers2, 1.second)
 ```
 
 There are also syntax versions of the methods,
 imported via [`cats.syntax.traverse`][cats.syntax.traverse]:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.traverse._ // for sequence and traverse
 ```
 
-```tut:book
+```scala mdoc
 Await.result(hostnames.traverse(getUptime), 1.second)
 Await.result(numbers.sequence, 1.second)
 ```

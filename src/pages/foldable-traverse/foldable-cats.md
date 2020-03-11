@@ -5,34 +5,34 @@ Instances of `Foldable` define these two methods
 and inherit a host of derived methods.
 Cats provides out-of-the-box instances of `Foldable`
 for a handful of Scala data types:
-`List`, `Vector`, `Stream`, and `Option`.
+`List`, `Vector`, `LazyList`, and `Option`.
 
 We can summon instances as usual using `Foldable.apply`
 and call their implementations of `foldLeft` directly.
 Here is an example using `List`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Foldable
 import cats.instances.list._ // for Foldable
 
 val ints = List(1, 2, 3)
 ```
 
-```tut:book
+```scala mdoc
 Foldable[List].foldLeft(ints, 0)(_ + _)
 ```
 
-Other sequences like `Vector` and `Stream` work in the same way.
+Other sequences like `Vector` and `LazyList` work in the same way.
 Here is an example using `Option`,
 which is treated like a sequence of zero or one elements:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.option._ // for Foldable
 
 val maybeInt = Option(123)
 ```
 
-```tut:book
+```scala mdoc
 Foldable[Option].foldLeft(maybeInt, 10)(_ * _)
 ```
 
@@ -48,18 +48,18 @@ def foldRight[A, B](fa: F[A], lb: Eval[B])
 
 Using `Eval` means folding is always *stack safe*,
 even when the collection's default definition of `foldRight` is not.
-For example, the default implementation of `foldRight` for `Stream` is not stack safe.
-The longer the stream, the larger the stack requirements for the fold.
-A sufficiently large stream will trigger a `StackOverflowError`:
+For example, the default implementation of `foldRight` for `LazyList` is not stack safe.
+The longer the lazy list, the larger the stack requirements for the fold.
+A sufficiently large lazy list will trigger a `StackOverflowError`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Eval
 import cats.Foldable
 
-def bigData = (1 to 100000).toStream
+def bigData = (1 to 100000).to(LazyList)
 ```
 
-```tut:book:fail:invisible
+```scala mdoc:fail:invisible
 // This example isn't printed... it's here to check the next code block is ok:
 bigData.foldRight(0L)(_ + _)
 ```
@@ -72,19 +72,19 @@ bigData.foldRight(0L)(_ + _)
 Using `Foldable` forces us to use stack safe operations,
 which fixes the overflow exception:
 
-```tut:book:silent
-import cats.instances.stream._ // for Foldable
+```scala mdoc:silent
+import cats.instances.lazyList._ // for Foldable
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 val eval: Eval[Long] =
-  Foldable[Stream].
+  Foldable[LazyList].
     foldRight(bigData, Eval.now(0L)) { (num, eval) =>
       eval.map(_ + num)
     }
 ```
 
-```tut:book
+```scala mdoc
 eval.value
 ```
 
@@ -95,7 +95,7 @@ Stack safety isn't typically an issue when using the standard library.
 The most commonly used collection types, such as `List` and `Vector`,
 provide stack safe implementations of `foldRight`:
 
-```tut:book
+```scala mdoc
 (1 to 100000).toList.foldRight(0L)(_ + _)
 (1 to 100000).toVector.foldRight(0L)(_ + _)
 ```
@@ -112,7 +112,7 @@ a host of useful methods defined on top of `foldLeft`.
 Many of these are facsimiles of familiar methods from the standard library:
 `find`, `exists`, `forall`, `toList`, `isEmpty`, `nonEmpty`, and so on:
 
-```tut:book
+```scala mdoc
 Foldable[Option].nonEmpty(Option(42))
 
 Foldable[List].find(List(1, 2, 3))(_ % 2 == 0)
@@ -129,35 +129,41 @@ Cats provides two methods that make use of `Monoids`:
 
 For example, we can use `combineAll` to sum over a `List[Int]`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.int._ // for Monoid
 ```
 
-```tut:book
+```scala mdoc
 Foldable[List].combineAll(List(1, 2, 3))
 ```
 
 Alternatively, we can use `foldMap`
 to convert each `Int` to a `String` and concatenate them:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.string._ // for Monoid
 ```
 
-```tut:book
+```scala mdoc
 Foldable[List].foldMap(List(1, 2, 3))(_.toString)
 ```
 
 Finally, we can compose `Foldables`
 to support deep traversal of nested sequences:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+import cats.Foldable
+import cats.instances.list._
+import cats.instances.int._
+import cats.instances.string._
+```
+```scala mdoc:silent
 import cats.instances.vector._ // for Monoid
 
 val ints = List(Vector(1, 2, 3), Vector(4, 5, 6))
 ```
 
-```tut:book
+```scala mdoc
 (Foldable[List] compose Foldable[Vector]).combineAll(ints)
 ```
 
@@ -168,11 +174,11 @@ via [`cats.syntax.foldable`][cats.syntax.foldable].
 In each case, the first argument to the method on `Foldable`
 becomes the receiver of the method call:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.foldable._ // for combineAll and foldMap
 ```
 
-```tut:book
+```scala mdoc
 List(1, 2, 3).combineAll
 
 List(1, 2, 3).foldMap(_.toString)
@@ -186,17 +192,16 @@ if the method isn't explicitly available on the receiver.
 For example, the following code will
 use the version of `foldLeft` defined on `List`:
 
-```tut:book
+```scala mdoc
 List(1, 2, 3).foldLeft(0)(_ + _)
 ```
 
 whereas the following generic code will use `Foldable`:
 
-```tut:book:silent
-import scala.language.higherKinds
+```scala mdoc:silent
 ```
 
-```tut:book
+```scala mdoc
 def sum[F[_]: Foldable](values: F[Int]): Int =
   values.foldLeft(0)(_ + _)
 ```

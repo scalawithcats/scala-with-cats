@@ -99,7 +99,7 @@ the system will always converge on a consistent state.
 We can implement a GCounter with the following interface,
 where we represent machine IDs as `Strings`.
 
-```tut:book:silent
+```scala mdoc:reset-object:silent
 final case class GCounter(counters: Map[String, Int]) {
   def increment(machine: String, amount: Int) =
     ???
@@ -118,7 +118,7 @@ Finish the implementation!
 Hopefully the description above was clear enough that
 you can get to an implementation like the one below.
 
-```tut:book:silent
+```scala mdoc:silent:reset-object
 final case class GCounter(counters: Map[String, Int]) {
   def increment(machine: String, amount: Int) = {
     val value = amount + counters.getOrElse(machine, 0)

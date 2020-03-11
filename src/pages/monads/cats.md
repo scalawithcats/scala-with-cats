@@ -16,13 +16,13 @@ We'll discuss `Applicatives` in Chapter [@sec:applicatives].
 
 Here are some examples using `pure` and `flatMap`, and `map` directly:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Monad
 import cats.instances.option._ // for Monad
 import cats.instances.list._   // for Monad
 ```
 
-```tut:book
+```scala mdoc
 val opt1 = Monad[Option].pure(3)
 val opt2 = Monad[Option].flatMap(opt1)(a => Some(a + 2))
 val opt3 = Monad[Option].map(opt2)(a => 100 * a)
@@ -42,27 +42,27 @@ See the [scaladoc][cats.Monad] for more information.
 Cats provides instances for all the monads in the standard library
 (`Option`, `List`, `Vector` and so on) via [`cats.instances`][cats.instances]:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.option._ // for Monad
 ```
 
-```tut:book
+```scala mdoc
 Monad[Option].flatMap(Option(1))(a => Option(a*2))
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.list._ // for Monad
 ```
 
-```tut:book
+```scala mdoc
 Monad[List].flatMap(List(1, 2, 3))(a => List(a, a*10))
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.vector._ // for Monad
 ```
 
-```tut:book
+```scala mdoc
 Monad[Vector].flatMap(Vector(1, 2, 3))(a => Vector(a, a*10))
 ```
 
@@ -74,35 +74,35 @@ can't accept implicit `ExecutionContext` parameters
 To work around this, Cats requires us to have an `ExecutionContext` in scope
 when we summon a `Monad` for `Future`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.future._ // for Monad
 import scala.concurrent._
 import scala.concurrent.duration._
 ```
 
-```tut:book:fail
+```scala mdoc:fail
 val fm = Monad[Future]
 ```
 
 Bringing the `ExecutionContext` into scope
 fixes the implicit resolution required to summon the instance:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.concurrent.ExecutionContext.Implicits.global
 ```
 
-```tut:book
+```scala mdoc
 val fm = Monad[Future]
 ```
 
 The `Monad` instance uses the captured `ExecutionContext`
 for subsequent calls to `pure` and `flatMap`:
 
-```tut:book:silent
+```scala mdoc:silent
 val future = fm.flatMap(fm.pure(1))(x => fm.pure(x + 2))
 ```
 
-```tut:book
+```scala mdoc
 Await.result(future, 1.second)
 ```
 
@@ -128,13 +128,13 @@ However, we'll use the individual imports here for clarity.
 We can use `pure` to construct instances of a monad.
 We'll often need to specify the type parameter to disambiguate the particular instance we want.
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.option._   // for Monad
 import cats.instances.list._     // for Monad
 import cats.syntax.applicative._ // for pure
 ```
 
-```tut:book
+```scala mdoc
 1.pure[Option]
 1.pure[List]
 ```
@@ -146,11 +146,10 @@ Instead we'll write a generic function that
 performs a calculation on parameters
 that come wrapped in a monad of the user's choice:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Monad
 import cats.syntax.functor._ // for map
 import cats.syntax.flatMap._ // for flatMap
-import scala.language.higherKinds
 
 def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
   a.flatMap(x => b.map(y => x*x + y*y))
@@ -159,7 +158,7 @@ import cats.instances.option._ // for Monad
 import cats.instances.list._   // for Monad
 ```
 
-```tut:book
+```scala mdoc
 sumSquare(Option(3), Option(4))
 sumSquare(List(1, 2, 3), List(4, 5))
 ```
@@ -169,7 +168,11 @@ The compiler will "do the right thing" by
 rewriting our comprehension in terms of `flatMap` and `map`
 and inserting the correct implicit conversions to use our `Monad`:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+import cats.Monad
+import cats.implicits._
+```
+```scala mdoc:silent
 def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
   for {
     x <- a
@@ -177,7 +180,7 @@ def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
   } yield x*x + y*y
 ```
 
-```tut:book
+```scala mdoc
 sumSquare(Option(3), Option(4))
 sumSquare(List(1, 2, 3), List(4, 5))
 ```

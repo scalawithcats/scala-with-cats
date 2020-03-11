@@ -5,7 +5,7 @@ we saw a curious compiler error.
 The following code compiled perfectly
 if we had the `-Ypartial-unification` compiler flag enabled:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Functor
 import cats.instances.function._ // for Functor
 import cats.syntax.functor._     // for map
@@ -14,7 +14,7 @@ val func1 = (x: Int)    => x.toDouble
 val func2 = (y: Double) => y * 2
 ```
 
-```tut:book
+```scala mdoc
 val func3 = func1.map(func2)
 ```
 
@@ -59,7 +59,7 @@ of `Function1` to create a type constructor
 of the correct kind to pass to `Functor`.
 It has two options to choose from:
 
-```tut:book:silent
+```scala
 type F[A] = Int => A
 type F[A] = A => Double
 ```
@@ -87,7 +87,7 @@ In the above example, the compiler fixes
 the `Int` in `Int => Double`
 and looks for a `Functor` for functions of type `Int => ?`:
 
-```tut:book:silent
+```scala mdoc:silent
 type F[A] = Int => A
 
 val functor = Functor[F]
@@ -98,11 +98,7 @@ a wide variety of common scenarios,
 including `Functors` for
 types such as `Function1` and `Either`:
 
-```tut:book:silent
-import cats.instances.either._ // for Functor
-```
-
-```tut:book
+```scala mdoc
 val either: Either[String, Int] = Right(123)
 
 either.map(_ + 1)
@@ -125,7 +121,7 @@ the `Contravariant` functor implements `compose`-style
 right-to-left composition.
 In other words, the following expressions are all equivalent:
 
-```tut:book:silent
+```scala mdoc:silent
 val func3a: Int => Double =
   a => func2(func1(a))
 
@@ -133,7 +129,7 @@ val func3b: Int => Double =
   func2.compose(func1)
 ```
 
-```tut:book:fail:silent
+```scala mdoc:fail:silent
 // Hypothetical example. This won't actually compile:
 val func3c: Int => Double =
   func2.contramap(func1)
@@ -142,11 +138,11 @@ val func3c: Int => Double =
 If we try this for real, however,
 our code won't compile:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.contravariant._ // for contramap
 ```
 
-```tut:book:fail
+```scala mdoc:fail
 val func3c = func2.contramap(func1)
 ```
 
@@ -165,9 +161,10 @@ The compiler fails simply because of its left-to-right bias.
 We can prove this by creating a type alias
 that flips the parameters on Function1:
 
-```tut:book:silent
+```scala mdoc:silent
 type <=[B, A] = A => B
-
+```
+``` scala
 type F[A] = Double <= A
 ```
 
@@ -175,11 +172,11 @@ If we re-type `func2` as an instance of `<=`,
 we reset the required order of elimination and
 we can call `contramap` as desired:
 
-```tut:book:silent
+```scala mdoc:silent
 val func2b: Double <= Double = func2
 ```
 
-```tut:book
+```scala mdoc
 val func3c = func2b.contramap(func1)
 ```
 

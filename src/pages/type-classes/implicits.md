@@ -1,19 +1,19 @@
 ## Working with Implicits
 
-```tut:book:invisible
+```scala mdoc:invisible
 // Forward definitions
 
 sealed trait Json
-final case class JsObject(get: Map[String, Json]) extends Json
-final case class JsString(get: String) extends Json
-final case class JsNumber(get: Double) extends Json
+case class JsObject(get: Map[String, Json]) extends Json
+case class JsString(get: String) extends Json
+case class JsNumber(get: Double) extends Json
 case object JsNull extends Json
 
 trait JsonWriter[A] {
   def write(value: A): Json
 }
 
-final case class Person(name: String, email: String)
+case class Person(name: String, email: String)
 
 object JsonWriterInstances {
   implicit val stringWriter: JsonWriter[String] =
@@ -67,7 +67,7 @@ For example, in the following expression
 it will look for an instance of type
 `JsonWriter[String]`:
 
-```tut:book:silent
+```scala mdoc:silent
 Json.toJson("A string!")
 ```
 
@@ -173,7 +173,7 @@ into a common constructor based on the instance for `A`:
 
 Here is the same code written out as an `implicit def`:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit def optionWriter[A]
     (implicit writer: JsonWriter[A]): JsonWriter[Option[A]] =
   new JsonWriter[Option[A]] {
@@ -190,21 +190,21 @@ relying on an implicit parameter to
 fill in the `A`-specific functionality.
 When the compiler sees an expression like this:
 
-```tut:book:silent
+```scala mdoc:silent
 Json.toJson(Option("A string"))
 ```
 
 it searches for an implicit `JsonWriter[Option[String]]`.
 It finds the implicit method for `JsonWriter[Option[A]]`:
 
-```tut:book:silent
+```scala mdoc:silent
 Json.toJson(Option("A string"))(optionWriter[String])
 ```
 
 and recursively searches for a `JsonWriter[String]`
 to use as the parameter to `optionWriter`:
 
-```tut:book:silent
+```scala mdoc:silent
 Json.toJson(Option("A string"))(optionWriter(stringWriter))
 ```
 
@@ -234,7 +234,7 @@ Fortunately, the compiler will warn you when you do this.
 You have to manually enable implicit conversions
 by importing `scala.language.implicitConversions` in your file:
 
-```tut:book:fail
+```scala mdoc:fail
 implicit def optionWriter[A]
     (writer: JsonWriter[A]): JsonWriter[Option[A]] =
   ???

@@ -3,8 +3,7 @@
 In the previous section we demonstrated Cats' `flatMap` and `map` syntax
 by writing a method that abstracted over different monads:
 
-```tut:book:silent
-import scala.language.higherKinds
+```scala mdoc:silent
 import cats.Monad
 import cats.syntax.functor._ // for map
 import cats.syntax.flatMap._ // for flatMap
@@ -19,7 +18,7 @@ def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
 This method works well on `Options` and `Lists`
 but we can't call it passing in plain values:
 
-```tut:book:fail
+```scala mdoc:fail
 sumSquare(3, 4)
 ```
 
@@ -28,11 +27,11 @@ with parameters that were either in a monad or not in a monad at all.
 This would allow us to abstract over monadic and non-monadic code.
 Fortunately, Cats provides the `Id` type to bridge the gap:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Id
 ```
 
-```tut:book
+```scala mdoc
 sumSquare(3 : Id[Int], 4 : Id[Int])
 ```
 
@@ -53,7 +52,7 @@ type Id[A] = A
 that turns an atomic type into a single-parameter type constructor.
 We can cast any value of any type to a corresponding `Id`:
 
-```tut:book
+```scala mdoc
 "Dave" : Id[String]
 123 : Id[Int]
 List(1, 2, 3) : Id[List[Int]]
@@ -64,17 +63,17 @@ including `Functor` and `Monad`.
 These let us call `map`, `flatMap`, and `pure`
 passing in plain values:
 
-```tut:book
+```scala mdoc
 val a = Monad[Id].pure(3)
 val b = Monad[Id].flatMap(a)(_ + 1)
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.functor._ // for map
 import cats.syntax.flatMap._ // for flatMap
 ```
 
-```tut:book
+```scala mdoc
 for {
   x <- a
   y <- b
@@ -97,7 +96,7 @@ What interesting discoveries do you uncover about the implementation?
 <div class="solution">
 Let's start by defining the method signatures:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Id
 
 def pure[A](value: A): Id[A] =
@@ -115,12 +114,22 @@ The `pure` operation creates an `Id[A]` from an `A`.
 But `A` and `Id[A]` are the same type!
 All we have to do is return the initial value:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+import cats.{Id,Monad}
+import cats.syntax.functor._ 
+import cats.syntax.flatMap._
+def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
+  for {
+    x <- a
+    y <- b
+  } yield x*x + y*y
+```
+```scala mdoc:silent
 def pure[A](value: A): Id[A] =
   value
 ```
 
-```tut:book
+```scala mdoc
 pure(123)
 ```
 
@@ -129,12 +138,12 @@ applies a function of type `A => B`, and returns an `Id[B]`.
 But `Id[A]` is simply `A` and `Id[B]` is simply `B`!
 All we have to do is call the function---no packing or unpacking required:
 
-```tut:book:silent
+```scala mdoc:silent
 def map[A, B](initial: Id[A])(func: A => B): Id[B] =
   func(initial)
 ```
 
-```tut:book
+```scala mdoc
 map(123)(_ * 2)
 ```
 
@@ -142,12 +151,12 @@ The final punch line is that,
 once we strip away the `Id` type constructors,
 `flatMap` and `map` are actually identical:
 
-```tut:book
+```scala mdoc
 def flatMap[A, B](initial: Id[A])(func: A => Id[B]): Id[B] =
   func(initial)
 ```
 
-```tut:book
+```scala mdoc
 flatMap(123)(_ * 2)
 ```
 
@@ -168,7 +177,7 @@ types and type constructors when searching for implicits.
 Hence our need to re-type `Int` as `Id[Int]`
 in the call to `sumSquare` at the opening of this section:
 
-```tut:book:silent
+```scala mdoc:silent
 sumSquare(3 : Id[Int], 4 : Id[Int])
 ```
 </div>

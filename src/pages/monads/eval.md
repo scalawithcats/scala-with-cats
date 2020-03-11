@@ -24,7 +24,7 @@ rather than on access (eager).
 Accessing `x` recalls the stored value
 without re-running the code (memoized).
 
-```tut:book
+```scala mdoc
 val x = {
   println("Computing X")
   math.random
@@ -39,7 +39,7 @@ The code to compute `y` below
 is not run until we access it (lazy),
 and is re-run on every access (not memoized):
 
-```tut:book
+```scala mdoc
 def y = {
   println("Computing Y")
   math.random
@@ -57,7 +57,7 @@ for the first time (lazy).
 The result is then cached
 and re-used on subsequent accesses (memoized):
 
-```tut:book
+```scala mdoc
 lazy val z = {
   println("Computing Z")
   math.random
@@ -74,11 +74,11 @@ We construct these with three constructor methods,
 which create instances of the three classes
 and return them typed as `Eval`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Eval
 ```
 
-```tut:book
+```scala mdoc
 val now = Eval.now(math.random + 1000)
 val later = Eval.later(math.random + 2000)
 val always = Eval.always(math.random + 3000)
@@ -87,7 +87,7 @@ val always = Eval.always(math.random + 3000)
 We can extract the result of an `Eval`
 using its `value` method:
 
-```tut:book
+```scala mdoc
 now.value
 later.value
 always.value
@@ -98,7 +98,10 @@ using one of the evaluation models defined above.
 `Eval.now` captures a value *right now*.
 Its semantics are similar to a `val`---eager and memoized:
 
-```tut:book
+```scala mdoc:invisible:reset-object
+import cats.Eval
+```
+```scala mdoc
 val x = Eval.now {
   println("Computing X")
   math.random
@@ -111,7 +114,7 @@ x.value // second access
 `Eval.always` captures a lazy computation,
 similar to a `def`:
 
-```tut:book
+```scala mdoc
 val y = Eval.always {
   println("Computing Y")
   math.random
@@ -124,7 +127,7 @@ y.value // second access
 Finally, `Eval.later` captures a lazy, memoized computation,
 similar to a `lazy val`:
 
-```tut:book
+```scala mdoc
 val z = Eval.later {
   println("Computing Z")
   math.random
@@ -153,7 +156,7 @@ In this case, however, the chain is stored explicitly as a list of functions.
 The functions aren't run until we call
 `Eval's` `value` method to request a result:
 
-```tut:book
+```scala mdoc
 val greeting = Eval.
   always { println("Step 1"); "Hello" }.
   map { str => println("Step 2"); s"$str world" }
@@ -166,7 +169,7 @@ the originating `Eval` instances are maintained,
 mapping functions are always
 called lazily on demand (`def` semantics):
 
-```tut:book
+```scala mdoc
 val ans = for {
   a <- Eval.now { println("Calculating A"); 40 }
   b <- Eval.always { println("Calculating B"); 2 }
@@ -184,7 +187,7 @@ allows us to memoize a chain of computations.
 The result of the chain up to the call to `memoize` is cached,
 whereas calculations after the call retain their original semantics:
 
-```tut:book
+```scala mdoc
 val saying = Eval.
   always { println("Step 1"); "The cat" }.
   map { str => println("Step 2"); s"$str sat on" }.
@@ -205,7 +208,7 @@ We call this property *"stack safety"*.
 
 For example, consider this function for calculating factorials:
 
-```tut:book:silent
+```scala mdoc:silent
 def factorial(n: BigInt): BigInt =
   if(n == 1) n else n * factorial(n - 1)
 ```
@@ -220,7 +223,10 @@ factorial(50000)
 
 We can rewrite the method using `Eval` to make it stack safe:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+import cats.Eval
+```
+```scala mdoc:silent
 def factorial(n: BigInt): Eval[BigInt] =
   if(n == 1) {
     Eval.now(n)
@@ -243,7 +249,10 @@ which takes an existing instance of `Eval` and defers its evaluation.
 The `defer` method is trampolined like `map` and `flatMap`,
 so we can use it as a quick way to make an existing operation stack safe:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+import cats.Eval
+```
+```scala mdoc:silent
 def factorial(n: BigInt): Eval[BigInt] =
   if(n == 1) {
     Eval.now(n)
@@ -252,7 +261,7 @@ def factorial(n: BigInt): Eval[BigInt] =
   }
 ```
 
-```tut:book
+```scala mdoc
 factorial(50000).value
 ```
 
@@ -268,7 +277,7 @@ but they are bounded by the size of the heap rather than the stack.
 The naive implementation of `foldRight` below is not stack safe.
 Make it so using `Eval`:
 
-```tut:book:silent
+```scala mdoc:silent
 def foldRight[A, B](as: List[A], acc: B)(fn: (A, B) => B): B =
   as match {
     case head :: tail =>
@@ -285,7 +294,7 @@ This is essentially our original method
 with every occurrence of `B` replaced with `Eval[B]`,
 and a call to `Eval.defer` to protect the recursive call:
 
-```tut:book:silent
+```scala mdoc:silent:reset-object
 import cats.Eval
 
 def foldRightEval[A, B](as: List[A], acc: Eval[B])
@@ -301,14 +310,14 @@ def foldRightEval[A, B](as: List[A], acc: Eval[B])
 We can redefine `foldRight` simply in terms of `foldRightEval`
 and the resulting method is stack safe:
 
-```tut:book:silent
+```scala mdoc:silent
 def foldRight[A, B](as: List[A], acc: B)(fn: (A, B) => B): B =
   foldRightEval(as, Eval.now(acc)) { (a, b) =>
     b.map(fn(a, _))
   }.value
 ```
 
-```tut:book
+```scala mdoc
 foldRight((1 to 100000).toList, 0L)(_ + _)
 ```
 </div>

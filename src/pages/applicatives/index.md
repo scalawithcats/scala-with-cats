@@ -18,7 +18,7 @@ For example, the code below
 fails on the first call to `parseInt`
 and doesn't go any further:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.either._ // for catchOnly
 
 def parseInt(str: String): Either[String, Int] =
@@ -26,7 +26,7 @@ def parseInt(str: String): Either[String, Int] =
     leftMap(_ => s"Couldn't read $str")
 ```
 
-```tut:book
+```scala mdoc
 for {
   a <- parseInt("a")
   b <- parseInt("b")

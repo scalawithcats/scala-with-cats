@@ -37,7 +37,7 @@ because there is no way of feeding a value in an
 However, we can define `contramap` for the `Printable` type class
 we discussed in Chapter [@sec:type-classes]:
 
-```tut:book:silent
+```scala mdoc:silent
 trait Printable[A] {
   def format(value: A): String
 }
@@ -47,7 +47,7 @@ A `Printable[A]` represents a transformation from `A` to `String`.
 Its `contramap` method accepts a function `func` of type `B => A`
 and creates a new `Printable[B]`:
 
-```tut:book:silent
+```scala mdoc:silent:reset-object
 trait Printable[A] {
   def format(value: A): String
 
@@ -65,7 +65,7 @@ Implement the `contramap` method for `Printable` above.
 Start with the following code template
 and replace the `???` with a working method body:
 
-```tut:book:silent
+```scala
 trait Printable[A] {
   def format(value: A): String
 
@@ -91,7 +91,7 @@ In a small show of sleight of hand
 we use a `self` alias to distinguish
 the outer and inner `Printables`:
 
-```tut:book:silent
+```scala mdoc:silent:reset-object
 trait Printable[A] {
   self =>
 
@@ -113,7 +113,7 @@ For testing purposes,
 let's define some instances of `Printable`
 for `String` and `Boolean`:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit val stringPrintable: Printable[String] =
   new Printable[String] {
     def format(value: String): String =
@@ -127,7 +127,7 @@ implicit val booleanPrintable: Printable[Boolean] =
   }
 ```
 
-```tut:book
+```scala mdoc
 format("hello")
 format(true)
 ```
@@ -137,7 +137,7 @@ the following `Box` case class.
 You'll need to write this as an `implicit def`
 as described in Section [@sec:type-classes:recursive-implicits]:
 
-```tut:book:silent
+```scala mdoc:silent
 final case class Box[A](value: A)
 ```
 
@@ -152,7 +152,7 @@ To make the instance generic across all types of `Box`,
 we base it on the `Printable` for the type inside the `Box`.
 We can either write out the complete definition by hand:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit def boxPrintable[A](implicit p: Printable[A]) =
   new Printable[Box[A]] {
     def format(box: Box[A]): String =
@@ -163,7 +163,36 @@ implicit def boxPrintable[A](implicit p: Printable[A]) =
 or use `contramap` to base the new instance
 on the implicit parameter:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+trait Printable[A] {
+  self =>
+
+  def format(value: A): String
+
+  def contramap[B](func: B => A): Printable[B] =
+    new Printable[B] {
+      def format(value: B): String =
+        self.format(func(value))
+    }
+}
+
+def format[A](value: A)(implicit p: Printable[A]): String =
+  p.format(value)
+
+implicit val stringPrintable: Printable[String] =
+  new Printable[String] {
+    def format(value: String): String =
+      "\"" + value + "\""
+  }
+
+implicit val booleanPrintable: Printable[Boolean] =
+  new Printable[Boolean] {
+    def format(value: Boolean): String =
+      if(value) "yes" else "no"
+  }
+final case class Box[A](value: A)
+```
+```scala mdoc:silent
 implicit def boxPrintable[A](implicit p: Printable[A]) =
   p.contramap[Box[A]](_.value)
 ```
@@ -176,7 +205,7 @@ using pure functional combinators.
 
 Your instance should work as follows:
 
-```tut:book
+```scala mdoc
 format(Box("hello world"))
 format(Box(true))
 ```
@@ -184,7 +213,7 @@ format(Box(true))
 If we don't have a `Printable` for the type inside the `Box`,
 calls to `format` should fail to compile:
 
-```tut:book:fail
+```scala mdoc:fail
 format(Box(123))
 ```
 
@@ -207,7 +236,7 @@ and scodec's [`Codec`][link-scodec-codec].
 We can build our own `Codec` by enhancing `Printable`
 to support encoding and decoding to/from a `String`:
 
-```tut:book:silent
+```scala mdoc:silent
 trait Codec[A] {
   def encode(value: A): String
   def decode(value: String): A
@@ -215,7 +244,7 @@ trait Codec[A] {
 }
 ```
 
-```tut:book:invisible
+```scala mdoc:invisible:reset
 trait Codec[A] {
   self =>
 
@@ -233,7 +262,7 @@ trait Codec[A] {
 }
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 def encode[A](value: A)(implicit c: Codec[A]): String =
   c.encode(value)
 
@@ -252,7 +281,7 @@ the `imap` method creates a `Codec[B]`:
 As an example use case, imagine we have a basic `Codec[String]`,
 whose `encode` and `decode` methods are both a no-op:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit val stringCodec: Codec[String] =
   new Codec[String] {
     def encode(value: String): String = value
@@ -263,7 +292,7 @@ implicit val stringCodec: Codec[String] =
 We can construct many useful `Codecs` for other types
 by building off of `stringCodec` using `imap`:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit val intCodec: Codec[Int] =
   stringCodec.imap(_.toInt, _.toString)
 
@@ -293,7 +322,7 @@ Implement the `imap` method for `Codec` above.
 <div class="solution">
 Here's a working implementation:
 
-```tut:book:silent:reset
+```scala mdoc:silent:reset
 trait Codec[A] {
   def encode(value: A): String
   def decode(value: String): A
@@ -311,7 +340,7 @@ trait Codec[A] {
 }
 ```
 
-```tut:book:invisible
+```scala mdoc:invisible
 implicit val stringCodec: Codec[String] =
   new Codec[String] {
     def encode(value: String): String = value
@@ -339,7 +368,7 @@ creating a `Codec` for `Double`.
 We can implement this using
 the `imap` method of `stringCodec`:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit val doubleCodec: Codec[Double] =
   stringCodec.imap[Double](_.toDouble, _.toString)
 ```
@@ -347,7 +376,7 @@ implicit val doubleCodec: Codec[Double] =
 
 Finally, implement a `Codec` for the following `Box` type:
 
-```tut:book:silent
+```scala mdoc:silent
 case class Box[A](value: A)
 ```
 
@@ -356,7 +385,7 @@ We need a generic `Codec` for `Box[A]` for any given `A`.
 We create this by calling `imap` on a `Codec[A]`,
 which we bring into scope using an implicit parameter:
 
-```tut:book:silent
+```scala mdoc:silent
 implicit def boxCodec[A](implicit c: Codec[A]): Codec[Box[A]] =
   c.imap[Box[A]](Box(_), _.value)
 ```
@@ -364,7 +393,7 @@ implicit def boxCodec[A](implicit c: Codec[A]): Codec[Box[A]] =
 
 Your instances should work as follows:
 
-```tut:book
+```scala mdoc
 encode(123.4)
 decode[Double]("123.4")
 

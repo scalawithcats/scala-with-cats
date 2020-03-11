@@ -24,7 +24,7 @@ for example: [`scala.Option`][scala.Option].
 Source code blocks are written as follows.
 Syntax is highlighted appropriately where applicable:
 
-```tut:book:silent
+```scala mdoc:silent
 object MyApp extends App {
   println("Hello world!") // Print a fine message to the user!
 }
@@ -34,7 +34,7 @@ Most code passes through [tut][link-tut] to ensure it compiles.
 tut uses the Scala console behind the scenes,
 so we sometimes show console-style output as comments:
 
-```tut:book
+```scala mdoc
 "Hello Cats!".toUpperCase
 ```
 

@@ -6,7 +6,7 @@ by providing implementations of three methods:
 a method we haven't seen yet called `tailRecM`.
 Here is an implementation of `Monad` for `Option` as an example:
 
-```tut:book:silent
+```scala mdoc:silent:reset-object
 import cats.Monad
 import scala.annotation.tailrec
 
@@ -53,21 +53,19 @@ can be a challenge... as we shall see.
 Let's write a `Monad` for our `Tree` data type from last chapter.
 Here's the type again:
 
-```tut:book:silent
-object wrapper {
-  sealed trait Tree[+A]
+```scala mdoc:silent
+sealed trait Tree[+A]
 
-  final case class Branch[A](left: Tree[A], right: Tree[A])
-    extends Tree[A]
+final case class Branch[A](left: Tree[A], right: Tree[A])
+  extends Tree[A]
 
-  final case class Leaf[A](value: A) extends Tree[A]
+final case class Leaf[A](value: A) extends Tree[A]
 
-  def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
-    Branch(left, right)
+def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
+  Branch(left, right)
 
-  def leaf[A](value: A): Tree[A] =
-    Leaf(value)
-}; import wrapper._
+def leaf[A](value: A): Tree[A] =
+  Leaf(value)
 ```
 
 Verify that the code works on instances of `Branch` and `Leaf`,
@@ -93,7 +91,7 @@ regardless of whether we make it tail-recursive or not.
 If we follow the types,
 the non-tail-recursive solution falls out:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.Monad
 
 implicit val treeMonad = new Monad[Tree] {
@@ -130,8 +128,23 @@ It involves an explicit depth first traversal of the tree,
 maintaining an `open` list of nodes to visit
 and a `closed` list of nodes to use to reconstruct the tree:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+sealed trait Tree[+A]
+
+final case class Branch[A](left: Tree[A], right: Tree[A])
+  extends Tree[A]
+
+final case class Leaf[A](value: A) extends Tree[A]
+
+def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
+  Branch(left, right)
+
+def leaf[A](value: A): Tree[A] =
+  Leaf(value)
+```
+```scala mdoc:silent
 import cats.Monad
+import scala.annotation.tailrec
 
 implicit val treeMonad = new Monad[Tree] {
   def pure[A](value: A): Tree[A] =
@@ -179,19 +192,19 @@ implicit val treeMonad = new Monad[Tree] {
 Regardless of which version of `tailRecM` we define,
 we can use our `Monad` to `flatMap` and `map` on `Trees`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.syntax.functor._ // for map
 import cats.syntax.flatMap._ // for flatMap
 ```
 
-```tut:book
+```scala mdoc
 branch(leaf(100), leaf(200)).
   flatMap(x => branch(leaf(x - 1), leaf(x + 1)))
 ```
 
 We can also transform `Trees` using for comprehensions:
 
-```tut:book
+```scala mdoc
 for {
   a <- branch(leaf(100), leaf(200))
   b <- branch(leaf(a - 10), leaf(a + 10))

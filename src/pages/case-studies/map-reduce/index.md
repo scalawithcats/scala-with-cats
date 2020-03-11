@@ -136,7 +136,7 @@ You will have to add implicit parameters or context bounds
 to complete the type signature.
 
 <div class="solution">
-```tut:book:silent
+```scala mdoc:silent
 import cats.Monoid
 
 /** Single-threaded map-reduce function.
@@ -159,7 +159,7 @@ to the steps required:
 
 Here's some sample output for reference:
 
-```tut:book:invisible
+```scala mdoc:invisible:reset
 import cats.Monoid
 import cats.syntax.semigroup._ // for |+|
 
@@ -167,19 +167,19 @@ def foldMap[A, B: Monoid](values: Vector[A])(func: A => B): B =
   values.foldLeft(Monoid[B].empty)(_ |+| func(_))
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.int._ // for Monoid
 ```
 
-```tut:book
+```scala mdoc
 foldMap(Vector(1, 2, 3))(identity)
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.string._ // for Monoid
 ```
 
-```tut:book
+```scala mdoc
 // Mapping to a String uses the concatenation monoid:
 foldMap(Vector(1, 2, 3))(_.toString + "! ")
 
@@ -192,10 +192,8 @@ We have to modify the type signature to accept a `Monoid` for `B`.
 With that change we can use the `Monoid` `empty` and `|+|` syntax
 as described in Section [@sec:monoid-syntax]:
 
-```tut:book:silent
+```scala mdoc:reset:silent
 import cats.Monoid
-import cats.instances.int._    // for Monoid
-import cats.instances.string._ // for Monoid
 import cats.syntax.semigroup._ // for |+|
 
 def foldMap[A, B : Monoid](as: Vector[A])(func: A => B): B =
@@ -204,7 +202,11 @@ def foldMap[A, B : Monoid](as: Vector[A])(func: A => B): B =
 
 We can make a slight alteration to this code to do everything in one step:
 
-```tut:book:silent
+```scala mdoc:reset:invisible
+import cats.Monoid
+import cats.syntax.semigroup._
+```
+```scala mdoc:silent
 def foldMap[A, B : Monoid](as: Vector[A])(func: A => B): B =
   as.foldLeft(Monoid[B].empty)(_ |+| func(_))
 ```
@@ -250,12 +252,12 @@ Whenever we create a `Future`,
 whether through a call to `Future.apply` or some other combinator,
 we must have an implicit `ExecutionContext` in scope:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 ```
 
-```tut:book
+```scala mdoc
 val future1 = Future {
   (1 to 100).toList.foldLeft(0)(_ + _)
 }
@@ -282,7 +284,7 @@ The `map` and `flatMap` methods, for example,
 schedule computations that run as soon as
 their input values are computed and a CPU is available:
 
-```tut:book
+```scala mdoc
 val future3 = future1.map(_.toString)
 
 val future4 = for {
@@ -295,19 +297,19 @@ As we saw in Section [@sec:traverse],
 we can convert a `List[Future[A]]` to a `Future[List[A]]`
 using `Future.sequence`:
 
-```tut:book
+```scala mdoc
 Future.sequence(List(Future(1), Future(2), Future(3)))
 ```
 
 or an instance of `Traverse`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.future._ // for Applicative
 import cats.instances.list._   // for Traverse
 import cats.syntax.traverse._  // for sequence
 ```
 
-```tut:book
+```scala mdoc
 List(Future(1), Future(2), Future(3)).sequence
 ```
 
@@ -315,19 +317,19 @@ An `ExecutionContext` is required in either case.
 Finally, we can use `Await.result`
 to block on a `Future` until a result is available:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.concurrent._
 import scala.concurrent.duration._
 ```
 
-```tut:book
+```scala mdoc
 Await.result(Future(1), 1.second) // wait for the result
 ```
 
 There are also `Monad` and `Monoid` implementations for `Future`
 available from `cats.instances.future`:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.{Monad, Monoid}
 import cats.instances.int._    // for Monoid
 import cats.instances.future._ // for Monad and Monoid
@@ -344,7 +346,7 @@ let's look at how we can divide work into batches.
 We can query the number of available CPUs on our machine
 using an API call from the Java standard library:
 
-```tut:book
+```scala mdoc
 Runtime.getRuntime.availableProcessors
 ```
 
@@ -353,7 +355,7 @@ We can partition a sequence
 using the `grouped` method.
 We'll use this to split off batches of work for each CPU:
 
-```tut:book
+```scala mdoc
 (1 to 10).toList.grouped(3).toList
 ```
 
@@ -362,7 +364,7 @@ We'll use this to split off batches of work for each CPU:
 Implement a parallel version of `foldMap` called `parallelFoldMap`.
 Here is the type signature:
 
-```tut:book:silent
+```scala mdoc:silent
 def parallelFoldMap[A, B : Monoid]
       (values: Vector[A])
       (func: A => B): Future[B] = ???
@@ -382,9 +384,14 @@ Here is an annotated solution that
 splits out each `map` and `fold`
 into a separate line of code:
 
-```tut:book:silent
-import scala.concurrent.duration.Duration
-
+```scala mdoc:invisible:reset
+import cats._
+import cats.implicits._
+import scala.concurrent._
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+```
+```scala mdoc:silent
 def parallelFoldMap[A, B: Monoid]
       (values: Vector[A])
       (func: A => B): Future[B] = {
@@ -414,7 +421,7 @@ val result: Future[Int] =
   parallelFoldMap((1 to 1000000).toVector)(identity)
 ```
 
-```tut:book
+```scala mdoc
 Await.result(result, 1.second)
 ```
 
@@ -424,7 +431,16 @@ Figure [@fig:map-reduce:parallel-fold-map]
 are actually equivalent to a single call to `foldMap`,
 shortening the entire algorithm as follows:
 
-```tut:book:silent
+```scala mdoc:reset:invisible
+import cats._
+import cats.implicits._
+import scala.concurrent._
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+def foldMap[A, B : Monoid](as: Vector[A])(func: A => B): B =
+  as.foldLeft(Monoid[B].empty)(_ |+| func(_))
+```
+```scala mdoc:silent
 def parallelFoldMap[A, B: Monoid]
       (values: Vector[A])
       (func: A => B): Future[B] = {
@@ -446,7 +462,7 @@ val result: Future[Int] =
   parallelFoldMap((1 to 1000000).toVector)(identity)
 ```
 
-```tut:book
+```scala mdoc
 Await.result(result, 1.second)
 ```
 </div>
@@ -463,16 +479,13 @@ Reimplement `parallelFoldMap` using Cats'
 <div class="solution">
 We'll restate all of the necessary imports for completeness:
 
-```tut:book:silent:reset
+```scala mdoc:silent:reset
 import cats.Monoid
-import cats.Foldable
-import cats.Traverse
 
 import cats.instances.int._    // for Monoid
 import cats.instances.future._ // for Applicative and Monad
 import cats.instances.vector._ // for Foldable and Traverse
 
-import cats.syntax.semigroup._ // for |+|
 import cats.syntax.foldable._  // for combineAll and foldMap
 import cats.syntax.traverse._  // for traverse
 
@@ -484,7 +497,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 Here's the implementation of `parallelFoldMap`
 delegating as much of the method body to Cats as possible:
 
-```tut:book:silent
+```scala mdoc:silent
 def parallelFoldMap[A, B: Monoid]
       (values: Vector[A])
       (func: A => B): Future[B] = {
@@ -499,12 +512,12 @@ def parallelFoldMap[A, B: Monoid]
 }
 ```
 
-```tut:book:silent
+```scala mdoc:silent
 val future: Future[Int] =
   parallelFoldMap((1 to 1000).toVector)(_ * 1000)
 ```
 
-```tut:book
+```scala mdoc
 Await.result(future, 1.second)
 ```
 

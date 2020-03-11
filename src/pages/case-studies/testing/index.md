@@ -12,7 +12,7 @@ There will be two components.
 The first is an `UptimeClient`
 that polls remote servers for their uptime:
 
-```tut:book:silent
+```scala mdoc:silent
 import scala.concurrent.Future
 
 trait UptimeClient {
@@ -23,7 +23,7 @@ trait UptimeClient {
 We'll also have an `UptimeService` that maintains a list of servers
 and allows the user to poll them for their total uptime:
 
-```tut:book:silent
+```scala mdoc:silent
 import cats.instances.future._ // for Applicative
 import cats.instances.list._   // for Traverse
 import cats.syntax.traverse._  // for traverse
@@ -41,7 +41,7 @@ For example, we can write a test client
 that allows us to provide dummy data
 rather than calling out to actual servers:
 
-```tut:book:silent
+```scala mdoc:silent
 class TestUptimeClient(hosts: Map[String, Int]) extends UptimeClient {
   def getUptime(hostname: String): Future[Int] =
     Future.successful(hosts.getOrElse(hostname, 0))
@@ -53,7 +53,7 @@ We want to test its ability to sum values,
 regardless of where it is getting them from.
 Here's an example:
 
-```tut:book:fail
+```scala mdoc:fail
 def testTotalUptime() = {
   val hosts    = Map("host1" -> 10, "host2" -> 6)
   val client   = new TestUptimeClient(hosts)
@@ -139,8 +139,10 @@ Implement this now:
 <div class="solution">
 Here's the implementation:
 
-```tut:book:silent
-import scala.language.higherKinds
+```scala mdoc:reset-object:invisible
+import scala.concurrent.Future
+```
+```scala mdoc:silent
 import cats.Id
 
 trait UptimeClient[F[_]] {
@@ -160,7 +162,19 @@ Note that, because `Id[A]` is just a simple alias for `A`,
 we don't need to refer to the type in `TestUptimeClient`
 as `Id[Int]`---we can simply write `Int` instead:
 
-```tut:book:silent
+```scala mdoc:reset-object:invisible
+import scala.concurrent.Future
+import cats.Id
+
+trait UptimeClient[F[_]] {
+  def getUptime(hostname: String): F[Int]
+}
+
+trait RealUptimeClient extends UptimeClient[Future] {
+  def getUptime(hostname: String): Future[Int]
+}
+```
+```scala mdoc:silent
 trait TestUptimeClient extends UptimeClient[Id] {
   def getUptime(hostname: String): Int
 }
@@ -182,14 +196,24 @@ our original implementation of `TestUptimeClient`,
 except we no longer need
 the call to `Future.successful`:
 
-```tut:book:silent
-object wrapper {
-  class TestUptimeClient(hosts: Map[String, Int])
-    extends UptimeClient[Id] {
-    def getUptime(hostname: String): Int =
-      hosts.getOrElse(hostname, 0)
-  }
-}; import wrapper._
+```scala mdoc:reset-object:invisible
+import scala.concurrent.Future
+import cats.Id
+
+trait UptimeClient[F[_]] {
+  def getUptime(hostname: String): F[Int]
+}
+
+trait RealUptimeClient extends UptimeClient[Future] {
+  def getUptime(hostname: String): Future[Int]
+}
+```
+```scala mdoc:silent
+class TestUptimeClient(hosts: Map[String, Int])
+  extends UptimeClient[Id] {
+  def getUptime(hostname: String): Int =
+    hosts.getOrElse(hostname, 0)
+}
 ```
 </div>
 
@@ -212,7 +236,7 @@ Starting with the method signatures:
 <div class="solution">
 The code should look like this:
 
-```tut:book:silent
+```scala
 class UptimeService[F[_]](client: UptimeClient[F]) {
   def getTotalUptime(hostnames: List[String]): F[Int] =
     ???
@@ -243,33 +267,45 @@ to `UptimeService`.
 <div class="solution">
 We can write this as an implicit parameter:
 
-```tut:book:silent
+```scala mdoc:invisible:reset-object
+import cats.syntax.traverse._  // for traverse
+import cats.instances.list._
+
+trait UptimeClient[F[_]] {
+  def getUptime(hostname: String): F[Int]
+}
+```
+```scala mdoc:silent
 import cats.Applicative
 import cats.syntax.functor._ // for map
-```
 
-```tut:book:silent
-object wrapper {
-  class UptimeService[F[_]](client: UptimeClient[F])
-      (implicit a: Applicative[F]) {
+class UptimeService[F[_]](client: UptimeClient[F])
+    (implicit a: Applicative[F]) {
 
-    def getTotalUptime(hostnames: List[String]): F[Int] =
-      hostnames.traverse(client.getUptime).map(_.sum)
-  }
-}; import wrapper._
+  def getTotalUptime(hostnames: List[String]): F[Int] =
+    hostnames.traverse(client.getUptime).map(_.sum)
+}
 ```
 
 or more tersely as a context bound:
 
-```tut:book:silent
-object wrapper {
-  class UptimeService[F[_]: Applicative]
-      (client: UptimeClient[F]) {
+```scala mdoc:reset-object:invisible
+import cats.Applicative
+import cats.syntax.functor._
+import cats.syntax.traverse._
+import cats.instances.list._
 
-    def getTotalUptime(hostnames: List[String]): F[Int] =
-      hostnames.traverse(client.getUptime).map(_.sum)
-  }
-}; import wrapper._
+trait UptimeClient[F[_]] {
+  def getUptime(hostname: String): F[Int]
+}
+```
+```scala mdoc:silent
+class UptimeService[F[_]: Applicative]
+    (client: UptimeClient[F]) {
+
+  def getTotalUptime(hostnames: List[String]): F[Int] =
+    hostnames.traverse(client.getUptime).map(_.sum)
+}
 ```
 
 Note that we need to import `cats.syntax.functor`
@@ -288,37 +324,33 @@ This effectively binds `F` to `Id`,
 allowing the rest of the code to operate
 synchronously without worrying about monads or applicatives:
 
-```tut:book:invisible:reset
+```scala mdoc:invisible:reset-object
 import cats.{Id, Applicative}
 import cats.instances.list._  // for Traverse
 import cats.syntax.functor._  // for map
 import cats.syntax.traverse._ // for traverse
 import scala.concurrent.Future
-import scala.language.higherKinds
 
-object wrapper {
-  trait UptimeClient[F[_]] {
-    def getUptime(hostname: String): F[Int]
+trait UptimeClient[F[_]] {
+  def getUptime(hostname: String): F[Int]
+}
+
+trait RealUptimeClient extends UptimeClient[Future]
+
+class TestUptimeClient(hosts: Map[String, Int])
+    extends UptimeClient[Id] {
+  def getUptime(hostname: String): Int =
+    hosts.getOrElse(hostname, 0)
   }
 
-  trait RealUptimeClient extends UptimeClient[Future]
+class UptimeService[F[_]: Applicative]
+    (client: UptimeClient[F]) {
 
-  class TestUptimeClient(hosts: Map[String, Int])
-      extends UptimeClient[Id] {
-    def getUptime(hostname: String): Int =
-      hosts.getOrElse(hostname, 0)
-    }
-
-  class UptimeService[F[_]: Applicative]
-      (client: UptimeClient[F]) {
-
-    def getTotalUptime(hostnames: List[String]): F[Int] =
-      hostnames.traverse(client.getUptime).map(_.sum)
-  }
-}; import wrapper._
+  def getTotalUptime(hostnames: List[String]): F[Int] =
+    hostnames.traverse(client.getUptime).map(_.sum)
+}
 ```
-
-```tut:book:silent
+```scala mdoc:silent
 def testTotalUptime() = {
   val hosts    = Map("host1" -> 10, "host2" -> 6)
   val client   = new TestUptimeClient(hosts)

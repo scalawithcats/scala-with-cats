@@ -28,7 +28,7 @@ of the structure of the predicates that failed.
 For example, if we represent error messsages as a `List[String]`
 and we get back the message:
 
-```tut:book:silent
+```scala mdoc:silent
 List("Must be longer than 4 characters",
      "Must not contain a number")
 ```
@@ -39,22 +39,20 @@ We can probably guess in this case
 but in general we don't have sufficient information to work this out.
 We can solve this problem by wrapping all messages in a type as follows:
 
-```tut:book:silent
-object wrapper {
-  sealed trait Structure[E]
+```scala mdoc:silent:reset-object
+sealed trait Structure[E]
 
-  final case class Or[E](messages: List[Structure[E]])
-    extends Structure[E]
+final case class Or[E](messages: List[Structure[E]])
+  extends Structure[E]
 
-  final case class And[E](messages: List[Structure[E]])
-    extends Structure[E]
+final case class And[E](messages: List[Structure[E]])
+  extends Structure[E]
 
-  final case class Not[E](messages: List[Structure[E]])
-    extends Structure[E]
+final case class Not[E](messages: List[Structure[E]])
+  extends Structure[E]
 
-  final case class Pure[E](message: E)
-    extends Structure[E]
-}; import wrapper._
+final case class Pure[E](message: E)
+  extends Structure[E]
 ```
 
 We can simplify this structure by converting all predicates into a normal form.
