@@ -77,7 +77,7 @@ no matter what functor context it's in:
 ```scala mdoc:silent
 def doMath[F[_]](start: F[Int])
     (implicit functor: Functor[F]): F[Int] =
-  start.map(n => n + 1 * 2)
+  start.map(n => (n + 1) * 2)
 
 import cats.instances.option._ // for Functor
 import cats.instances.list._   // for Functor
