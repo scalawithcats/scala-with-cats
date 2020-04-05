@@ -396,6 +396,7 @@ to suppress warnings from the compiler.
 We can either do this with a "language import" as above:
 
 ```scala
+import scala.language.higherKinds
 ```
 
 or by adding the following to `scalacOptions` in `build.sbt`:
