@@ -26,9 +26,15 @@ scalacOptions ++= Seq(
 
 // resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"))
 
-libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % "2.0.0")
+libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % catsVersion)
 
 addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
+
+mdocVariables := Map(
+  "SCALA_VERSION" -> scalaVersion.value,
+  "CATS_VERSION" -> catsVersion.value
+)
+
 
 lazy val pdf  = taskKey[Unit]("Build the PDF version of the book")
 lazy val html = taskKey[Unit]("Build the HTML version of the book")

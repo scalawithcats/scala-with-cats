@@ -1,18 +1,17 @@
 ## Versions {-}
 
-This book is written for Scala 2.12.9 and Cats 2.0.0.
+This book is written for Scala @SCALA_VERSION@ and Cats @CATS_VERSION@.
 Here is a minimal `build.sbt` containing
 the relevant dependencies and settings[^sbt-version]:
 
 ```scala
-scalaVersion := "2.12.9"
+scalaVersion := "@SCALA_VERSION@"
 
 libraryDependencies +=
-  "org.typelevel" %% "cats-core" % "2.0.0"
+  "org.typelevel" %% "cats-core" % "@CATS_VERSION@"
 
 scalacOptions ++= Seq(
-  "-Xfatal-warnings",
-  "-Ypartial-unification"
+  "-Xfatal-warnings"
 )
 ```
 
