@@ -30,8 +30,8 @@ object MyApp extends App {
 }
 ```
 
-Most code passes through [tut][link-tut] to ensure it compiles.
-tut uses the Scala console behind the scenes,
+Most code passes through [mdoc][link-mdoc] to ensure it compiles.
+mdoc uses the Scala console behind the scenes,
 so we sometimes show console-style output as comments:
 
 ```scala mdoc

@@ -3,7 +3,7 @@
 title: "Scala with Cats"
 subtitle: null
 author: "Noel Welsh and Dave Gurnell"
-date: "November 2019"
+date: "April 2020"
 # Used by Pandoc to generate the PDF cover...
 # see src/css/book.css for HTML/ePub covers:
 coverColor: "2E5943"
@@ -12,7 +12,7 @@ filenameStem: "scala-with-cats"
 # Used by Grunt to create a ZIP of source code:
 exercisesRepo: null # "git@github.com:underscoreio/advanced-scala-code.git"
 tocDepth: 3
-copyright: "2014-19"
+copyright: "2014-20"
 # Enable pandoc-crossref (must be installed on user's computer)
 # There's no distinction here between section and chapter prefixes.
 # We disable all prefixes for consistency and write them by hand:

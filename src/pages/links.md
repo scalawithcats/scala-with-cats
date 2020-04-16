@@ -114,6 +114,7 @@
 [link-kind-projector]: https://github.com/non/kind-projector
 [link-map-reduce-monoid]: http://arxiv.org/abs/1304.7544
 [link-map-reduce]: http://research.google.com/archive/map-reduce.html
+[link-mdoc]: https://github.com/scalameta/mdoc
 [link-monads-burritos]: http://blog.plover.com/prog/burritos.html
 [link-monocle]: http://julien-truffaut.github.io/Monocle/
 [link-parallel-collections]: http://docs.scala-lang.org/overviews/parallel-collections/overview.html
@@ -135,7 +136,6 @@
 [link-summingbird]: https://github.com/twitter/summingbird
 [link-symbol]: http://www.scala-lang.org/api/2.12.1/scala/Symbol.html
 [link-topk]: http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.114.9563
-[link-tut]: https://github.com/tpolecat/tut
 [link-typelevel-scala]: https://github.com/typelevel/scala
 [link-value-classes]: http://docs.scala-lang.org/overviews/core/value-classes.html
 [link-gibbons-oliviera-iterator-pattern]: https://www.cs.ox.ac.uk/jeremy.gibbons/publications/iterator.pdf

@@ -5,6 +5,7 @@ organization      in ThisBuild := "io.underscore"
 version           in ThisBuild := "0.0.1"
 
 scalaVersion      in ThisBuild := "2.13.1"
+catsVersion       in ThisBuild := "2.0.0"
 
 useSuperShell     in ThisBuild := false
 logLevel          in Global    := Level.Warn

@@ -24,7 +24,7 @@ a Giter8 template to get you started.
 To clone the template type the following:
 
 ```bash
-$ sbt new underscoreio/cats-seed.g8
+$ sbt new scalawithcats/cats-seed.g8
 ```
 
 This will generate a sandbox project
@@ -33,7 +33,7 @@ See the generated `README.md` for
 instructions on how to run the sample code
 and/or start an interactive Scala console.
 
-The `cats-seed` template is as minimal as it gets.
+The `cats-seed` template is very minimal.
 If you'd prefer a more batteries-included starting point,
 check out Typelevel's `sbt-catalysts` template:
 
@@ -44,7 +44,7 @@ $ sbt new typelevel/sbt-catalysts.g8
 This will generate a project with a suite
 of library dependencies and compiler plugins,
 together with templates for unit tests
-and [tut-enabled][link-tut] documentation.
+and documentation.
 See the project pages for [catalysts][link-catalysts]
 and [sbt-catalysts][link-sbt-catalysts]
 for more information.

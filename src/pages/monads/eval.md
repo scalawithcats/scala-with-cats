@@ -261,8 +261,9 @@ def factorial(n: BigInt): Eval[BigInt] =
   }
 ```
 
-```scala mdoc
+```scala
 factorial(50000).value
+// res: A very big value
 ```
 
 `Eval` is a useful tool to enforce stack safety
