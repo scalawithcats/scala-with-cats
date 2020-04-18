@@ -457,6 +457,7 @@ import cats.data.EitherT
 import cats.instances.list._
 import scala.concurrent.Future
 ```
+
 ```scala mdoc:silent
 sealed abstract class HttpError
 final case class NotFound(item: String) extends HttpError
@@ -492,6 +493,7 @@ def parseNumber(str: String): Logged[Option[Int]] =
 // Consumers use monad transformers locally to simplify composition:
 def addAll(a: String, b: String, c: String): Logged[Option[Int]] = {
   import cats.data.OptionT
+import cats.instances.list._
 
   val result = for {
     a <- OptionT(parseNumber(a))
