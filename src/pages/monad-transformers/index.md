@@ -326,9 +326,8 @@ cut through three layers of abstraction:
 
 ```scala mdoc:silent
 import cats.instances.future._ // for Monad
-import scala.concurrent.Await
+import cats.syntax.applicative._ // for pure
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
 ```
 
 ```scala mdoc:silent
