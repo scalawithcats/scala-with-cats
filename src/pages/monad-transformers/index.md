@@ -398,6 +398,9 @@ For example, to `Await` the `FutureEitherOption` stack above,
 we need to call `value` twice:
 
 ```scala mdoc
+import scala.concurrent.Await
+import scala.concurrent.duration._
+
 futureEitherOr
 
 val intermediate = futureEitherOr.value
