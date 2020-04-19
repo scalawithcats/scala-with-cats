@@ -258,7 +258,7 @@ to fail with a specified error
 if a predicate does not hold:
 
 ```scala mdoc
-// 123.valid[String].ensure("Negative!")(_ > 0)
+123.valid[String].ensure("Negative!")(_ > 0)
 ```
 
 Finally, we can call `getOrElse` or `fold`
