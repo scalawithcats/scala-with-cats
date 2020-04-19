@@ -171,11 +171,40 @@ lazy val html = taskKey[Unit]("Build the HTML version of the book")
 lazy val epub = taskKey[Unit]("Build the ePub version of the book")
 lazy val json = taskKey[Unit]("Build the Pandoc JSON AST of the book")
 
-pdf  := { pdfSetup.value ; mdoc.toTask("").value ; pdfPandoc.value }
-html := { htmlSetup.value ; mdoc.toTask("").value ; htmlPandoc.value }
-epub := { epubSetup.value ; mdoc.toTask("").value ; epubPandoc.value }
-json := { jsonSetup.value ; mdoc.toTask("").value ; jsonPandoc.value }
+pdf  := {
+  pdfSetup.value
+  mdoc.toTask("").value
+  pdfPandoc.value
+}
+
+html := {
+  htmlSetup.value
+  mdoc.toTask("").value
+  htmlPandoc.value
+}
+
+epub := {
+  epubSetup.value
+  mdoc.toTask("").value
+  epubPandoc.value
+}
+
+json := {
+  jsonSetup.value
+  mdoc.toTask("").value
+  jsonPandoc.value
+}
 
 lazy val all  = taskKey[Unit]("Build all versions of the book")
 
-all := { pdf.value ; html.value ; epub.value ; json.value }
+all := {
+  pdfSetup.value
+  htmlSetup.value
+  epubSetup.value
+
+  mdoc.toTask("").value
+
+  pdfPandoc.value
+  htmlPandoc.value
+  epubPandoc.value
+}

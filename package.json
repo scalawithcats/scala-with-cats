@@ -2,6 +2,11 @@
   "name": "scala-with-cats",
   "description": "Take your Scala to the next level",
   "version": "0.0.1",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scalawithcats/scala-with-cats"
+  },
   "devDependencies": {
     "bootstrap": "^3.4.1",
     "jquery": "2.1.1",
