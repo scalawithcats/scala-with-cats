@@ -75,8 +75,7 @@ object Pandoc {
         List(
           s"--toc-depth=${tocDepth}",
           s"--include-before-body=${srcDir}/templates/cover-notes.tex",
-          s"--pdf-engine=xelatex",
-          s"--variable=documentclass:book",
+          s"--pdf-engine=xelatex"
         )
       case Html  =>
         List(
@@ -86,7 +85,7 @@ object Pandoc {
       case Epub  =>
         List(
           s"--toc-depth=${tocDepth}",
-          s"--epub-stylesheet=${srcDir}/css/epub/main.css",
+          s"--css=${srcDir}/temp/epub.css",
           s"--epub-cover-image=${srcDir}/covers/epub-cover.png",
           s"--include-before-body=${srcDir}/templates/cover-notes.html",
         )
