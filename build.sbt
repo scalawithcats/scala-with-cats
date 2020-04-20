@@ -130,10 +130,31 @@ lazy val pages = List(
   "parts/part4.md",
 )
 
+/*
+
+The code below outlines steps to build the book:
+
+Each build is independent (even the TeX and PDF builds).
+The PDF, HTML, and ePub builds are the important ones.
+Others are for debugging.
+
+Each build involves three steps: a setup step, mdoc, and a Pandoc step.
+You can run each of these steps indepdendently. For example,
+running `pdf` is equivalent to `;pdfSetup; mdoc; pdfPandoc`.
+
+The `all` task is equivalent to `;pdf ;html ;epub`,
+except that it only runs `mdoc` once.
+
+The code to build the Pandoc command-line is in `project/Pandoc.scala`.
+
+*/
+
 lazy val pdfSetup  = taskKey[Unit]("Pre-mdoc component of the PDF build")
 lazy val htmlSetup = taskKey[Unit]("Pre-mdoc component of the HTML build")
 lazy val epubSetup = taskKey[Unit]("Pre-mdoc component of the ePub build")
-lazy val jsonSetup = taskKey[Unit]("Pre-mdoc component of the JSON AST build")
+
+lazy val texSetup  = taskKey[Unit]("Pre-mdoc component of the TeX debug build")
+lazy val jsonSetup = taskKey[Unit]("Pre-mdoc component of the JSON AST debug build")
 
 pdfSetup := {
   "mkdir -p dist".!
@@ -152,6 +173,10 @@ epubSetup := {
   "npx lessc --include-path=node_modules --strict-imports src/less/epub.less src/temp/epub.css".!
 }
 
+texSetup := {
+  "mkdir -p dist".!
+}
+
 jsonSetup := {
   "mkdir -p dist".!
 }
@@ -159,17 +184,23 @@ jsonSetup := {
 lazy val pdfPandoc  = taskKey[Unit]("Pandoc component of the PDF build")
 lazy val htmlPandoc = taskKey[Unit]("Pandoc component of the HTML build")
 lazy val epubPandoc = taskKey[Unit]("Pandoc component of the ePub build")
-lazy val jsonPandoc = taskKey[Unit]("Pandoc component of the JSON AST build")
+
+lazy val texPandoc  = taskKey[Unit]("Pandoc component of the TeX debug build")
+lazy val jsonPandoc = taskKey[Unit]("Pandoc component of the JSON AST debug build")
 
 pdfPandoc  := { Pandoc.commandLine(pages, PandocTarget.Pdf).! }
 htmlPandoc := { Pandoc.commandLine(pages, PandocTarget.Html).! }
 epubPandoc := { Pandoc.commandLine(pages, PandocTarget.Epub).! }
+
+texPandoc  := { Pandoc.commandLine(pages, PandocTarget.Tex).! }
 jsonPandoc := { Pandoc.commandLine(pages, PandocTarget.Json).! }
 
 lazy val pdf  = taskKey[Unit]("Build the PDF version of the book")
 lazy val html = taskKey[Unit]("Build the HTML version of the book")
 lazy val epub = taskKey[Unit]("Build the ePub version of the book")
-lazy val json = taskKey[Unit]("Build the Pandoc JSON AST of the book")
+
+lazy val tex = taskKey[Unit]("Build the TeX debug build of the book")
+lazy val json = taskKey[Unit]("Build the JSON AST debug build of the book")
 
 pdf  := {
   pdfSetup.value
@@ -189,13 +220,19 @@ epub := {
   epubPandoc.value
 }
 
+tex  := {
+  texSetup.value
+  mdoc.toTask("").value
+  texPandoc.value
+}
+
 json := {
   jsonSetup.value
   mdoc.toTask("").value
   jsonPandoc.value
 }
 
-lazy val all  = taskKey[Unit]("Build all versions of the book")
+lazy val all  = taskKey[Unit]("Build the PDF, HTML, and ePub versions of the book")
 
 all := {
   pdfSetup.value
