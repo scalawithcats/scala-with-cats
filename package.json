@@ -2,7 +2,7 @@
   "name": "scala-with-cats",
   "description": "Take your Scala to the next level",
   "version": "0.0.1",
-  "license": "UNLICENSED",
+  "license": "CC-BY-SA-4.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/scalawithcats/scala-with-cats"
