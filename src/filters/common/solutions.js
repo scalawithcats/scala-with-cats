@@ -38,11 +38,7 @@ function textOf(body) {
 
 // string integer -> string
 function numberedTitle(title, number) {
-  return number == null
-    ? (number = 1)
-    : number === 1
-    ? title
-    : `${title} Part ${number}`;
+  return number == null || number === 1 ? title : `${title} Part ${number}`;
 }
 
 // string string -> string
@@ -122,8 +118,8 @@ function linkToExercise(solution) {
 // Data types ------------------------------------
 
 class Heading {
-  constructor(label1, title) {
-    this.label = label1;
+  constructor(label, title) {
+    this.label = label;
     this.title = title;
   }
 }
@@ -175,6 +171,7 @@ function createFilter() {
     switch (type) {
       case "Link": {
         const [attrs, body, [href, unused]] = value;
+
         return; // don't rewrite the document here
       }
 
@@ -269,13 +266,6 @@ function createFilter() {
               3
             );
 
-            // console.error(new Error("" + solutionsHeadingText))
-            // console.error(new Error("" + solutionsHeadingLevel))
-            // console.error(new Error("" + chapterHeadingTemplate))
-            // console.error(new Error("" + chapterHeadingLevel))
-            // console.error(new Error("" + solutionHeadingTemplate))
-            // console.error(new Error("" + solutionHeadingLevel))
-
             let nodes =
               solutionsHeadingText == null
                 ? []
@@ -315,7 +305,6 @@ function createFilter() {
             return nodes;
           }
         }
-        break;
     }
   };
 }
