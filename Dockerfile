@@ -30,20 +30,21 @@ RUN set -ex \
   && apt-get update -y \
   && DEBIAN_FRONTEND=noninteractive \
   && mkdir -p /usr/share/man/man1 \
-  && apt-get install -y default-jdk-headless \
-  && apt-get clean \
+  && apt-get install -y default-jdk-headless
 
-  ## Install SBT
+## Install SBT
 
-  RUN mkdir -p ~/bin; curl -Ls https://git.io/sbt > ~/bin/sbt && chmod 0755 ~/bin/sbt
+RUN mkdir -p ~/bin; curl -Ls https://git.io/sbt > ~/bin/sbt && chmod 0755 ~/bin/sbt
 
 ## Install fonts
 
-RUN apt-get install -y ttf-bitstream-vera
+RUN apt-get update -y \
+  && apt-get install -y ttf-bitstream-vera
 
 ## Clean up
 
-RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 ## Tweak PATH
 
