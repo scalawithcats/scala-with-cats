@@ -4,4 +4,9 @@ author: "Noel Welsh and Dave Gurnell"
 date: "April 2020"
 tocDepth: 3
 copyright: "2014-20"
+figPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+lstPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
 ...

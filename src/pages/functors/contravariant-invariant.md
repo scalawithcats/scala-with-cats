@@ -1,4 +1,4 @@
-## *Contravariant* and Invariant Functors {#contravariant-invariant}
+## *Contravariant* and Invariant Functors {#sec:functors:contravariant-invariant}
 
 As we have seen, we can think of `Functor's` `map` method as
 "appending" a transformation to a chain.
@@ -21,7 +21,7 @@ feel free to skip straight to Chapter [@sec:monads].
 Come back here before you read Chapter [@sec:applicatives].
 </div>
 
-### Contravariant Functors and the *contramap* Method {#contravariant}
+### Contravariant Functors and the *contramap* Method {#sec:functors:contravariant}
 
 The first of our type classes, the *contravariant functor*,
 provides an operation called `contramap`

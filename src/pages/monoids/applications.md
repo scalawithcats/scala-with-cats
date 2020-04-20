@@ -26,7 +26,7 @@ we can use a data structure called a `QTree` for which there is a monoid.
 Hopefully you get the idea. Almost every analysis that we might want to do over a large data set is a monoid,
 and therefore we can build an expressive and powerful analytics system around this idea.
 This is exactly what Twitter's Algebird and Summingbird projects have done.
-We explore this idea further in the [map-reduce](#map-reduce) case study.
+We explore this idea further in the map-reduce case study in Section [@sec:map-reduce].
 
 ### Distributed Systems
 

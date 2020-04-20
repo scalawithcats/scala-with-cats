@@ -79,7 +79,7 @@ Semigroup[String].combine("Hi ", "there")
 The type class instances for `Monoid`
 are organised under `cats.instances`
 in the standard way described
-in [Chapter 1](#importing-default-instances).
+in Chapter [@sec:importing-default-instances].
 For example, if we want to pull in instances for `Int`
 we import from [`cats.instances.int`][cats.instances.int]:
 
@@ -109,7 +109,7 @@ val b = Option(20)
 Monoid[Option[Int]].combine(a, b)
 ```
 
-Refer back to [Chapter 1](#importing-default-instances)
+Refer back to Chapter [@sec:importing-default-instances]
 for a more comprehensive list of imports.
 
 ### Monoid Syntax {#sec:monoid-syntax}
