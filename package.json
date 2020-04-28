@@ -3,9 +3,9 @@
   "description": "Take your Scala to the next level",
   "version": "0.0.1",
   "devDependencies": {
-    "bootstrap": "^3.3.1",
+    "bootstrap": "^3.4.1",
     "coffeeify": "1.0.0",
-    "jquery": "2.1.1",
+    "jquery": "3.4.0",
     "uglifyify": "2.6.0",
     "underscore": "1.7.0",
     "underscore-ebook-template": "git+https://github.com/underscoreio/underscore-ebook-template.git#0.6.2"
