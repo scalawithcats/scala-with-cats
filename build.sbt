@@ -1,31 +1,21 @@
 import scala.sys.process._
 
 name              in ThisBuild := "scala-with-cats"
-organization      in ThisBuild := "io.underscore"
+organization      in ThisBuild := "com.scalawithcats"
 version           in ThisBuild := "0.0.1"
 
 scalaVersion      in ThisBuild := "2.13.1"
-catsVersion       in ThisBuild := "2.0.0"
 
 useSuperShell     in ThisBuild := false
 logLevel          in Global    := Level.Warn
+
+
 
 enablePlugins(MdocPlugin)
 mdocIn  := sourceDirectory.value / "pages"
 mdocOut := target.value          / "pages"
 
-scalacOptions ++= Seq(
-//   "-deprecation",
-//   "-encoding", "UTF-8",
-//   "-unchecked",
-//   "-feature",
-//   "-Xlint",
-//   "-Xfatal-warnings",
-//   "-Ywarn-dead-code",
-  "-Yrepl-class-based"
-)
-
-// resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"))
+val catsVersion  = "2.1.0"
 
 libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % catsVersion)
 
@@ -33,7 +23,7 @@ addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVers
 
 mdocVariables := Map(
   "SCALA_VERSION" -> scalaVersion.value,
-  "CATS_VERSION" -> catsVersion.value
+  "CATS_VERSION" -> catsVersion
 )
 
 
