@@ -3,13 +3,25 @@
 There are three important components to the type class pattern:
 the *type class* itself,
 *instances* for particular types,
-and the *interface* methods that we expose to users.
+and the methods that *use* type classes.
+
+Type classes in Scala are implemented using *implicit values* and *parameters*,
+and optionally using *implicit classes*.
+Scala language constructs correspond to the components of type classes as follows:
+
+- traits: type classes;
+- implicit values: type class instances;
+- implicit parameters: type class use; and
+- implicit classes: optional utilities that make type classes easier to use.
+
+Let's see how this works in detail.
+
 
 ### The Type Class
 
 A *type class* is an interface or API
 that represents some functionality we want to implement.
-In Cats a type class is represented by a trait with at least one type parameter.
+In Scala a type class is represented by a trait with at least one type parameter.
 For example, we can represent generic "serialize to JSON" behaviour
 as follows:
 
@@ -29,12 +41,14 @@ trait JsonWriter[A] {
 
 `JsonWriter` is our type class in this example,
 with `Json` and its subtypes providing supporting code.
+When we come to implement instances of `JsonWriter`,
+the type parameter `A` will be the concrete type of data we are writing.
 
 ### Type Class Instances
 
 The *instances* of a type class
-provide implementations of the type class for the types we care about,
-including types from the Scala standard library
+provide implementations of the type class for specific types we care about,
+which can include types from the Scala standard library
 and types from our domain model.
 
 In Scala we define instances by creating
@@ -42,7 +56,7 @@ concrete implementations of the type class
 and tagging them with the `implicit` keyword:
 
 ```scala mdoc:silent
-case class Person(name: String, email: String)
+final case class Person(name: String, email: String)
 
 object JsonWriterInstances {
   implicit val stringWriter: JsonWriter[String] =
@@ -64,18 +78,23 @@ object JsonWriterInstances {
 }
 ```
 
-### Type Class Interfaces
+These are known as implicit values.
 
-A type class *interface* is any functionality we expose to users.
-Interfaces are generic methods that accept
-instances of the type class as implicit parameters.
 
-There are two common ways of specifying an interface:
-*Interface Objects* and *Interface Syntax*.
+### Type Class Use
+
+A type class *use* is any functionality 
+that requires a type class instance to work.
+In Scala this means any method 
+that accepts instances of the type class as implicit parameters.
+
+Cats provides utilities that make type classes easier to use,
+and you will sometimes seem these patterns in other libraries.
+There are two ways it does this: *Interface Objects* and *Interface Syntax*.
 
 **Interface Objects**
 
-The simplest way of creating an interface
+The simplest way of creating an interface that uses a type class
 is to place methods in a singleton object:
 
 ```scala mdoc:silent

@@ -28,7 +28,7 @@ Let's define a `Printable` type class to work around these problems:
 These steps define the three main components of our type class.
 First we define `Printable`---the *type class* itself:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 trait Printable[A] {
   def format(value: A): String
 }
@@ -71,7 +71,7 @@ Let's define an "application" now that uses the library.
 First we'll define a data type to represent a well-known type of furry animal:
 
 ```scala
-case class Cat(name: String, age: Int, color: String)
+final case class Cat(name: String, age: Int, color: String)
 ```
 
 Next we'll create an implementation of `Printable` for `Cat`
@@ -96,7 +96,7 @@ This is a standard use of the type class pattern.
 First we define a set of custom data types for our application:
 
 ```scala mdoc:silent
-case class Cat(name: String, age: Int, color: String)
+final case class Cat(name: String, age: Int, color: String)
 ```
 
 Then we define type class instances for the types we care about.
@@ -124,7 +124,7 @@ Scala brings them into scope for us automatically.
 Otherwise we use an `import` to access them:
 
 ```scala mdoc
-val cat = Cat("Garfield", 38, "ginger and black")
+val cat = Cat("Garfield", 41, "ginger and black")
 
 Printable.print(cat)
 ```
@@ -175,7 +175,7 @@ import PrintableSyntax._
 ```
 
 ```scala mdoc
-Cat("Garfield", 38, "ginger and black").print
+Cat("Garfield", 41, "ginger and black").print
 ```
 
 We get a compile error if we haven't defined an instance of `Printable`

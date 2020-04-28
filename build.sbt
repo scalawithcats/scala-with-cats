@@ -1,14 +1,13 @@
 import scala.sys.process._
 
-name              in ThisBuild := "scala-with-cats"
-organization      in ThisBuild := "com.scalawithcats"
-version           in ThisBuild := "0.0.1"
+ThisBuild / name               := "scala-with-cats"
+ThisBuild / organization       := "com.scalawithcats"
+ThisBuild / version            := "0.0.1"
 
-scalaVersion      in ThisBuild := "2.13.1"
+ThisBuild / scalaVersion       := "2.13.1"
 
-useSuperShell     in ThisBuild := false
-logLevel          in Global    := Level.Warn
-
+ThisBuild / useSuperShell      := false
+Global    / logLevel           := Level.Warn
 
 
 enablePlugins(MdocPlugin)
