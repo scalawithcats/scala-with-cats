@@ -53,7 +53,7 @@ trait Option[+A]
 ```
 
 The covariance of Scala collections allows
-us to substitute collections of one type for another in our code.
+us to substitute collections of one type with a collection of a subtype in our code.
 For example, we can use a `List[Circle]`
 anywhere we expect a `List[Shape]` because
 `Circle` is a subtype of `Shape`:
@@ -73,6 +73,13 @@ val circles: List[Circle] = null
 val shapes: List[Shape] = circles
 ```
 
+Generally speaking, covariance is used for outputs:
+data that we can later get out of a container type such as `List`,
+or otherwise returned by some method.
+
+
+**Contravariance**
+
 What about contravariance?
 We write contravariant type constructors
 with a `-` symbol like this:
@@ -81,11 +88,9 @@ with a `-` symbol like this:
 trait F[-A]
 ```
 
-**Contravariance**
-
-Confusingly, contravariance means that the type `F[B]`
+Perhaps confusingly, contravariance means that the type `F[B]`
 is a subtype of `F[A]` if `A` is a subtype of `B`.
-This is useful for modelling types that represent processes,
+This is useful for modelling types that represent inputs,
 like our `JsonWriter` type class above:
 
 ```scala mdoc:invisible
@@ -128,9 +133,9 @@ def format[A](value: A, writer: JsonWriter[A]): Json =
 
 Now ask yourself the question:
 "Which combinations of value and writer can I pass to `format`?"
-We can combine `circle` with either writer
+We can `write` a `Circle` with either writer
 because all `Circles` are `Shapes`.
-Conversely, we can't combine `shape` with `circleWriter`
+Conversely, we can't write a `Shape` with `circleWriter`
 because not all `Shapes` are `Circles`.
 
 This relationship is what we formally model using contravariance.
@@ -139,9 +144,10 @@ because `Circle` is a subtype of `Shape`.
 This means we can use `shapeWriter`
 anywhere we expect to see a `JsonWriter[Circle]`.
 
+
 **Invariance**
 
-Invariance is actually the easiest situation to describe.
+Invariance is the easiest situation to describe.
 It's what we get when we don't write a `+` or `-`
 in a type constructor:
 
@@ -193,7 +199,7 @@ More specific type preferred?   No          Yes         No
 -----------------------------------------------------------------------
 
 It's clear there is no perfect system.
-Cats generally prefers to use invariant type classes.
+Cats prefers to use invariant type classes.
 This allows us to specify
 more specific instances for subtypes if we want.
 It does mean that if we have, for example,

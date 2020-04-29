@@ -22,7 +22,7 @@ Let's define a `Printable` type class to work around these problems:
     It uses the relevant `Printable` to convert the `A` to a `String`.
 
     `print` accepts the same parameters as `format` and returns `Unit`.
-    It prints the `A` value to the console using `println`.
+    It prints the formatted `A` value to the console using `println`.
 
 <div class="solution">
 These steps define the three main components of our type class.

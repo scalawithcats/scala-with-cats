@@ -104,30 +104,15 @@ We will introduce these as we encounter them in later sections and chapters.
 
 In this book we will use specific imports to show you
 exactly which instances and syntax you need in each example.
-However, this can be time consuming for many use cases.
-You should feel free to take one of the following shortcuts
-to simplify your imports:
+However, this is doesn't add value in production code.
+It is simpler and faster to use the following imports:
 
 - `import cats._` imports all of Cats' type classes in one go;
-
-- `import cats.instances.all._` imports
-  all of the type class instances for the standard library in one go;
-
-- `import cats.syntax.all._` imports all of the syntax in one go;
 
 - `import cats.implicits._` imports
   all of the standard type class instances
   *and* all of the syntax in one go.
 
-Most people start their files with the following imports,
-reverting to more specific imports only
-if they encounter naming conflicts
-or problems with ambiguous implicits:
-
-```scala mdoc:silent:reset-object
-import cats._
-import cats.implicits._
-```
 
 ### Defining Custom Instances {#defining-custom-instances}
 
@@ -193,7 +178,7 @@ the `Show` type class,
 the instances for `Int` and `String`,
 and the interface syntax:
 
-```scala mdoc:reset:silent
+```scala mdoc:reset-object:silent
 import cats.Show
 import cats.instances.int._    // for Show
 import cats.instances.string._ // for Show
@@ -203,7 +188,7 @@ import cats.syntax.show._      // for show
 Our definition of `Cat` remains the same:
 
 ```scala mdoc:silent
-case class Cat(name: String, age: Int, color: String)
+final case class Cat(name: String, age: Int, color: String)
 ```
 
 In the companion object we replace our `Printable` with an instance of `Show`

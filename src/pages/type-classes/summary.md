@@ -4,7 +4,16 @@ In this chapter we took a first look at type classes.
 We implemented our own `Printable` type class using plain Scala
 before looking at two examples from Cats---`Show` and `Eq`.
 
-We have now seen the general patterns in Cats type classes:
+We saw the components that make up a type class:
+
+- A `trait`, which is the type class
+
+- Type class instances, which are implicit values.
+
+- Type class usage, which uses implicit parameters.
+
+
+We have also seen the general patterns in Cats type classes:
 
  - The type classes themselves are generic traits
    in the [`cats`][cats.package] package.
