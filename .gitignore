@@ -20,3 +20,9 @@ project/target
 book_deploy_rsa
 
 .history
+
+.metals
+.ivy2
+.bloop
+
+project/metals.sbt
