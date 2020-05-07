@@ -112,6 +112,14 @@ Monoid[Option[Int]].combine(a, b)
 Refer back to [Chapter 1](#importing-default-instances)
 for a more comprehensive list of imports.
 
+As always, unless we have a good reason to import individual instances,
+we can just import everything.
+
+```scala
+import cats._
+import cats.implicits._
+```
+
 ### Monoid Syntax {#sec:monoid-syntax}
 
 Cats provides syntax for the `combine` method
@@ -143,7 +151,7 @@ The main function in the program has signature `def add(items: List[Int]): Int`.
 In a tragic accident this code is deleted! Rewrite the method and save the day!
 
 <div class="solution">
-We can write the addition as a simple `foldLeft` using `0` and the `+` operator:
+We can write the addition as a `foldLeft` using `0` and the `+` operator:
 
 ```scala mdoc:silent
 def add(items: List[Int]): Int =
@@ -183,7 +191,7 @@ def add[A](items: List[A])(implicit monoid: Monoid[A]): A =
   items.foldLeft(monoid.empty)(_ |+| _)
 ```
 
-We can optionally use Scala's *context bound* syntax to write the same code in a friendlier way:
+We can optionally use Scala's *context bound* syntax to write the same code in a shorter way:
 
 ```scala mdoc:invisible:reset-object
 import cats.Monoid

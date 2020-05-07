@@ -145,7 +145,8 @@ and assume the library authors know what they're doing.
 
 ## Definition of a Semigroup
 
-A semigroup is just the `combine` part of a monoid.
+A semigroup is just the `combine` part of a monoid,
+without the `empty` part.
 While many semigroups are also monoids,
 there are some data types for which we cannot define an `empty` element.
 For example, we have just seen that
