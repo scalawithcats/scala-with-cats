@@ -1,10 +1,10 @@
 ## Functors in Cats
 
 Let's look at the implementation of functors in Cats.
-We'll examine the aspects we did for monoids:
+We'll examine the same aspects we did for monoids:
 the *type class*, the *instances*, and the *syntax*.
 
-### The Functor Type Class
+### The Functor Type Class and Instances
 
 The functor type class is [`cats.Functor`][cats.Functor].
 We obtain instances using the standard `Functor.apply`
@@ -26,7 +26,7 @@ val option1 = Option(123)
 val option2 = Functor[Option].map(option1)(_.toString)
 ```
 
-`Functor` also provides the `lift` method,
+`Functor` provides a method called `lift`,
 which converts a function of type `A => B`
 to one that operates over a functor and has type `F[A] => F[B]`:
 
@@ -36,6 +36,13 @@ val func = (x: Int) => x + 1
 val liftedFunc = Functor[Option].lift(func)
 
 liftedFunc(Option(1))
+```
+
+The `as` method is the other method you are likely to use.
+It replaces with value inside the `Functor` with the given value.
+
+```scala mdoc
+Functor[List].as(list1, "As")
 ```
 
 ### Functor Syntax
@@ -132,6 +139,12 @@ val box = Box[Int](123)
 box.map(value => value + 1)
 ```
 
+The `as` method is also available as syntax.
+
+```scala mdoc
+List(1, 2, 3).as("As")
+```
+
 ### Instances for Custom Types
 
 We can define a functor simply by defining its map method.
@@ -189,14 +202,12 @@ Write a `Functor` for the following binary tree data type.
 Verify that the code works as expected on instances of `Branch` and `Leaf`:
 
 ```scala mdoc:silent
-object wrapper {
-  sealed trait Tree[+A]
+sealed trait Tree[+A]
 
-  final case class Branch[A](left: Tree[A], right: Tree[A])
-    extends Tree[A]
+final case class Branch[A](left: Tree[A], right: Tree[A])
+  extends Tree[A]
 
-  final case class Leaf[A](value: A) extends Tree[A]
-}; import wrapper._
+final case class Leaf[A](value: A) extends Tree[A]
 ```
 
 <div class="solution">

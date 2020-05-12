@@ -6,8 +6,8 @@ represent sequences of operations within a context
 such as a `List`, an `Option`,
 or any one of a thousand other possibilities.
 Functors on their own aren't so useful,
-but special cases of functors such as
-**monads** and **applicative functors**
+but special cases of functors, 
+such as **monads** and **applicative functors**,
 are some of the most commonly used abstractions in Cats.
 
 ## Examples of Functors {#sec:functors:examples}
@@ -23,7 +23,9 @@ Rather than traversing the list, we should think of it as
 transforming all of the values inside in one go.
 We specify the function to apply,
 and `map` ensures it is applied to every item.
-The values change but the structure of the list remains the same:
+The values change but the structure of the list
+(the number of elements and their order)
+remains the same:
 
 ```scala mdoc
 List(1, 2, 3).map(n => n + 1)
@@ -172,6 +174,9 @@ rather than allowing the user to dictate when the program should run.
 For more information
 see [this excellent Reddit answer][link-so-future]
 by Rob Norris.
+
+When we look at Cats Effect 
+we'll see that the `IO` type solves these problems.
 </div>
 
 If `Future` isn't referentially transparent,
@@ -250,7 +255,8 @@ func(123)
 <div class="callout callout-warning">
 *Partial Unification*
 
-For the above examples to work
+For the above examples to work,
+in versions of Scala before 2.13,
 we need to add the following compiler option to `build.sbt`:
 
 ```scala
@@ -302,7 +308,6 @@ trait Functor[F[_]] {
 If you haven't seen syntax like `F[_]` before,
 it's time to take a brief detour to discuss
 *type constructors* and *higher kinded types*.
-We'll explain that `scala.language` import as well.
 
 <div class="callout callout-warning">
 *Functor Laws*
@@ -343,7 +348,7 @@ The trick is not to confuse type constructors with generic types.
 
 ```scala
 List    // type constructor, takes one parameter
-List[A] // type, produced using a type parameter
+List[A] // type, produced by applying a type parameter
 ```
 
 There's a close analogy here with functions and values.
@@ -352,12 +357,12 @@ produce values when we supply parameters:
 
 ```scala
 math.abs    // function, takes one parameter
-math.abs(x) // value, produced using a value parameter
+math.abs(x) // value, produced by applying a value parameter
 ```
 
 In Scala we declare type constructors using underscores.
-Once we've declared them, however,
-we refer to them as simple identifiers:
+This specifies how many "holes" the type constructor has.
+However, to use them we refer to just the name.
 
 ```scala
 // Declare F using underscores:
@@ -370,15 +375,15 @@ def myMethod[F[_]] = {
 }
 ```
 
-This is analogous to specifying a function's parameters
-in its definition and omitting them when referring to it:
+This is analogous to specifying function parameter types.
+When we declare a parameter we also give its type.
+However, to use them we refer to just the name.
 
 ```scala
-// Declare f specifying parameters:
-val f = (x: Int) => x * 2
-
-// Reference f without parameters:
-val f2 = f andThen f
+// Declare f specifying parameter types
+def f(x: Int): Int = 
+  // Reference x without type
+  x * 2
 ```
 
 Armed with this knowledge of type constructors,
@@ -389,13 +394,14 @@ such as `List`, `Option`, `Future`, or a type alias such as `MyFunc`.
 <div class="callout callout-info">
 *Language Feature Imports*
 
-Higher kinded types are considered an advanced language feature in Scala.
-Whenever we declare a type constructor with `A[_]` syntax,
-we need to "enable" the higher kinded type language feature
-to suppress warnings from the compiler.
+In versions of Scala before 2.13
+we need to "enable" the higher kinded type language feature,
+to suppress warnings from the compiler,
+whenever we declare a type constructor with `A[_]` syntax.
 We can either do this with a "language import" as above:
 
 ```scala
+import scala.language.higherKinds
 ```
 
 or by adding the following to `scalacOptions` in `build.sbt`:
@@ -404,8 +410,6 @@ or by adding the following to `scalacOptions` in `build.sbt`:
 scalacOptions += "-language:higherKinds"
 ```
 
-We'll use the language import in this book
-to ensure we are as explicit as possible.
-In practice, however, we find the `scalacOptions`
-flag to be simpler and less verbose.
+In practice we find the `scalacOptions` flag to be
+the simpler of the two options.
 </div>
