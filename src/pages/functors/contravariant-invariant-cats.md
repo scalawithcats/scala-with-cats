@@ -1,4 +1,4 @@
-## *Contravariant* and Invariant in Cats
+## Contravariant and Invariant in Cats
 
 Let's look at the implementation of
 contravariant and invariant functors in Cats,
@@ -51,7 +51,9 @@ import cats.syntax.contravariant._ // for contramap
 ```
 
 ```scala mdoc
-showString.contramap[Symbol](_.name).show(Symbol("dave"))
+showString
+  .contramap[Symbol](sym => s"'${sym.name}")
+  .show(Symbol("dave"))
 ```
 
 ### Invariant in Cats
