@@ -185,7 +185,9 @@ trait Printable[A] {
 final case class Box[A](value: A)
 ```
 ```scala mdoc:silent
-implicit def boxPrintable[A](implicit p: Printable[A]): Printable[Box[A]] =
+implicit def boxPrintable[A](
+    implicit p: Printable[A]
+): Printable[Box[A]] =
   new Printable[Box[A]] {
     def format(box: Box[A]): String =
       p.format(box.value)
