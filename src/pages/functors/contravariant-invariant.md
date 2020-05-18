@@ -1,4 +1,4 @@
-## *Contravariant* and Invariant Functors {#contravariant-invariant}
+\## Contravariant and Invariant Functors {#contravariant-invariant}
 
 As we have seen, we can think of `Functor's` `map` method as
 "appending" a transformation to a chain.
@@ -92,8 +92,7 @@ we use a `self` alias to distinguish
 the outer and inner `Printables`:
 
 ```scala mdoc:silent:reset-object
-trait Printable[A] {
-  self =>
+trait Printable[A] { self =>
 
   def format(value: A): String
 
@@ -117,7 +116,7 @@ for `String` and `Boolean`:
 implicit val stringPrintable: Printable[String] =
   new Printable[String] {
     def format(value: String): String =
-      "\"" + value + "\""
+      s"'${value}'"
   }
 
 implicit val booleanPrintable: Printable[Boolean] =
@@ -147,13 +146,46 @@ the complete definition from scratch
 create your instance from an
 existing instance using `contramap`.
 
+```scala mdoc:invisible
+implicit def boxPrintable[A](implicit p: Printable[A]): Printable[Box[A]] =
+  p.contramap[Box[A]](_.value)
+```
+
+Your instance should work as follows:
+
+```scala mdoc
+format(Box("hello world"))
+format(Box(true))
+```
+
+If we don't have a `Printable` for the type inside the `Box`,
+calls to `format` should fail to compile:
+
+```scala mdoc:fail
+format(Box(123))
+```
+
 <div class="solution">
 To make the instance generic across all types of `Box`,
 we base it on the `Printable` for the type inside the `Box`.
 We can either write out the complete definition by hand:
 
+```scala mdoc:invisible:reset-object
+trait Printable[A] {
+  self =>
+
+  def format(value: A): String
+
+  def contramap[B](func: B => A): Printable[B] =
+    new Printable[B] {
+      def format(value: B): String =
+        self.format(func(value))
+    }
+}
+final case class Box[A](value: A)
+```
 ```scala mdoc:silent
-implicit def boxPrintable[A](implicit p: Printable[A]) =
+implicit def boxPrintable[A](implicit p: Printable[A]): Printable[Box[A]] =
   new Printable[Box[A]] {
     def format(box: Box[A]): String =
       p.format(box.value)
@@ -182,7 +214,7 @@ def format[A](value: A)(implicit p: Printable[A]): String =
 implicit val stringPrintable: Printable[String] =
   new Printable[String] {
     def format(value: String): String =
-      "\"" + value + "\""
+      s"'${value}'"
   }
 
 implicit val booleanPrintable: Printable[Boolean] =
@@ -193,7 +225,7 @@ implicit val booleanPrintable: Printable[Boolean] =
 final case class Box[A](value: A)
 ```
 ```scala mdoc:silent
-implicit def boxPrintable[A](implicit p: Printable[A]) =
+implicit def boxPrintable[A](implicit p: Printable[A]): Printable[Box[A]] =
   p.contramap[Box[A]](_.value)
 ```
 
@@ -202,20 +234,6 @@ and conveys the functional programming approach
 of building solutions by combining simple building blocks
 using pure functional combinators.
 </div>
-
-Your instance should work as follows:
-
-```scala mdoc
-format(Box("hello world"))
-format(Box(true))
-```
-
-If we don't have a `Printable` for the type inside the `Box`,
-calls to `format` should fail to compile:
-
-```scala mdoc:fail
-format(Box(123))
-```
 
 ### Invariant functors and the *imap* method {#sec:functors:invariant}
 
@@ -244,7 +262,7 @@ trait Codec[A] {
 }
 ```
 
-```scala mdoc:invisible:reset
+```scala mdoc:invisible:reset-object
 trait Codec[A] {
   self =>
 
@@ -279,7 +297,8 @@ the `imap` method creates a `Codec[B]`:
 ![Type chart: the imap method](src/pages/functors/generic-imap.pdf+svg){#fig:functors:imap-type-chart}
 
 As an example use case, imagine we have a basic `Codec[String]`,
-whose `encode` and `decode` methods are both a no-op:
+whose `encode` and `decode` methods both 
+simply return the value they are passed:
 
 ```scala mdoc:silent
 implicit val stringCodec: Codec[String] =
@@ -322,13 +341,12 @@ Implement the `imap` method for `Codec` above.
 <div class="solution">
 Here's a working implementation:
 
-```scala mdoc:silent:reset
-trait Codec[A] {
+```scala mdoc:silent:reset-object
+trait Codec[A] { self =>
   def encode(value: A): String
   def decode(value: String): A
 
   def imap[B](dec: A => B, enc: B => A): Codec[B] = {
-    val self = this
     new Codec[B] {
       def encode(value: B): String =
         self.encode(enc(value))
@@ -377,7 +395,7 @@ implicit val doubleCodec: Codec[Double] =
 Finally, implement a `Codec` for the following `Box` type:
 
 ```scala mdoc:silent
-case class Box[A](value: A)
+final case class Box[A](value: A)
 ```
 
 <div class="solution">
