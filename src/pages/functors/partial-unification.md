@@ -1,9 +1,7 @@
 ## Aside: Partial Unification {#sec:functors:partial-unification}
 
 In Section [@sec:functors:more-examples]
-we saw a curious compiler error.
-The following code compiled perfectly
-if we had the `-Ypartial-unification` compiler flag enabled:
+we saw a functor instance for `Function1`.
 
 ```scala mdoc:silent
 import cats.Functor
@@ -13,44 +11,24 @@ import cats.syntax.functor._     // for map
 val func1 = (x: Int)    => x.toDouble
 val func2 = (y: Double) => y * 2
 ```
-
 ```scala mdoc
 val func3 = func1.map(func2)
 ```
 
-but failed if the flag was missing:
-
-```scala
-val func3 = func1.map(func2)
-// <console>: error: value map is not a member of Int => Double
-//        val func3 = func1.map(func2)
-                            ^
-```
-
-Obviously "partial unification" is
-some kind of optional compiler behaviour,
-without which our code will not compile.
-We should take a moment to describe this behaviour
-and discuss some gotchas and workarounds.
-
-### Unifying Type Constructors
-
-In order to compile an expression like `func1.map(func2)` above,
-the compiler has to search for a `Functor` for `Function1`.
-However, `Functor` accepts a type constructor with one parameter:
-
-```scala
-trait Functor[F[_]] {
-  def map[A, B](fa: F[A])(func: A => B): F[B]
-}
-```
-
-and `Function1` has two type parameters
+`Function1` has two type parameters
 (the function argument and the result type):
 
 ```scala
 trait Function1[-A, +B] {
   def apply(arg: A): B
+}
+```
+
+However, `Functor` accepts a type constructor with one parameter:
+
+```scala
+trait Functor[F[_]] {
+  def map[A, B](fa: F[A])(func: A => B): F[B]
 }
 ```
 
@@ -65,21 +43,9 @@ type F[A] = A => Double
 ```
 
 *We* know that the former of these is the correct choice.
-However, earlier versions of the Scala compiler
-were not able to make this inference.
-This infamous limitation,
-known as [SI-2712][link-si2712],
-prevented the compiler from "unifying" type constructors
-of different arities.
-This compiler limitation is now fixed,
-although we have to enable the fix
-via a compiler flag in `build.sbt`:
-
-```scala
-scalacOptions += "-Ypartial-unification"
-```
-
-### Left-to-Right Elimination
+However the compiler doesn't understand what the code means.
+Instead it relies on a simple rule, 
+implementing what is called "partial unification".
 
 The partial unification in the Scala compiler
 works by fixing type parameters from left to right.
@@ -104,7 +70,25 @@ val either: Either[String, Int] = Right(123)
 either.map(_ + 1)
 ```
 
-However, there are situations where
+
+<div class="callout callout-warning">
+Partial unification is the default behaviour in Scala 2.13.
+In earlier versions of Scala
+we need to add the `-Ypartial-unification` compiler flag.
+In sbt we would add the compiler flag in `build.sbt`:
+
+```scala
+scalacOptions += "-Ypartial-unification"
+```
+
+The rationale behind this change is discussed in [SI-2712][link-si2712].
+</div>
+
+
+
+### Limitations of Partial Unification
+
+There are situations where
 left-to-right elimination is not the correct choice.
 One example is the `Or` type in [Scalactic][link-scalactic],
 which is a conventionally left-biased equivalent of `Either`:
@@ -196,7 +180,6 @@ requiring the left-to-right elimination
 that is supported by the compiler
 out of the box.
 However, it is useful to know about
-`-Ypartial-unification`
-and this quirk of elimination order
+this quirk of elimination order
 in case you ever come across
 an odd scenario like the one above.
