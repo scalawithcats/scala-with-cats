@@ -41,7 +41,7 @@ to sequence computations ignoring some complication.
 However, functors are limited in that
 they only allow this complication
 to occur once at the beginning of the sequence.
-They don't account further complications
+They don't account for further complications
 at each step in the sequence.
 
 This is where monads come in.
@@ -82,7 +82,7 @@ def stringDivideBy(aStr: String, bStr: String): Option[Int] =
   }
 ```
 
-We know the semantics well:
+The semantics are:
 
 - the first call to `parseInt` returns a `None` or a `Some`;
 - if it returns a `Some`, the `flatMap` method calls our function and passes us the integer `aNum`;
@@ -177,7 +177,7 @@ created from combinations of intermediate `As` and `Bs`.
 **Futures**
 
 `Future` is a monad that sequences computations
-without worrying that they are asynchronous:
+without worrying that they may be asynchronous:
 
 ```scala mdoc:silent
 import scala.concurrent.Future
