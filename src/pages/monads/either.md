@@ -81,9 +81,9 @@ These "smart constructors" have
 advantages over `Left.apply` and `Right.apply`
 because they return results of type `Either`
 instead of `Left` and `Right`.
-This helps avoid type inference bugs
+This helps avoid type inference problems
 caused by over-narrowing,
-like the bug in the example below:
+like the issue in the example below:
 
 ```scala mdoc:fail
 def countPositive(nums: List[Int]) =
@@ -148,7 +148,9 @@ Either.fromOption[String, Int](None, "Badness")
 
 `cats.syntax.either` also adds
 some useful methods for instances of `Either`.
-We can use `orElse` and `getOrElse` to extract
+
+Users of Scala 2.11 or 2.12 
+can use `orElse` and `getOrElse` to extract
 values from the right side or return a default:
 
 ```scala mdoc:silent

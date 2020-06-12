@@ -136,7 +136,7 @@ pure(123)
 The `map` method takes a parameter of type `Id[A]`,
 applies a function of type `A => B`, and returns an `Id[B]`.
 But `Id[A]` is simply `A` and `Id[B]` is simply `B`!
-All we have to do is call the function---no packing or unpacking required:
+All we have to do is call the function---no boxing or unboxing required:
 
 ```scala mdoc:silent
 def map[A, B](initial: Id[A])(func: A => B): Id[B] =
