@@ -33,6 +33,9 @@ trait MonadError[F[_], E] extends Monad[F] {
   def raiseError[A](e: E): F[A]
 
   // Handle an error, potentially recovering from it:
+  def handleErrorWith[A](fa: F[A])(f: E => F[A]): F[A]
+  
+  // Handle all errors, recovering from them:
   def handleError[A](fa: F[A])(f: E => A): F[A]
 
   // Test an instance of `F`,
@@ -73,7 +76,7 @@ so we can ignore this detail for now.
 ### Raising and Handling Errors
 
 The two most important methods of `MonadError`
-are `raiseError` and `handleError`.
+are `raiseError` and `handleErrorWith`.
 `raiseError` is like the `pure` method for `Monad`
 except that it creates an instance representing a failure:
 
@@ -82,13 +85,13 @@ val success = monadError.pure(42)
 val failure = monadError.raiseError("Badness")
 ```
 
-`handleError` is the complement of `raiseError`.
+`handleErrorWith` is the complement of `raiseError`.
 It allows us to consume an error and (possibly)
 turn it into a success,
 similar to the `recover` method of `Future`:
 
 ```scala mdoc
-monadError.handleError(failure) {
+monadError.handleErrorWith(failure) {
   case "Badness" =>
     monadError.pure("It's ok")
 
@@ -97,7 +100,18 @@ monadError.handleError(failure) {
 }
 ```
 
-There is also a third useful method called `ensure`
+If we know we can handle all possible errors 
+we can use `handleWith`.
+
+```scala mdoc
+monadError.handleError(failure) {
+  case "Badness" => 42
+
+  case _ => -1
+}
+```
+
+There is another useful method called `ensure`
 that implements `filter`-like behaviour.
 We test the value of a successful monad with a predicate
 and specify an error to raise if the predicate returns `false`:
@@ -106,11 +120,12 @@ and specify an error to raise if the predicate returns `false`:
 monadError.ensure(success)("Number too low!")(_ > 1000)
 ```
 
-Cats provides syntax for `raiseError` and `handleError`
+Cats provides syntax for `raiseError` and `handleErrorWith`
 via [`cats.syntax.applicativeError`][cats.syntax.applicativeError]
 and `ensure` via [`cats.syntax.monadError`][cats.syntax.monadError]:
 
 ```scala mdoc:invisible:reset
+import cats.MonadError
 import cats.instances.either._ // for MonadError
 
 type ErrorOr[A] = Either[String, A]
@@ -124,6 +139,13 @@ import cats.syntax.monadError._       // for ensure
 ```scala mdoc
 val success = 42.pure[ErrorOr]
 val failure = "Badness".raiseError[ErrorOr, Int]
+failure.handleErrorWith{
+  case "Badness" =>
+    256.pure
+
+  case _ =>
+    ("It's not ok").raiseError
+}
 success.ensure("Number to low!")(_ > 1000)
 ```
 
@@ -154,3 +176,41 @@ exn.raiseError[Try, Int]
 ```
 
 ### Exercise: Abstracting
+
+Implement a method `validateAdult` with the following signature
+
+```scala
+def validateAdult[F[_]](age: Int)(implicit me: MonadError[F, Throwable]): F[Int] =
+  ???
+```
+
+When passed an `age` greater than or equal to 18 it should return that value as a success. Otherwise it should return a error represented as an `IllegalArgumentException`.
+
+```scala mdoc:invisible
+def validateAdult[F[_]](age: Int)(implicit me: MonadError[F, Throwable]): F[Int] =
+  if(age >= 18) age.pure[F]
+  else new IllegalArgumentException("Age must be greater than or equal to 18").raiseError[F, Int]
+```
+
+Here are some examples of use.
+
+```scala mdoc
+validateAdult[Try](18)
+validateAdult[Try](8)
+type ExceptionOr[A] = Either[Throwable, A]
+validateAdult[ExceptionOr](-1)
+```
+
+<div class="solution">
+We can solve this using `pure` and `raiseError`. Note the use of type parameters to these methods, to aid type inference.
+
+```scala mdoc:invisible:reset-object
+import cats.MonadError
+import cats.implicits._
+```
+```scala mdoc:silent
+def validateAdult[F[_]](age: Int)(implicit me: MonadError[F, Throwable]): F[Int] =
+  if(age >= 18) age.pure[F]
+  else new IllegalArgumentException("Age must be greater than or equal to 18").raiseError[F, Int]
+```
+</div>
