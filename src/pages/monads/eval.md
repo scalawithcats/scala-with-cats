@@ -2,27 +2,30 @@
 
 [`cats.Eval`][cats.Eval] is a monad that allows us to
 abstract over different *models of evaluation*.
-We typically hear of two such models: *eager* and *lazy*.
-`Eval` throws in a further distinction of
-whether or not a result is *memoized*.
+We typically talk of two such models: *eager* and *lazy*,
+also called *call-by-value* and *call-by-name* respectively.
+`Eval` also allows for a result to be *memoized*,
+which gives us *call-by-need* evaluation.
+
+`Eval` is also *stack-safe*,
+which means we can use it in very deep recursions
+without blowing up the stack.
+
 
 ### Eager, Lazy, Memoized, Oh My!
 
-What do these terms mean?
+What do these terms for models of evaluation mean?
+Let's see some examples.
 
-*Eager* computations happen immediately
-whereas *lazy* computations happen on access.
-*Memoized* computations are run once on first access,
-after which the results are cached.
-
-For example, Scala `vals` are eager and memoized.
-We can see this using a computation with a visible side-effect.
+Let's first look at Scala `vals`.
+We can see the evaluation model using
+a computation with a visible side-effect.
 In the following example,
 the code to compute the value of `x`
-happens at the definition site
-rather than on access (eager).
+happens at place where it is defined
+rather than on access.
 Accessing `x` recalls the stored value
-without re-running the code (memoized).
+without re-running the code.
 
 ```scala mdoc
 val x = {
@@ -34,10 +37,16 @@ x // first access
 x // second access
 ```
 
-By contrast, `defs` are lazy and not memoized.
+This is an example of call-by-value evaluation:
+
+- the computation is evaluated at point where it is defined (eager); and
+- the computation is evaluated once (memoized).
+
+
+Let's look at an example using a `def`.
 The code to compute `y` below
-is not run until we access it (lazy),
-and is re-run on every access (not memoized):
+is not run until we use it,
+and is re-run on every access:
 
 ```scala mdoc
 def y = {
@@ -49,10 +58,15 @@ y // first access
 y // second access
 ```
 
+These are the properties of call-by-name evaluation:
+
+- the computation is evaluated at the point of use (lazy); and
+- the computation is evaluated each time it is used (not memoized).
+
 Last but not least,
-`lazy vals` are lazy and memoized.
+`lazy vals` are an example of call-by-need evaluation.
 The code to compute `z` below
-is not run until we access it
+is not run until we use it
 for the first time (lazy).
 The result is then cached
 and re-used on subsequent accesses (memoized):
@@ -67,9 +81,24 @@ z // first access
 z // second access
 ```
 
+Let's summarize. There are two properties of interest:
+
+- evaluation at the point of definition (eager) versus at the point of use (lazy); and
+- values are saved once evaluated (memoized) or not (not memoized).
+
+There are three possible combinations of these properties:
+
+- call-by-value which is eager and memoized;
+- call-by-name which is lazy and not memoized; and
+- call-by-need which is lazy and memoized.
+
+The final combination, eager and not memoized, is not possible.
+
+
 ### Eval's Models of Evaluation
 
-`Eval` has three subtypes: `Now`, `Later`, and `Always`.
+`Eval` has three subtypes: `Now`, `Always`, and `Later`.
+They correspond to call-by-value, call-by-name, and call-by-need respectively.
 We construct these with three constructor methods,
 which create instances of the three classes
 and return them typed as `Eval`:
@@ -80,8 +109,8 @@ import cats.Eval
 
 ```scala mdoc
 val now = Eval.now(math.random + 1000)
-val later = Eval.later(math.random + 2000)
 val always = Eval.always(math.random + 3000)
+val later = Eval.later(math.random + 2000)
 ```
 
 We can extract the result of an `Eval`
@@ -89,8 +118,8 @@ using its `value` method:
 
 ```scala mdoc
 now.value
-later.value
 always.value
+later.value
 ```
 
 Each type of `Eval` calculates its result
@@ -102,7 +131,7 @@ Its semantics are similar to a `val`---eager and memoized:
 import cats.Eval
 ```
 ```scala mdoc
-val x = Eval.now {
+val x = Eval.now{
   println("Computing X")
   math.random
 }
@@ -115,7 +144,7 @@ x.value // second access
 similar to a `def`:
 
 ```scala mdoc
-val y = Eval.always {
+val y = Eval.always{
   println("Computing Y")
   math.random
 }
@@ -128,7 +157,7 @@ Finally, `Eval.later` captures a lazy, memoized computation,
 similar to a `lazy val`:
 
 ```scala mdoc
-val z = Eval.later {
+val z = Eval.later{
   println("Computing Z")
   math.random
 }
@@ -137,6 +166,7 @@ z.value // first access
 z.value // second access
 ```
 
+
 The three behaviours are summarized below:
 
 -----------------------------------------------------------------------
@@ -144,9 +174,9 @@ Scala              Cats                      Properties
 ------------------ ------------------------- --------------------------
 `val`              `Now`                     eager, memoized
 
-`lazy val`         `Later`                   lazy, memoized
-
 `def`              `Always`                  lazy, not memoized
+
+`lazy val`         `Later`                   lazy, memoized
 ------------------ ------------------------- --------------------------
 
 ### Eval as a Monad
@@ -157,9 +187,9 @@ The functions aren't run until we call
 `Eval's` `value` method to request a result:
 
 ```scala mdoc
-val greeting = Eval.
-  always { println("Step 1"); "Hello" }.
-  map { str => println("Step 2"); s"$str world" }
+val greeting = Eval
+  .always{ println("Step 1"); "Hello" }
+  .map{ str => println("Step 2"); s"$str world" }
 
 greeting.value
 ```
@@ -171,8 +201,8 @@ called lazily on demand (`def` semantics):
 
 ```scala mdoc
 val ans = for {
-  a <- Eval.now { println("Calculating A"); 40 }
-  b <- Eval.always { println("Calculating B"); 2 }
+  a <- Eval.now{ println("Calculating A"); 40 }
+  b <- Eval.always{ println("Calculating B"); 2 }
 } yield {
   println("Adding A and B")
   a + b
@@ -188,11 +218,11 @@ The result of the chain up to the call to `memoize` is cached,
 whereas calculations after the call retain their original semantics:
 
 ```scala mdoc
-val saying = Eval.
-  always { println("Step 1"); "The cat" }.
-  map { str => println("Step 2"); s"$str sat on" }.
-  memoize.
-  map { str => println("Step 3"); s"$str the mat" }
+val saying = Eval
+  .always{ println("Step 1"); "The cat" }
+  .map{ str => println("Step 2"); s"$str sat on" }
+  .memoize
+  .map{ str => println("Step 3"); s"$str the mat" }
 
 saying.value // first access
 saying.value // second access
