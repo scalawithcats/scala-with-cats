@@ -215,11 +215,12 @@ which messages come from which computation:
 
 ```scala
 import scala.concurrent._
+import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.duration._
 
 Await.result(Future.sequence(Vector(
-  Future(factorial(3)),
-  Future(factorial(3))
+  Future(factorial(5)),
+  Future(factorial(5))
 )), 5.seconds)
 // fact 0 1
 // fact 0 1
@@ -229,7 +230,11 @@ Await.result(Future.sequence(Vector(
 // fact 2 2
 // fact 3 6
 // fact 3 6
-// res14: scala.collection.immutable.Vector[Int] =
+// fact 4 24
+// fact 4 24
+// fact 5 120
+// fact 5 120
+// res: scala.collection.immutable.Vector[Int] =
 //   Vector(120, 120)
 ```
 
@@ -314,19 +319,14 @@ without fear of interleaving:
 
 ```scala
 Await.result(Future.sequence(Vector(
-  Future(factorial(3)),
-  Future(factorial(3))
-)), 5.seconds)
-// fact 0 1
-// fact 0 1
-// fact 1 1
-// fact 1 1
-// fact 2 2
-// fact 2 2
-// fact 3 6
-// fact 3 6
-// res14: scala.collection.immutable.Vector[Int] =
-//   Vector(120, 120)
+  Future(factorial(5)),
+  Future(factorial(5))
+)).map(_.map(_.written)), 5.seconds)
+// res: scala.collection.immutable.Vector[cats.Id[Vector[String]]] = 
+//   Vector(
+//     Vector(fact 0 1, fact 1 1, fact 2 2, fact 3 6, fact 4 24, fact 5 120), 
+//     Vector(fact 0 1, fact 1 1, fact 2 2, fact 3 6, fact 4 24, fact 5 120)
+//   )
 ```
 
 <!--
