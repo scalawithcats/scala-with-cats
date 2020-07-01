@@ -5,7 +5,7 @@ allows us to pass additional state around as part of a computation.
 We define `State` instances representing atomic state operations
 and thread them together using `map` and `flatMap`.
 In this way we can model mutable state in a purely functional way,
-without using mutation.
+without using actual mutation.
 
 ### Creating and Unpacking State
 
@@ -17,8 +17,8 @@ instances of `State[S, A]` represent functions of type `S => (S, A)`.
 import cats.data.State
 ```
 
-```scala mdoc
-val a = State[Int, String] { state =>
+```scala mdoc:silent
+val a = State[Int, String]{ state =>
   (state, s"The state is $state")
 }
 ```
@@ -57,17 +57,17 @@ and their combination represents a complete sequence of changes:
 
 ```scala mdoc:invisible:reset-object
 import cats.data.State
-val a = State[Int, String] { state =>
+val a = State[Int, String]{ state =>
   (state, s"The state is $state")
 }
 ```
-```scala mdoc
-val step1 = State[Int, String] { num =>
+```scala mdoc:silent
+val step1 = State[Int, String]{ num =>
   val ans = num + 1
   (ans, s"Result of step1: $ans")
 }
 
-val step2 = State[Int, String] { num =>
+val step2 = State[Int, String]{ num =>
   val ans = num * 2
   (ans, s"Result of step2: $ans")
 }
@@ -76,7 +76,9 @@ val both = for {
   a <- step1
   b <- step2
 } yield (a, b)
+```
 
+```scala mdoc
 val (state, result) = both.run(20).value
 ```
 
@@ -253,7 +255,9 @@ def operand(num: Int): CalcState[Int] =
 ```
 
 The `operator` function is a little more complex.
-We have to pop two operands off the stack (having the second operand at the top of the stack) and push the result in their place.
+We have to pop two operands off the stack 
+(having the second operand at the top of the stack)i
+and push the result in their place.
 The code can fail if the stack doesn't have enough operands on it,
 but the exercise description allows us to throw an exception in this case:
 

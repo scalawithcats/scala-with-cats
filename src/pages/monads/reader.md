@@ -23,7 +23,7 @@ import cats.data.Reader
 ```
 
 ```scala mdoc
-case class Cat(name: String, favoriteFood: String)
+final case class Cat(name: String, favoriteFood: String)
 
 val catName: Reader[Cat, String] =
   Reader(cat => cat.name)
@@ -237,7 +237,7 @@ to complex techniques like the cake pattern and DI frameworks.
 
 `Readers` are most useful in situations where:
 
-- we are constructing a batch program
+- we are constructing a program
   that can easily be represented by a function;
 
 - we need to defer injection of a known parameter
@@ -250,7 +250,7 @@ By representing the steps of our program as `Readers`
 we can test them as easily as pure functions,
 plus we gain access to the `map` and `flatMap` combinators.
 
-For more advanced problems where we have lots of dependencies,
+For more complicated problems where we have lots of dependencies,
 or where a program isn't easily represented as a pure function,
 other dependency injection techniques tend to be more appropriate.
 
