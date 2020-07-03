@@ -353,7 +353,7 @@ For example:
 ```scala mdoc
 import cats.instances.option._ // for Monad
 
-123.pure[EitherT[Option, String, ?]]
+123.pure[EitherT[Option, String, *]]
 ```
 
 Kind Projector can't simplify all type declarations down to a single line,
