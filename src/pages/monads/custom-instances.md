@@ -36,13 +36,86 @@ by PureScript creator Phil Freeman.
 The method should recursively call itself
 until the result of `fn` returns a `Right`.
 
-If we can make `tailRecM` tail-recursive,
-Cats is able to guarantee stack safety
-in recursive situations such as
-folding over large lists (see Section [@sec:foldable]).
-If we can't make `tailRecM` tail-recursive,
-Cats cannot make these guarantees
-and extreme use cases may result in `StackOverflowErrors`.
+To motivate its use let's use the following example:
+Suppose we want to write a method that calls a
+function until the function indicates it should stop.
+The function will return a monad instance because,
+as we know,
+monads represent sequencing
+and many monads have some notion of stopping.
+
+We can write this method in terms of `flatMap`.
+
+```scala mdoc:silent
+import cats.syntax.flatMap._ // For flatMap
+
+def retry[F[_]: Monad, A](start: A)(f: A => F[A]): F[A] =
+  f(start).flatMap{ a =>
+    retry(a)(f)
+  }
+```
+
+Unfortunately it is not stack-safe.
+It works for small input.
+
+```scala mdoc
+import cats.instances.option._
+
+retry(100)(a => if(a == 0) None else Some(a - 1))
+```
+
+but if we try large input we get a `StackOverflowError`.
+
+```scala
+retry(100000)(a => if(a == 0) None else Some(a - 1))
+// KABLOOIE!!!!
+```
+
+We can instead rewrite this method
+using `tailRecM`.
+
+```scala mdoc:silent
+import cats.syntax.functor._ // for map
+
+def retryTailRecM[F[_]: Monad, A](start: A)(f: A => F[A]): F[A] =
+  Monad[F].tailRecM(start){ a =>
+    f(a).map(a2 => Left(a2))
+  }
+```
+
+Now it runs successfully
+no matter how many time we recurse.
+
+```scala mdoc
+retryTailRecM(100000)(a => if(a == 0) None else Some(a - 1))
+```
+
+It's important to note
+that we have to explicitly call `tailRecM`.
+There isn't a code transformation
+that will convert non-tail recursive
+code into tail recursive code
+that uses `tailRecM`.
+However there are several utilities
+provided by the `Monad` type class
+that makes these kinds of methods easier to write.
+For example, we can rewrite `retry`
+in terms of `iterateWhileM`
+and we don't have to explicitly call `tailRecM`.
+
+```scala mdoc:silent
+import cats.syntax.monad._ // for iterateWhileM
+
+def retryM[F[_]: Monad, A](start: A)(f: A => F[A]): F[A] =
+  start.iterateWhileM(f)(a => true)
+```
+
+```scala mdoc
+retryM(100000)(a => if(a == 0) None else Some(a - 1))
+```
+
+We'll see more methods that use `tailRecM` in Section [@sec:foldable].
+
 All of the built-in monads in Cats have
 tail-recursive implementations of `tailRecM`,
 although writing one for custom monads
