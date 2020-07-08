@@ -101,15 +101,30 @@ and see that it is also a failure.
 
 The reason for the surprising results
 for `List` and `Either` is that they are both monads.
+If we have a monad we can implement `product` as follows.
+
+```scala mdoc:silent
+import cats.Monad
+import cats.syntax.functor._ // for map
+import cats.syntax.flatMap._ // for flatmap
+
+def product[F[_]: Monad, A, B](fa: F[A], fb: F[B]): F[(A,B)] =
+  fa.flatMap(a => 
+    fb.map(b =>
+      (a, b)
+    )
+  )
+```
+
+It would be very strange
+if we had different semantics
+for `product` depending
+on how we implemented it.
 To ensure consistent semantics,
 Cats' `Monad` (which extends `Semigroupal`)
 provides a standard definition of `product`
-in terms of `map` and `flatMap`.
-This gives what we might think of as
-unexpected and less useful behaviour for a number of data types.
-The consistency of semantics is important
-for higher level abstractions,
-but we don't know about those yet.
+in terms of `map` and `flatMap`
+as we showed above.
 
 Even our results for `Future` are a trick of the light.
 `flatMap` provides sequential ordering,
@@ -137,33 +152,40 @@ This frees us to implement `product` in different ways.
 We'll examine this further in a moment
 when we look at an alternative data type for error handling.
 
-#### Exercise: The Product of Monads
+#### Exercise: The Product of Lists
 
-Implement `product` in terms of `flatMap`:
+Why does `product` for `List`
+produce the Cartesian product?
+We saw an example above.
+Here it is again.
 
-```scala mdoc:silent
-import cats.Monad
+```scala mdoc
+Semigroupal[List].product(List(1, 2), List(3, 4))
+```
 
-def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
-  ???
+We can also write this in terms of `tupled`.
+
+```scala mdoc
+(List(1, 2), List(3, 4)).tupled
 ```
 
 <div class="solution">
-We can implement `product`
-in terms of `map` and `flatMap` like so:
+This exercise is checking that you understood
+the definition of `product` in terms of
+`flatMap` and `map`.
 
 ```scala mdoc:invisible:reset-object
 import cats.Monad
 ```
 ```scala mdoc:silent
-import cats.syntax.flatMap._ // for flatMap
 import cats.syntax.functor._ // for map
+import cats.syntax.flatMap._ // for flatMap
 
-def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
+def product[F[_]: Monad, A, B](x: F[A], y: F[B]): F[(A, B)] =
   x.flatMap(a => y.map(b => (a, b)))
 ```
 
-Unsurprisingly, this code is equivalent to a for comprehension:
+This code is equivalent to a for comprehension:
 
 ```scala mdoc:invisible:reset-object
 import cats.Monad
@@ -171,7 +193,7 @@ import cats.syntax.flatMap._ // for flatMap
 import cats.syntax.functor._ // for map
 ```
 ```scala mdoc:silent
-def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
+def product[F[_]: Monad, A, B](x: F[A], y: F[B]): F[(A, B)] =
   for {
     a <- x
     b <- y
@@ -188,27 +210,4 @@ import cats.instances.list._ // for Semigroupal
 ```scala mdoc
 product(List(1, 2), List(3, 4))
 ```
-
-```scala mdoc:invisible:reset-object
-import cats.Monad
-import cats.syntax.flatMap._ // for flatMap
-import cats.syntax.functor._ // for map
-import cats.instances.either._
-def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
-  for {
-    a <- x
-    b <- y
-  } yield (a, b)
-```
-```scala mdoc:silent
-type ErrorOr[A] = Either[Vector[String], A]
-```
-
-```scala mdoc
-product[ErrorOr, Int, Int](
-  Left(Vector("Error 1")),
-  Left(Vector("Error 2"))
-)
-```
-
 </div>

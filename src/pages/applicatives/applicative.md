@@ -19,7 +19,7 @@ extends `Semigroupal` and `Functor`
 and adds an `ap` method that applies a parameter
 to a function within a context.
 The second, [`cats.Applicative`][cats.Applicative],
-extends `Apply`, adds the `pure` method
+extends `Apply` and adds the `pure` method
 introduced in Chapter [@sec:monads].
 Here's a simplified definition in code:
 

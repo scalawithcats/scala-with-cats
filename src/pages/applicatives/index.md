@@ -55,7 +55,7 @@ but `map` and `flatMap` can't exploit this.
 We need a weaker construct---one
 that doesn't guarantee sequencing---to
 achieve the result we want.
-In this chapter we will look at two type classes
+In this chapter we will look at three type classes
 that support this pattern:
 
   - `Semigroupal` encompasses
@@ -63,6 +63,10 @@ that support this pattern:
     Cats provides a [`cats.syntax.apply`][cats.syntax.apply] module
     that makes use of `Semigroupal` and `Functor`
     to allow users to sequence functions with multiple arguments.
+    
+  - `Parallel` converts
+    types with a `Monad` instance
+    to a related type with a `Semigroupal` instance.
 
   - `Applicative` extends `Semigroupal` and `Functor`.
     It provides a way of applying functions to parameters within a context.

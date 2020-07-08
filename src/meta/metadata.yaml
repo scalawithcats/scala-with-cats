@@ -73,7 +73,7 @@ pages:
   - applicatives/index.md
   - applicatives/semigroupal.md
   - applicatives/examples.md
-  - applicatives/validated.md
+  - applicatives/parallel.md
   - applicatives/applicative.md
   - applicatives/summary.md
 

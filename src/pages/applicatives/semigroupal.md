@@ -31,7 +31,7 @@ While `Semigroup` allows us to join values,
 `Semigroupal` allows us to join contexts.
 Let's join some `Options` as an example:
 
-```scala mdoc:silent
+```scala mdoc:silent:reset-object
 import cats.Semigroupal
 import cats.instances.option._ // for Semigroupal
 ```
@@ -80,16 +80,14 @@ There are also methods `contramap2` through `contramap22`
 and `imap2` through `imap22`,
 that require instances of `Contravariant` and `Invariant` respectively.
 
-<!--
 ### Semigroupal Laws
 
 There is only one law for `Semigroupal`:
-the `product` method must be associative:
+the `product` method must be associative.
 
 ```scala
 product(a, product(b, c)) == product(product(a, b), c)
 ```
--->
 
 ## Apply Syntax
 
@@ -120,10 +118,10 @@ Cats defines a separate `tupled` method for each arity:
 
 In addition to `tupled`, Cats' apply syntax provides
 a method called `mapN` that accepts an implicit `Functor`
-and a function of the correct arity to combine the values:
+and a function of the correct arity to combine the values.
 
 ```scala mdoc:silent
-case class Cat(name: String, born: Int, color: String)
+final case class Cat(name: String, born: Int, color: String)
 ```
 
 ```scala mdoc
@@ -133,6 +131,9 @@ case class Cat(name: String, born: Int, color: String)
   Option("Orange & black")
 ).mapN(Cat.apply)
 ```
+
+Of all the methods mentioned here,
+it is most common to use `mapN`.
 
 Internally `mapN` uses the `Semigroupal`
 to extract the values from the `Option`
