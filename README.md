@@ -17,9 +17,10 @@ using the [Cats](http://typelevel.org/cats) library and a number of case studies
 
 ## Building
 
-Scala with Cats uses [Underscore's ebook build system][ebook-template].
-
-The simplest way to build the book is to use [Docker Compose](http://docker.com):
+The build requires a lot of heavy machinery:
+texlive, node, java, scala, and pandoc and pandoc-crossref.
+The simplest way to build it is to use [Docker Compose](http://docker.com)
+with the provided shell scripts, `Dockerfile`, and `docker-compose.yaml`:
 
 - install Docker Compose (`brew install docker-compose` on OS X;
   or download from [docker.com](http://docker.com/)); and
@@ -28,15 +29,25 @@ The simplest way to build the book is to use [Docker Compose](http://docker.com)
 
 This will open a `bash` shell running inside the Docker container
 that contains all the dependencies to build the book.
-From the shell run:
 
-- `npm install`; and then
-- `sbt`.
+From the shell run `sbt` to open an SBT prompt,
+from which you can issue the following commands:
 
-Within `sbt` you can issue the commands
-`pdf`, `html`, `epub`, or `all`
-to build the desired version(s) of the book.
-Targets are placed in the `dist` directory.
+- `pdf` builds a PDF version in `dist/scala-with-cats.pdf`;
+- `html` builds an HTML version in `dist/scala-with-cats.html`;
+- `epub` builds an ePub version in `dist/scala-with-cats.epub`;
+- `all` builds all three versions.
+
+The `pdf`, `html`, and `epub` commands are each made of three smaller commands:
+
+- `{foo}Setup` creates temp directories and builds JS/CSS prerequisites for the HTML/ePub versions;
+- `mdoc` runs the files in `src/pages` through [mdoc](https://scalameta.org/mdoc/) to compile and run the Scala snippets;
+- `{foo}Pandoc` runs the output of `mdoc` through [pandoc](https://pandoc.org/) to produce the output.
+
+There are also `tex` and `json` commands
+(and commands like `texSetup`, `jsonPandoc`, and so on)
+that build a LaTeX version of the book and a Pandoc AST respectively.
+These are useful for debugging the build.
 
 ## Contributing
 

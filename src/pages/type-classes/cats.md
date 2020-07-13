@@ -42,7 +42,7 @@ Oops---that didn't work!
 The `apply` method uses *implicits* to look up individual instances,
 so we'll have to bring some instances into scope.
 
-### Importing Default Instances {#importing-default-instances}
+### Importing Default Instances {#sec:importing-default-instances}
 
 The [`cats.instances`][cats.instances] package
 provides default instances for a wide variety of types.

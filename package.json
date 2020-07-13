@@ -2,16 +2,20 @@
   "name": "scala-with-cats",
   "description": "Take your Scala to the next level",
   "version": "0.0.1",
+  "license": "CC-BY-SA-4.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scalawithcats/scala-with-cats"
+  },
   "devDependencies": {
     "bootstrap": "^3.4.1",
     "coffeeify": "1.0.0",
     "jquery": "3.5.0",
     "uglifyify": "2.6.0",
+    "lessc": "^1.0.2",
     "underscore": "1.7.0",
-    "underscore-ebook-template": "git+https://github.com/underscoreio/underscore-ebook-template.git#0.6.2"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specificed\" && exit 1"
+    "pandoc-filter": "0.1.6",
+    "coffeescript": "^2.5.1"
   },
   "author": "Noel Welsh and Dave Gurnell"
 }
