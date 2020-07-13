@@ -1,4 +1,5 @@
 ---
+documentclass: "book"
 papersize: "a5paper"
 fontsize: "11pt"
 geometry: "margin=.75in"

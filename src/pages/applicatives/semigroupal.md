@@ -1,6 +1,6 @@
-## Semigroupal {#semigroupal}
+## Semigroupal {#sec:semigroupal}
 
-[`cats.Semigroupal`][cats.Semigroupal] is a type class that
+[`cats.Semigroupal`][cats.semigroupal] is a type class that
 allows us to combine contexts[^semigroupal-name].
 If we have two objects of type `F[A]` and `F[B]`,
 a `Semigroupal[F]` allows us to combine them to form an `F[(A, B)]`.
@@ -21,6 +21,7 @@ This gives us more freedom when defining
 instances of `Semigroupal` than we get when defining `Monads`.
 
 [^semigroupal-name]: It
+
 is also the winner of Underscore's 2017 award for
 the most difficult functional programming term
 to work into a coherent English sentence.
@@ -159,8 +160,8 @@ val add: (Int, Int) => Int = (a, b) => a + b
 ### Fancy Functors and Apply Syntax
 
 Apply syntax also has `contramapN` and `imapN` methods
-that accept [Contravariant](#contravariant)
-and [Invariant](#invariant) functors.
+that accept Contravariant and Invariant functors
+(Section [@sec:functors:contravariant-invariant]).
 For example, we can combine `Monoids` using `Invariant`.
 Here's an example:
 

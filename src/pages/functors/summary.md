@@ -33,10 +33,10 @@ transformations on large collections,
 a technique leveraged heavily in
 "map-reduce" frameworks like [Hadoop][link-hadoop].
 We will investigate this approach in more detail in the
-[Map-reduce](#map-reduce) case study later in the book.
+map-reduce case study later in Section [@sec:map-reduce].
 
 The `Contravariant` and `Invariant` type classes
 are less widely applicable but are still useful
 for building data types that represent transformations.
-We will revisit them to discuss the [`Semigroupal`](#semigroupal)
+We will revisit them to discuss the `Semigroupal`
 type class later in Chapter [@sec:applicatives].

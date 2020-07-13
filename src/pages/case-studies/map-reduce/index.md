@@ -1,4 +1,4 @@
-# Case Study: Map-Reduce {#map-reduce}
+# Case Study: Map-Reduce {#sec:map-reduce}
 
 <!--
 TODO:

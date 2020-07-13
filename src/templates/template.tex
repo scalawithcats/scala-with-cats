@@ -55,29 +55,29 @@ $endif$
 $if(mainfont)$
     \setmainfont$mainfont$
 $else$
-    \setmainfont[%
+    \setmainfont{Lato-Regular}[%
       Color=primary,
       Path=$lib-dir$/fonts/Lato/,
       BoldItalicFont=Lato-BlackItalic,
       BoldFont=Lato-Bold,
-      ItalicFont=Lato-Italic]{Lato-Regular}
+      ItalicFont=Lato-Italic]
 $endif$
 
 $if(sansfont)$
     \setsansfont{$sansfont$}
 $else$
-    \setsansfont[%
+    \setsansfont{Lato-Regular}[%
       Color=primary,
       Path=$lib-dir$/fonts/Lato/,
       BoldItalicFont=Lato-BlackItalic,
       BoldFont=Lato-Bold,
-      ItalicFont=Lato-Italic]{Lato-Regular}
+      ItalicFont=Lato-Italic]
 $endif$
 
 $if(monofont)$
-    \setmonofont[Mapping=tex-ansi]{$monofont$}
+    \setmonofont{$monofont$}[Mapping=tex-ansi]
 $else$
-    \setmonofont[Mapping=tex-ansi]{Bitstream Vera Sans Mono}
+    \setmonofont{Bitstream Vera Sans Mono}[Mapping=tex-ansi]
 $endif$
 
 $if(mathfont)$
@@ -332,31 +332,53 @@ $endif$
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
+% Workaround for https://github.com/jgm/pandoc/issues/5801
+
+\renewcommand{\linethickness}{1pt}
+
 % Cat images in part title pages ----------------
 
-\makeatletter
+% TODO: Fix the \partimage command for cartoons on "Part" title pages.
+% For some reason the LaTeX we used to use for this has broken.
+% The command below temporarily disables the images instead:
 
-% define a user command to choose the image
-% this command also creates an internal command to insert the image
-\newcommand{\partimage}[2][]{\gdef\@partimage{\includegraphics[#1]{#2}}}
+\newcommand{\partimage}[2][]{}
 
-% redefine the amsbook part code to include the \@partimage insertion command
-\def\@part[#1]#2{%
-  \ifnum \c@secnumdepth >-2\relax \refstepcounter{part}%
-    \addcontentsline{toc}{part}{\partname\ \thepart.
-        \protect\enspace\protect\noindent#1}%
-  \else
-    \addcontentsline{toc}{part}{#1}\fi
-  \begingroup\centering
-  \ifnum \c@secnumdepth >-2\relax
-       {\fontsize{24pt}{30pt} \bfseries \partname\ \thepart}
-       \vskip 20\p@ \fi
-       \fontsize{30pt}{36pt} \bfseries#1
-       \vfil\@partimage\vfil
-  \endgroup
-  \newpage\thispagestyle{empty}}
+% TODO: This command implements \partimage with a regular \includegraphics
+% (which appears on the first page of the part rather than on the title page):
 
-\makeatother
+% \newcommand{\partimage}[2][]{\includegraphics[#1]{#2}}
+
+% TODO: This thread has some suggestions on how to do this
+% but I haven't got them to work yet:
+% https://tex.stackexchange.com/questions/485819/how-to-put-an-image-in-part-page
+
+% TODO: This is the original code:
+
+% \makeatletter
+%
+% % Define a user command to choose the image.
+% % This command also creates an internal command to insert the image
+% \newcommand{\partimage}[2][]{\gdef\@partimage{\includegraphics[#1]{#2}}}
+%
+% % redefine the amsbook part code to include the \@partimage insertion command
+% \def\@partimage{}
+% \def\@part[#1]#2{%
+%   \ifnum \c@secnumdepth >-2\relax \refstepcounter{part}%
+%     \addcontentsline{toc}{part}{\partname\ \thepart.
+%         \protect\enspace\protect\noindent#1}%
+%   \else
+%     \addcontentsline{toc}{part}{#1}\fi
+%   \begingroup\centering
+%   \ifnum \c@secnumdepth >-2\relax
+%        {\fontsize{24pt}{30pt} \bfseries \partname\ \thepart}
+%        \vskip 20\p@ \fi
+%        \fontsize{30pt}{36pt} \bfseries#1
+%        \vfil\@partimage\vfil
+%   \endgroup
+%   \newpage\thispagestyle{empty}}
+%
+% \makeatother
 
 % Tweaks to the table of contents ---------------
 

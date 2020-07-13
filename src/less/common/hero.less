@@ -1,0 +1,66 @@
+.hero {
+  @title-height: 2 * @line-height-computed;
+  @title-spacing: @line-height-computed;
+  @author-height: 1.5 * @line-height-computed;
+  @author-spacing: @line-height-computed;
+  @date-height: 1 * @line-height-computed;
+  @date-spacing: 2 * @line-height-computed;
+  @logo-height: 100px;
+  @surround-spacing: 3 * @line-height-computed;
+
+  @hero-text-height: @title-height + @title-spacing + @author-height +
+    @author-spacing + @date-height + @date-spacing + @logo-height;
+
+  position: relative;
+
+  color: white;
+  background: @book-color;
+
+  .container {
+    position: relative;
+    height: 50vh;
+    min-height: @hero-text-height + 2 * @surround-spacing + 30px;
+  }
+
+  .hero-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 30px;
+    margin: auto;
+    height: @hero-text-height;
+    text-align: center;
+
+    .title {
+      margin: 0 0 @title-spacing;
+      line-height: @title-height;
+
+      &.with-subtitle {
+        margin-top: -@title-spacing;
+      }
+    }
+
+    .subtitle {
+      display: block;
+      font-size: 66%;
+      line-height: @title-height * 0.6;
+    }
+
+    .author {
+      margin: 0 0 @author-spacing;
+      line-height: @author-height;
+    }
+
+    .date {
+      margin: 0 0 @date-spacing;
+      line-height: @date-height;
+    }
+
+    .brand-logo {
+      display: block;
+      height: @logo-height;
+      margin: 0 auto;
+    }
+  }
+}
