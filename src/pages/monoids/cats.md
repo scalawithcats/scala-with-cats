@@ -23,7 +23,7 @@ import cats.Semigroup
 *Cats Kernel?*
 
 Cats Kernel is a subproject of Cats
-providing a small set of typeclasses
+providing a small set of type classes
 for libraries that don't require the full Cats toolbox.
 While these core type classes are technically
 defined in the [`cats.kernel`][cats.kernel.package] package,
