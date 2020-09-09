@@ -89,7 +89,7 @@ and a `combine` method that works as follows:
 We can implement `combine` using `imap`,
 passing functions of type `String => Symbol`
 and `Symbol => String` as parameters.
-Here' the code, written out using
+Here's the code, written out using
 the `imap` extension method
 provided by `cats.syntax.invariant`:
 

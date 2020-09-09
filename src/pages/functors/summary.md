@@ -33,7 +33,7 @@ transformations on large collections,
 a technique leveraged heavily in
 "map-reduce" frameworks like [Hadoop][link-hadoop].
 We will investigate this approach in more detail in the
-map-reduce case study later in Section [@sec:map-reduce].
+map-reduce case study later in Chapter [@sec:map-reduce].
 
 The `Contravariant` and `Invariant` type classes
 are less widely applicable but are still useful
