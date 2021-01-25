@@ -114,7 +114,7 @@
 [link-json]: http://json.org/
 [link-kind-projector]: https://github.com/typelevel/kind-projector
 [link-map-reduce-monoid]: http://arxiv.org/abs/1304.7544
-[link-map-reduce]: http://research.google.com/archive/map-reduce.html
+[link-map-reduce]: http://static.googleusercontent.com/media/research.google.com/es/us/archive/mapreduce-osdi04.pdf
 [link-mdoc]: https://github.com/scalameta/mdoc
 [link-monads-burritos]: http://blog.plover.com/prog/burritos.html
 [link-monocle]: http://julien-truffaut.github.io/Monocle/

@@ -261,7 +261,7 @@ def checkPred[A](pred: Predicate[Errors, A]): Check[A, A] =
 ```
 
 Our base predicate definitions are
-essenitally unchanged:
+essentially unchanged:
 
 ```scala mdoc:silent
 def longerThan(n: Int): Predicate[Errors, String] =
@@ -307,7 +307,7 @@ val checkLeft: Check[String, String] =
   checkPred(longerThan(0))
 
 val checkRight: Check[String, String] =
-  checkPred(longerThan(3) and contains('.'))
+  checkPred(longerThan(2) and contains('.'))
 
 val joinEmail: Check[(String, String), String] =
   check {

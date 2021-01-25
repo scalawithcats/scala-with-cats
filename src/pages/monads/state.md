@@ -165,14 +165,13 @@ carrying a *stack* of operands with us as we go:
   operate on them, and push the result in their place.
 
 This allows us to evaluate complex expressions without using parentheses.
-For example, we can evaluate `(1 + 2) * 3)` as follows:
+For example, we can evaluate `((1 + 2) * 3)` as follows:
 
 ```scala
 1 2 + 3 * // see 1, push onto stack
 2 + 3 *   // see 2, push onto stack
 + 3 *     // see +, pop 1 and 2 off of stack,
           //        push (1 + 2) = 3 in their place
-3 3 *     // see 3, push onto stack
 3 *       // see 3, push onto stack
 *         // see *, pop 3 and 3 off of stack,
           //        push (3 * 3) = 9 in their place
@@ -256,7 +255,7 @@ def operand(num: Int): CalcState[Int] =
 
 The `operator` function is a little more complex.
 We have to pop two operands off the stack 
-(having the second operand at the top of the stack)i
+(having the second operand at the top of the stack)
 and push the result in their place.
 The code can fail if the stack doesn't have enough operands on it,
 but the exercise description allows us to throw an exception in this case:
