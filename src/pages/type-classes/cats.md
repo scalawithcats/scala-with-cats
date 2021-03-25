@@ -104,7 +104,7 @@ We will introduce these as we encounter them in later sections and chapters.
 
 In this book we will use specific imports to show you
 exactly which instances and syntax you need in each example.
-However, this is doesn't add value in production code.
+However, this doesn't add value in production code.
 It is simpler and faster to use the following imports:
 
 - `import cats._` imports all of Cats' type classes in one go;
