@@ -417,14 +417,15 @@ def parallelFoldMap[A, B: Monoid]
   }
 }
 
-val result: Future[Int] =
-  parallelFoldMap((1 to 1000000).toVector)(identity)
+val result: Future[Long] =
+  parallelFoldMap((1L to 1000000L).toVector)(identity)
 ```
 
 ```scala mdoc
 Await.result(result, 1.second)
 ```
 
+We used Long instead of Int in the example run above, to avoid numeric overflow.
 We can re-use our definition of `foldMap` for a more concise solution.
 Note that the local maps and reduces in steps 3 and 4 of
 Figure [@fig:map-reduce:parallel-fold-map]
@@ -458,8 +459,8 @@ def parallelFoldMap[A, B: Monoid]
   }
 }
 
-val result: Future[Int] =
-  parallelFoldMap((1 to 1000000).toVector)(identity)
+val result: Future[Long] =
+  parallelFoldMap((1L to 1000000L).toVector)(identity)
 ```
 
 ```scala mdoc
@@ -474,7 +475,7 @@ the method is also available as part of the `Foldable`
 type class we discussed in Section [@sec:foldable].
 
 Reimplement `parallelFoldMap` using Cats'
-`Foldable` and `Traverseable` type classes.
+`Foldable` and `Traversable` type classes.
 
 <div class="solution">
 We'll restate all of the necessary imports for completeness:
@@ -544,7 +545,7 @@ Our algorithm followed three steps:
 Our toy system emulates the batching behaviour
 of real-world map-reduce systems such as Hadoop.
 However, in reality we are running all of our work
-on a single machine where communcation between nodes is negligible.
+on a single machine where communication between nodes is negligible.
 We don't actually need to batch data
 to gain efficient parallel processing of a list.
 We can simply map using a `Functor` and reduce using a `Monoid`.

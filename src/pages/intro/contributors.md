@@ -8,6 +8,7 @@ and Richard Dallaway for his proof reading expertise.
 Here is an alphabetical list of contributors:
 
 Alessandro Marrella,
+Alex Stangl,
 Cody Koeninger,
 Connie Chen,
 Conor Fennell,

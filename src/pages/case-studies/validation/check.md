@@ -39,7 +39,7 @@ As we said in [Essential Scala][link-essential-scala],
 there are two functional programming patterns
 that we should consider when defining a trait:
 
-- we can make it a typeclass, or;
+- we can make it a type class, or;
 - we can make it an algebraic data type (and hence seal it).
 
 Type classes allow us to unify disparate data types with a common interface.

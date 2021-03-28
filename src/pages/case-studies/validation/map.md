@@ -322,7 +322,7 @@ val h: A => C = f andThen g
 ```
 
 A `Check` is basically a function `A => Validated[E, B]`
-so we can define an analagous `andThen` method:
+so we can define an analogous `andThen` method:
 
 ```scala
 trait Check[E, A, B] {
@@ -627,7 +627,7 @@ val checkLeft: Check[Errors, String, String] =
   Check(longerThan(0))
 
 val checkRight: Check[Errors, String, String] =
-  Check(longerThan(3) and contains('.'))
+  Check(longerThan(2) and contains('.'))
 
 val joinEmail: Check[Errors, (String, String), String] =
   Check { case (l, r) =>

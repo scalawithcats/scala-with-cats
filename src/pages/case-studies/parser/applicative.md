@@ -142,7 +142,7 @@ Let's implement an instance of Scalaz's `Applicative` type class for our `Parser
 
 ### Exercise: Applicative Parser
 
-Define a typeclass instance of `Applicative` for `Parser`. You must implement the following trait:
+Define a type class instance of `Applicative` for `Parser`. You must implement the following trait:
 
 ~~~ scala
 Applicative[Parser] {
@@ -162,7 +162,7 @@ Hints:
 
 
 <div class="solution">
-The usual place to define typeclass instances is as implicit elements on the companion object, in this case the `Parser` object. Here's my implementation:
+The usual place to define type class instances is as implicit elements on the companion object, in this case the `Parser` object. Here's my implementation:
 
 ~~~ scala
 val identity: Parser[Unit] =

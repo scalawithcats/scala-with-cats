@@ -133,7 +133,7 @@ any values contained with the type constructor `M`.
 The conversion must be performed
 purely in terms of the structure of the type constructors `M` and `F`.
 We can in `optionToList` above
-this is indeed the case.
+see this is indeed the case.
 
 So in summary,
 `Parallel` allows us to take a type that has a monad instance
@@ -155,7 +155,7 @@ Does `List` have a `Parallel` instance? If so, what does the `Parallel` instance
 <div class="solution">
 `List` does have a `Parallel` instance, 
 and it zips the `List`
-insted of creating the cartesian product.
+instead of creating the cartesian product.
 
 We can see by writing a little bit of code.
 

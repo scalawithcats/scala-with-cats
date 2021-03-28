@@ -40,7 +40,7 @@ See the [scaladoc][cats.Monad] for more information.
 ### Default Instances
 
 Cats provides instances for all the monads in the standard library
-(`Option`, `List`, `Vector` and so on) via [`cats.instances`][cats.instances]:
+(`Option`, `List`, `Vector`, and so on) via [`cats.instances`][cats.instances]:
 
 ```scala mdoc:silent
 import cats.instances.option._ // for Monad

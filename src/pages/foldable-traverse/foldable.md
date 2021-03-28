@@ -41,7 +41,8 @@ Figure [@fig:foldable-traverse:fold] illustrates each direction.
 ![Illustration of foldLeft and foldRight](src/pages/foldable-traverse/fold.pdf+svg){#fig:foldable-traverse:fold}
 
 `foldLeft` and `foldRight` are equivalent
-if our binary operation is associative.
+if our binary operation is associative and initial accumulator is
+monoid empty/identity value for the binary operation.
 For example, we can sum a `List[Int]` by folding in either direction,
 using `0` as our accumulator and addition as our operation:
 

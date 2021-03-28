@@ -22,7 +22,7 @@ We can see the evaluation model using
 a computation with a visible side-effect.
 In the following example,
 the code to compute the value of `x`
-happens at place where it is defined
+happens at the place where it is defined
 rather than on access.
 Accessing `x` recalls the stored value
 without re-running the code.
