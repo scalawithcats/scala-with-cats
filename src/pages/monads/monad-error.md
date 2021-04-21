@@ -213,4 +213,16 @@ def validateAdult[F[_]](age: Int)(implicit me: MonadError[F, Throwable]): F[Int]
   if(age >= 18) age.pure[F]
   else new IllegalArgumentException("Age must be greater than or equal to 18").raiseError[F, Int]
 ```
+
+Another way of solving it is using `pure` and `ensure`.
+
+```scala mdoc:invisible:reset-object
+import cats.MonadError
+import cats.implicits._
+```
+
+```scala mdoc:silent
+def validateAdult[F[_]](age: Int)(implicit me: MonadError[F, Throwable]): F[Int] = 
+  age.pure[F].ensure(new IllegalArgumentException("Age must be greater than or equal to 18"))(_ >= 18)
+```
 </div>
