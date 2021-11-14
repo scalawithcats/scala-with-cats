@@ -21,7 +21,7 @@ trait Traverse[F[_]] {
 ```
 
 Cats provides instances of `Traverse`
-for `List`, `Vector`, `Stream`, `Option`, `Either`,
+for `List`, `Vector`, `LazyList`, `Option`, `Either`,
 and a variety of other types.
 We can summon instances as usual using `Traverse.apply`
 and use the `traverse` and `sequence` methods

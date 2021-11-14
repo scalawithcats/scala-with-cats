@@ -42,7 +42,7 @@ The `product` method from `Semigroupal`
 is defined in terms of `ap` and `map`.
 
 Don't worry too much about the implementation of `product`---it's
-difficult to read and the details aren't particuarly important.
+difficult to read and the details aren't particularly important.
 The main point is that there is a tight relationship
 between `product`, `ap`, and `map`
 that allows any one of them to be defined

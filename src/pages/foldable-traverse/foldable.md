@@ -1,7 +1,7 @@
 ## Foldable {#sec:foldable}
 
 The `Foldable` type class captures the `foldLeft` and `foldRight` methods
-we're used to in sequences like `Lists`, `Vectors`, and `Streams`.
+we're used to in sequences like `Lists`, `Vectors`, and `LazyLists`.
 Using `Foldable`, we can write generic folds that work with a variety of sequence types.
 We can also invent new sequences and plug them into our code.
 `Foldable` gives us great use cases for `Monoids` and the `Eval` monad.
