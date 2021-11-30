@@ -218,6 +218,7 @@ with the same pattern of `Branch` and `Leaf` nodes:
 
 ```scala mdoc:silent
 import cats.Functor
+import cats.syntax.functor._     // for map
 
 implicit val treeFunctor: Functor[Tree] =
   new Functor[Tree] {
