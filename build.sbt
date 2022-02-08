@@ -14,11 +14,11 @@ enablePlugins(MdocPlugin)
 mdocIn  := sourceDirectory.value / "pages"
 mdocOut := target.value          / "pages"
 
-val catsVersion  = "2.1.0"
+val catsVersion  = "2.7.0"
 
 libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % catsVersion)
 
-addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
+addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
 
 mdocVariables := Map(
   "SCALA_VERSION" -> scalaVersion.value,
@@ -190,35 +190,15 @@ lazy val epub = taskKey[Unit]("Build the ePub version of the book")
 lazy val tex = taskKey[Unit]("Build the TeX debug build of the book")
 lazy val json = taskKey[Unit]("Build the JSON AST debug build of the book")
 
-pdf  := {
-  pdfSetup.value
-  mdoc.toTask("").value
-  pdfPandoc.value
-}
+pdf  := Def.sequential(pdfSetup, mdoc.toTask(""), pdfPandoc).value
 
-html := {
-  htmlSetup.value
-  mdoc.toTask("").value
-  htmlPandoc.value
-}
+html := Def.sequential(htmlSetup, mdoc.toTask(""), htmlPandoc).value
 
-epub := {
-  epubSetup.value
-  mdoc.toTask("").value
-  epubPandoc.value
-}
+epub := Def.sequential(epubSetup, mdoc.toTask(""), epubPandoc).value
 
-tex  := {
-  texSetup.value
-  mdoc.toTask("").value
-  texPandoc.value
-}
+tex  := Def.sequential(texSetup, mdoc.toTask(""), texPandoc).value
 
-json := {
-  jsonSetup.value
-  mdoc.toTask("").value
-  jsonPandoc.value
-}
+json := Def.sequential(jsonSetup, mdoc.toTask(""), jsonPandoc).value
 
 lazy val all  = taskKey[Unit]("Build the PDF, HTML, and ePub versions of the book")
 
