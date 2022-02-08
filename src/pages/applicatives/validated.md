@@ -141,7 +141,7 @@ so we need one of those in scope to summon the `Semigroupal`.
 If no `Semigroup` is visible at the call site,
 we get an annoyingly unhelpful compilation error:
 
-```scala mdoc:fail
+```scala mdoc
 Semigroupal[AllErrorsOr]
 ```
 

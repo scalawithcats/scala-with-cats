@@ -34,7 +34,7 @@ import cats.Show
 The companion object of every Cats type class has an `apply` method
 that locates an instance for any type we specify:
 
-```scala mdoc:fail
+```scala mdoc
 val showInt = Show.apply[Int]
 ```
 
@@ -61,7 +61,8 @@ for a complete list of available imports.
 
 Let's import the instances of `Show` for `Int` and `String`:
 
-```scala mdoc:silent
+```scala mdoc:reset:silent
+import cats.Show
 import cats.instances.int._    // for Show
 import cats.instances.string._ // for Show
 
