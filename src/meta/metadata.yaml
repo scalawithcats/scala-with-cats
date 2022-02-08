@@ -1,9 +1,9 @@
 ---
 title: "Scala with Cats"
-author: "Noel Welsh and Dave Gurnell"
-date: "July 2020"
+author: "Noel Welsh with Dave Gurnell"
+date: "January 2021"
 tocDepth: 3
-copyright: "2014-20"
+copyright: "2014-21"
 figPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "$$i$$"
 tblPrefixTemplate: "$$i$$"
