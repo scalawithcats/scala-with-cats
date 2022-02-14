@@ -1,7 +1,7 @@
 # Scala with Cats
 
 Copyright [Noel Welsh](http://twitter.com/noelwelsh)
-and [Dave Gurnell](http://twitter.com/davegurnell), 2014-2017.
+and [Dave Gurnell](http://twitter.com/davegurnell), 2014-2021.
 
 Artwork by [Jenny Clements](http://patreon.com/miasandelle).
 
