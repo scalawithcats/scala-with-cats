@@ -74,6 +74,7 @@ object Pandoc {
       case Pdf | Tex =>
         List(
           s"--toc-depth=${tocDepth}",
+          s"--listings",
           s"--include-before-body=${srcDir}/templates/cover-notes.tex",
           s"--pdf-engine=xelatex"
         )
