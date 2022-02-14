@@ -136,7 +136,7 @@ val future1 = {
 
   // nextInt has the side-effect of moving to
   // the next random number in the sequence:
-  val x = Future(r.nextInt)
+  val x = Future(r.nextInt())
 
   for {
     a <- x
@@ -148,8 +148,8 @@ val future2 = {
   val r = new Random(0L)
 
   for {
-    a <- Future(r.nextInt)
-    b <- Future(r.nextInt)
+    a <- Future(r.nextInt())
+    b <- Future(r.nextInt())
   } yield (a, b)
 }
 ```

@@ -30,7 +30,7 @@ without re-running the code.
 ```scala mdoc
 val x = {
   println("Computing X")
-  math.random
+  math.random()
 }
 
 x // first access
@@ -51,7 +51,7 @@ and is re-run on every access:
 ```scala mdoc
 def y = {
   println("Computing Y")
-  math.random
+  math.random()
 }
 
 y // first access
@@ -74,7 +74,7 @@ and re-used on subsequent accesses (memoized):
 ```scala mdoc
 lazy val z = {
   println("Computing Z")
-  math.random
+  math.random()
 }
 
 z // first access
@@ -108,9 +108,9 @@ import cats.Eval
 ```
 
 ```scala mdoc
-val now = Eval.now(math.random + 1000)
-val always = Eval.always(math.random + 3000)
-val later = Eval.later(math.random + 2000)
+val now = Eval.now(math.random() + 1000)
+val always = Eval.always(math.random() + 3000)
+val later = Eval.later(math.random() + 2000)
 ```
 
 We can extract the result of an `Eval`
@@ -133,7 +133,7 @@ import cats.Eval
 ```scala mdoc
 val x = Eval.now{
   println("Computing X")
-  math.random
+  math.random()
 }
 
 x.value // first access
@@ -146,7 +146,7 @@ similar to a `def`:
 ```scala mdoc
 val y = Eval.always{
   println("Computing Y")
-  math.random
+  math.random()
 }
 
 y.value // first access
@@ -159,7 +159,7 @@ similar to a `lazy val`:
 ```scala mdoc
 val z = Eval.later{
   println("Computing Z")
-  math.random
+  math.random()
 }
 
 z.value // first access

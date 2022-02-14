@@ -72,7 +72,7 @@ the concept of "accumulating" errors
 as shown in Figure [@fig:validation:error-semigroup]
 What type class do we know that looks like this?
 What method or operator should we use
-to implement the `•` operation?
+to implement the `?` operation?
 
 ![Combining error messages](src/pages/case-studies/validation/error-semigroup.pdf+svg){#fig:validation:error-semigroup}
 
