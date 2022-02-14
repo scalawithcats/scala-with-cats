@@ -128,7 +128,7 @@ $endif$
 
 \usepackage{fancyvrb}
 $if(tables)$
-\usepackage{longtable,booktabs}
+\usepackage{longtable,booktabs,array}
 $endif$
 $if(graphics)$
 \usepackage{graphicx}
@@ -249,6 +249,7 @@ $endfor$
 \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},fontsize=\small}
 
 \usepackage{listings}
+\newcommand{\passthrough}[1]{#1}
 
 $if(blackandwhiteprintable)$
 \definecolor{codebgcolor}{gray}{0.95}
@@ -431,7 +432,7 @@ Copyright $copyright$ $author$. CC-BY-SA 3.0.
 
 Artwork by Jenny Clements.
 
-Published by Underscore Consulting LLP, Brighton, UK.
+Published by Inner Product Consulting Ltd, UK.
 
 \end{center}
 
