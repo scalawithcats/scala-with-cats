@@ -26,11 +26,13 @@ mdocVariables := Map(
 )
 
 lazy val pages = List(
-  "intro/preface.md",
-  "intro/versions.md",
-  "intro/conventions.md",
-  "intro/contributors.md",
-  "intro/backers.md",
+  "preface/preface.md",
+  "preface/versions.md",
+  "preface/conventions.md",
+  "preface/contributors.md",
+  "preface/backers.md",
+
+  "intro/index.md",
 
   "parts/part1.md",
 
