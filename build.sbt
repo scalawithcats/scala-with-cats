@@ -33,6 +33,8 @@ lazy val pages = List(
   "preface/backers.md",
 
   "intro/index.md",
+  "intro/three-levels.md",
+  "intro/what-is-fp.md",
 
   "parts/part1.md",
 
