@@ -27,9 +27,9 @@ Type systems push programs towards particular designs, as to work effectively wi
 
 In my view functional programming is not about immutability, or keeping to "the substitution model of evaluation", and so on. These are tools in service of the goals of enabling local reasoning and composition, but they are not the goals themselves. Code that is immutable always allows local reasoning, for example, but it is not necessary to avoid mutation to still have local reasoning. Here is an example of summing a collection of numbers. 
 
-```scala
+```scala mdoc:silent
 def sum(numbers: List[Int]): Int = {
-  var total = 0.0
+  var total = 0
   numbers.foreach(x => total = total + x)
   total
 }
@@ -50,17 +50,17 @@ val it2 = Iterator(1, 2, 3, 4)
 ```
 
 ```scala mdoc
-it.zip(it2).next
+it.zip(it2).next()
 ```
 
 However if we pass the same generator twice we get a surprising result.
 
 ```scala mdoc:silent
-val it = Iterator(1, 2, 3, 4)
+val it3 = Iterator(1, 2, 3, 4)
 ```
 
 ```scala mdoc
-it.zip(it).next                                                                                                                 
+it3.zip(it3).next()
 ```
 
 The usual functional programming solution is to avoid mutable state but we can envisage other possibilities. For example, an [effect tracking system][effect-system] would allow us to avoid combining two generators that use the same memory region. These systems are still research projects, however.
