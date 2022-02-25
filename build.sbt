@@ -38,6 +38,8 @@ lazy val pages = List(
 
   "parts/part1.md",
 
+  "adt/index.md",
+
   "type-classes/index.md",
   "type-classes/anatomy.md",
   "type-classes/implicits.md",
