@@ -1,10 +1,14 @@
 # Algebraic Data Types and Structural Recursion
 
-In this section we'll see our first example of a programming strategy: **algebraic data types**. Algebraic data types are the main way of representing data in functional programming languages. We'll start with some examples of data, discuss the common structure we can extract, and then get into the details of using algebraic data types in Scala.
+In this section we'll see our first example of a programming strategy: **algebraic data types**. Any data we can describe using logical ands and logical ors is an algebraic data type. Once we recognize an algebraic data type we get two things for free:
 
-We'll then turn to **structural recursion**, which provides a way to transform algebraic data types.
+- the Scala representation of the data; and
+- a **structural recursion** skeleton to transform the algebraic data type into any other type.
 
-The point: from description of data the follow to represent and transform follows.
+The key point is this: from an implementation independent representation of data we can automatically derive most of the interesting implementation specific facets of working with that data.
+
+We'll start with some examples of data, from which we'll extract the common structure that motivates algebraic data types. We then look at their representation in Scala 2 and Scala 3. We'll then turn to structural recursion, to transform algebraic data types. We'll finish by looking at the algebra of algebraic data types, which is interesting but not essential.
+
 
 
 ## Some Examples of Data
