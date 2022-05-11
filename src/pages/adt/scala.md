@@ -43,8 +43,57 @@ enum A {
 }
 ```
 
-In other words you can't write `final case class` inside an `enum`. You also can't nest `enum` inside `enum`. Any nested logical or and logical ands can be rewritten into a single logical or containing only logical ands (known as disjunctive normal form) so this is not a limitation in practice. However the Scala 2 representation is still available in Scala 3 should you want more expressivity.
+In other words you can't write `final case class` inside an `enum`. You also can't nest `enum` inside `enum`. Nexted logical ors  can be rewritten into a single logical or containing only logical ands (known as disjunctive normal form) so this is not a limitation in practice. However the Scala 2 representation is still available in Scala 3 should you want more expressivity.
 
 
 ### Algebraic Data Types in Scala 2
 
+A logical and (product type) has the same representation in Scala 2 as in Scala 3. If we define a product type `A` is `B` **and** `C`, the representation in Scala 2 is
+
+```scala
+final case class A(b: B, c: C)
+```
+
+A logical or (a sum type) is represented by a `sealed abstract class`.  For the sum type `A` is a `B` **or** `C` the Scala 2 representation is
+
+```scala
+sealed abstract class A
+final case class B() extends A
+final case class C() extends A
+```
+
+Scala 2 has several little tricks to defining algebraic data types.
+
+Firstly, instead of using a `sealed abstract class` you can use a `sealed trait`. There isn't much practical difference between the two. When teaching I'll often use `sealed trait` to avoid having to introduce `sealed abstract class`. I believe `sealed abstract class` may have slightly better performance and Java interoperability but I haven't tested this. I also think `sealed abstract class` is closer, semantically, to the meaning of a sum type.
+
+For extra style points we can `extend Product with Serializable` from `sealed abstract class`. Compare the reported types below with and without this little addition.
+
+Let's first see the code without extending `Product` and `Serializable`.
+
+```scala mdoc:silent
+sealed abstract class A
+final case class B() extends A
+final case class C() extends A
+```
+
+```scala mdoc
+val list = List(B(), C())
+```
+
+Notice how the type of `list` includes `Product` and `Serializable`. 
+
+Now we have extending `Product` and `Serializable`.
+
+```scala mdoc:reset:silent
+sealed abstract class A extends Product with Serializable
+final case class B() extends A
+final case class C() extends A
+```
+   
+```scala mdoc
+val list = List(B(), C())
+```
+
+Much easier to read!
+
+Finally, if a logical and holds no data we can use a `case object` instead of a `case class`. For example, 

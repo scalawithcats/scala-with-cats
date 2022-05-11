@@ -44,15 +44,6 @@ Algebraic data types are closed worlds, which means they cannot be extended afte
 The closed world property is important because it gives us some guarantees we would not otherwise have. In particular, it allows the compiler to check, when we use an algebraic data type, that we handle all possible cases and alert us if we don't. This is known as **exhaustivity checking**. This is an example of how functional programming prioritizes reasoning about code---in this case automated reasoning by the compiler---over other properties such as extensibility.
 
 
-## Algebraic Data Types in Scala 
-
-Now we know about algebraic data types we can turn to their representation in Scala. The important point here is that the translation to Scala is entirely determined by the structure of the data, no thinking is required. In other words the work is finding the structure of the data that best represents the problem at hand. Work out the structure of the data and the code directly follows from it.
-
-Scala 3 can directly represent algebraic data types using `enum`, but Scala 2 doesn't have this language feature. Hence we'll look at algebraic data types separately in Scala 3 and Scala 2.
-
-### Algebraic Data Types in Scala 3
-### Algebraic Data Types in Scala 2
-
 ## Applications of Algebraic Data Types
 
 ## The Algebra of Algebraic Data Types
