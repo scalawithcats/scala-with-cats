@@ -14,7 +14,7 @@
 [cats.MonadError]: http://typelevel.org/cats/api/cats/MonadError.html
 [cats.Show]: http://typelevel.org/cats/api/cats/Show.html
 [cats.Semigroup]: http://typelevel.org/cats/api/cats/kernel/Semigroup.html
-[cats.Semigroupal]: http://typelevel.org/cats/api/cats/kernel/Semigroupal.html
+[cats.Semigroupal]: https://typelevel.org/cats/api/cats/Semigroupal.html
 [cats.Traverse]: http://typelevel.org/cats/api/cats/Traverse.html
 [cats.arrow.FunctionK]: http://typelevel.org/cats/api/cats/arrow/FunctionK.html
 [cats.data]: http://typelevel.org/cats/api/cats/data/
