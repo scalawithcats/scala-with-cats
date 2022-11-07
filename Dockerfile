@@ -1,4 +1,4 @@
-FROM thomasweise/docker-pandoc
+FROM thomasweise/docker-pandoc:3.3
 
 ## Install Node the easy way
 
