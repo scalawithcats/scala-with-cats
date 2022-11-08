@@ -271,7 +271,7 @@ def handleError(error: LoginError): Unit =
       println(s"Password incorrect: $u")
 
     case UnexpectedError =>
-      println(s"Unexpected error")
+      println("Unexpected error")
   }
 ```
 
