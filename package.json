@@ -13,7 +13,7 @@
     "jquery": "3.5.0",
     "uglifyify": "2.6.0",
     "lessc": "^1.0.2",
-    "underscore": "1.7.0",
+    "underscore": "1.12.1",
     "pandoc-filter": "0.1.6",
     "coffeescript": "^2.5.1"
   },

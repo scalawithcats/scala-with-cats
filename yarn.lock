@@ -482,9 +482,9 @@ uglifyify@2.6.0:
     through "~2.3.4"
     uglify-js "2.x.x"
 
-underscore@1.7.0:
-  version "1.7.0"
-  resolved "https://registry.npmjs.org/underscore/-/underscore-1.7.0.tgz"
+underscore@1.12.1:
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.12.1.tgz#7bb8cc9b3d397e201cf8553336d262544ead829e"
 
 uri-js@^4.2.2:
   version "4.2.2"
