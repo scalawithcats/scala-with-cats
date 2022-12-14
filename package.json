@@ -11,7 +11,7 @@
     "bootstrap": "^3.4.1",
     "coffeeify": "1.0.0",
     "jquery": "3.5.0",
-    "uglifyify": "2.6.0",
+    "uglifyify": "5.0.2",
     "lessc": "^1.0.2",
     "underscore": "1.7.0",
     "pandoc-filter": "0.1.6",
