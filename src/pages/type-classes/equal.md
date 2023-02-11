@@ -34,10 +34,9 @@ between instances of any given type:
 ```scala
 package cats
 
-trait Eq[A] {
+trait Eq[A]:
   def eqv(a: A, b: A): Boolean
   // other concrete methods based on eqv...
-}
 ```
 
 The interface syntax, defined in [`cats.syntax.eq`][cats.syntax.eq],
