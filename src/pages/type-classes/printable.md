@@ -39,13 +39,11 @@ and package them in `PrintableInstances`:
 
 ```scala mdoc:silent
 object PrintableInstances {
-  implicit val stringPrintable: Printable[String] = new Printable[String] {
+  given stringPrintable: Printable[String] with
     def format(input: String) = input
-  }
 
-  implicit val intPrintable: Printable[Int] = new Printable[Int] {
+  given intPrintable: Printable[Int] with
     def format(input: Int) = input.toString
-  }
 }
 ```
 
@@ -53,10 +51,10 @@ Finally we define an *interface* object, `Printable`:
 
 ```scala mdoc:silent
 object Printable {
-  def format[A](input: A)(implicit p: Printable[A]): String =
+  def format[A](input: A)(using p: Printable[A]): String =
     p.format(input)
 
-  def print[A](input: A)(implicit p: Printable[A]): Unit =
+  def print[A](input: A)(using p: Printable[A]): Unit =
     println(p.format(input))
 }
 ```
@@ -104,16 +102,15 @@ These either go into the companion object of `Cat`
 or a separate object to act as a namespace:
 
 ```scala mdoc:silent
-import PrintableInstances._
+import PrintableInstances.{intPrintable, stringPrintable}
 
-implicit val catPrintable: Printable[Cat] = new Printable[Cat] {
+given catPrintable: Printable[Cat] with
   def format(cat: Cat) = {
     val name  = Printable.format(cat.name)
     val age   = Printable.format(cat.age)
     val color = Printable.format(cat.color)
     s"$name is a $age year-old $color cat."
   }
-}
 ```
 
 Finally, we use the type class by
@@ -157,11 +154,11 @@ First we define an `implicit class` containing our extension methods:
 ```scala mdoc:silent
 object PrintableSyntax {
   implicit class PrintableOps[A](value: A) {
-    def format(implicit p: Printable[A]): String =
+    def format(using p: Printable[A]): String =
       p.format(value)
 
-    def print(implicit p: Printable[A]): Unit =
-      println(format(p))
+    def print(using p: Printable[A]): Unit =
+      println(format(using p))
   }
 }
 ```

@@ -280,7 +280,7 @@ import cats.Applicative
 import cats.syntax.functor._ // for map
 
 class UptimeService[F[_]](client: UptimeClient[F])
-    (implicit a: Applicative[F]) {
+    (using a: Applicative[F]) {
 
   def getTotalUptime(hostnames: List[String]): F[Int] =
     hostnames.traverse(client.getUptime).map(_.sum)

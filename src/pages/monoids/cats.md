@@ -187,7 +187,7 @@ We can write this as a generic method that accepts an implicit `Monoid` as a par
 import cats.Monoid
 import cats.syntax.semigroup._ // for |+|
 
-def add[A](items: List[A])(implicit monoid: Monoid[A]): A =
+def add[A](items: List[A])(using monoid: Monoid[A]): A =
   items.foldLeft(monoid.empty)(_ |+| _)
 ```
 
@@ -247,7 +247,7 @@ Make it so!
 Easy---we simply define a monoid instance for `Order`!
 
 ```scala mdoc:silent
-implicit val monoid: Monoid[Order] = new Monoid[Order] {
+given monoid: Monoid[Order] with
   def combine(o1: Order, o2: Order) =
     Order(
       o1.totalCost + o2.totalCost,
@@ -255,6 +255,5 @@ implicit val monoid: Monoid[Order] = new Monoid[Order] {
     )
 
   def empty = Order(0, 0)
-}
 ```
 </div>

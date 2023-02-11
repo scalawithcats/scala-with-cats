@@ -151,7 +151,7 @@ import cats.instances.long._ // for Eq
 ```
 
 ```scala mdoc:silent
-implicit val dateEq: Eq[Date] =
+given dateEq: Eq[Date] =
   Eq.instance[Date] { (date1, date2) =>
     date1.getTime === date2.getTime
   }
@@ -209,7 +209,7 @@ into scope for the implementation of `Eq[Cat]`:
 import cats.instances.int._    // for Eq
 import cats.instances.string._ // for Eq
 
-implicit val catEqual: Eq[Cat] =
+given catEqual: Eq[Cat] =
   Eq.instance[Cat] { (cat1, cat2) =>
     (cat1.name  === cat2.name ) &&
     (cat1.age   === cat2.age  ) &&

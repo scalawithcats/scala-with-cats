@@ -83,7 +83,7 @@ no matter what functor context it's in:
 
 ```scala mdoc:silent
 def doMath[F[_]](start: F[Int])
-    (implicit functor: Functor[F]): F[Int] =
+    (using functor: Functor[F]): F[Int] =
   start.map(n => n + 1 * 2)
 
 import cats.instances.option._ // for Functor
@@ -103,7 +103,7 @@ Here's a simplified version of the code:
 ```scala
 implicit class FunctorOps[F[_], A](src: F[A]) {
   def map[B](func: A => B)
-      (implicit functor: Functor[F]): F[B] =
+      (using functor: Functor[F]): F[B] =
     functor.map(src)(func)
 }
 ```
@@ -153,11 +153,9 @@ even though such a thing already exists in [`cats.instances`][cats.instances].
 The implementation is trivial---we simply call `Option's` `map` method:
 
 ```scala mdoc:silent
-implicit val optionFunctor: Functor[Option] =
-  new Functor[Option] {
-    def map[A, B](value: Option[A])(func: A => B): Option[B] =
-      value.map(func)
-  }
+given optionFunctor: Functor[Option] with
+  def map[A, B](value: Option[A])(func: A => B): Option[B] =
+    value.map(func)
 ```
 
 Sometimes we need to inject dependencies into our instances.
@@ -171,7 +169,7 @@ so we have to account for the dependency when we create the instance:
 import scala.concurrent.{Future, ExecutionContext}
 
 implicit def futureFunctor
-    (implicit ec: ExecutionContext): Functor[Future] =
+    (using ec: ExecutionContext): Functor[Future] =
   new Functor[Future] {
     def map[A, B](value: Future[A])(func: A => B): Future[B] =
       value.map(func)
@@ -219,16 +217,14 @@ with the same pattern of `Branch` and `Leaf` nodes:
 ```scala mdoc:silent
 import cats.Functor
 
-implicit val treeFunctor: Functor[Tree] =
-  new Functor[Tree] {
-    def map[A, B](tree: Tree[A])(func: A => B): Tree[B] =
-      tree match {
-        case Branch(left, right) =>
-          Branch(map(left)(func), map(right)(func))
-        case Leaf(value) =>
-          Leaf(func(value))
-      }
-  }
+given treeFunctor: Functor[Tree] with
+  def map[A, B](tree: Tree[A])(func: A => B): Tree[B] =
+    tree match {
+      case Branch(left, right) =>
+        Branch(map(left)(func), map(right)(func))
+      case Leaf(value) =>
+        Leaf(func(value))
+    }
 ```
 
 Let's use our `Functor` to transform some `Trees`:

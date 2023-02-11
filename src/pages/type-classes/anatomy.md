@@ -59,20 +59,16 @@ and tagging them with the `implicit` keyword:
 final case class Person(name: String, email: String)
 
 object JsonWriterInstances {
-  implicit val stringWriter: JsonWriter[String] =
-    new JsonWriter[String] {
-      def write(value: String): Json =
-        JsString(value)
-    }
+  given stringWriter: JsonWriter[String] with
+    def write(value: String): Json =
+      JsString(value)
 
-  implicit val personWriter: JsonWriter[Person] =
-    new JsonWriter[Person] {
-      def write(value: Person): Json =
-        JsObject(Map(
-          "name" -> JsString(value.name),
-          "email" -> JsString(value.email)
-        ))
-    }
+  given personWriter: JsonWriter[Person] with
+    def write(value: Person): Json =
+      JsObject(Map(
+        "name" -> JsString(value.name),
+        "email" -> JsString(value.email)
+      ))
 
   // etc...
 }
@@ -99,7 +95,7 @@ is to place methods in a singleton object:
 
 ```scala mdoc:silent
 object Json {
-  def toJson[A](value: A)(implicit w: JsonWriter[A]): Json =
+  def toJson[A](value: A)(using w: JsonWriter[A]): Json =
     w.write(value)
 }
 ```
@@ -108,7 +104,7 @@ To use this object, we import any type class instances we care about
 and call the relevant method:
 
 ```scala mdoc:silent
-import JsonWriterInstances._
+import JsonWriterInstances.personWriter
 ```
 
 ```scala mdoc
@@ -121,7 +117,7 @@ It tries to fix this by searching for type class instances
 of the relevant types and inserting them at the call site:
 
 ```scala mdoc:silent
-Json.toJson(Person("Dave", "dave@example.com"))(personWriter)
+Json.toJson(Person("Dave", "dave@example.com"))(using personWriter)
 ```
 
 **Interface Syntax**
@@ -137,7 +133,7 @@ These are older terms that we don't use anymore.
 ```scala mdoc:silent
 object JsonSyntax {
   implicit class JsonWriterOps[A](value: A) {
-    def toJson(implicit w: JsonWriter[A]): Json =
+    def toJson(using w: JsonWriter[A]): Json =
       w.write(value)
   }
 }
@@ -147,7 +143,7 @@ We use interface syntax by importing it
 alongside the instances for the types we need:
 
 ```scala mdoc:silent
-import JsonWriterInstances._
+import JsonWriterInstances.personWriter
 import JsonSyntax._
 ```
 
@@ -159,7 +155,7 @@ Again, the compiler searches for candidates
 for the implicit parameters and fills them in for us:
 
 ```scala mdoc:silent
-Person("Dave", "dave@example.com").toJson(personWriter)
+Person("Dave", "dave@example.com").toJson(using personWriter)
 ```
 
 **The *implicitly* Method**
@@ -169,7 +165,7 @@ a generic type class interface called `implicitly`.
 Its definition is very simple:
 
 ```scala
-def implicitly[A](implicit value: A): A =
+def implicitly[A](using value: A): A =
   value
 ```
 
@@ -177,7 +173,7 @@ We can use `implicitly` to summon any value from implicit scope.
 We provide the type we want and `implicitly` does the rest:
 
 ```scala mdoc
-import JsonWriterInstances._
+import JsonWriterInstances.stringWriter
 
 implicitly[JsonWriter[String]]
 ```

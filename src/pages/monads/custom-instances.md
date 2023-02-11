@@ -167,7 +167,7 @@ the non-tail-recursive solution falls out:
 ```scala mdoc:silent
 import cats.Monad
 
-implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
+given treeMonad: Monad[Tree] with
   def pure[A](value: A): Tree[A] =
     Leaf(value)
 
@@ -188,7 +188,6 @@ implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
       case Right(value) =>
         Leaf(value)
     }
-}
 ```
 
 The solution above is perfectly fine for this exercise.
@@ -219,7 +218,7 @@ def leaf[A](value: A): Tree[A] =
 import cats.Monad
 import scala.annotation.tailrec
 
-implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
+given treeMonad: Monad[Tree] with
   def pure[A](value: A): Tree[A] =
     Leaf(value)
 
@@ -260,7 +259,6 @@ implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
 
     loop(List(func(arg)), Nil).head
   }
-}
 ```
 
 Regardless of which version of `tailRecM` we define,

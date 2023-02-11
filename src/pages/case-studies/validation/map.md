@@ -102,7 +102,7 @@ sealed trait Predicate[E, A] {
   def or(that: Predicate[E, A]): Predicate[E, A] =
     Or(this, that)
 
-  def apply(a: A)(implicit s: Semigroup[E]): Validated[E, A] =
+  def apply(a: A)(using s: Semigroup[E]): Validated[E, A] =
     this match {
       case Pure(func) =>
         func(a)
@@ -170,7 +170,7 @@ sealed trait Predicate[E, A] {
   def or(that: Predicate[E, A]): Predicate[E, A] =
     Or(this, that)
 
-  def apply(a: A)(implicit s: Semigroup[E]): Validated[E, A] =
+  def apply(a: A)(using s: Semigroup[E]): Validated[E, A] =
     this match {
       case Pure(func) =>
         func(a)
@@ -211,7 +211,7 @@ import cats.data.Validated
 sealed trait Check[E, A, B] {
   import Check._
 
-  def apply(in: A)(implicit s: Semigroup[E]): Validated[E, B]
+  def apply(in: A)(using s: Semigroup[E]): Validated[E, B]
 
   def map[C](f: B => C): Check[E, A, C] =
     Map[E, A, B, C](this, f)
@@ -222,14 +222,14 @@ object Check {
     check: Check[E, A, B],
     func: B => C) extends Check[E, A, C] {
   
-    def apply(in: A)(implicit s: Semigroup[E]): Validated[E, C] =
+    def apply(in: A)(using s: Semigroup[E]): Validated[E, C] =
       check(in).map(func)
   }
   
   final case class Pure[E, A](
     pred: Predicate[E, A]) extends Check[E, A, A] {
   
-    def apply(in: A)(implicit s: Semigroup[E]): Validated[E, A] =
+    def apply(in: A)(using s: Semigroup[E]): Validated[E, A] =
       pred(in)
   }
 
@@ -289,7 +289,7 @@ import cats.data.Validated
 
 ```scala mdoc:silent
 sealed trait Check[E, A, B] {
-  def apply(in: A)(implicit s: Semigroup[E]): Validated[E, B]
+  def apply(in: A)(using s: Semigroup[E]): Validated[E, B]
 
   def flatMap[C](f: B => Check[E, A, C]) =
     FlatMap[E, A, B, C](this, f)
@@ -301,7 +301,7 @@ final case class FlatMap[E, A, B, C](
   check: Check[E, A, B],
   func: B => Check[E, A, C]) extends Check[E, A, C] {
 
-  def apply(a: A)(implicit s: Semigroup[E]): Validated[E, C] =
+  def apply(a: A)(using s: Semigroup[E]): Validated[E, C] =
     check(a).withEither(_.flatMap(b => func(b)(a).toEither))
 }
 
@@ -342,7 +342,7 @@ import cats.data.Validated
 ```
 ```scala mdoc:silent
 sealed trait Check[E, A, B] {
-  def apply(in: A)(implicit s: Semigroup[E]): Validated[E, B]
+  def apply(in: A)(using s: Semigroup[E]): Validated[E, B]
 
   def andThen[C](that: Check[E, B, C]): Check[E, A, C] =
     AndThen[E, A, B, C](this, that)
@@ -352,7 +352,7 @@ final case class AndThen[E, A, B, C](
   check1: Check[E, A, B],
   check2: Check[E, B, C]) extends Check[E, A, C] {
 
-  def apply(a: A)(implicit s: Semigroup[E]): Validated[E, C] =
+  def apply(a: A)(using s: Semigroup[E]): Validated[E, C] =
     check1(a).withEither(_.flatMap(b => check2(b).toEither))
 }
 ```
@@ -395,7 +395,7 @@ sealed trait Predicate[E, A] {
   def or(that: Predicate[E, A]): Predicate[E, A] =
     Or(this, that)
 
-  def apply(a: A)(implicit s: Semigroup[E]): Validated[E, A] =
+  def apply(a: A)(using s: Semigroup[E]): Validated[E, A] =
     this match {
       case Pure(func) =>
         func(a)
@@ -451,7 +451,7 @@ import cats.syntax.validated._ // for valid and invalid
 sealed trait Check[E, A, B] {
   import Check._
 
-  def apply(in: A)(implicit s: Semigroup[E]): Validated[E, B]
+  def apply(in: A)(using s: Semigroup[E]): Validated[E, B]
 
   def map[C](f: B => C): Check[E, A, C] =
     Map[E, A, B, C](this, f)
@@ -469,7 +469,7 @@ object Check {
     func: B => C) extends Check[E, A, C] {
 
     def apply(a: A)
-        (implicit s: Semigroup[E]): Validated[E, C] =
+        (using s: Semigroup[E]): Validated[E, C] =
       check(a) map func
   }
 
@@ -478,7 +478,7 @@ object Check {
     func: B => Check[E, A, C]) extends Check[E, A, C] {
 
     def apply(a: A)
-        (implicit s: Semigroup[E]): Validated[E, C] =
+        (using s: Semigroup[E]): Validated[E, C] =
       check(a).withEither(_.flatMap(b => func(b)(a).toEither))
   }
 
@@ -487,7 +487,7 @@ object Check {
     next: Check[E, B, C]) extends Check[E, A, C] {
 
     def apply(a: A)
-        (implicit s: Semigroup[E]): Validated[E, C] =
+        (using s: Semigroup[E]): Validated[E, C] =
       check(a).withEither(_.flatMap(b => next(b).toEither))
   }
 
@@ -495,7 +495,7 @@ object Check {
     func: A => Validated[E, B]) extends Check[E, A, B] {
 
     def apply(a: A)
-        (implicit s: Semigroup[E]): Validated[E, B] =
+        (using s: Semigroup[E]): Validated[E, B] =
       func(a)
   }
 
@@ -503,7 +503,7 @@ object Check {
     pred: Predicate[E, A]) extends Check[E, A, A] {
 
     def apply(a: A)
-        (implicit s: Semigroup[E]): Validated[E, A] =
+        (using s: Semigroup[E]): Validated[E, A] =
       pred(a)
   }
 

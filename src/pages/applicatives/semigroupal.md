@@ -185,7 +185,7 @@ val tupleToCat: (String, Int, List[String]) => Cat =
 val catToTuple: Cat => (String, Int, List[String]) =
   cat => (cat.name, cat.yearOfBirth, cat.favoriteFoods)
 
-implicit val catMonoid: Monoid[Cat] = (
+given catMonoid: Monoid[Cat] = (
   Monoid[String],
   Monoid[Int],
   Monoid[List[String]]

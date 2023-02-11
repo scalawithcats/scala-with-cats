@@ -180,14 +180,14 @@ exn.raiseError[Try, Int]
 Implement a method `validateAdult` with the following signature
 
 ```scala
-def validateAdult[F[_]](age: Int)(implicit me: MonadError[F, Throwable]): F[Int] =
+def validateAdult[F[_]](age: Int)(using me: MonadError[F, Throwable]): F[Int] =
   ???
 ```
 
 When passed an `age` greater than or equal to 18 it should return that value as a success. Otherwise it should return a error represented as an `IllegalArgumentException`.
 
 ```scala mdoc:invisible
-def validateAdult[F[_]](age: Int)(implicit me: MonadError[F, Throwable]): F[Int] =
+def validateAdult[F[_]](age: Int)(using me: MonadError[F, Throwable]): F[Int] =
   if(age >= 18) age.pure[F]
   else new IllegalArgumentException("Age must be greater than or equal to 18").raiseError[F, Int]
 ```
@@ -209,7 +209,7 @@ import cats.MonadError
 import cats.implicits._
 ```
 ```scala mdoc:silent
-def validateAdult[F[_]](age: Int)(implicit me: MonadError[F, Throwable]): F[Int] =
+def validateAdult[F[_]](age: Int)(using me: MonadError[F, Throwable]): F[Int] =
   if(age >= 18) age.pure[F]
   else new IllegalArgumentException("Age must be greater than or equal to 18").raiseError[F, Int]
 ```

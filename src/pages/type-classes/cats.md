@@ -123,11 +123,9 @@ simply by implementing the trait for a given type:
 ```scala mdoc:silent
 import java.util.Date
 
-implicit val dateShow: Show[Date] =
-  new Show[Date] {
-    def show(date: Date): String =
-      s"${date.getTime}ms since the epoch."
-  }
+given dateShow: Show[Date] with
+  def show(date: Date): String =
+    s"${date.getTime}ms since the epoch."
 ```
 ```scala mdoc
 new Date().show
@@ -158,7 +156,7 @@ import cats.Show
 import java.util.Date
 ```
 ```scala mdoc:silent
-implicit val dateShow: Show[Date] =
+given dateShow: Show[Date] =
   Show.show(date => s"${date.getTime}ms since the epoch.")
 ```
 
@@ -196,7 +194,7 @@ In the companion object we replace our `Printable` with an instance of `Show`
 using one of the definition helpers discussed above:
 
 ```scala mdoc:silent
-implicit val catShow: Show[Cat] = Show.show[Cat] { cat =>
+given catShow: Show[Cat] = Show.show[Cat] { cat =>
   val name  = cat.name.show
   val age   = cat.age.show
   val color = cat.color.show

@@ -60,7 +60,7 @@ for which we have an instance of `Monoid`:
 
 ```scala mdoc:silent
 def addAll[A](values: List[A])
-      (implicit monoid: Monoid[A]): A =
+      (using monoid: Monoid[A]): A =
   values.foldRight(monoid.empty)(_ |+| _)
 ```
 

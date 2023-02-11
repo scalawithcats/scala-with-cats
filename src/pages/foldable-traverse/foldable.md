@@ -141,7 +141,7 @@ one using `scala.math.Numeric`
 import scala.math.Numeric
 
 def sumWithNumeric[A](list: List[A])
-      (implicit numeric: Numeric[A]): A =
+      (using numeric: Numeric[A]): A =
   list.foldRight(numeric.zero)(numeric.plus)
 ```
 
@@ -156,7 +156,7 @@ and one using `cats.Monoid`
 import cats.Monoid
 
 def sumWithMonoid[A](list: List[A])
-      (implicit monoid: Monoid[A]): A =
+      (using monoid: Monoid[A]): A =
   list.foldRight(monoid.empty)(monoid.combine)
 
 import cats.instances.int._ // for Monoid

@@ -16,28 +16,24 @@ trait JsonWriter[A] {
 case class Person(name: String, email: String)
 
 object JsonWriterInstances {
-  implicit val stringWriter: JsonWriter[String] =
-    new JsonWriter[String] {
-      def write(value: String): Json =
-        JsString(value)
-    }
+  given stringWriter: JsonWriter[String] with
+    def write(value: String): Json =
+      JsString(value)
 
-  implicit val personWriter: JsonWriter[Person] =
-    new JsonWriter[Person] {
-      def write(value: Person): Json =
-        JsObject(Map(
-          "name" -> JsString(value.name),
-          "email" -> JsString(value.email)
-        ))
-    }
+  given personWriter: JsonWriter[Person] with
+    def write(value: Person): Json =
+      JsObject(Map(
+        "name" -> JsString(value.name),
+        "email" -> JsString(value.email)
+      ))
 
   // etc...
 }
 
-import JsonWriterInstances._
+import JsonWriterInstances.{personWriter, stringWriter}
 
 object Json {
-  def toJson[A](value: A)(implicit w: JsonWriter[A]): Json =
+  def toJson[A](value: A)(using w: JsonWriter[A]): Json =
     w.write(value)
 }
 ```
@@ -104,23 +100,21 @@ trait JsonWriter[A] {
 }
 
 object JsonWriterInstances {
-  implicit val stringWriter: JsonWriter[String] =
-    new JsonWriter[String] {
-      def write(value: String): Json =
-        JsString(value)
-    }
+  given stringWriter: JsonWriter[String] with
+    def write(value: String): Json =
+      JsString(value)
 }
 
 object Json {
-  def toJson[A](value: A)(implicit w: JsonWriter[A]): Json =
+  def toJson[A](value: A)(using w: JsonWriter[A]): Json =
     w.write(value)
 }
 ```
 ```scala mdoc:fail
-implicit val writer1: JsonWriter[String] =
+given writer1: JsonWriter[String] =
   JsonWriterInstances.stringWriter
 
-implicit val writer2: JsonWriter[String] =
+given writer2: JsonWriter[String] =
   JsonWriterInstances.stringWriter
 
 Json.toJson("A string")
@@ -179,10 +173,10 @@ We could try to brute force the problem by creating
 a library of `implicit vals`:
 
 ```scala
-implicit val optionIntWriter: JsonWriter[Option[Int]] =
+given optionIntWriter: JsonWriter[Option[Int]] with
   ???
 
-implicit val optionPersonWriter: JsonWriter[Option[Person]] =
+given optionPersonWriter: JsonWriter[Option[Person]] with
   ???
 
 // and so on...
@@ -205,7 +199,7 @@ Here is the same code written out as an `implicit def`:
 
 ```scala mdoc:silent
 implicit def optionWriter[A]
-    (implicit writer: JsonWriter[A]): JsonWriter[Option[A]] =
+    (using writer: JsonWriter[A]): JsonWriter[Option[A]] =
   new JsonWriter[Option[A]] {
     def write(option: Option[A]): Json =
       option match {
@@ -221,7 +215,7 @@ fill in the `A`-specific functionality.
 When the compiler sees an expression like this:
 
 ```scala mdoc:invisible
-import JsonWriterInstances._
+import JsonWriterInstances.stringWriter
 ```
 ```scala mdoc:silent
 Json.toJson(Option("A string"))
@@ -231,14 +225,14 @@ it searches for an implicit `JsonWriter[Option[String]]`.
 It finds the implicit method for `JsonWriter[Option[A]]`:
 
 ```scala mdoc:silent
-Json.toJson(Option("A string"))(optionWriter[String])
+Json.toJson(Option("A string"))(using optionWriter[String])
 ```
 
 and recursively searches for a `JsonWriter[String]`
 to use as the parameter to `optionWriter`:
 
 ```scala mdoc:silent
-Json.toJson(Option("A string"))(optionWriter(stringWriter))
+Json.toJson(Option("A string"))(using optionWriter(using stringWriter))
 ```
 
 In this way, implicit resolution becomes

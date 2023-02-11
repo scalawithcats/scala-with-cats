@@ -114,13 +114,13 @@ For all values `x`, `y`, and `z`, in `A`,
 
 ```scala mdoc:silent
 def associativeLaw[A](x: A, y: A, z: A)
-      (implicit m: Monoid[A]): Boolean = {
+      (using m: Monoid[A]): Boolean = {
   m.combine(x, m.combine(y, z)) ==
     m.combine(m.combine(x, y), z)
 }
 
 def identityLaw[A](x: A)
-      (implicit m: Monoid[A]): Boolean = {
+      (using m: Monoid[A]): Boolean = {
   (m.combine(x, m.empty) == x) &&
     (m.combine(m.empty, x) == x)
 }
@@ -194,7 +194,7 @@ trait Monoid[A] extends Semigroup[A] {
 }
 
 object Monoid {
-  def apply[A](implicit monoid: Monoid[A]) =
+  def apply[A](using monoid: Monoid[A]) =
     monoid
 }
 ```
@@ -204,46 +204,38 @@ There are four monoids for `Boolean`!
 First, we have *and* with operator `&&` and identity `true`:
 
 ```scala mdoc:silent
-implicit val booleanAndMonoid: Monoid[Boolean] =
-  new Monoid[Boolean] {
-    def combine(a: Boolean, b: Boolean) = a && b
-    def empty = true
-  }
+given booleanAndMonoid: Monoid[Boolean] with
+  def combine(a: Boolean, b: Boolean) = a && b
+  def empty = true
 ```
 
 Second, we have *or* with operator `||` and identity `false`:
 
 ```scala mdoc:silent
-implicit val booleanOrMonoid: Monoid[Boolean] =
-  new Monoid[Boolean] {
-    def combine(a: Boolean, b: Boolean) = a || b
-    def empty = false
-  }
+given booleanOrMonoid: Monoid[Boolean] with
+  def combine(a: Boolean, b: Boolean) = a || b
+  def empty = false
 ```
 
 Third, we have *exclusive or* with identity `false`:
 
 ```scala mdoc:silent
-implicit val booleanEitherMonoid: Monoid[Boolean] =
-  new Monoid[Boolean] {
-    def combine(a: Boolean, b: Boolean) =
-      (a && !b) || (!a && b)
+given booleanEitherMonoid: Monoid[Boolean] with
+  def combine(a: Boolean, b: Boolean) =
+    (a && !b) || (!a && b)
 
-    def empty = false
-  }
+  def empty = false
 ```
 
 Finally, we have *exclusive nor* (the negation of exclusive or)
 with identity `true`:
 
 ```scala mdoc:silent
-implicit val booleanXnorMonoid: Monoid[Boolean] =
-  new Monoid[Boolean] {
-    def combine(a: Boolean, b: Boolean) =
-      (!a || b) && (a || !b)
+given booleanXnorMonoid: Monoid[Boolean] with
+  def combine(a: Boolean, b: Boolean) =
+    (!a || b) && (a || !b)
 
-    def empty = true
-  }
+  def empty = true
 ```
 
 Showing that the identity law holds in each case is straightforward.

@@ -55,7 +55,7 @@ trait Printable[A] {
     ???
 }
 
-def format[A](value: A)(implicit p: Printable[A]): String =
+def format[A](value: A)(using p: Printable[A]): String =
   p.format(value)
 ```
 
@@ -103,7 +103,7 @@ trait Printable[A] { self =>
     }
 }
 
-def format[A](value: A)(implicit p: Printable[A]): String =
+def format[A](value: A)(using p: Printable[A]): String =
   p.format(value)
 ```
 </div>
@@ -113,17 +113,13 @@ let's define some instances of `Printable`
 for `String` and `Boolean`:
 
 ```scala mdoc:silent
-implicit val stringPrintable: Printable[String] =
-  new Printable[String] {
-    def format(value: String): String =
-      s"'${value}'"
-  }
+given stringPrintable: Printable[String] with
+  def format(value: String): String =
+    s"'${value}'"
 
-implicit val booleanPrintable: Printable[Boolean] =
-  new Printable[Boolean] {
-    def format(value: Boolean): String =
-      if(value) "yes" else "no"
-  }
+given booleanPrintable: Printable[Boolean] with
+  def format(value: Boolean): String =
+    if(value) "yes" else "no"
 ```
 
 ```scala mdoc
@@ -147,7 +143,7 @@ create your instance from an
 existing instance using `contramap`.
 
 ```scala mdoc:invisible
-implicit def boxPrintable[A](implicit p: Printable[A]): Printable[Box[A]] =
+implicit def boxPrintable[A](using p: Printable[A]): Printable[Box[A]] =
   p.contramap[Box[A]](_.value)
 ```
 
@@ -210,24 +206,21 @@ trait Printable[A] {
     }
 }
 
-def format[A](value: A)(implicit p: Printable[A]): String =
+def format[A](value: A)(using p: Printable[A]): String =
   p.format(value)
 
-implicit val stringPrintable: Printable[String] =
-  new Printable[String] {
-    def format(value: String): String =
-      s"'${value}'"
-  }
+given stringPrintable: Printable[String] with
+  def format(value: String): String =
+    s"'${value}'"
 
-implicit val booleanPrintable: Printable[Boolean] =
-  new Printable[Boolean] {
-    def format(value: Boolean): String =
-      if(value) "yes" else "no"
-  }
+given booleanPrintable: Printable[Boolean] with
+  def format(value: Boolean): String =
+    if(value) "yes" else "no"
+
 final case class Box[A](value: A)
 ```
 ```scala mdoc:silent
-implicit def boxPrintable[A](implicit p: Printable[A]): Printable[Box[A]] =
+implicit def boxPrintable[A](using p: Printable[A]): Printable[Box[A]] =
   p.contramap[Box[A]](_.value)
 ```
 
@@ -283,10 +276,10 @@ trait Codec[A] {
 ```
 
 ```scala mdoc:silent
-def encode[A](value: A)(implicit c: Codec[A]): String =
+def encode[A](value: A)(using c: Codec[A]): String =
   c.encode(value)
 
-def decode[A](value: String)(implicit c: Codec[A]): A =
+def decode[A](value: String)(using c: Codec[A]): A =
   c.decode(value)
 ```
 
@@ -303,21 +296,19 @@ whose `encode` and `decode` methods both
 simply return the value they are passed:
 
 ```scala mdoc:silent
-implicit val stringCodec: Codec[String] =
-  new Codec[String] {
-    def encode(value: String): String = value
-    def decode(value: String): String = value
-  }
+given stringCodec: Codec[String] with
+  def encode(value: String): String = value
+  def decode(value: String): String = value
 ```
 
 We can construct many useful `Codecs` for other types
 by building off of `stringCodec` using `imap`:
 
 ```scala mdoc:silent
-implicit val intCodec: Codec[Int] =
+given intCodec: Codec[Int] =
   stringCodec.imap(_.toInt, _.toString)
 
-implicit val booleanCodec: Codec[Boolean] =
+given booleanCodec: Codec[Boolean] =
   stringCodec.imap(_.toBoolean, _.toString)
 ```
 
@@ -361,22 +352,20 @@ trait Codec[A] { self =>
 ```
 
 ```scala mdoc:invisible
-implicit val stringCodec: Codec[String] =
-  new Codec[String] {
-    def encode(value: String): String = value
-    def decode(value: String): String = value
-  }
+given stringCodec: Codec[String] with
+  def encode(value: String): String = value
+  def decode(value: String): String = value
 
-implicit val intCodec: Codec[Int] =
+given intCodec: Codec[Int] =
   stringCodec.imap[Int](_.toInt, _.toString)
 
-implicit val booleanCodec: Codec[Boolean] =
+given booleanCodec: Codec[Boolean] =
   stringCodec.imap[Boolean](_.toBoolean, _.toString)
 
-def encode[A](value: A)(implicit c: Codec[A]): String =
+def encode[A](value: A)(using c: Codec[A]): String =
   c.encode(value)
 
-def decode[A](value: String)(implicit c: Codec[A]): A =
+def decode[A](value: String)(using c: Codec[A]): A =
   c.decode(value)
 ```
 </div>
@@ -389,7 +378,7 @@ We can implement this using
 the `imap` method of `stringCodec`:
 
 ```scala mdoc:silent
-implicit val doubleCodec: Codec[Double] =
+given doubleCodec: Codec[Double] =
   stringCodec.imap[Double](_.toDouble, _.toString)
 ```
 </div>
@@ -406,7 +395,7 @@ We create this by calling `imap` on a `Codec[A]`,
 which we bring into scope using an implicit parameter:
 
 ```scala mdoc:silent
-implicit def boxCodec[A](implicit c: Codec[A]): Codec[Box[A]] =
+implicit def boxCodec[A](using c: Codec[A]): Codec[Box[A]] =
   c.imap[Box[A]](Box(_), _.value)
 ```
 </div>
