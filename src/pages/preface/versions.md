@@ -11,7 +11,8 @@ libraryDependencies +=
   "org.typelevel" %% "cats-core" % "@CATS_VERSION@"
 
 scalacOptions ++= Seq(
-  "-Xfatal-warnings"
+  "-explain",
+  "-Werror"
 )
 ```
 

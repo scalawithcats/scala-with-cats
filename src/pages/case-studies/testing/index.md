@@ -53,7 +53,7 @@ We want to test its ability to sum values,
 regardless of where it is getting them from.
 Here's an example:
 
-```scala mdoc:warn
+```scala mdoc:fail
 def testTotalUptime() = {
   val hosts    = Map("host1" -> 10, "host2" -> 6)
   val client   = new TestUptimeClient(hosts)

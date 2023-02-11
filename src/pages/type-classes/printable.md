@@ -39,11 +39,11 @@ and package them in `PrintableInstances`:
 
 ```scala mdoc:silent
 object PrintableInstances {
-  implicit val stringPrintable = new Printable[String] {
+  implicit val stringPrintable: Printable[String] = new Printable[String] {
     def format(input: String) = input
   }
 
-  implicit val intPrintable = new Printable[Int] {
+  implicit val intPrintable: Printable[Int] = new Printable[Int] {
     def format(input: Int) = input.toString
   }
 }
@@ -106,7 +106,7 @@ or a separate object to act as a namespace:
 ```scala mdoc:silent
 import PrintableInstances._
 
-implicit val catPrintable = new Printable[Cat] {
+implicit val catPrintable: Printable[Cat] = new Printable[Cat] {
   def format(cat: Cat) = {
     val name  = Printable.format(cat.name)
     val age   = Printable.format(cat.age)

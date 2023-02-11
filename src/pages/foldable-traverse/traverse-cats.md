@@ -74,8 +74,8 @@ import cats.syntax.traverse._ // for sequence and traverse
 ```
 
 ```scala mdoc
-Await.result(hostnames.traverse(getUptime), 1.second)
-Await.result(numbers.sequence, 1.second)
+Await.result(hostnames.traverse[Future, Int](getUptime), 1.second)
+Await.result(numbers.sequence[Future, Int], 1.second)
 ```
 
 As you can see, this is much more compact and readable

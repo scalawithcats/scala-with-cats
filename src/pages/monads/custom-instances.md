@@ -167,7 +167,7 @@ the non-tail-recursive solution falls out:
 ```scala mdoc:silent
 import cats.Monad
 
-implicit val treeMonad = new Monad[Tree] {
+implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
   def pure[A](value: A): Tree[A] =
     Leaf(value)
 
@@ -180,14 +180,14 @@ implicit val treeMonad = new Monad[Tree] {
         func(value)
     }
 
- def tailRecM[A, B](a: A)
-     (func: A => Tree[Either[A, B]]): Tree[B] =
-   flatMap(func(a)) {
-     case Left(value) =>
-       tailRecM(value)(func)
-     case Right(value) =>
-       Leaf(value)
-   }
+  def tailRecM[A, B](a: A)
+      (func: A => Tree[Either[A, B]]): Tree[B] =
+    flatMap(func(a)) {
+      case Left(value) =>
+        tailRecM(value)(func)
+      case Right(value) =>
+        Leaf(value)
+    }
 }
 ```
 
@@ -219,7 +219,7 @@ def leaf[A](value: A): Tree[A] =
 import cats.Monad
 import scala.annotation.tailrec
 
-implicit val treeMonad = new Monad[Tree] {
+implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
   def pure[A](value: A): Tree[A] =
     Leaf(value)
 
@@ -232,8 +232,9 @@ implicit val treeMonad = new Monad[Tree] {
         func(value)
     }
 
-  def tailRecM[A, B](arg: A)
-      (func: A => Tree[Either[A, B]]): Tree[B] = {
+  def tailRecM[A, B](arg: A)(
+    func: A => Tree[Either[A, B]]
+  ): Tree[B] = {
     @tailrec
     def loop(
           open: List[Tree[Either[A, B]]],
