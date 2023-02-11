@@ -5,14 +5,14 @@ the *type class* itself,
 *instances* for particular types,
 and the methods that *use* type classes.
 
-Type classes in Scala are implemented using *implicit values* and *parameters*,
-and optionally using *implicit classes*.
+Type classes in Scala are implemented using *traits*, *given instances* and *using clauses*,
+and optionally using *extension methods*.
 Scala language constructs correspond to the components of type classes as follows:
 
 - traits: type classes;
-- implicit values: type class instances;
-- implicit parameters: type class use; and
-- implicit classes: optional utilities that make type classes easier to use.
+- given instances: type class instances;
+- using clauses: type class use; and
+- extension methods: optional utilities that make type classes easier to use.
 
 Let's see how this works in detail.
 

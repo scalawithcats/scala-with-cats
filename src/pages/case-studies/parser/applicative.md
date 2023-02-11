@@ -15,11 +15,11 @@ Given a nested tuple like `((1, 2), 3)` we could write an implicit conversion to
 
 ### Exercise: Flattening
 
-Define a `Tuple2Flatten` implicit class with an extension method `flatten`, and an instance of `Flattener` for a nested tuple like `((1, 2), 3)`.
+Define an extension method `flatten`, and an instance of `Flattener` for a nested tuple like `((1, 2), 3)`.
 
 <div class="solution">
 ~~~ scala
-implicit class Tuple2Flatten[A, B, C](val in: ((A, B), C)) extends AnyVal {
+extension [A, B, C](in: ((A, B), C)) {
   def flatten: (A, B, C) =
     in match {
       case ((a, b), c) => (a, b, c)

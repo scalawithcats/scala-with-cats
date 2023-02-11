@@ -132,24 +132,21 @@ Printable.print(cat)
 Let's make our printing library easier to use
 by defining some extension methods to provide better syntax:
 
- 1. Create an object called `PrintableSyntax`.
+ 1. Define an `extension [A](value: A)` to wrap up a value of type `A`.
 
- 2. Inside `PrintableSyntax` define an `implicit class PrintableOps[A]`
-    to wrap up a value of type `A`.
+ 2. Define the following extension methods:
 
- 3. In `PrintableOps` define the following methods:
-
-     - `format` accepts an implicit `Printable[A]`
+     - `format` using an implicit `Printable[A]`
        and returns a `String` representation of the wrapped `A`;
 
-     - `print` accepts an implicit `Printable[A]` and returns `Unit`.
+     - `print` using an implicit `Printable[A]` and returns `Unit`.
        It prints the wrapped `A` to the console.
 
- 4. Use the extension methods to print the example `Cat`
+  3. Use the extension methods to print the example `Cat`
     you created in the previous exercise.
 
 <div class="solution">
-First we define an `implicit class` containing our extension methods:
+First we define our extension methods:
 
 ```scala mdoc:silent
 extension [A](value: A) {
@@ -161,7 +158,7 @@ extension [A](value: A) {
 }
 ```
 
-With `PrintableOps` in scope,
+With the extensions in scope,
 we can call the imaginary `print` and `format` methods
 on any value for which Scala can locate an implicit instance of `Printable`:
 
