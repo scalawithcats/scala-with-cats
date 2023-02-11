@@ -12,8 +12,7 @@ Let's define a `Printable` type class to work around these problems:
  1. Define a type class `Printable[A]` containing a single method `format`.
     `format` should accept a value of type `A` and return a `String`.
 
- 2. Create an object `PrintableInstances`
-    containing instances of `Printable` for `String` and `Int`.
+ 2. Create instances of `Printable` for `String` and `Int`.
 
  3. Define an object `Printable` with two generic interface methods:
 
@@ -29,34 +28,30 @@ These steps define the three main components of our type class.
 First we define `Printable`---the *type class* itself:
 
 ```scala mdoc:silent:reset-object
-trait Printable[A] {
+trait Printable[A]:
   def format(value: A): String
-}
 ```
 
 Then we define some default *instances* of `Printable`
 and package them in `PrintableInstances`:
 
 ```scala mdoc:silent
-object PrintableInstances {
-  given stringPrintable: Printable[String] with
-    def format(input: String) = input
+given stringPrintable: Printable[String] with
+  def format(input: String) = input
 
-  given intPrintable: Printable[Int] with
-    def format(input: Int) = input.toString
-}
+given intPrintable: Printable[Int] with
+  def format(input: Int) = input.toString
 ```
 
 Finally we define an *interface* object, `Printable`:
 
 ```scala mdoc:silent
-object Printable {
+object Printable:
   def format[A](input: A)(using p: Printable[A]): String =
     p.format(input)
 
   def print[A](input: A)(using p: Printable[A]): Unit =
     println(p.format(input))
-}
 ```
 </div>
 
@@ -102,8 +97,6 @@ These either go into the companion object of `Cat`
 or a separate object to act as a namespace:
 
 ```scala mdoc:silent
-import PrintableInstances.{intPrintable, stringPrintable}
-
 given catPrintable: Printable[Cat] with
   def format(cat: Cat) = {
     val name  = Printable.format(cat.name)
@@ -149,13 +142,12 @@ by defining some extension methods to provide better syntax:
 First we define our extension methods:
 
 ```scala mdoc:silent
-extension [A](value: A) {
+extension [A](value: A)
   def format(using p: Printable[A]): String =
     p.format(value)
 
   def print(using p: Printable[A]): Unit =
     println(format(using p))
-}
 ```
 
 With the extensions in scope,
