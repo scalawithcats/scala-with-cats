@@ -17,9 +17,8 @@ Here's an abbreviated definition:
 ```scala
 package cats
 
-trait Show[A] {
+trait Show[A]:
   def show(value: A): String
-}
 ```
 
 ### Importing Type Classes
@@ -137,7 +136,7 @@ There are two construction methods on the companion object of `Show`
 that we can use to define instances for our own types:
 
 ```scala
-object Show {
+object Show:
   // Convert a function to a `Show` instance:
   def show[A](f: A => String): Show[A] =
     ???
@@ -145,7 +144,6 @@ object Show {
   // Create a `Show` instance from a `toString` method:
   def fromToString[A]: Show[A] =
     ???
-}
 ```
 
 These allow us to quickly construct instances
