@@ -101,7 +101,7 @@ the `map` method in `cats.syntax.functor`.
 Here's a simplified version of the code:
 
 ```scala
-implicit class FunctorOps[F[_], A](src: F[A]) {
+extension [F[_], A](src: F[A]) {
   def map[B](func: A => B)
       (using functor: Functor[F]): F[B] =
     functor.map(src)(func)

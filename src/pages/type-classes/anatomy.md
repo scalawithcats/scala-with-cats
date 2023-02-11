@@ -131,11 +131,9 @@ referred to as "type enrichment" or "pimping".
 These are older terms that we don't use anymore.
 
 ```scala mdoc:silent
-object JsonSyntax {
-  implicit class JsonWriterOps[A](value: A) {
-    def toJson(using w: JsonWriter[A]): Json =
-      w.write(value)
-  }
+extension [A](value: A) {
+  def toJson(using w: JsonWriter[A]): Json =
+    w.write(value)
 }
 ```
 
@@ -144,7 +142,6 @@ alongside the instances for the types we need:
 
 ```scala mdoc:silent
 import JsonWriterInstances.personWriter
-import JsonSyntax._
 ```
 
 ```scala mdoc

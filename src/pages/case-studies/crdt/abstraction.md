@@ -174,7 +174,7 @@ With our type class in place we can implement syntax
 to enhance data types for which we have instances:
 
 ```scala mdoc:silent
-implicit class KvsOps[F[_,_], K, V](f: F[K, V]) {
+extension [F[_,_], K, V](f: F[K, V]) {
   def put(key: K, value: V)
         (using kvs: KeyValueStore[F]): F[K, V] =
     kvs.put(f)(key, value)

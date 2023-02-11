@@ -152,24 +152,18 @@ by defining some extension methods to provide better syntax:
 First we define an `implicit class` containing our extension methods:
 
 ```scala mdoc:silent
-object PrintableSyntax {
-  implicit class PrintableOps[A](value: A) {
-    def format(using p: Printable[A]): String =
-      p.format(value)
+extension [A](value: A) {
+  def format(using p: Printable[A]): String =
+    p.format(value)
 
-    def print(using p: Printable[A]): Unit =
-      println(format(using p))
-  }
+  def print(using p: Printable[A]): Unit =
+    println(format(using p))
 }
 ```
 
 With `PrintableOps` in scope,
 we can call the imaginary `print` and `format` methods
 on any value for which Scala can locate an implicit instance of `Printable`:
-
-```scala mdoc:silent
-import PrintableSyntax._
-```
 
 ```scala mdoc
 Cat("Garfield", 41, "ginger and black").print
