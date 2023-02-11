@@ -1,64 +1,40 @@
-## Working with Implicits
+## Working with Given Instances and Using Clauses
 
 ```scala mdoc:invisible
 // Forward definitions
 
-enum Json {
+enum Json:
   case JsObject(get: Map[String, Json])
   case JsString(get: String)
   case JsNumber(get: Double)
   case JsNull
-}
 
-import Json.*
-
-trait JsonWriter[A] {
+trait JsonWriter[A]:
   def write(value: A): Json
-}
 
 case class Person(name: String, email: String)
 
-object JsonWriterInstances {
-  given stringWriter: JsonWriter[String] with
-    def write(value: String): Json =
-      JsString(value)
+given stringWriter: JsonWriter[String] with
+  def write(value: String): Json =
+    Json.JsString(value)
 
-  given personWriter: JsonWriter[Person] with
-    def write(value: Person): Json =
-      JsObject(Map(
-        "name" -> JsString(value.name),
-        "email" -> JsString(value.email)
-      ))
+given personWriter: JsonWriter[Person] with
+  def write(value: Person): Json =
+    Json.JsObject(Map(
+      "name" -> Json.JsString(value.name),
+      "email" -> Json.JsString(value.email)
+    ))
 
-  // etc...
-}
+// etc...
 
-import JsonWriterInstances.{personWriter, stringWriter}
-
-object Json {
+object Json:
   def toJson[A](value: A)(using w: JsonWriter[A]): Json =
     w.write(value)
-}
 ```
 
 Working with type classes in Scala means
-working with implicit values and implicit parameters.
+working with given instances and using clauses.
 There are a few rules we need to know to do this effectively.
-
-
-### Packaging Implicits
-
-In a curious quirk of the language,
-any definitions marked `implicit` in Scala must be placed
-inside an object or trait rather than at the top level.
-In the example above we packaged our type class instances
-in an object called `JsonWriterInstances`.
-We could equally have placed them
-in a companion object to `JsonWriter`.
-Placing instances in a companion object
-to the type class has special significance in Scala
-because it plays into something called *implicit scope*.
-
 
 ### Implicit Scope
 
@@ -75,7 +51,7 @@ Json.toJson("A string!")
 The places where the compiler searches for candidate instances
 is known as the *implicit scope*.
 The implicit scope applies at the call site;
-that is the point where we call a method with an implicit parameter.
+that is the point where we call a method with a using clause.
 The implicit scope which roughly consists of:
 
 - local or inherited definitions;
@@ -86,61 +62,50 @@ The implicit scope which roughly consists of:
   of the type class or the parameter type
   (in this case `JsonWriter` or `String`).
 
-Definitions are only included in implicit scope
-if they are tagged with the `implicit` keyword.
 Furthermore, if the compiler sees multiple candidate definitions,
-it fails with an *ambiguous implicit values* error:
+it fails with an *ambiguous given instances* error:
 
 ```scala mdoc:invisible:reset-object
-enum Json {
+enum Json:
   case JsObject(get: Map[String, Json])
   case JsString(get: String)
   case JsNumber(get: Double)
   case JsNull
-}
 
-import Json.*
-
-trait JsonWriter[A] {
+trait JsonWriter[A]:
   def write(value: A): Json
-}
 
-object JsonWriterInstances {
-  given stringWriter: JsonWriter[String] with
-    def write(value: String): Json =
-      JsString(value)
-}
+given stringWriter: JsonWriter[String] with
+  def write(value: String): Json =
+    Json.JsString(value)
 
-object Json {
+object Json:
   def toJson[A](value: A)(using w: JsonWriter[A]): Json =
     w.write(value)
-}
 ```
 ```scala mdoc:fail
-given writer1: JsonWriter[String] =
-  JsonWriterInstances.stringWriter
-
-given writer2: JsonWriter[String] =
+given secondStringWriter: JsonWriter[String] =
   JsonWriterInstances.stringWriter
 
 Json.toJson("A string")
 ```
 
-The precise rules of implicit resolution are more complex than this,
+The precise rules of given instance resolution are more complex than this,
 but the complexity is largely irrelevant for day-to-day use[^implicit-search].
-For our purposes, we can package type class instances in roughly four ways:
+For our purposes, we can package type class instances in roughly five ways:
 
-1. by placing them in an object such as `JsonWriterInstances`;
-2. by placing them in a trait;
-3. by placing them in the companion object of the type class;
-4. by placing them in the companion object of the parameter type.
+1. by placing them as top level definitions in a package.
+2. by placing them in an object such as `JsonWriterInstances`;
+3. by placing them in a trait;
+4. by placing them in the companion object of the type class;
+5. by placing them in the companion object of the parameter type.
 
-With option 1 we bring instances into scope by `importing` them.
-With option 2 we bring them into scope with inheritance.
-With options 3 and 4 instances are *always* in implicit scope,
+With option 1 and 2 we bring given instances into scope by `importing` them explicitly.
+With option 3 we bring them into scope with inheritance.
+With options 4 and 5 instances are *always* in implicit scope,
 regardless of where we try to use them.
 
-It is conventional to put type class instances in a companion object (option 3 and 4 above)
+It is conventional to put type class instances in a companion object (option 4 and 5 above)
 if there is only one sensible implementation,
 or at least one implementation that is widely accepted as the default.
 This makes type class instances easier to use
@@ -151,24 +116,22 @@ start by taking a look at [this Stack Overflow post on implicit scope][link-so-i
 and [this blog post on implicit priority][link-implicit-priority].
 
 
-### Recursive Implicit Resolution {#sec:type-classes:recursive-implicits}
+### Recursive Given Instance Resolution {#sec:type-classes:recursive-implicits}
 
-The power of type classes and implicits lies in
-the compiler's ability to *combine* implicit definitions
+The power of type classes with given instances and using clauses lies in
+the compiler's ability to *combine* given instances definitions
 when searching for candidate instances.
 This is sometimes known as *type class composition*.
 
 Earlier we insinuated that all type class instances
-are `implicit vals`. This was a simplification.
+are `given`. This was a simplification.
 We can actually define instances in two ways:
 
 1. by defining concrete instances as
-   `implicit vals` of the required type[^implicit-objects];
+   `given` of the required type;
 
-2. by defining `implicit` methods to
+2. by defining `given` methods to
    construct instances from other type class instances.
-
-[^implicit-objects]: We can also use an `implicit object`, which provides the same thing as an `implicit val`.
 
 Why would we construct instances from other instances?
 As a motivational example,
@@ -176,7 +139,7 @@ consider defining a `JsonWriter` for `Option`.
 We would need a `JsonWriter[Option[A]]`
 for every `A` we care about in our application.
 We could try to brute force the problem by creating
-a library of `implicit vals`:
+a library of `given`s:
 
 ```scala
 given optionIntWriter: JsonWriter[Option[Int]] with
@@ -189,7 +152,7 @@ given optionPersonWriter: JsonWriter[Option[Person]] with
 ```
 
 However, this approach clearly doesn't scale.
-We end up requiring two `implicit vals`
+We end up requiring two `given` instances
 for every type `A` in our application:
 one for `A` and one for `Option[A]`.
 
@@ -201,28 +164,22 @@ into a common constructor based on the instance for `A`:
 
 - if the option is `None`, return `JsNull`.
 
-Here is the same code written out as an `implicit def`:
+Here is the same code written out as a `given` with a `using` clause:
 
 ```scala mdoc:silent
-implicit def optionWriter[A]
-    (using writer: JsonWriter[A]): JsonWriter[Option[A]] =
-  new JsonWriter[Option[A]] {
-    def write(option: Option[A]): Json =
-      option match {
-        case Some(aValue) => writer.write(aValue)
-        case None         => JsNull
-      }
-  }
+given optionWriter[A](using writer: JsonWriter[A]): JsonWriter[Option[A]] with
+  def write(option: Option[A]): Json =
+    option match {
+      case Some(aValue) => writer.write(aValue)
+      case None         => Json.JsNull
+    }
 ```
 
 This method *constructs* a `JsonWriter` for `Option[A]` by
-relying on an implicit parameter to
+relying on a using clause to
 fill in the `A`-specific functionality.
 When the compiler sees an expression like this:
 
-```scala mdoc:invisible
-import JsonWriterInstances.stringWriter
-```
 ```scala mdoc:silent
 Json.toJson(Option("A string"))
 ```
@@ -241,9 +198,9 @@ to use as the parameter to `optionWriter`:
 Json.toJson(Option("A string"))(using optionWriter(using stringWriter))
 ```
 
-In this way, implicit resolution becomes
+In this way, given instance resolution becomes
 a search through the space of possible combinations
-of implicit definitions, to find
+of given definitions, to find
 a combination that creates a type class instance
 of the correct overall type.
 
@@ -251,13 +208,13 @@ of the correct overall type.
 *Implicit Conversions*
 
 When you create a type class instance constructor
-using an `implicit def`,
+using an `given`,
 be sure to mark the parameters to the method
-as `implicit` parameters.
+as `using` parameters.
 Without this keyword, the compiler won't be able to
-fill in the parameters during implicit resolution.
+fill in the parameters during given instance resolution.
 
-`implicit` methods with non-`implicit` parameters
+`given` methods with non-`using` parameters
 form a different Scala pattern called an *implicit conversion*. 
 This is also different from the previous section on `Interface Syntax`, 
 because in that case the `JsonWriter` is an implicit class with extension methods. 
@@ -269,13 +226,11 @@ by importing `scala.language.implicitConversions` in your file:
 
 ```scala mdoc:invisible:reset
 type Json = Nothing
-trait JsonWriter[A] {
+trait JsonWriter[A]:
   def write(value: A): Json
-}
 ```
-```scala
-implicit def optionWriter[A]
-    (writer: JsonWriter[A]): JsonWriter[Option[A]] =
+```scala modc:warn
+given optionWriter[A](writer: JsonWriter[A]): JsonWriter[Option[A]] =
   ???
 // warning: implicit conversion method foo should be enabled
 // by making the implicit value scala.language.implicitConversions visible.
