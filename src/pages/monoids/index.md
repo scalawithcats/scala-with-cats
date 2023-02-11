@@ -251,11 +251,9 @@ What monoids and semigroups are there for sets?
 *Set union* forms a monoid along with the empty set:
 
 ```scala mdoc:silent
-implicit def setUnionMonoid[A]: Monoid[Set[A]] =
-  new Monoid[Set[A]] {
-    def combine(a: Set[A], b: Set[A]) = a union b
-    def empty = Set.empty[A]
-  }
+given setUnionMonoid[A]: Monoid[Set[A]] with
+  def combine(a: Set[A], b: Set[A]) = a union b
+  def empty = Set.empty[A]
 ```
 
 We need to define `setUnionMonoid` as a method
@@ -277,11 +275,9 @@ Set intersection forms a semigroup,
 but doesn't form a monoid because it has no identity element:
 
 ```scala mdoc:silent
-implicit def setIntersectionSemigroup[A]: Semigroup[Set[A]] =
-  new Semigroup[Set[A]] {
-    def combine(a: Set[A], b: Set[A]) =
-      a intersect b
-  }
+given setIntersectionSemigroup[A]: Semigroup[Set[A]] with
+  def combine(a: Set[A], b: Set[A]) =
+    a intersect b
 ```
 
 Set complement and set difference are not associative,
@@ -293,11 +289,9 @@ does also form a monoid with the empty set:
 import cats.Monoid
 ```
 ```scala mdoc:silent
-implicit def symDiffMonoid[A]: Monoid[Set[A]] =
-  new Monoid[Set[A]] {
-    def combine(a: Set[A], b: Set[A]): Set[A] =
-      (a diff b) union (b diff a)
-    def empty: Set[A] = Set.empty
-  }
+given symDiffMonoid[A]: Monoid[Set[A]] with
+  def combine(a: Set[A], b: Set[A]): Set[A] =
+    (a diff b) union (b diff a)
+  def empty: Set[A] = Set.empty
 ```
 </div>

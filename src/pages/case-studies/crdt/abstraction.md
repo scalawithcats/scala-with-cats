@@ -40,14 +40,12 @@ object BoundedSemiLattice {
     val empty: Int =
       0
 
-  implicit def setInstance[A]: BoundedSemiLattice[Set[A]] =
-    new BoundedSemiLattice[Set[A]]{
-      def combine(a1: Set[A], a2: Set[A]): Set[A] =
-        a1 union a2
+  given setInstance[A]: BoundedSemiLattice[Set[A]] with
+    def combine(a1: Set[A], a2: Set[A]): Set[A] =
+      a1 union a2
 
-      val empty: Set[A] =
-        Set.empty[A]
-    }
+    val empty: Set[A] =
+      Set.empty[A]
 }
 ```
 ```scala mdoc:silent
@@ -86,22 +84,20 @@ import cats.instances.map._    // for Monoid
 import cats.syntax.semigroup._ // for |+|
 import cats.syntax.foldable._  // for combineAll
 
-implicit def mapGCounterInstance[K, V]: GCounter[Map, K, V] =
-  new GCounter[Map, K, V] {
-    def increment(map: Map[K, V])(key: K, value: V)
-          (using m: CommutativeMonoid[V]): Map[K, V] = {
-      val total = map.getOrElse(key, m.empty) |+| value
-      map + (key -> total)
-    }
-
-    def merge(map1: Map[K, V], map2: Map[K, V])
-          (using b: BoundedSemiLattice[V]): Map[K, V] =
-      map1 |+| map2
-
-    def total(map: Map[K, V])
-        (using m: CommutativeMonoid[V]): V =
-      map.values.toList.combineAll
+given mapGCounterInstance[K, V]: GCounter[Map, K, V] with
+  def increment(map: Map[K, V])(key: K, value: V)
+        (using m: CommutativeMonoid[V]): Map[K, V] = {
+    val total = map.getOrElse(key, m.empty) |+| value
+    map + (key -> total)
   }
+
+  def merge(map1: Map[K, V], map2: Map[K, V])
+        (using b: BoundedSemiLattice[V]): Map[K, V] =
+    map1 |+| map2
+
+  def total(map: Map[K, V])
+      (using m: CommutativeMonoid[V]): V =
+    map.values.toList.combineAll
 ```
 </div>
 

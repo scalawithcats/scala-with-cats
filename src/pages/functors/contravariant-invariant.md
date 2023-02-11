@@ -143,7 +143,7 @@ create your instance from an
 existing instance using `contramap`.
 
 ```scala mdoc:invisible
-implicit def boxPrintable[A](using p: Printable[A]): Printable[Box[A]] =
+given boxPrintable[A](using p: Printable[A]): Printable[Box[A]] =
   p.contramap[Box[A]](_.value)
 ```
 
@@ -220,7 +220,7 @@ given booleanPrintable: Printable[Boolean] with
 final case class Box[A](value: A)
 ```
 ```scala mdoc:silent
-implicit def boxPrintable[A](using p: Printable[A]): Printable[Box[A]] =
+given boxPrintable[A](using p: Printable[A]): Printable[Box[A]] =
   p.contramap[Box[A]](_.value)
 ```
 
@@ -395,7 +395,7 @@ We create this by calling `imap` on a `Codec[A]`,
 which we bring into scope using an implicit parameter:
 
 ```scala mdoc:silent
-implicit def boxCodec[A](using c: Codec[A]): Codec[Box[A]] =
+given boxCodec[A](using c: Codec[A]): Codec[Box[A]] =
   c.imap[Box[A]](Box(_), _.value)
 ```
 </div>

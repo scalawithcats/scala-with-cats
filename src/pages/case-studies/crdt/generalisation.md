@@ -160,14 +160,12 @@ object wrapper {
       val empty: Int =
         0
 
-    implicit def setInstance[A]: BoundedSemiLattice[Set[A]] =
-      new BoundedSemiLattice[Set[A]]{
-        def combine(a1: Set[A], a2: Set[A]): Set[A] =
-          a1 union a2
+    given setInstance[A]: BoundedSemiLattice[Set[A]] with
+      def combine(a1: Set[A], a2: Set[A]): Set[A] =
+        a1 union a2
 
-        val empty: Set[A] =
-          Set.empty[A]
-      }
+      val empty: Set[A] =
+        Set.empty[A]
   }
 }; import wrapper._
 ```
