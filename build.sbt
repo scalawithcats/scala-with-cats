@@ -14,7 +14,7 @@ enablePlugins(MdocPlugin)
 mdocIn  := sourceDirectory.value / "pages"
 mdocOut := target.value          / "pages"
 
-val catsVersion  = "2.7.0"
+val catsVersion  = "2.9.0"
 
 libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % catsVersion)
 
