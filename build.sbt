@@ -14,11 +14,14 @@ enablePlugins(MdocPlugin)
 mdocIn  := sourceDirectory.value / "pages"
 mdocOut := target.value          / "pages"
 
+scalacOptions ++= Seq(
+  "-explain", // Better diagnostics
+  "-Ykind-projector:underscores" // In-lieu of kind-projector
+)
+
 val catsVersion  = "2.9.0"
 
 libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % catsVersion)
-
-addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
 
 mdocVariables := Map(
   "SCALA_VERSION" -> scalaVersion.value,
