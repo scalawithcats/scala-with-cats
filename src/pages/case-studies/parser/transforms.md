@@ -101,10 +101,11 @@ Start by implementing data structures to store the result of a successful parse.
 An expression is an addition, or a substraction, or a number. Once we have this structure its realisation in code is straightforward.
 
 ~~~ scala
-sealed trait Expression
-final case class Addition(left: Expression, right: Expression) extends Expression
-final case class Subtraction(left: Expression, right: Expression) extends Expression
-final case class Number(value: Int) extends Expression
+enum Expression {
+  case Addition(left: Expression, right: Expression)
+  case Subtraction(left: Expression, right: Expression)
+  case Number(value: Int)
+}
 ~~~
 </div>
 
@@ -147,20 +148,10 @@ There are two ways we could write this method: as a method on `Expression` using
 Either way, `eval` is a straightforward application of structural recursion. My implementation is:
 
 ~~~ scala
-sealed trait Expression {
-  def eval: Int
-}
-final case class Addition(left: Expression, right: Expression) extends Expression {
-  def eval: Int =
-    left.eval + right.eval
-}
-final case class Subtraction(left: Expression, right: Expression) extends Expression {
-  def eval: Int =
-    left.eval - right.eval
-}
-final case class Number(value: Int) extends Expression {
-  def eval: Int =
-    value
+enum Expression(val eval: Int) {
+  case Addition(left: Expression, right: Expression) extends Expression(left.eval + right.eval)
+  case Subtraction(left: Expression, right: Expression) extends Expression(left.eval - right.eval)
+  case Number(value: Int) extends Expression(value)
 }
 ~~~
 

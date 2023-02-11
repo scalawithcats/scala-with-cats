@@ -236,16 +236,14 @@ to represent errors that may occur in our program:
 
 ```scala mdoc:silent
 object wrapper {
-  sealed trait LoginError extends Product with Serializable
-
-  final case class UserNotFound(username: String)
-    extends LoginError
-
-  final case class PasswordIncorrect(username: String)
-    extends LoginError
-
-  case object UnexpectedError extends LoginError
+  enum LoginError {
+    case UserNotFound(username: String)
+    case PasswordIncorrect(username: String)
+    case UnexpectedError
+  }
 }; import wrapper._
+
+import LoginError.*
 ```
 
 ```scala mdoc:silent

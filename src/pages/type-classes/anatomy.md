@@ -27,11 +27,14 @@ as follows:
 
 ```scala mdoc:silent:reset-object
 // Define a very simple JSON AST
-sealed trait Json
-final case class JsObject(get: Map[String, Json]) extends Json
-final case class JsString(get: String) extends Json
-final case class JsNumber(get: Double) extends Json
-final case object JsNull extends Json
+enum Json {
+  case JsObject(get: Map[String, Json])
+  case JsString(get: String)
+  case JsNumber(get: Double)
+  case JsNull
+}
+
+import Json.*
 
 // The "serialize to JSON" behaviour is encoded in this trait
 trait JsonWriter[A] {

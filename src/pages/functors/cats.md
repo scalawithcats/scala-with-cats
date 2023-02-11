@@ -200,12 +200,10 @@ Write a `Functor` for the following binary tree data type.
 Verify that the code works as expected on instances of `Branch` and `Leaf`:
 
 ```scala mdoc:silent
-sealed trait Tree[+A]
-
-final case class Branch[A](left: Tree[A], right: Tree[A])
-  extends Tree[A]
-
-final case class Leaf[A](value: A) extends Tree[A]
+enum Tree[+A] {
+  case Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+  case Leaf[A](value: A) extends Tree[A]
+}
 ```
 
 <div class="solution">
@@ -216,6 +214,7 @@ with the same pattern of `Branch` and `Leaf` nodes:
 
 ```scala mdoc:silent
 import cats.Functor
+import Tree.{Branch, Leaf}
 
 given treeFunctor: Functor[Tree] with
   def map[A, B](tree: Tree[A])(func: A => B): Tree[B] =

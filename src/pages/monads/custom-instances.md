@@ -127,12 +127,12 @@ Let's write a `Monad` for our `Tree` data type from last chapter.
 Here's the type again:
 
 ```scala mdoc:silent
-sealed trait Tree[+A]
+enum Tree[+A] {
+  case Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+  case Leaf[A](value: A) extends Tree[A]
+}
 
-final case class Branch[A](left: Tree[A], right: Tree[A])
-  extends Tree[A]
-
-final case class Leaf[A](value: A) extends Tree[A]
+import Tree.{Branch, Leaf}
 
 def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
   Branch(left, right)

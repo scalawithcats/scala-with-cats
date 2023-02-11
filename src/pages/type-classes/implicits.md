@@ -3,11 +3,14 @@
 ```scala mdoc:invisible
 // Forward definitions
 
-sealed trait Json
-case class JsObject(get: Map[String, Json]) extends Json
-case class JsString(get: String) extends Json
-case class JsNumber(get: Double) extends Json
-case object JsNull extends Json
+enum Json {
+  case JsObject(get: Map[String, Json])
+  case JsString(get: String)
+  case JsNumber(get: Double)
+  case JsNull
+}
+
+import Json.*
 
 trait JsonWriter[A] {
   def write(value: A): Json
@@ -89,11 +92,14 @@ Furthermore, if the compiler sees multiple candidate definitions,
 it fails with an *ambiguous implicit values* error:
 
 ```scala mdoc:invisible:reset-object
-sealed trait Json
-case class JsObject(get: Map[String, Json]) extends Json
-case class JsString(get: String) extends Json
-case class JsNumber(get: Double) extends Json
-case object JsNull extends Json
+enum Json {
+  case JsObject(get: Map[String, Json])
+  case JsString(get: String)
+  case JsNumber(get: Double)
+  case JsNull
+}
+
+import Json.*
 
 trait JsonWriter[A] {
   def write(value: A): Json

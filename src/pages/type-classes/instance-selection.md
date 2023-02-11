@@ -59,8 +59,11 @@ anywhere we expect a `List[Shape]` because
 `Circle` is a subtype of `Shape`:
 
 ```scala mdoc:silent
-sealed trait Shape
-case class Circle(radius: Double) extends Shape
+enum Shape {
+  case Circle(radius: Double)
+}
+
+import Shape.Circle
 ```
 
 ```scala
