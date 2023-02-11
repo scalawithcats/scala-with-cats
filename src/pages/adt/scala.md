@@ -43,7 +43,7 @@ enum A {
 }
 ```
 
-In other words you can't write `final case class` inside an `enum`. You also can't nest `enum` inside `enum`. Nexted logical ors  can be rewritten into a single logical or containing only logical ands (known as disjunctive normal form) so this is not a limitation in practice. However the Scala 2 representation is still available in Scala 3 should you want more expressivity.
+In other words you can't write `final case class` inside an `enum`. You also can't nest `enum` inside `enum`. Nested logical expressions can be rewritten into a single logical or containing only logical ands (known as disjunctive normal form) so this is not a limitation in practice. However the Scala 2 representation is still available in Scala 3 should you want more expressivity.
 
 
 ### Algebraic Data Types in Scala 2
