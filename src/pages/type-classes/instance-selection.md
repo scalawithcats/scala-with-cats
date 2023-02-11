@@ -23,8 +23,8 @@ that control instance selection:
 When we define type classes we can
 add variance annotations to the type parameter
 to affect the variance of the type class
-and the compiler's ability to select instances
-during implicit resolution.
+and the compiler's ability to select given instances
+during resolution.
 
 To recap Essential Scala,
 variance relates to subtypes.
@@ -59,20 +59,17 @@ anywhere we expect a `List[Shape]` because
 `Circle` is a subtype of `Shape`:
 
 ```scala mdoc:silent
-enum Shape {
+enum Shape:
   case Circle(radius: Double)
-}
-
-import Shape.Circle
 ```
 
 ```scala
-val circles: List[Circle] = ???
+val circles: List[Shape.Circle] = ???
 val shapes: List[Shape] = circles
 ```
 
 ```scala mdoc:invisible
-val circles: List[Circle] = null
+val circles: List[Shape.Circle] = null
 val shapes: List[Shape] = circles
 ```
 
@@ -101,32 +98,31 @@ trait Json
 ```
 
 ```scala mdoc
-trait JsonWriter[-A] {
+trait JsonWriter[-A]:
   def write(value: A): Json
-}
 ```
 
 Let's unpack this a bit further.
 Remember that variance is all about
 the ability to substitute one value for another.
 Consider a scenario where we have two values,
-one of type `Shape` and one of type `Circle`,
-and two `JsonWriters`, one for `Shape` and one for `Circle`:
+one of type `Shape` and one of type `Shape.Circle`,
+and two `JsonWriters`, one for `Shape` and one for `Shape.Circle`:
 
 ```scala
 val shape: Shape = ???
-val circle: Circle = ???
+val circle: Shape.Circle = ???
 
 val shapeWriter: JsonWriter[Shape] = ???
-val circleWriter: JsonWriter[Circle] = ???
+val circleWriter: JsonWriter[Shape.Circle] = ???
 ```
 
 ```scala mdoc:invisible
 val shape: Shape = null
-val circle: Circle = null
+val circle: Shape.Circle = null
 
 val shapeWriter: JsonWriter[Shape] = null
-val circleWriter: JsonWriter[Circle] = null
+val circleWriter: JsonWriter[Shape.Circle] = null
 ```
 
 ```scala mdoc:silent
@@ -136,16 +132,16 @@ def format[A](value: A, writer: JsonWriter[A]): Json =
 
 Now ask yourself the question:
 "Which combinations of value and writer can I pass to `format`?"
-We can `write` a `Circle` with either writer
+We can `write` a `Shape.Circle` with either writer
 because all `Circles` are `Shapes`.
 Conversely, we can't write a `Shape` with `circleWriter`
 because not all `Shapes` are `Circles`.
 
 This relationship is what we formally model using contravariance.
-`JsonWriter[Shape]` is a subtype of `JsonWriter[Circle]`
-because `Circle` is a subtype of `Shape`.
+`JsonWriter[Shape]` is a subtype of `JsonWriter[Shape.Circle]`
+because `Shape.Circle` is a subtype of `Shape`.
 This means we can use `shapeWriter`
-anywhere we expect to see a `JsonWriter[Circle]`.
+anywhere we expect to see a `JsonWriter[Shape.Circle]`.
 
 
 **Invariance**
@@ -163,7 +159,7 @@ are never subtypes of one another,
 no matter what the relationship between `A` and `B`.
 This is the default semantics for Scala type constructors.
 
-When the compiler searches for an implicit
+When the compiler searches for a given instance
 it looks for one matching the type *or subtype*.
 Thus we can use variance annotations
 to control type class instance selection to some extent.
@@ -172,9 +168,8 @@ There are two issues that tend to arise.
 Let's imagine we have an algebraic data type like:
 
 ```scala
-sealed trait A
-final case object B extends A
-final case object C extends A
+enum A:
+  case B, C
 ```
 
 The issues are:
@@ -182,13 +177,13 @@ The issues are:
  1. Will an instance defined on a supertype be selected
     if one is available?
     For example, can we define an instance for `A`
-    and have it work for values of type `B` and `C`?
+    and have it work for values of type `A.B` and `A.C`?
 
  2. Will an instance for a subtype be selected
     in preference to that of a supertype.
-    For instance, if we define an instance for `A` and `B`,
-    and we have a value of type `B`,
-    will the instance for `B` be selected in preference to `A`?
+    For instance, if we define an instance for `A` and `A.B`,
+    and we have a value of type `A.B`,
+    will the instance for `A.B` be selected in preference to `A`?
 
 It turns out we can't have both at once.
 The three choices give us behaviour as follows:
