@@ -118,7 +118,7 @@ object Pandoc {
         "--table-of-contents",
         "--highlight-style tango",
         "--standalone",
-        "--self-contained",
+        "--embed-resources",
       ),
       extras,
       metadata,
