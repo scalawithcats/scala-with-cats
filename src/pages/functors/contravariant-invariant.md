@@ -123,7 +123,7 @@ format(true)
 
 Now define an instance of `Printable` for
 the following `Box` case class.
-You'll need to write this as an `implicit def`
+You'll need to write this as a `given` instance
 as described in Section [@sec:type-classes:recursive-implicits]:
 
 ```scala mdoc:silent

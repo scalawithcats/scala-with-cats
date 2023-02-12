@@ -84,8 +84,7 @@ object Json:
     w.write(value)
 ```
 ```scala mdoc:fail
-given secondStringWriter: JsonWriter[String] =
-  JsonWriterInstances.stringWriter
+given secondStringWriter: JsonWriter[String] = stringWriter
 
 Json.toJson("A string")
 ```
@@ -183,15 +182,15 @@ When the compiler sees an expression like this:
 Json.toJson(Option("A string"))
 ```
 
-it searches for an implicit `JsonWriter[Option[String]]`.
-It finds the implicit method for `JsonWriter[Option[A]]`:
+it searches for a given instance `JsonWriter[Option[String]]`.
+It finds the given instance for `JsonWriter[Option[A]]`:
 
 ```scala mdoc:silent
 Json.toJson(Option("A string"))(using optionWriter[String])
 ```
 
 and recursively searches for a `JsonWriter[String]`
-to use as the parameter to `optionWriter`:
+for the using clause to `optionWriter`:
 
 ```scala mdoc:silent
 Json.toJson(Option("A string"))(using optionWriter(using stringWriter))
@@ -216,7 +215,7 @@ fill in the parameters during given instance resolution.
 `given` methods with non-`using` parameters
 form a different Scala pattern called an *implicit conversion*. 
 This is also different from the previous section on `Interface Syntax`, 
-because in that case the `JsonWriter` is an implicit class with extension methods. 
+because in that case the `JsonWriter` has extension methods. 
 Implicit conversion is an older programming pattern
 that is frowned upon in modern Scala code.
 Fortunately, the compiler will warn you when you do this.

@@ -152,7 +152,7 @@ given optionFunctor: Functor[Option] with
 Sometimes we need to inject dependencies into our instances.
 For example, if we had to define a custom `Functor` for `Future`
 (another hypothetical example---Cats provides one in `cats.instances.future`)
-we would need to account for the implicit `ExecutionContext` parameter on `future.map`.
+we would need to account for the using clause `ExecutionContext` parameter on `future.map`.
 We can't add extra parameters to `functor.map`
 so we have to account for the dependency when we create the instance:
 
@@ -167,7 +167,7 @@ given futureFunctor(using ec: ExecutionContext): Functor[Future] with
 Whenever we summon a `Functor` for `Future`,
 either directly using `Functor.apply`
 or indirectly via the `map` extension method,
-the compiler will locate `futureFunctor` by implicit resolution
+the compiler will locate `futureFunctor` by given instance resolution
 and recursively search for an `ExecutionContext` at the call site.
 This is what the expansion might look like:
 

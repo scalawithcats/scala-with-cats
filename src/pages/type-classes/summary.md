@@ -8,9 +8,9 @@ We saw the components that make up a type class:
 
 - A `trait`, which is the type class
 
-- Type class instances, which are implicit values.
+- Type class instances, which are given instances.
 
-- Type class usage, which uses implicit parameters.
+- Type class usage, which utilizes using clauses.
 
 
 We have also seen the general patterns in Cats type classes:

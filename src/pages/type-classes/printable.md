@@ -32,8 +32,7 @@ trait Printable[A]:
   def format(value: A): String
 ```
 
-Then we define some default *instances* of `Printable`
-and package them in `PrintableInstances`:
+Then we define some default *instances* of `Printable`:
 
 ```scala mdoc:silent
 given stringPrintable: Printable[String] with
@@ -129,10 +128,10 @@ by defining some extension methods to provide better syntax:
 
  2. Define the following extension methods:
 
-     - `format` using an implicit `Printable[A]`
+     - `format` using a `Printable[A]`
        and returns a `String` representation of the wrapped `A`;
 
-     - `print` using an implicit `Printable[A]` and returns `Unit`.
+     - `print` using a `Printable[A]` and returns `Unit`.
        It prints the wrapped `A` to the console.
 
   3. Use the extension methods to print the example `Cat`

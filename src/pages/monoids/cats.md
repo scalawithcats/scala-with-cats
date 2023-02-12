@@ -45,7 +45,7 @@ are defined directly in the [`cats`][cats.package] package.
 the companion object has an `apply` method
 that returns the type class instance for a particular type.
 For example, if we want the monoid instance for `String`,
-and we have the correct implicits in scope,
+and we have the correct given instances in scope,
 we can write the following:
 
 ```scala mdoc:silent
