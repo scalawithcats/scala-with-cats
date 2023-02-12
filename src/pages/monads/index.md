@@ -257,11 +257,10 @@ Here is a simplified version of the `Monad` type class in Cats:
 
 ```scala mdoc:silent
 
-trait Monad[F[_]] {
+trait Monad[F[_]]:
   def pure[A](value: A): F[A]
 
   def flatMap[A, B](value: F[A])(func: A => F[B]): F[B]
-}
 ```
 
 <div class="callout callout-warning">
@@ -302,14 +301,13 @@ using the existing methods, `flatMap` and `pure`:
 
 ```scala mdoc:silent:reset-object
 
-trait Monad[F[_]] {
+trait Monad[F[_]]:
   def pure[A](a: A): F[A]
 
   def flatMap[A, B](value: F[A])(func: A => F[B]): F[B]
 
   def map[A, B](value: F[A])(func: A => B): F[B] =
     ???
-}
 ```
 
 Try defining `map` yourself now.
@@ -322,14 +320,13 @@ Given the tools available there's only one thing we can do:
 call `flatMap`:
 
 ```scala
-trait Monad[F[_]] {
+trait Monad[F[_]]:
   def pure[A](value: A): F[A]
 
   def flatMap[A, B](value: F[A])(func: A => F[B]): F[B]
 
   def map[A, B](value: F[A])(func: A => B): F[B] =
     flatMap(value)(a => ???)
-}
 ```
 
 We need a function of type `A => F[B]` as the second parameter.
@@ -341,13 +338,12 @@ Combining these gives us our result:
 ```scala mdoc:invisible:reset-object
 ```
 ```scala mdoc
-trait Monad[F[_]] {
+trait Monad[F[_]]:
   def pure[A](value: A): F[A]
 
   def flatMap[A, B](value: F[A])(func: A => F[B]): F[B]
 
   def map[A, B](value: F[A])(func: A => B): F[B] =
     flatMap(value)(a => pure(func(a)))
-}
 ```
 </div>

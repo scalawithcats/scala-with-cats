@@ -235,13 +235,13 @@ Another approach is to define an algebraic data type
 to represent errors that may occur in our program:
 
 ```scala mdoc:silent
-object wrapper {
-  enum LoginError {
+object wrapper:
+  enum LoginError:
     case UserNotFound(username: String)
     case PasswordIncorrect(username: String)
     case UnexpectedError
-  }
-}; import wrapper.*
+
+import wrapper.*
 
 import LoginError.*
 ```

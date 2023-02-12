@@ -125,7 +125,7 @@ Like `apply`, the method must accept an implicit `Semigroup`:
 import cats.Semigroup
 import cats.data.Validated
 
-sealed trait Predicate[E, A] {
+sealed trait Predicate[E, A]:
   def run(using s: Semigroup[E]): A => Either[E, A] =
     (a: A) => this(a).toEither
 
@@ -133,7 +133,6 @@ sealed trait Predicate[E, A] {
     ??? // etc...
 
   // other methods...
-}
 ```
 </div>
 

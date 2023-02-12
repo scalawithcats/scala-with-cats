@@ -15,9 +15,8 @@ that polls remote servers for their uptime:
 ```scala mdoc:silent
 import scala.concurrent.Future
 
-trait UptimeClient {
+trait UptimeClient:
   def getUptime(hostname: String): Future[Int]
-}
 ```
 
 We'll also have an `UptimeService` that maintains a list of servers
@@ -29,10 +28,9 @@ import cats.instances.list.*   // for Traverse
 import cats.syntax.traverse.*  // for traverse
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class UptimeService(client: UptimeClient) {
+class UptimeService(client: UptimeClient):
   def getTotalUptime(hostnames: List[String]): Future[Int] =
     hostnames.traverse(client.getUptime).map(_.sum)
-}
 ```
 
 We've modelled `UptimeClient` as a trait
@@ -42,10 +40,9 @@ that allows us to provide dummy data
 rather than calling out to actual servers:
 
 ```scala mdoc:silent
-class TestUptimeClient(hosts: Map[String, Int]) extends UptimeClient {
+class TestUptimeClient(hosts: Map[String, Int]) extends UptimeClient:
   def getUptime(hostname: String): Future[Int] =
     Future.successful(hosts.getOrElse(hostname, 0))
-}
 ```
 
 Now, suppose we're writing unit tests for `UptimeService`.
@@ -89,13 +86,11 @@ an asynchronous one for use in production
 and a synchronous one for use in our unit tests:
 
 ```scala
-trait RealUptimeClient extends UptimeClient {
+trait RealUptimeClient extends UptimeClient:
   def getUptime(hostname: String): Future[Int]
-}
 
-trait TestUptimeClient extends UptimeClient {
+trait TestUptimeClient extends UptimeClient:
   def getUptime(hostname: String): Int
-}
 ```
 
 The question is: what result type should we give
@@ -103,9 +98,8 @@ to the abstract method in `UptimeClient`?
 We need to abstract over `Future[Int]` and `Int`:
 
 ```scala
-trait UptimeClient {
+trait UptimeClient:
   def getUptime(hostname: String): ???
-}
 ```
 
 At first this may seem difficult.
@@ -145,17 +139,14 @@ import scala.concurrent.Future
 ```scala mdoc:silent
 import cats.Id
 
-trait UptimeClient[F[_]] {
+trait UptimeClient[F[_]]:
   def getUptime(hostname: String): F[Int]
-}
 
-trait RealUptimeClient extends UptimeClient[Future] {
+trait RealUptimeClient extends UptimeClient[Future]:
   def getUptime(hostname: String): Future[Int]
-}
 
-trait TestUptimeClient extends UptimeClient[Id] {
+trait TestUptimeClient extends UptimeClient[Id]:
   def getUptime(hostname: String): Id[Int]
-}
 ```
 
 Note that, because `Id[A]` is just a simple alias for `A`,
@@ -166,18 +157,15 @@ as `Id[Int]`---we can simply write `Int` instead:
 import scala.concurrent.Future
 import cats.Id
 
-trait UptimeClient[F[_]] {
+trait UptimeClient[F[_]]:
   def getUptime(hostname: String): F[Int]
-}
 
-trait RealUptimeClient extends UptimeClient[Future] {
+trait RealUptimeClient extends UptimeClient[Future]:
   def getUptime(hostname: String): Future[Int]
-}
 ```
 ```scala mdoc:silent
-trait TestUptimeClient extends UptimeClient[Id] {
+trait TestUptimeClient extends UptimeClient[Id]:
   def getUptime(hostname: String): Int
-}
 ```
 
 Of course, technically speaking
@@ -200,20 +188,17 @@ the call to `Future.successful`:
 import scala.concurrent.Future
 import cats.Id
 
-trait UptimeClient[F[_]] {
+trait UptimeClient[F[_]]:
   def getUptime(hostname: String): F[Int]
-}
 
-trait RealUptimeClient extends UptimeClient[Future] {
+trait RealUptimeClient extends UptimeClient[Future]:
   def getUptime(hostname: String): Future[Int]
-}
 ```
 ```scala mdoc:silent
 class TestUptimeClient(hosts: Map[String, Int])
-  extends UptimeClient[Id] {
+  extends UptimeClient[Id]:
   def getUptime(hostname: String): Int =
     hosts.getOrElse(hostname, 0)
-}
 ```
 </div>
 
@@ -237,11 +222,10 @@ Starting with the method signatures:
 The code should look like this:
 
 ```scala
-class UptimeService[F[_]](client: UptimeClient[F]) {
+class UptimeService[F[_]](client: UptimeClient[F]):
   def getTotalUptime(hostnames: List[String]): F[Int] =
     ???
     // hostnames.traverse(client.getUptime).map(_.sum)
-}
 ```
 </div>
 
@@ -271,20 +255,18 @@ We can write this as an implicit parameter:
 import cats.syntax.traverse.*  // for traverse
 import cats.instances.list.*
 
-trait UptimeClient[F[_]] {
+trait UptimeClient[F[_]]:
   def getUptime(hostname: String): F[Int]
-}
 ```
 ```scala mdoc:silent
 import cats.Applicative
 import cats.syntax.functor.* // for map
 
 class UptimeService[F[_]](client: UptimeClient[F])
-    (using a: Applicative[F]) {
+    (using a: Applicative[F]):
 
   def getTotalUptime(hostnames: List[String]): F[Int] =
     hostnames.traverse(client.getUptime).map(_.sum)
-}
 ```
 
 or more tersely as a context bound:
@@ -295,17 +277,15 @@ import cats.syntax.functor.*
 import cats.syntax.traverse.*
 import cats.instances.list.*
 
-trait UptimeClient[F[_]] {
+trait UptimeClient[F[_]]:
   def getUptime(hostname: String): F[Int]
-}
 ```
 ```scala mdoc:silent
 class UptimeService[F[_]: Applicative]
-    (client: UptimeClient[F]) {
+    (client: UptimeClient[F]):
 
   def getTotalUptime(hostnames: List[String]): F[Int] =
     hostnames.traverse(client.getUptime).map(_.sum)
-}
 ```
 
 Note that we need to import `cats.syntax.functor`
@@ -331,24 +311,20 @@ import cats.syntax.functor.*  // for map
 import cats.syntax.traverse.* // for traverse
 import scala.concurrent.Future
 
-trait UptimeClient[F[_]] {
+trait UptimeClient[F[_]]:
   def getUptime(hostname: String): F[Int]
-}
 
 trait RealUptimeClient extends UptimeClient[Future]
 
 class TestUptimeClient(hosts: Map[String, Int])
-    extends UptimeClient[Id] {
+    extends UptimeClient[Id]:
   def getUptime(hostname: String): Int =
     hosts.getOrElse(hostname, 0)
-  }
 
 class UptimeService[F[_]: Applicative]
-    (client: UptimeClient[F]) {
-
+    (client: UptimeClient[F]):
   def getTotalUptime(hostnames: List[String]): F[Int] =
     hostnames.traverse(client.getUptime).map(_.sum)
-}
 ```
 ```scala mdoc:silent
 def testTotalUptime() = {

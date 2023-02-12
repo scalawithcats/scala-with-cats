@@ -27,29 +27,25 @@ represent the key and value types of the map abstraction.
 ```scala mdoc:reset-object:invisible
 import cats.kernel.CommutativeMonoid
 
-trait BoundedSemiLattice[A] extends CommutativeMonoid[A] {
+trait BoundedSemiLattice[A] extends CommutativeMonoid[A]:
   def combine(a1: A, a2: A): A
   def empty: A
-}
 
-object BoundedSemiLattice {
-  given intInstance: BoundedSemiLattice[Int] with
-    def combine(a1: Int, a2: Int): Int =
-      a1 max a2
+given intInstance: BoundedSemiLattice[Int] with
+  def combine(a1: Int, a2: Int): Int =
+    a1 max a2
 
-    val empty: Int =
-      0
+  val empty: Int = 0
 
-  given setInstance[A]: BoundedSemiLattice[Set[A]] with
-    def combine(a1: Set[A], a2: Set[A]): Set[A] =
-      a1 union a2
+given setInstance[A]: BoundedSemiLattice[Set[A]] with
+  def combine(a1: Set[A], a2: Set[A]): Set[A] =
+    a1 union a2
 
-    val empty: Set[A] =
-      Set.empty[A]
-}
+  val empty: Set[A] =
+    Set.empty[A]
 ```
 ```scala mdoc:silent
-trait GCounter[F[_,_],K, V] {
+trait GCounter[F[_,_],K, V]:
   def increment(f: F[K, V])(k: K, v: V)
         (using m: CommutativeMonoid[V]): F[K, V]
 
@@ -58,13 +54,11 @@ trait GCounter[F[_,_],K, V] {
 
   def total(f: F[K, V])
         (using m: CommutativeMonoid[V]): V
-}
 
-object GCounter {
+object GCounter:
   def apply[F[_,_], K, V]
         (using counter: GCounter[F, K, V]) =
     counter
-}
 ```
 
 Try defining an instance of this type class for `Map`.
@@ -114,7 +108,7 @@ val counter = GCounter[Map, String, Int]
 
 ```scala mdoc
 val merged = counter.merge(g1, g2)
-val total  = counter.total(merged)
+val total  = counter.total(merged)(using intInstance)
 ```
 
 The implementation strategy
@@ -133,7 +127,7 @@ for any type that has a `KeyValueStore` instance.
 Here's the code for such a type class:
 
 ```scala mdoc:silent
-trait KeyValueStore[F[_,_]] {
+trait KeyValueStore[F[_,_]]:
   def put[K, V](f: F[K, V])(k: K, v: V): F[K, V]
 
   def get[K, V](f: F[K, V])(k: K): Option[V]
@@ -142,7 +136,6 @@ trait KeyValueStore[F[_,_]] {
     get(f)(k).getOrElse(default)
 
   def values[K, V](f: F[K, V]): List[V]
-}
 ```
 
 Implement your own instance for `Map`.
@@ -197,9 +190,7 @@ instances of `KeyValueStore` and `CommutativeMonoid`
 using an `implicit def`:
 
 ```scala mdoc:silent
-implicit def gcounterInstance[F[_,_], K, V]
-    (using kvs: KeyValueStore[F], km: CommutativeMonoid[F[K, V]]): GCounter[F, K, V] =
-  new GCounter[F, K, V] {
+given gcounterInstance[F[_,_], K, V](using kvs: KeyValueStore[F], km: CommutativeMonoid[F[K, V]]): GCounter[F, K, V] with
     def increment(f: F[K, V])(key: K, value: V)
           (using m: CommutativeMonoid[V]): F[K, V] = {
       val total = f.getOrElse(key, m.empty) |+| value
@@ -212,7 +203,6 @@ implicit def gcounterInstance[F[_,_], K, V]
 
     def total(f: F[K, V])(using m: CommutativeMonoid[V]): V =
       f.values.combineAll
-  }
 ```
 
 The complete code for this case study is quite long,

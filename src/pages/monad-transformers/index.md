@@ -297,9 +297,8 @@ However, we can't define this in one line
 because `EitherT` has three type parameters:
 
 ```scala
-case class EitherT[F[_], E, A](stack: F[Either[E, A]]) {
+case class EitherT[F[_], E, A](stack: F[Either[E, A]]):
   // etc...
-}
 ```
 
 The three type parameters are as follows:

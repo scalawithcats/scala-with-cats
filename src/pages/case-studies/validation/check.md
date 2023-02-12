@@ -28,11 +28,10 @@ We will probably want to add custom methods to `Check`
 so let's declare it as a `trait` instead of a type alias:
 
 ```scala mdoc:silent:reset-object
-trait Check[E, A] {
+trait Check[E, A]:
   def apply(value: A): Either[E, A]
 
   // other methods...
-}
 ```
 
 As we said in [Essential Scala][link-essential-scala],
@@ -56,12 +55,11 @@ Think about implementing this method now.
 You should hit some problems. Read on when you do!
 
 ```scala mdoc:silent:reset-object
-trait Check[E, A] {
+trait Check[E, A]:
   def and(that: Check[E, A]): Check[E, A] =
     ???
 
   // other methods...
-}
 ```
 
 The problem is: what do you do when *both* checks fail?
@@ -136,7 +134,7 @@ import cats.syntax.semigroup.* // for |+|
 ```
 
 ```scala mdoc:silent
-final case class CheckF[E, A](func: A => Either[E, A]) {
+final case class CheckF[E, A](func: A => Either[E, A]):
   def apply(a: A): Either[E, A] =
     func(a)
 
@@ -150,7 +148,6 @@ final case class CheckF[E, A](func: A => Either[E, A]) {
         case (Right(_), Right(_)) => a.asRight
       }
     }
-}
 ```
 
 Let's test the behaviour we get.
@@ -195,7 +192,7 @@ What happens if we create instances of `CheckF[Nothing, A]`?
 import cats.Semigroup
 import cats.syntax.semigroup.*
 import cats.syntax.either.*
-final case class CheckF[E, A](func: A => Either[E, A]) {
+final case class CheckF[E, A](func: A => Either[E, A]):
   def apply(a: A): Either[E, A] =
     func(a)
 
@@ -209,7 +206,6 @@ final case class CheckF[E, A](func: A => Either[E, A]) {
         case (Right(_), Right(_)) => a.asRight
       }
     }
-}
 ```
 ```scala mdoc:silent
 val a: CheckF[Nothing, Int] =

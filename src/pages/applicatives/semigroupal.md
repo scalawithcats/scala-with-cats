@@ -7,9 +7,8 @@ a `Semigroupal[F]` allows us to combine them to form an `F[(A, B)]`.
 Its definition in Cats is:
 
 ```scala
-trait Semigroupal[F[_]] {
+trait Semigroupal[F[_]]:
   def product[A, B](fa: F[A], fb: F[B]): F[(A, B)]
-}
 ```
 
 As we discussed at the beginning of this chapter,

@@ -24,16 +24,14 @@ introduced in Chapter [@sec:monads].
 Here's a simplified definition in code:
 
 ```scala
-trait Apply[F[_]] extends Semigroupal[F] with Functor[F] {
+trait Apply[F[_]] extends Semigroupal[F] with Functor[F]:
   def ap[A, B](ff: F[A => B])(fa: F[A]): F[B]
 
   def product[A, B](fa: F[A], fb: F[B]): F[(A, B)] =
     ap(map(fa)(a => (b: B) => (a, b)))(fb)
-}
 
-trait Applicative[F[_]] extends Apply[F] {
+trait Applicative[F[_]] extends Apply[F]:
   def pure[A](a: A): F[A]
-}
 ```
 
 Breaking this down, the `ap` method applies a parameter `fa`

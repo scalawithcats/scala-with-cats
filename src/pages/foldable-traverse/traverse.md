@@ -113,12 +113,11 @@ that assumes we're starting with a `List[Future[B]]`
 and don't need to provide an identity function:
 
 ```scala
-object Future {
+object Future:
   def sequence[B](futures: List[Future[B]]): Future[List[B]] =
     traverse(futures)(identity)
 
   // etc...
-}
 ```
 
 In this case the intuitive understanding is even simpler:

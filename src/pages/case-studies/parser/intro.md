@@ -32,18 +32,14 @@ package underscore.parser
 
 import scala.annotation.tailrec
 
-case class ParseResult(result: String, remainder: String) {
-
+case class ParseResult(result: String, remainder: String):
   def failed: Boolean =
     result.isEmpty
 
   def success: Boolean =
     !failed
 
-}
-
-case class Parser(parse: String => ParseResult) {
-
+case class Parser(parse: String => ParseResult):
   def ~(next: Parser): Parser = ???
 
   def `*`: Parser =
@@ -60,10 +56,7 @@ case class Parser(parse: String => ParseResult) {
       loop("", input)
     }
 
-}
-
-object Parser {
-
+object Parser:
   def string(literal: String): Parser =
     Parser { input =>
       if(input.startsWith(literal))
@@ -71,8 +64,6 @@ object Parser {
       else
         ParseResult("", input)
     }
-
-}
 ~~~
 
 What does the code do? The first thing is to look at what a `Parser` is. It is basically a wrapper around a function `String => ParseResult`. The `String` parameter is the input to parse, and returned is the result of parsing that `String`.

@@ -143,13 +143,12 @@ Let's implement an instance of Scalaz's `Applicative` type class for our `Parser
 Define a typeclass instance of `Applicative` for `Parser`. You must implement the following trait:
 
 ~~~ scala
-Applicative[Parser] {
+Applicative[Parser] with
   def point[A](a: => A): Parser[A] =
     ???
 
   def ap[A, B](fa: => Parser[A])(f: => Parser[A => B]): Parser[B] =
     ???
-}
 ~~~
 
 Hints:
@@ -166,25 +165,24 @@ The usual place to define typeclass instances is as implicit elements on the com
 val identity: Parser[Unit] =
   Parser { input => Success(Unit, input) }
 
-implicit object applicativeInstance extends Applicative[Parser] {
+given applicativeInstance: Applicative[Parser] with
   def point[A](a: => A): Parser[A] =
     identity map (_ => a)
 
   def ap[A, B](fa: => Parser[A])(f: => Parser[A => B]): Parser[B] =
     Parser { input =>
-      f.parse(input) match {
+      f.parse(input) match
         case fail @ Failure(_) =>
           fail
         case Success(aToB, remainder) =>
-          fa.parse(remainder) match {
+          fa.parse(remainder) match
             case fail @ Failure(_) =>
               fail
             case Success(a, remainder1) =>
               Success(aToB(a), remainder1)
-          }
-      }
+          end match
+      end match
     }
-}
 ~~~
 
 Checkout the `parser-applicative` tag to see the full code and tests.

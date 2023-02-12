@@ -100,7 +100,7 @@ We can implement a GCounter with the following interface,
 where we represent machine IDs as `Strings`.
 
 ```scala mdoc:reset-object:silent
-final case class GCounter(counters: Map[String, Int]) {
+final case class GCounter(counters: Map[String, Int]):
   def increment(machine: String, amount: Int) =
     ???
 
@@ -109,7 +109,6 @@ final case class GCounter(counters: Map[String, Int]) {
 
   def total: Int =
     ???
-}
 ```
 
 Finish the implementation!
@@ -119,7 +118,7 @@ Hopefully the description above was clear enough that
 you can get to an implementation like the one below.
 
 ```scala mdoc:silent:reset-object
-final case class GCounter(counters: Map[String, Int]) {
+final case class GCounter(counters: Map[String, Int]):
   def increment(machine: String, amount: Int) = {
     val value = amount + counters.getOrElse(machine, 0)
     GCounter(counters + (machine -> value))
@@ -131,8 +130,6 @@ final case class GCounter(counters: Map[String, Int]) {
         k -> (v max that.counters.getOrElse(k, 0))
     })
 
-  def total: Int =
-    counters.values.sum
-}
+  def total: Int = counters.values.sum
 ```
 </div>

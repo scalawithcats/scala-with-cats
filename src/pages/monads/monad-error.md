@@ -28,7 +28,7 @@ of the definition of `MonadError`:
 ```scala
 package cats
 
-trait MonadError[F[_], E] extends Monad[F] {
+trait MonadError[F[_], E] extends Monad[F]:
   // Lift an error into the `F` context:
   def raiseError[A](e: E): F[A]
 
@@ -41,7 +41,6 @@ trait MonadError[F[_], E] extends Monad[F] {
   // Test an instance of `F`,
   // failing if the predicate is not satisfied:
   def ensure[A](fa: F[A])(e: E)(f: A => Boolean): F[A]
-}
 ```
 
 `MonadError` is defined in terms of two type parameters:

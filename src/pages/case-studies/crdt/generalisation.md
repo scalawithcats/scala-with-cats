@@ -113,10 +113,9 @@ our own `BoundedSemiLattice` type class.
 ```scala mdoc:silent
 import cats.kernel.CommutativeMonoid
 
-trait BoundedSemiLattice[A] extends CommutativeMonoid[A] {
+trait BoundedSemiLattice[A] extends CommutativeMonoid[A]:
   def combine(a1: A, a2: A): A
   def empty: A
-}
 ```
 
 In the implementation above,
@@ -146,28 +145,26 @@ import cats.kernel.CommutativeMonoid
 ```
 
 ```scala mdoc:silent
-object wrapper {
-  trait BoundedSemiLattice[A] extends CommutativeMonoid[A] {
+object wrapper:
+  trait BoundedSemiLattice[A] extends CommutativeMonoid[A]:
     def combine(a1: A, a2: A): A
     def empty: A
-  }
 
-  object BoundedSemiLattice {
-    given intInstance: BoundedSemiLattice[Int] with
-      def combine(a1: Int, a2: Int): Int =
-        a1 max a2
+  given intInstance: BoundedSemiLattice[Int] with
+    def combine(a1: Int, a2: Int): Int =
+      a1 max a2
 
-      val empty: Int =
-        0
+    val empty: Int =
+      0
 
-    given setInstance[A]: BoundedSemiLattice[Set[A]] with
-      def combine(a1: Set[A], a2: Set[A]): Set[A] =
-        a1 union a2
+  given setInstance[A]: BoundedSemiLattice[Set[A]] with
+    def combine(a1: Set[A], a2: Set[A]): Set[A] =
+      a1 union a2
 
-      val empty: Set[A] =
-        Set.empty[A]
-  }
-}; import wrapper.*
+    val empty: Set[A] =
+      Set.empty[A]
+
+import wrapper.*
 ```
 </div>
 
@@ -197,7 +194,7 @@ import cats.instances.map.*    // for Monoid
 import cats.syntax.semigroup.* // for |+|
 import cats.syntax.foldable.*  // for combineAll
 
-final case class GCounter[A](counters: Map[String,A]) {
+final case class GCounter[A](counters: Map[String,A]):
   def increment(machine: String, amount: A)
         (using m: CommutativeMonoid[A]): GCounter[A] = {
     val value = amount |+| counters.getOrElse(machine, m.empty)
@@ -210,7 +207,6 @@ final case class GCounter[A](counters: Map[String,A]) {
 
   def total(using m: CommutativeMonoid[A]): A =
     this.counters.values.toList.combineAll
-}
 ```
 </div>
 

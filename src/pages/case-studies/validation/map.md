@@ -205,35 +205,32 @@ import cats.data.Validated
 ```
 
 ```scala mdoc:silent
-sealed trait Check[E, A, B] {
+sealed trait Check[E, A, B]:
   import Check.*
 
   def apply(in: A)(using s: Semigroup[E]): Validated[E, B]
 
   def map[C](f: B => C): Check[E, A, C] =
     Map[E, A, B, C](this, f)
-}
 
-object Check {
+object Check:
   final case class Map[E, A, B, C](
     check: Check[E, A, B],
-    func: B => C) extends Check[E, A, C] {
+    func: B => C) extends Check[E, A, C]:
   
     def apply(in: A)(using s: Semigroup[E]): Validated[E, C] =
       check(in).map(func)
-  }
+  end Map
   
   final case class Pure[E, A](
-    pred: Predicate[E, A]) extends Check[E, A, A] {
+    pred: Predicate[E, A]) extends Check[E, A, A]:
   
     def apply(in: A)(using s: Semigroup[E]): Validated[E, A] =
       pred(in)
-  }
+  end Pure
 
   def apply[E, A](pred: Predicate[E, A]): Check[E, A, A] =
     Pure(pred)
-}
-
 ```
 </div>
 
@@ -285,22 +282,20 @@ import cats.data.Validated
 ```
 
 ```scala mdoc:silent
-sealed trait Check[E, A, B] {
+sealed trait Check[E, A, B]:
   def apply(in: A)(using s: Semigroup[E]): Validated[E, B]
 
   def flatMap[C](f: B => Check[E, A, C]) =
     FlatMap[E, A, B, C](this, f)
 
   // other methods...
-}
 
 final case class FlatMap[E, A, B, C](
   check: Check[E, A, B],
-  func: B => Check[E, A, C]) extends Check[E, A, C] {
+  func: B => Check[E, A, C]) extends Check[E, A, C]:
 
   def apply(a: A)(using s: Semigroup[E]): Validated[E, C] =
     check(a).withEither(_.flatMap(b => func(b)(a).toEither))
-}
 
 // other data types...
 ```
@@ -322,9 +317,8 @@ A `Check` is basically a function `A => Validated[E, B]`
 so we can define an analagous `andThen` method:
 
 ```scala
-trait Check[E, A, B] {
+trait Check[E, A, B]:
   def andThen[C](that: Check[E, B, C]): Check[E, A, C]
-}
 ```
 
 Implement `andThen` now!
@@ -338,20 +332,18 @@ import cats.Semigroup
 import cats.data.Validated
 ```
 ```scala mdoc:silent
-sealed trait Check[E, A, B] {
+sealed trait Check[E, A, B]:
   def apply(in: A)(using s: Semigroup[E]): Validated[E, B]
 
   def andThen[C](that: Check[E, B, C]): Check[E, A, C] =
     AndThen[E, A, B, C](this, that)
-}
 
 final case class AndThen[E, A, B, C](
   check1: Check[E, A, B],
-  check2: Check[E, B, C]) extends Check[E, A, C] {
+  check2: Check[E, B, C]) extends Check[E, A, C]:
 
   def apply(a: A)(using s: Semigroup[E]): Validated[E, C] =
     check1(a).withEither(_.flatMap(b => check2(b).toEither))
-}
 ```
 </div>
 

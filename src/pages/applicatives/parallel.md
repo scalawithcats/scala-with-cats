@@ -88,13 +88,12 @@ Let's dig into how `Parallel` works.
 The definition below is the core of `Parallel`.
 
 ```scala
-trait Parallel[M[_]] {
+trait Parallel[M[_]]:
   type F[_]
   
   def applicative: Applicative[F]
   def monad: Monad[M]
   def parallel: ~>[M, F]
-}
 ```
 
 This tells us if there is a `Parallel` instance for some type constructor `M` then:
