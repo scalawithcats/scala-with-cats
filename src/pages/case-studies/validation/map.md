@@ -95,7 +95,7 @@ import cats.data.Validated.*   // for Valid and Invalid
 ```
 
 ```scala mdoc:silent
-sealed trait Predicate[E, A] {
+sealed trait Predicate[E, A]:
   def and(that: Predicate[E, A]): Predicate[E, A] =
     And(this, that)
 
@@ -103,7 +103,7 @@ sealed trait Predicate[E, A] {
     Or(this, that)
 
   def apply(a: A)(using s: Semigroup[E]): Validated[E, A] =
-    this match {
+    this match
       case Pure(func) =>
         func(a)
 
@@ -119,8 +119,7 @@ sealed trait Predicate[E, A] {
               case Invalid(e2) => Invalid(e1 |+| e2)
             }
         }
-    }
-}
+    end match
 
 final case class And[E, A](
   left: Predicate[E, A],
@@ -142,13 +141,12 @@ that also allows transformation of its input.
 Implement `Check` with the following interface:
 
 ```scala
-sealed trait Check[E, A, B] {
+sealed trait Check[E, A, B]:
   def apply(a: A): Validated[E, B] =
     ???
 
   def map[C](func: B => C): Check[E, A, C] =
     ???
-}
 ```
 
 <div class="solution">
@@ -160,7 +158,7 @@ import cats.Semigroup
 import cats.data.Validated
 import cats.implicits.*
 
-sealed trait Predicate[E, A] {
+sealed trait Predicate[E, A]:
   import Predicate.*
   import Validated.*
 
@@ -171,7 +169,7 @@ sealed trait Predicate[E, A] {
     Or(this, that)
 
   def apply(a: A)(using s: Semigroup[E]): Validated[E, A] =
-    this match {
+    this match
       case Pure(func) =>
         func(a)
 
@@ -187,9 +185,9 @@ sealed trait Predicate[E, A] {
               case Invalid(e2) => Invalid(e1 |+| e2)
             }
         }
-    }
-}
-object Predicate {
+    end match
+
+object Predicate:
   final case class And[E, A](
     left: Predicate[E, A],
     right: Predicate[E, A]) extends Predicate[E, A]
@@ -200,7 +198,6 @@ object Predicate {
   
   final case class Pure[E, A](
     func: A => Validated[E, A]) extends Predicate[E, A]
-}
 ```
 ```scala mdoc:silent
 import cats.Semigroup
@@ -385,7 +382,7 @@ a `Predicate.apply` method to create
 a `Predicate` from a function:
 
 ```scala mdoc:silent
-sealed trait Predicate[E, A] {
+sealed trait Predicate[E, A]:
   import Predicate.*
   import Validated.*
 
@@ -396,7 +393,7 @@ sealed trait Predicate[E, A] {
     Or(this, that)
 
   def apply(a: A)(using s: Semigroup[E]): Validated[E, A] =
-    this match {
+    this match
       case Pure(func) =>
         func(a)
 
@@ -412,10 +409,9 @@ sealed trait Predicate[E, A] {
               case Invalid(e2) => Invalid(e1 |+| e2)
             }
         }
-    }
-}
+    end match
 
-object Predicate {
+object Predicate:
   final case class And[E, A](
     left: Predicate[E, A],
     right: Predicate[E, A]) extends Predicate[E, A]
@@ -432,7 +428,6 @@ object Predicate {
 
   def lift[E, A](err: E, fn: A => Boolean): Predicate[E, A] =
     Pure(a => if(fn(a)) a.valid else err.invalid)
-}
 ```
 
 Here is a complete implementation of `Check`.
@@ -448,7 +443,7 @@ import cats.syntax.apply.*     // for mapN
 import cats.syntax.validated.* // for valid and invalid
 ```
 ```scala mdoc:silent
-sealed trait Check[E, A, B] {
+sealed trait Check[E, A, B]:
   import Check.*
 
   def apply(in: A)(using s: Semigroup[E]): Validated[E, B]
@@ -461,51 +456,50 @@ sealed trait Check[E, A, B] {
 
   def andThen[C](next: Check[E, B, C]): Check[E, A, C] =
     AndThen[E, A, B, C](this, next)
-}
 
-object Check {
+object Check:
   final case class Map[E, A, B, C](
     check: Check[E, A, B],
-    func: B => C) extends Check[E, A, C] {
+    func: B => C) extends Check[E, A, C]:
 
     def apply(a: A)
         (using s: Semigroup[E]): Validated[E, C] =
       check(a) map func
-  }
+  end Map
 
   final case class FlatMap[E, A, B, C](
     check: Check[E, A, B],
-    func: B => Check[E, A, C]) extends Check[E, A, C] {
+    func: B => Check[E, A, C]) extends Check[E, A, C]:
 
     def apply(a: A)
         (using s: Semigroup[E]): Validated[E, C] =
       check(a).withEither(_.flatMap(b => func(b)(a).toEither))
-  }
+  end FlatMap
 
   final case class AndThen[E, A, B, C](
     check: Check[E, A, B],
-    next: Check[E, B, C]) extends Check[E, A, C] {
+    next: Check[E, B, C]) extends Check[E, A, C]:
 
     def apply(a: A)
         (using s: Semigroup[E]): Validated[E, C] =
       check(a).withEither(_.flatMap(b => next(b).toEither))
-  }
+  end AndThen
 
   final case class Pure[E, A, B](
-    func: A => Validated[E, B]) extends Check[E, A, B] {
+    func: A => Validated[E, B]) extends Check[E, A, B]:
 
     def apply(a: A)
         (using s: Semigroup[E]): Validated[E, B] =
       func(a)
-  }
+  end Pure
 
   final case class PurePredicate[E, A](
-    pred: Predicate[E, A]) extends Check[E, A, A] {
+    pred: Predicate[E, A]) extends Check[E, A, A]:
 
     def apply(a: A)
         (using s: Semigroup[E]): Validated[E, A] =
       pred(a)
-  }
+  end PurePredicate
 
   def apply[E, A](pred: Predicate[E, A]): Check[E, A, A] =
     PurePredicate(pred)
@@ -513,7 +507,6 @@ object Check {
   def apply[E, A, B]
       (func: A => Validated[E, B]): Check[E, A, B] =
     Pure(func)
-}
 ```
 </div>
 
@@ -614,14 +607,14 @@ built up from a number of smaller components:
 // at least three characters long and contain a dot.
 
 val splitEmail: Check[Errors, String, (String, String)] =
-  Check(_.split('@') match {
+  Check(_.split('@') match
     case Array(name, domain) =>
       (name, domain).validNel[String]
 
     case _ =>
       "Must contain a single @ character".
         invalidNel[(String, String)]
-  })
+  )
 
 val checkLeft: Check[Errors, String, String] =
   Check(longerThan(0))
@@ -630,7 +623,7 @@ val checkRight: Check[Errors, String, String] =
   Check(longerThan(3) and contains('.'))
 
 val joinEmail: Check[Errors, (String, String), String] =
-  Check { case (l, r) =>
+  Check { (l, r) =>
     (checkLeft(l), checkRight(r)).mapN(_ + "@" + _)
   }
 

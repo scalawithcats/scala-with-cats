@@ -19,12 +19,10 @@ Define an extension method `flatten`, and an instance of `Flattener` for a neste
 
 <div class="solution">
 ~~~ scala
-extension [A, B, C](in: ((A, B), C)) {
+extension [A, B, C](in: ((A, B), C))
   def flatten: (A, B, C) =
-    in match {
+    in match
       case ((a, b), c) => (a, b, c)
-    }
-}
 ~~~
 
 It's fairly straightforward to define this class, but we can't abstract over it in any way. If we want to define `flatten` for a tuple like `(a, (b, c))` we need to define a new extension method. Similarly if we want to flatten a tuple with four elements.

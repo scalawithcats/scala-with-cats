@@ -115,13 +115,11 @@ by defining a `FunctionK` that converts an `Option` to a `List`.
 ```scala mdoc:silent
 import cats.arrow.FunctionK
 
-object optionToList extends FunctionK[Option, List] {
+object optionToList extends FunctionK[Option, List]:
   def apply[A](fa: Option[A]): List[A] =
-    fa match {
+    fa match
       case None    => List.empty[A]
       case Some(a) => List(a)
-    }
-}
 ```
 ```scala mdoc
 optionToList(Some(1))

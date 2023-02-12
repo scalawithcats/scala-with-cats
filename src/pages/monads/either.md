@@ -261,7 +261,7 @@ on any pattern matching we do:
 ```scala mdoc:silent
 // Choose error-handling behaviour based on type:
 def handleError(error: LoginError): Unit =
-  error match {
+  error match
     case UserNotFound(u) =>
       println(s"User not found: $u")
 
@@ -270,7 +270,6 @@ def handleError(error: LoginError): Unit =
 
     case UnexpectedError =>
       println(s"Unexpected error")
-  }
 ```
 
 ```scala mdoc

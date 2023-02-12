@@ -51,12 +51,11 @@ case class Parser(parse: String => ParseResult) {
       @tailrec
       def loop(result: String, remainder: String): ParseResult = {
         val result1 = this.parse(remainder)
-        result1 match {
+        result1 match
           case _ if result1.failed =>
             ParseResult(result, remainder)
           case ParseResult(result1, remainder1) =>
             loop(result + result1, remainder1)
-        }
       }
       loop("", input)
     }
@@ -115,18 +114,18 @@ Checkout the `parser-initial-a` tag to see the complete code with `~` implemente
 def ~(next: Parser): Parser =
   Parser { input =>
     val result = this.parse(input)
-    result match {
+    result match
       case _ if result.failed =>
         result
       case ParseResult(parsed, remainder) =>
         val result1 = next.parse(remainder)
-        result1 match {
+        result1 match
           case _ if result1.failed =>
             ParseResult("", input)
           case ParseResult(parsed1, remainder1) =>
             ParseResult(parsed + parsed1, remainder1)
-        }
-    }
+        end match
+    end match
   }
 ~~~
 </div>

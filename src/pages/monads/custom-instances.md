@@ -173,12 +173,11 @@ given treeMonad: Monad[Tree] with
 
   def flatMap[A, B](tree: Tree[A])
       (func: A => Tree[B]): Tree[B] =
-    tree match {
+    tree match
       case Branch(l, r) =>
         Branch(flatMap(l)(func), flatMap(r)(func))
       case Leaf(value)  =>
         func(value)
-    }
 
   def tailRecM[A, B](a: A)
       (func: A => Tree[Either[A, B]]): Tree[B] =
@@ -224,12 +223,11 @@ given treeMonad: Monad[Tree] with
 
   def flatMap[A, B](tree: Tree[A])
       (func: A => Tree[B]): Tree[B] =
-    tree match {
+    tree match
       case Branch(l, r) =>
         Branch(flatMap(l)(func), flatMap(r)(func))
       case Leaf(value)  =>
         func(value)
-    }
 
   def tailRecM[A, B](arg: A)(
     func: A => Tree[Either[A, B]]
@@ -238,7 +236,7 @@ given treeMonad: Monad[Tree] with
     def loop(
           open: List[Tree[Either[A, B]]],
           closed: List[Option[Tree[B]]]): List[Tree[B]] =
-      open match {
+      open match
         case Branch(l, r) :: next =>
           loop(l :: r :: next, None :: closed)
 
@@ -255,7 +253,7 @@ given treeMonad: Monad[Tree] with
               branch(left, right) :: tail
             }
           }
-      }
+      end match
 
     loop(List(func(arg)), Nil).head
   }

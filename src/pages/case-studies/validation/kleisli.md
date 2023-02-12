@@ -177,7 +177,7 @@ import cats.syntax.semigroup.* // for |+|
 import cats.data.Validated
 import cats.data.Validated.{Valid, Invalid}
 
-sealed trait Predicate[E, A] {
+sealed trait Predicate[E, A]:
   import Predicate.*
 
   def and(that: Predicate[E, A]): Predicate[E, A] =
@@ -190,7 +190,7 @@ sealed trait Predicate[E, A] {
     (a: A) => this(a).toEither
 
   def apply(a: A)(using s: Semigroup[E]): Validated[E, A] =
-    this match {
+    this match
       case Pure(func) =>
         func(a)
 
@@ -206,10 +206,10 @@ sealed trait Predicate[E, A] {
               case Invalid(e2) => Invalid(e1 |+| e2)
             }
         }
-    }
-}
+    end match
+end Predicate
 
-object Predicate {
+object Predicate:
   final case class And[E, A](
     left: Predicate[E, A],
     right: Predicate[E, A]) extends Predicate[E, A]
@@ -226,7 +226,7 @@ object Predicate {
 
   def lift[E, A](error: E, func: A => Boolean): Predicate[E, A] =
     Pure(a => if(func(a)) Valid(a) else Invalid(error))
-}
+end Predicate
 ```
 
 Working around limitations of type inference

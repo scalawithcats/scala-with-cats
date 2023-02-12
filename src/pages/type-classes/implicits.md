@@ -169,10 +169,9 @@ Here is the same code written out as a `given` with a `using` clause:
 ```scala mdoc:silent
 given optionWriter[A](using writer: JsonWriter[A]): JsonWriter[Option[A]] with
   def write(option: Option[A]): Json =
-    option match {
+    option match
       case Some(aValue) => writer.write(aValue)
       case None         => Json.JsNull
-    }
 ```
 
 This method *constructs* a `JsonWriter` for `Option[A]` by

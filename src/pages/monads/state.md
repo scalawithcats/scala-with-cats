@@ -234,13 +234,12 @@ type CalcState[A] = State[List[Int], A]
 ```
 ```scala
 def evalOne(sym: String): CalcState[Int] =
-  sym match {
+  sym match
     case "+" => operator(_ + _)
     case "-" => operator(_ - _)
     case "*" => operator(_ * _)
     case "/" => operator(_ / _)
     case num => operand(num.toInt)
-  }
 ```
 
 Let's look at `operand` first.
@@ -275,13 +274,12 @@ def operator(func: (Int, Int) => Int): CalcState[Int] =
 
 ```scala mdoc:invisible
 def evalOne(sym: String): CalcState[Int] =
-  sym match {
+  sym match
     case "+" => operator(_ + _)
     case "-" => operator(_ - _)
     case "*" => operator(_ * _)
     case "/" => operator(_ / _)
     case num => operand(num.toInt)
-  }
 ```
 </div>
 
@@ -342,13 +340,12 @@ def operator(func: (Int, Int) => Int): CalcState[Int] =
       sys.error("Fail!")
   }
 def evalOne(sym: String): CalcState[Int] =
-  sym match {
+  sym match
     case "+" => operator(_ + _)
     case "-" => operator(_ - _)
     case "*" => operator(_ * _)
     case "/" => operator(_ / _)
     case num => operand(num.toInt)
-  }
 ```
 ```scala mdoc:silent
 import cats.syntax.applicative.* // for pure

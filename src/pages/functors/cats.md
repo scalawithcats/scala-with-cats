@@ -205,12 +205,11 @@ import Tree.{Branch, Leaf}
 
 given treeFunctor: Functor[Tree] with
   def map[A, B](tree: Tree[A])(func: A => B): Tree[B] =
-    tree match {
+    tree match
       case Branch(left, right) =>
         Branch(map(left)(func), map(right)(func))
       case Leaf(value) =>
         Leaf(func(value))
-    }
 ```
 
 Let's use our `Functor` to transform some `Trees`:

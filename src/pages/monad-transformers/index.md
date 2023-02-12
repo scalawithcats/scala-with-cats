@@ -482,10 +482,9 @@ type Logged[A] = Writer[List[String], A]
 
 // Methods generally return untransformed stacks:
 def parseNumber(str: String): Logged[Option[Int]] =
-  util.Try(str.toInt).toOption match {
+  util.Try(str.toInt).toOption match
     case Some(num) => Writer(List(s"Read $str"), Some(num))
     case None      => Writer(List(s"Failed on $str"), None)
-  }
 
 // Consumers use monad transformers locally to simplify composition:
 def addAll(a: String, b: String, c: String): Logged[Option[Int]] = {

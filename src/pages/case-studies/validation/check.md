@@ -240,14 +240,14 @@ import cats.syntax.semigroup.* // for |+|
 ```
 
 ```scala mdoc:silent
-sealed trait Check[E, A] {
+sealed trait Check[E, A]:
   import Check.*
 
   def and(that: Check[E, A]): Check[E, A] =
     And(this, that)
 
   def apply(a: A)(using s: Semigroup[E]): Either[E, A] =
-    this match {
+    this match
       case Pure(func) =>
         func(a)
 
@@ -258,9 +258,9 @@ sealed trait Check[E, A] {
           case (Right(_),  Left(e))   => e.asLeft
           case (Right(_), Right(_)) => a.asRight
         }
-    }
-}
-object Check {
+    end match
+
+object Check:
   final case class And[E, A](
     left: Check[E, A],
     right: Check[E, A]) extends Check[E, A]
@@ -270,7 +270,6 @@ object Check {
     
   def pure[E, A](f: A => Either[E, A]): Check[E, A] =
     Pure(f)
-}
 ```
 
 Let's see an example:
@@ -336,29 +335,27 @@ import cats.syntax.apply.*     // for mapN
 ```
 
 ```scala mdoc:silent
-sealed trait Check[E, A] {
+sealed trait Check[E, A]:
   import Check.*
 
   def and(that: Check[E, A]): Check[E, A] =
     And(this, that)
 
   def apply(a: A)(using s: Semigroup[E]): Validated[E, A] =
-    this match {
+    this match
       case Pure(func) =>
         func(a)
 
       case And(left, right) =>
         (left(a), right(a)).mapN((_, _) => a)
-    }
-}
-object Check {
+
+object Check:
   final case class And[E, A](
     left: Check[E, A],
     right: Check[E, A]) extends Check[E, A]
   
   final case class Pure[E, A](
     func: A => Validated[E, A]) extends Check[E, A]
-}
 ```
 </div>
 
@@ -381,7 +378,7 @@ import cats.data.Validated.*   // for Valid and Invalid
 ```
 
 ```scala mdoc:silent
-sealed trait Check[E, A] {
+sealed trait Check[E, A]:
   import Check.*
 
   def and(that: Check[E, A]): Check[E, A] =
@@ -391,7 +388,7 @@ sealed trait Check[E, A] {
     Or(this, that)
 
   def apply(a: A)(using s: Semigroup[E]): Validated[E, A] =
-    this match {
+    this match
       case Pure(func) =>
         func(a)
 
@@ -407,9 +404,9 @@ sealed trait Check[E, A] {
               case Invalid(e2) => Invalid(e1 |+| e2)
             }
         }
-    }
-}
-object Check {
+    end match
+
+object Check:
   final case class And[E, A](
     left: Check[E, A],
     right: Check[E, A]) extends Check[E, A]
@@ -420,7 +417,6 @@ object Check {
   
   final case class Pure[E, A](
     func: A => Validated[E, A]) extends Check[E, A]
-}
 ```
 </div>
 
