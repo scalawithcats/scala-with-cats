@@ -34,12 +34,8 @@ The companion object of every Cats type class has an `apply` method
 that locates an instance for any type we specify:
 
 ```scala mdoc
-val showInt = Show.apply[Int]
+given showInt: Show[Int] = Show.apply[Int]
 ```
-
-Oops---that didn't work!
-The `apply` method uses *implicits* to look up individual instances,
-so we'll have to bring some instances into scope.
 
 ### Importing Default Instances {#sec:importing-default-instances}
 
