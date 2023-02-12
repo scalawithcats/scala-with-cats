@@ -65,7 +65,7 @@ through three steps:
 
 ```scala mdoc:silent
 import cats.data.Kleisli
-import cats.instances.list._ // for Monad
+import cats.instances.list.* // for Monad
 ```
 
 These steps each transform an input `Int`
@@ -172,13 +172,13 @@ def checkPred[A](pred: Predicate[Errors, A]): Check[A, A] =
 // Foreword declarations
 
 import cats.Semigroup
-import cats.syntax.apply._     // for mapN
-import cats.syntax.semigroup._ // for |+|
+import cats.syntax.apply.*     // for mapN
+import cats.syntax.semigroup.* // for |+|
 import cats.data.Validated
 import cats.data.Validated.{Valid, Invalid}
 
 sealed trait Predicate[E, A] {
-  import Predicate._
+  import Predicate.*
 
   def and(that: Predicate[E, A]): Predicate[E, A] =
     And(this, that)
@@ -237,7 +237,7 @@ simplifies things, but the process is still complex:
 
 ```scala mdoc:silent
 import cats.data.{Kleisli, NonEmptyList}
-import cats.instances.either._   // for Semigroupal
+import cats.instances.either.*   // for Semigroupal
 ```
 
 Here is the preamble we suggested in

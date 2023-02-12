@@ -107,8 +107,8 @@ The method is called `ap` and types `F[A]` that implement it are called **applic
 The Scalaz library provides an applicative functor type class, and instances for `Option` and many other types. In Scalaz, `ap` is written as `<*>` for consistency with Haskell. Here's an example:
 
 ~~~ scala
-import scalaz.syntax.applicative._
-import scalaz.std.option._
+import scalaz.syntax.applicative.*
+import scalaz.std.option.*
 
 val adder = ((x: Int, y: Int, z: Int) => x + y + z).curried
 // adder: Int => (Int => (Int => Int)) = <function1>
@@ -198,7 +198,7 @@ Checkout the `parser-applicative` tag to see the full code and tests.
 Once we have our `Applicative` instance we can take it for a spin:
 
 ~~~ scala
-import scalaz.syntax.applicative._
+import scalaz.syntax.applicative.*
 
 val parser = Parser.string("chicken") <*> ((_: String) => "Tastes like chicken").point[Parser]
 // parser: underscore.parser.Parser[String] = Parser(<function1>)
@@ -258,7 +258,7 @@ Sometime we do need more than one result, so the problem still remains. In these
 Here is it in use
 
 ~~~ scala
-import scalaz.syntax.applicative._
+import scalaz.syntax.applicative.*
 
 def taste(taster: String, action: String, flava: String): String = s"$flava tastes like chicken!"
 // taste: (taster: String, action: String, flava: String)String

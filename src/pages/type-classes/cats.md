@@ -62,8 +62,8 @@ Let's import the instances of `Show` for `Int` and `String`:
 
 ```scala mdoc:reset:silent
 import cats.Show
-import cats.instances.int._    // for Show
-import cats.instances.string._ // for Show
+import cats.instances.int.*    // for Show
+import cats.instances.string.* // for Show
 
 val showInt:    Show[Int]    = Show.apply[Int]
 val showString: Show[String] = Show.apply[String]
@@ -88,7 +88,7 @@ This adds an extension method called `show`
 to any type for which we have an instance of `Show` in scope:
 
 ```scala mdoc:silent
-import cats.syntax.show._ // for show
+import cats.syntax.show.* // for show
 ```
 
 ```scala mdoc
@@ -107,9 +107,9 @@ exactly which instances and syntax you need in each example.
 However, this doesn't add value in production code.
 It is simpler and faster to use the following imports:
 
-- `import cats._` imports all of Cats' type classes in one go;
+- `import cats.*` imports all of Cats' type classes in one go;
 
-- `import cats.implicits._` imports
+- `import cats.implicits.*` imports
   all of the standard type class instances
   *and* all of the syntax in one go.
 
@@ -177,9 +177,9 @@ and the interface syntax:
 
 ```scala mdoc:reset-object:silent
 import cats.Show
-import cats.instances.int._    // for Show
-import cats.instances.string._ // for Show
-import cats.syntax.show._      // for show
+import cats.instances.int.*    // for Show
+import cats.instances.string.* // for Show
+import cats.syntax.show.*      // for show
 ```
 
 Our definition of `Cat` remains the same:

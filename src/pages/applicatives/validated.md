@@ -21,7 +21,7 @@ is therefore free to accumulate errors:
 ```scala mdoc:silent
 import cats.Semigroupal
 import cats.data.Validated
-import cats.instances.list._ // for Monoid
+import cats.instances.list.* // for Monoid
 
 type AllErrorsOr[A] = Validated[List[String], A]
 ```
@@ -59,7 +59,7 @@ which widen the return type to `Validated`:
 
 ```scala mdoc:invisible:reset-object
 import cats.data.Validated
-import cats.instances.list._ // for Monoid
+import cats.instances.list.* // for Monoid
 
 type AllErrorsOr[A] = Validated[List[String], A]
 ```
@@ -73,7 +73,7 @@ the `valid` and `invalid` extension methods
 from `cats.syntax.validated`:
 
 ```scala mdoc:silent
-import cats.syntax.validated._ // for valid and invalid
+import cats.syntax.validated.* // for valid and invalid
 ```
 
 ```scala mdoc
@@ -87,8 +87,8 @@ and [`cats.syntax.applicativeError`][cats.syntax.applicativeError]
 respectively:
 
 ```scala mdoc:silent
-import cats.syntax.applicative._      // for pure
-import cats.syntax.applicativeError._ // for raiseError
+import cats.syntax.applicative.*      // for pure
+import cats.syntax.applicativeError.* // for raiseError
 
 type ErrorsOr[A] = Validated[List[String], A]
 ```
@@ -130,7 +130,7 @@ number of parameters for `Semigroupal`:
 ```scala mdoc:invisible:reset-object
 import cats.data.Validated
 import cats.Semigroupal
-import cats.syntax.validated._
+import cats.syntax.validated.*
 ```
 ```scala mdoc:silent
 type AllErrorsOr[A] = Validated[String, A]
@@ -149,7 +149,7 @@ Once we import a `Semigroup` for the error type,
 everything works as expected:
 
 ```scala mdoc:silent
-import cats.instances.string._ // for Semigroup
+import cats.instances.string.* // for Semigroup
 ```
 
 ```scala mdoc
@@ -163,7 +163,7 @@ or any of the other `Semigroupal` methods
 to accumulate errors as we like:
 
 ```scala mdoc:silent
-import cats.syntax.apply._ // for tupled
+import cats.syntax.apply.* // for tupled
 ```
 
 ```scala mdoc
@@ -178,7 +178,7 @@ for accumulating errors.
 We commonly use `Lists` or `Vectors` instead:
 
 ```scala mdoc:silent
-import cats.instances.vector._ // for Semigroupal
+import cats.instances.vector.* // for Semigroupal
 ```
 
 ```scala mdoc
@@ -246,7 +246,7 @@ using the `toEither` and `toValidated` methods.
 Note that `toValidated` comes from [`cats.syntax.either`]:
 
 ```scala mdoc
-import cats.syntax.either._ // for toValidated
+import cats.syntax.either.* // for toValidated
 
 "Badness".invalid[Int]
 "Badness".invalid[Int].toEither
@@ -371,7 +371,7 @@ and we use `leftMap` to
 turn it into an error message:
 
 ```scala mdoc:silent
-import cats.syntax.either._ // for catchOnly
+import cats.syntax.either.* // for catchOnly
 
 type NumFmtExn = NumberFormatException
 
@@ -468,8 +468,8 @@ We can do this by switching from `Either` to `Validated`
 and using apply syntax:
 
 ```scala mdoc:silent
-import cats.instances.list._ // for Semigroupal
-import cats.syntax.apply._   // for mapN
+import cats.instances.list.* // for Semigroupal
+import cats.syntax.apply.*   // for mapN
 
 def readUser(data: FormData): FailSlow[User] =
   (

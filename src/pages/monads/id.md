@@ -5,8 +5,8 @@ by writing a method that abstracted over different monads:
 
 ```scala mdoc:silent
 import cats.Monad
-import cats.syntax.functor._ // for map
-import cats.syntax.flatMap._ // for flatMap
+import cats.syntax.functor.* // for map
+import cats.syntax.flatMap.* // for flatMap
 
 def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
   for {
@@ -69,8 +69,8 @@ val b = Monad[Id].flatMap(a)(_ + 1)
 ```
 
 ```scala mdoc:silent
-import cats.syntax.functor._ // for map
-import cats.syntax.flatMap._ // for flatMap
+import cats.syntax.functor.* // for map
+import cats.syntax.flatMap.* // for flatMap
 ```
 
 ```scala mdoc
@@ -116,8 +116,8 @@ All we have to do is return the initial value:
 
 ```scala mdoc:invisible:reset-object
 import cats.{Id,Monad}
-import cats.syntax.functor._ 
-import cats.syntax.flatMap._
+import cats.syntax.functor.* 
+import cats.syntax.flatMap.*
 def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
   for {
     x <- a

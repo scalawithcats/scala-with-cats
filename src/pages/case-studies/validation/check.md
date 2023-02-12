@@ -83,8 +83,8 @@ the `combine` method or its associated `|+|` syntax:
 
 ```scala mdoc:silent
 import cats.Semigroup
-import cats.instances.list._   // for Semigroup
-import cats.syntax.semigroup._ // for |+|
+import cats.instances.list.*   // for Semigroup
+import cats.syntax.semigroup.* // for |+|
 
 val semigroup = Semigroup[List[String]]
 ```
@@ -131,8 +131,8 @@ we'll call this implementation `CheckF`:
 
 ```scala mdoc:silent
 import cats.Semigroup
-import cats.syntax.either._    // for asLeft and asRight
-import cats.syntax.semigroup._ // for |+|
+import cats.syntax.either.*    // for asLeft and asRight
+import cats.syntax.semigroup.* // for |+|
 ```
 
 ```scala mdoc:silent
@@ -157,7 +157,7 @@ Let's test the behaviour we get.
 First we'll setup some checks:
 
 ```scala mdoc:silent
-import cats.instances.list._ // for Semigroup
+import cats.instances.list.* // for Semigroup
 
 val a: CheckF[List[String], Int] =
   CheckF { v =>
@@ -193,8 +193,8 @@ What happens if we create instances of `CheckF[Nothing, A]`?
 
 ```scala mdoc:invisible:reset-object
 import cats.Semigroup
-import cats.syntax.semigroup._
-import cats.syntax.either._
+import cats.syntax.semigroup.*
+import cats.syntax.either.*
 final case class CheckF[E, A](func: A => Either[E, A]) {
   def apply(a: A): Either[E, A] =
     func(a)
@@ -235,13 +235,13 @@ We'll call this implementation `Check`:
 
 ```scala mdoc:invisible:reset-object
 import cats.Semigroup
-import cats.syntax.either._    // for asLeft and asRight
-import cats.syntax.semigroup._ // for |+|
+import cats.syntax.either.*    // for asLeft and asRight
+import cats.syntax.semigroup.* // for |+|
 ```
 
 ```scala mdoc:silent
 sealed trait Check[E, A] {
-  import Check._
+  import Check.*
 
   def and(that: Check[E, A]): Check[E, A] =
     And(this, that)
@@ -332,12 +332,12 @@ Here's the complete implementation:
 ```scala mdoc:silent:reset-object
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.apply._     // for mapN
+import cats.syntax.apply.*     // for mapN
 ```
 
 ```scala mdoc:silent
 sealed trait Check[E, A] {
-  import Check._
+  import Check.*
 
   def and(that: Check[E, A]): Check[E, A] =
     And(this, that)
@@ -375,14 +375,14 @@ is implicit in the semantics of "or".
 ```scala mdoc:silent:reset-object
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.semigroup._ // for |+|
-import cats.syntax.apply._     // for mapN
-import cats.data.Validated._   // for Valid and Invalid
+import cats.syntax.semigroup.* // for |+|
+import cats.syntax.apply.*     // for mapN
+import cats.data.Validated.*   // for Valid and Invalid
 ```
 
 ```scala mdoc:silent
 sealed trait Check[E, A] {
-  import Check._
+  import Check.*
 
   def and(that: Check[E, A]): Check[E, A] =
     And(this, that)

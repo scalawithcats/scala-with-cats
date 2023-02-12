@@ -167,7 +167,7 @@ object wrapper {
       val empty: Set[A] =
         Set.empty[A]
   }
-}; import wrapper._
+}; import wrapper.*
 ```
 </div>
 
@@ -192,10 +192,10 @@ which significantly simplifies
 the process of merging and maximising counters:
 
 ```scala mdoc:silent
-import cats.instances.list._   // for Monoid
-import cats.instances.map._    // for Monoid
-import cats.syntax.semigroup._ // for |+|
-import cats.syntax.foldable._  // for combineAll
+import cats.instances.list.*   // for Monoid
+import cats.instances.map.*    // for Monoid
+import cats.syntax.semigroup.* // for |+|
+import cats.syntax.foldable.*  // for combineAll
 
 final case class GCounter[A](counters: Map[String,A]) {
   def increment(machine: String, amount: A)

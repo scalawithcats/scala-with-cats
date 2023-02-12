@@ -79,10 +79,10 @@ in the companion object for `GCounter`
 to place it in global implicit scope:
 
 ```scala mdoc:silent
-import cats.instances.list._   // for Monoid
-import cats.instances.map._    // for Monoid
-import cats.syntax.semigroup._ // for |+|
-import cats.syntax.foldable._  // for combineAll
+import cats.instances.list.*   // for Monoid
+import cats.instances.map.*    // for Monoid
+import cats.syntax.semigroup.* // for |+|
+import cats.syntax.foldable.*  // for combineAll
 
 given mapGCounterInstance[K, V]: GCounter[Map, K, V] with
   def increment(map: Map[K, V])(key: K, value: V)
@@ -104,7 +104,7 @@ given mapGCounterInstance[K, V]: GCounter[Map, K, V] with
 You should be able to use your instance as follows:
 
 ```scala mdoc:silent
-import cats.instances.int._ // for Monoid
+import cats.instances.int.* // for Monoid
 
 val g1 = Map("a" -> 7, "b" -> 3)
 val g2 = Map("a" -> 2, "b" -> 5)

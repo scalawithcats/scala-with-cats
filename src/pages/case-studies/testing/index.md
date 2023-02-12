@@ -24,9 +24,9 @@ We'll also have an `UptimeService` that maintains a list of servers
 and allows the user to poll them for their total uptime:
 
 ```scala mdoc:silent
-import cats.instances.future._ // for Applicative
-import cats.instances.list._   // for Traverse
-import cats.syntax.traverse._  // for traverse
+import cats.instances.future.* // for Applicative
+import cats.instances.list.*   // for Traverse
+import cats.syntax.traverse.*  // for traverse
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class UptimeService(client: UptimeClient) {
@@ -268,8 +268,8 @@ to `UptimeService`.
 We can write this as an implicit parameter:
 
 ```scala mdoc:invisible:reset-object
-import cats.syntax.traverse._  // for traverse
-import cats.instances.list._
+import cats.syntax.traverse.*  // for traverse
+import cats.instances.list.*
 
 trait UptimeClient[F[_]] {
   def getUptime(hostname: String): F[Int]
@@ -277,7 +277,7 @@ trait UptimeClient[F[_]] {
 ```
 ```scala mdoc:silent
 import cats.Applicative
-import cats.syntax.functor._ // for map
+import cats.syntax.functor.* // for map
 
 class UptimeService[F[_]](client: UptimeClient[F])
     (using a: Applicative[F]) {
@@ -291,9 +291,9 @@ or more tersely as a context bound:
 
 ```scala mdoc:reset-object:invisible
 import cats.Applicative
-import cats.syntax.functor._
-import cats.syntax.traverse._
-import cats.instances.list._
+import cats.syntax.functor.*
+import cats.syntax.traverse.*
+import cats.instances.list.*
 
 trait UptimeClient[F[_]] {
   def getUptime(hostname: String): F[Int]
@@ -326,9 +326,9 @@ synchronously without worrying about monads or applicatives:
 
 ```scala mdoc:invisible:reset-object
 import cats.{Id, Applicative}
-import cats.instances.list._  // for Traverse
-import cats.syntax.functor._  // for map
-import cats.syntax.traverse._ // for traverse
+import cats.instances.list.*  // for Traverse
+import cats.syntax.functor.*  // for map
+import cats.syntax.traverse.* // for traverse
 import scala.concurrent.Future
 
 trait UptimeClient[F[_]] {

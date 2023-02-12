@@ -49,7 +49,7 @@ In Scala 2.12+ we can either omit this import
 or leave it in place without breaking anything:
 
 ```scala mdoc:silent
-import cats.syntax.either._ // for map and flatMap
+import cats.syntax.either.* // for map and flatMap
 
 for {
   a <- either1
@@ -64,7 +64,7 @@ we can also import the `asLeft` and `asRight` extension methods
 from [`cats.syntax.either`][cats.syntax.either]:
 
 ```scala mdoc:silent
-import cats.syntax.either._ // for asRight
+import cats.syntax.either.* // for asRight
 ```
 
 ```scala mdoc
@@ -154,7 +154,7 @@ can use `orElse` and `getOrElse` to extract
 values from the right side or return a default:
 
 ```scala mdoc:silent
-import cats.syntax.either._
+import cats.syntax.either.*
 ```
 
 ```scala mdoc
@@ -241,7 +241,7 @@ object wrapper {
     case PasswordIncorrect(username: String)
     case UnexpectedError
   }
-}; import wrapper._
+}; import wrapper.*
 
 import LoginError.*
 ```

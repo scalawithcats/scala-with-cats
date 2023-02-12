@@ -121,7 +121,7 @@ that only represent transformations on the state:
 
 ```scala mdoc:silent:reset-object
 import cats.data.State
-import State._
+import State.*
 ```
 
 ```scala mdoc
@@ -351,7 +351,7 @@ def evalOne(sym: String): CalcState[Int] =
   }
 ```
 ```scala mdoc:silent
-import cats.syntax.applicative._ // for pure
+import cats.syntax.applicative.* // for pure
 
 def evalAll(input: List[String]): CalcState[Int] =
   input.foldLeft(0.pure[CalcState]) { (a, b) =>

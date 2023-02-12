@@ -30,7 +30,7 @@ Here's an example:
 ```scala mdoc:silent:reset
 import cats.Contravariant
 import cats.Show
-import cats.instances.string._
+import cats.instances.string.*
 
 val showString = Show[String]
 
@@ -47,7 +47,7 @@ More conveniently, we can use
 which provides a `contramap` extension method:
 
 ```scala mdoc:silent
-import cats.syntax.contravariant._ // for contramap
+import cats.syntax.contravariant.* // for contramap
 ```
 
 ```scala mdoc
@@ -95,9 +95,9 @@ provided by `cats.syntax.invariant`:
 
 ```scala mdoc:silent
 import cats.Monoid
-import cats.instances.string._ // for Monoid
-import cats.syntax.invariant._ // for imap
-import cats.syntax.semigroup._ // for |+|
+import cats.instances.string.* // for Monoid
+import cats.syntax.invariant.* // for imap
+import cats.syntax.semigroup.* // for |+|
 
 given symbolMonoid: Monoid[Symbol] =
   Monoid[String].imap(Symbol.apply)(_.name)

@@ -102,7 +102,7 @@ seen in `List`, `Option`, and `Either`:
 ```scala mdoc:silent
 import scala.concurrent.{Future, Await}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 val future: Future[String] =
   Future(123).
@@ -210,8 +210,8 @@ We also see this in Figure [@fig:functors:function-type-chart]:
 In other words, "mapping" over a `Function1` is function composition:
 
 ```scala mdoc:silent
-import cats.instances.function._ // for Functor
-import cats.syntax.functor._     // for map
+import cats.instances.function.* // for Functor
+import cats.syntax.functor.*     // for map
 ```
 
 ```scala mdoc:silent

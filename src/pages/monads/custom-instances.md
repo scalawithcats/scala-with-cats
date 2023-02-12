@@ -47,7 +47,7 @@ and many monads have some notion of stopping.
 We can write this method in terms of `flatMap`.
 
 ```scala mdoc:silent
-import cats.syntax.flatMap._ // For flatMap
+import cats.syntax.flatMap.* // For flatMap
 
 def retry[F[_]: Monad, A](start: A)(f: A => F[A]): F[A] =
   f(start).flatMap{ a =>
@@ -59,7 +59,7 @@ Unfortunately it is not stack-safe.
 It works for small input.
 
 ```scala mdoc
-import cats.instances.option._
+import cats.instances.option.*
 
 retry(100)(a => if(a == 0) None else Some(a - 1))
 ```
@@ -75,7 +75,7 @@ We can instead rewrite this method
 using `tailRecM`.
 
 ```scala mdoc:silent
-import cats.syntax.functor._ // for map
+import cats.syntax.functor.* // for map
 
 def retryTailRecM[F[_]: Monad, A](start: A)(f: A => F[A]): F[A] =
   Monad[F].tailRecM(start){ a =>
@@ -104,7 +104,7 @@ in terms of `iterateWhileM`
 and we don't have to explicitly call `tailRecM`.
 
 ```scala mdoc:silent
-import cats.syntax.monad._ // for iterateWhileM
+import cats.syntax.monad.* // for iterateWhileM
 
 def retryM[F[_]: Monad, A](start: A)(f: A => F[A]): F[A] =
   start.iterateWhileM(f)(a => true)
@@ -265,8 +265,8 @@ Regardless of which version of `tailRecM` we define,
 we can use our `Monad` to `flatMap` and `map` on `Trees`:
 
 ```scala mdoc:silent
-import cats.syntax.functor._ // for map
-import cats.syntax.flatMap._ // for flatMap
+import cats.syntax.functor.* // for map
+import cats.syntax.flatMap.* // for flatMap
 ```
 
 ```scala mdoc

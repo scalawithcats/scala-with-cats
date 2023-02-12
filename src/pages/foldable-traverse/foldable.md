@@ -159,7 +159,7 @@ def sumWithMonoid[A](list: List[A])
       (using monoid: Monoid[A]): A =
   list.foldRight(monoid.empty)(monoid.combine)
 
-import cats.instances.int._ // for Monoid
+import cats.instances.int.* // for Monoid
 ```
 
 ```scala mdoc

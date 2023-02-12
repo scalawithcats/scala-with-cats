@@ -13,7 +13,7 @@ Here is an example using `List`:
 
 ```scala mdoc:silent
 import cats.Foldable
-import cats.instances.list._ // for Foldable
+import cats.instances.list.* // for Foldable
 
 val ints = List(1, 2, 3)
 ```
@@ -27,7 +27,7 @@ Here is an example using `Option`,
 which is treated like a sequence of zero or one elements:
 
 ```scala mdoc:silent
-import cats.instances.option._ // for Foldable
+import cats.instances.option.* // for Foldable
 
 val maybeInt = Option(123)
 ```
@@ -73,7 +73,7 @@ Using `Foldable` forces us to use stack safe operations,
 which fixes the overflow exception:
 
 ```scala mdoc:silent
-import cats.instances.lazyList._ // for Foldable
+import cats.instances.lazyList.* // for Foldable
 ```
 
 ```scala mdoc:silent
@@ -130,7 +130,7 @@ Cats provides two methods that make use of `Monoids`:
 For example, we can use `combineAll` to sum over a `List[Int]`:
 
 ```scala mdoc:silent
-import cats.instances.int._ // for Monoid
+import cats.instances.int.* // for Monoid
 ```
 
 ```scala mdoc
@@ -141,7 +141,7 @@ Alternatively, we can use `foldMap`
 to convert each `Int` to a `String` and concatenate them:
 
 ```scala mdoc:silent
-import cats.instances.string._ // for Monoid
+import cats.instances.string.* // for Monoid
 ```
 
 ```scala mdoc
@@ -153,12 +153,12 @@ to support deep traversal of nested sequences:
 
 ```scala mdoc:invisible:reset-object
 import cats.Foldable
-import cats.instances.list._
-import cats.instances.int._
-import cats.instances.string._
+import cats.instances.list.*
+import cats.instances.int.*
+import cats.instances.string.*
 ```
 ```scala mdoc:silent
-import cats.instances.vector._ // for Monoid
+import cats.instances.vector.* // for Monoid
 
 val ints = List(Vector(1, 2, 3), Vector(4, 5, 6))
 ```
@@ -175,7 +175,7 @@ In each case, the first argument to the method on `Foldable`
 becomes the receiver of the method call:
 
 ```scala mdoc:silent
-import cats.syntax.foldable._ // for combineAll and foldMap
+import cats.syntax.foldable.* // for combineAll and foldMap
 ```
 
 ```scala mdoc

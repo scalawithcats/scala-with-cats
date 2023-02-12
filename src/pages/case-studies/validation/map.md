@@ -89,9 +89,9 @@ Making this change gives us the following code:
 ```scala mdoc:silent
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.semigroup._ // for |+|
-import cats.syntax.apply._     // for mapN
-import cats.data.Validated._   // for Valid and Invalid
+import cats.syntax.semigroup.* // for |+|
+import cats.syntax.apply.*     // for mapN
+import cats.data.Validated.*   // for Valid and Invalid
 ```
 
 ```scala mdoc:silent
@@ -158,11 +158,11 @@ you should be able to create code similar to the below:
 ```scala mdoc:invisible:reset-object
 import cats.Semigroup
 import cats.data.Validated
-import cats.implicits._
+import cats.implicits.*
 
 sealed trait Predicate[E, A] {
-  import Predicate._
-  import Validated._
+  import Predicate.*
+  import Validated.*
 
   def and(that: Predicate[E, A]): Predicate[E, A] =
     And(this, that)
@@ -209,7 +209,7 @@ import cats.data.Validated
 
 ```scala mdoc:silent
 sealed trait Check[E, A, B] {
-  import Check._
+  import Check.*
 
   def apply(in: A)(using s: Semigroup[E]): Validated[E, B]
 
@@ -373,10 +373,10 @@ including some tidying and repackaging of the code:
 ```scala mdoc:silent:reset-object
 import cats.Semigroup
 import cats.data.Validated
-import cats.data.Validated._   // for Valid and Invalid
-import cats.syntax.semigroup._ // for |+|
-import cats.syntax.apply._     // for mapN
-import cats.syntax.validated._ // for valid and invalid
+import cats.data.Validated.*   // for Valid and Invalid
+import cats.syntax.semigroup.* // for |+|
+import cats.syntax.apply.*     // for mapN
+import cats.syntax.validated.* // for valid and invalid
 ```
 
 Here is our complete implementation of `Predicate`,
@@ -386,8 +386,8 @@ a `Predicate` from a function:
 
 ```scala mdoc:silent
 sealed trait Predicate[E, A] {
-  import Predicate._
-  import Validated._
+  import Predicate.*
+  import Validated.*
 
   def and(that: Predicate[E, A]): Predicate[E, A] =
     And(this, that)
@@ -444,12 +444,12 @@ using inheritance:
 ```scala mdoc:silent
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.apply._     // for mapN
-import cats.syntax.validated._ // for valid and invalid
+import cats.syntax.apply.*     // for mapN
+import cats.syntax.validated.* // for valid and invalid
 ```
 ```scala mdoc:silent
 sealed trait Check[E, A, B] {
-  import Check._
+  import Check.*
 
   def apply(in: A)(using s: Semigroup[E]): Validated[E, B]
 
@@ -589,8 +589,8 @@ In later sections we'll make some changes
 that make the library easier to use.
 
 ```scala mdoc:silent
-import cats.syntax.apply._     // for mapN
-import cats.syntax.validated._ // for valid and invalid
+import cats.syntax.apply.*     // for mapN
+import cats.syntax.validated.* // for valid and invalid
 ```
 
 Here's the implementation of `checkUsername`:

@@ -12,9 +12,9 @@ provide parallel as opposed to sequential execution:
 
 ```scala mdoc:silent
 import cats.Semigroupal
-import cats.instances.future._ // for Semigroupal
-import scala.concurrent._
-import scala.concurrent.duration._
+import cats.instances.future.* // for Semigroupal
+import scala.concurrent.*
+import scala.concurrent.duration.*
 import scala.concurrent.ExecutionContext.Implicits.global
 
 val futurePair = Semigroupal[Future].
@@ -31,7 +31,7 @@ by the time we call `product`.
 We can use apply syntax to zip fixed numbers of `Futures`:
 
 ```scala mdoc:silent
-import cats.syntax.apply._ // for mapN
+import cats.syntax.apply.* // for mapN
 
 case class Cat(
   name: String,
@@ -59,7 +59,7 @@ but we actually get the cartesian product of their elements:
 
 ```scala mdoc:silent
 import cats.Semigroupal
-import cats.instances.list._ // for Semigroupal
+import cats.instances.list.* // for Semigroupal
 ```
 
 ```scala mdoc
@@ -81,7 +81,7 @@ we find that `product` implements
 the same fail-fast behaviour as `flatMap`:
 
 ```scala mdoc:silent
-import cats.instances.either._ // for Semigroupal
+import cats.instances.either.* // for Semigroupal
 
 type ErrorOr[A] = Either[Vector[String], A]
 ```
@@ -105,8 +105,8 @@ If we have a monad we can implement `product` as follows.
 
 ```scala mdoc:silent
 import cats.Monad
-import cats.syntax.functor._ // for map
-import cats.syntax.flatMap._ // for flatmap
+import cats.syntax.functor.* // for map
+import cats.syntax.flatMap.* // for flatmap
 
 def product[F[_]: Monad, A, B](fa: F[A], fb: F[B]): F[(A,B)] =
   fa.flatMap(a => 
@@ -178,8 +178,8 @@ the definition of `product` in terms of
 import cats.Monad
 ```
 ```scala mdoc:silent
-import cats.syntax.functor._ // for map
-import cats.syntax.flatMap._ // for flatMap
+import cats.syntax.functor.* // for map
+import cats.syntax.flatMap.* // for flatMap
 
 def product[F[_]: Monad, A, B](x: F[A], y: F[B]): F[(A, B)] =
   x.flatMap(a => y.map(b => (a, b)))
@@ -189,8 +189,8 @@ This code is equivalent to a for comprehension:
 
 ```scala mdoc:invisible:reset-object
 import cats.Monad
-import cats.syntax.flatMap._ // for flatMap
-import cats.syntax.functor._ // for map
+import cats.syntax.flatMap.* // for flatMap
+import cats.syntax.functor.* // for map
 ```
 ```scala mdoc:silent
 def product[F[_]: Monad, A, B](x: F[A], y: F[B]): F[(A, B)] =
@@ -204,7 +204,7 @@ The semantics of `flatMap` are what give rise
 to the behaviour for `List` and `Either`:
 
 ```scala mdoc:silent
-import cats.instances.list._ // for Semigroupal
+import cats.instances.list.* // for Semigroupal
 ```
 
 ```scala mdoc

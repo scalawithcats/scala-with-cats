@@ -16,8 +16,8 @@ As an example, suppose we have a list of server hostnames
 and a method to poll a host for its uptime:
 
 ```scala mdoc:silent
-import scala.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent.*
+import scala.concurrent.duration.*
 import scala.concurrent.ExecutionContext.Implicits.global
 
 val hostnames = List(
@@ -62,8 +62,8 @@ We can improve on things greatly using `Future.traverse`,
 which is tailor-made for this pattern:
 
 ```scala mdoc:invisible:reset-object
-import scala.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent.*
+import scala.concurrent.duration.*
 import scala.concurrent.ExecutionContext.Implicits.global
 
 val hostnames = List(
@@ -157,8 +157,8 @@ is equivalent to `Applicative.pure`:
 
 ```scala mdoc:silent
 import cats.Applicative
-import cats.instances.future._   // for Applicative
-import cats.syntax.applicative._ // for pure
+import cats.instances.future.*   // for Applicative
+import cats.syntax.applicative.* // for pure
 
 List.empty[Int].pure[Future]
 ```
@@ -181,7 +181,7 @@ def oldCombine(
 is now equivalent to `Semigroupal.combine`:
 
 ```scala mdoc:silent
-import cats.syntax.apply._ // for mapN
+import cats.syntax.apply.* // for mapN
 
 // Combining accumulator and hostname using an Applicative:
 def newCombine(accum: Future[List[Int]],
@@ -223,7 +223,7 @@ as shown in the following exercises.
 What is the result of the following?
 
 ```scala mdoc:silent
-import cats.instances.vector._ // for Applicative
+import cats.instances.vector.* // for Applicative
 
 listSequence(List(Vector(1, 2), Vector(3, 4)))
 ```
@@ -263,7 +263,7 @@ listSequence(List(Vector(1, 2), Vector(3, 4), Vector(5, 6)))
 Here's an example that uses `Options`:
 
 ```scala mdoc:silent
-import cats.instances.option._ // for Applicative
+import cats.instances.option.* // for Applicative
 
 def process(inputs: List[Int]) =
   listTraverse(inputs)(n => if(n % 2 == 0) Some(n) else None)
@@ -297,8 +297,8 @@ Finally, here is an example that uses `Validated`:
 
 ```scala mdoc:invisible:reset
 import cats.Applicative
-import cats.syntax.applicative._ // for pure
-import cats.syntax.apply._ // for mapN
+import cats.syntax.applicative.* // for pure
+import cats.syntax.apply.* // for mapN
 def listTraverse[F[_]: Applicative, A, B]
       (list: List[A])(func: A => F[B]): F[List[B]] =
   list.foldLeft(List.empty[B].pure[F]) { (accum, item) =>
@@ -307,7 +307,7 @@ def listTraverse[F[_]: Applicative, A, B]
 ```
 ```scala mdoc:silent
 import cats.data.Validated
-import cats.instances.list._ // for Monoid
+import cats.instances.list.* // for Monoid
 
 type ErrorsOr[A] = Validated[List[String], A]
 

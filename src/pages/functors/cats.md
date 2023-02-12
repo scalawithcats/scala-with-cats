@@ -14,8 +14,8 @@ the [`cats.instances`][cats.instances] package:
 
 ```scala mdoc:silent:reset-object
 import cats.Functor
-import cats.instances.list._   // for Functor
-import cats.instances.option._ // for Functor
+import cats.instances.list.*   // for Functor
+import cats.instances.option.* // for Functor
 ```
 
 ```scala mdoc
@@ -60,8 +60,8 @@ Scala's `Function1` type doesn't have a `map` method
 so there are no naming conflicts:
 
 ```scala mdoc:silent
-import cats.instances.function._ // for Functor
-import cats.syntax.functor._     // for map
+import cats.instances.function.* // for Functor
+import cats.syntax.functor.*     // for map
 ```
 
 ```scala mdoc:silent
@@ -86,8 +86,8 @@ def doMath[F[_]](start: F[Int])
     (using functor: Functor[F]): F[Int] =
   start.map(n => n + 1 * 2)
 
-import cats.instances.option._ // for Functor
-import cats.instances.list._   // for Functor
+import cats.instances.option.* // for Functor
+import cats.instances.list.*   // for Functor
 ```
 
 ```scala mdoc

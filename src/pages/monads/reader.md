@@ -184,7 +184,7 @@ def checkPassword(
   Reader(db => db.passwords.get(username).contains(password))
 ```
 ```scala mdoc:silent
-import cats.syntax.applicative._ // for pure
+import cats.syntax.applicative.* // for pure
 
 def checkLogin(
       userId: Int,
