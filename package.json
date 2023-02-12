@@ -10,12 +10,12 @@
   "devDependencies": {
     "bootstrap": "^3.4.1",
     "coffeeify": "1.0.0",
+    "coffeescript": "^2.5.1",
     "jquery": "3.5.0",
-    "uglifyify": "2.6.0",
     "lessc": "^1.0.2",
-    "underscore": "1.7.0",
     "pandoc-filter": "0.1.6",
-    "coffeescript": "^2.5.1"
+    "uglifyify": "2.6.0",
+    "underscore": "1.7.0"
   },
   "author": "Noel Welsh and Dave Gurnell"
 }
