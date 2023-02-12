@@ -100,10 +100,9 @@ This definition translates nicely into Scala code.
 Here is a simplified version of the definition from Cats:
 
 ```scala mdoc:silent
-trait Monoid[A] {
+trait Monoid[A]:
   def combine(x: A, y: A): A
   def empty: A
-}
 ```
 
 In addition to providing the `combine` and `empty` operations,
@@ -161,13 +160,11 @@ A more accurate (though still simplified)
 definition of Cats' [`Monoid`][cats.Monoid] is:
 
 ```scala mdoc:silent:reset-object
-trait Semigroup[A] {
+trait Semigroup[A]:
   def combine(x: A, y: A): A
-}
 
-trait Monoid[A] extends Semigroup[A] {
+trait Monoid[A] extends Semigroup[A]:
   def empty: A
-}
 ```
 
 We'll see this kind of inheritance often when discussing type classes.
@@ -185,18 +182,15 @@ and convince yourself that the monoid laws hold.
 Use the following definitions as a starting point:
 
 ```scala mdoc:reset:silent
-trait Semigroup[A] {
+trait Semigroup[A]:
   def combine(x: A, y: A): A
-}
 
-trait Monoid[A] extends Semigroup[A] {
+trait Monoid[A] extends Semigroup[A]:
   def empty: A
-}
 
-object Monoid {
+object Monoid:
   def apply[A](using monoid: Monoid[A]) =
     monoid
-}
 ```
 
 <div class="solution">
