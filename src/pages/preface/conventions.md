@@ -25,9 +25,8 @@ Source code blocks are written as follows.
 Syntax is highlighted appropriately where applicable:
 
 ```scala mdoc:silent
-object MyApp extends App {
+object MyApp extends App:
   println("Hello world!") // Print a fine message to the user!
-}
 ```
 
 Most code passes through [mdoc][link-mdoc] to ensure it compiles.
