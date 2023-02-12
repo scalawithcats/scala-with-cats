@@ -38,9 +38,8 @@ However, we can define `contramap` for the `Printable` type class
 we discussed in Chapter [@sec:type-classes]:
 
 ```scala mdoc:silent
-trait Printable[A] {
+trait Printable[A]:
   def format(value: A): String
-}
 ```
 
 A `Printable[A]` represents a transformation from `A` to `String`.
@@ -48,12 +47,11 @@ Its `contramap` method accepts a function `func` of type `B => A`
 and creates a new `Printable[B]`:
 
 ```scala mdoc:silent:reset-object
-trait Printable[A] {
+trait Printable[A]:
   def format(value: A): String
 
   def contramap[B](func: B => A): Printable[B] =
     ???
-}
 
 def format[A](value: A)(using p: Printable[A]): String =
   p.format(value)
@@ -66,15 +64,13 @@ Start with the following code template
 and replace the `???` with a working method body:
 
 ```scala
-trait Printable[A] {
+trait Printable[A]:
   def format(value: A): String
 
   def contramap[B](func: B => A): Printable[B] =
-    new Printable[B] {
+    new Printable[B]:
       def format(value: B): String =
         ???
-    }
-}
 ```
 
 If you get stuck, think about the types.
@@ -92,16 +88,14 @@ we use a `self` alias to distinguish
 the outer and inner `Printables`:
 
 ```scala mdoc:silent:reset-object
-trait Printable[A] { self =>
+trait Printable[A]:
+  self =>
+    def format(value: A): String
 
-  def format(value: A): String
-
-  def contramap[B](func: B => A): Printable[B] =
-    new Printable[B] {
-      def format(value: B): String =
-        self.format(func(value))
-    }
-}
+    def contramap[B](func: B => A): Printable[B] =
+      new Printable[B]:
+        def format(value: B): String =
+          self.format(func(value))
 
 def format[A](value: A)(using p: Printable[A]): String =
   p.format(value)
@@ -167,44 +161,33 @@ we base it on the `Printable` for the type inside the `Box`.
 We can either write out the complete definition by hand:
 
 ```scala mdoc:invisible:reset-object
-trait Printable[A] {
+trait Printable[A]:
   self =>
+    def format(value: A): String
 
-  def format(value: A): String
+    def contramap[B](func: B => A): Printable[B] =
+      (value: B) => self.format(func(value))
 
-  def contramap[B](func: B => A): Printable[B] =
-    new Printable[B] {
-      def format(value: B): String =
-        self.format(func(value))
-    }
-}
 final case class Box[A](value: A)
 ```
 ```scala mdoc:silent
-implicit def boxPrintable[A](
-    implicit p: Printable[A]
-): Printable[Box[A]] =
-  new Printable[Box[A]] {
-    def format(box: Box[A]): String =
-      p.format(box.value)
-  }
+given boxPrintable[A](using p: Printable[A]): Printable[Box[A]] with
+  def format(box: Box[A]): String =
+    p.format(box.value)
 ```
 
 or use `contramap` to base the new instance
 on the implicit parameter:
 
 ```scala mdoc:invisible:reset-object
-trait Printable[A] {
+trait Printable[A]:
   self =>
+    def format(value: A): String
 
-  def format(value: A): String
-
-  def contramap[B](func: B => A): Printable[B] =
-    new Printable[B] {
-      def format(value: B): String =
-        self.format(func(value))
-    }
-}
+    def contramap[B](func: B => A): Printable[B] =
+      new Printable[B]:
+        def format(value: B): String =
+          self.format(func(value))
 
 def format[A](value: A)(using p: Printable[A]): String =
   p.format(value)
@@ -250,29 +233,25 @@ We can build our own `Codec` by enhancing `Printable`
 to support encoding and decoding to/from a `String`:
 
 ```scala mdoc:silent
-trait Codec[A] {
+trait Codec[A]:
   def encode(value: A): String
   def decode(value: String): A
   def imap[B](dec: A => B, enc: B => A): Codec[B] = ???
-}
 ```
 
 ```scala mdoc:invisible:reset-object
-trait Codec[A] {
+trait Codec[A]:
   self =>
+    def encode(value: A): String
+    def decode(value: String): A
 
-  def encode(value: A): String
-  def decode(value: String): A
+    def imap[B](dec: A => B, enc: B => A): Codec[B] =
+      new Codec[B]:
+        def encode(value: B): String =
+          self.encode(enc(value))
 
-  def imap[B](dec: A => B, enc: B => A): Codec[B] =
-    new Codec[B] {
-      def encode(value: B): String =
-        self.encode(enc(value))
-
-      def decode(value: String): B =
-        dec(self.decode(value))
-    }
-}
+        def decode(value: String): B =
+          dec(self.decode(value))
 ```
 
 ```scala mdoc:silent
@@ -335,20 +314,18 @@ Implement the `imap` method for `Codec` above.
 Here's a working implementation:
 
 ```scala mdoc:silent:reset-object
-trait Codec[A] { self =>
-  def encode(value: A): String
-  def decode(value: String): A
+trait Codec[A]:
+  self =>
+    def encode(value: A): String
+    def decode(value: String): A
 
-  def imap[B](dec: A => B, enc: B => A): Codec[B] = {
-    new Codec[B] {
-      def encode(value: B): String =
-        self.encode(enc(value))
+    def imap[B](dec: A => B, enc: B => A): Codec[B] =
+      new Codec[B]:
+        def encode(value: B): String =
+          self.encode(enc(value))
 
-      def decode(value: String): B =
-        dec(self.decode(value))
-    }
-  }
-}
+        def decode(value: String): B =
+          dec(self.decode(value))
 ```
 
 ```scala mdoc:invisible

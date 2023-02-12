@@ -138,19 +138,19 @@ val future1 = {
   // the next random number in the sequence:
   val x = Future(r.nextInt())
 
-  for {
+  for
     a <- x
     b <- x
-  } yield (a, b)
+  yield (a, b)
 }
 
 val future2 = {
   val r = new Random(0L)
 
-  for {
+  for
     a <- Future(r.nextInt())
     b <- Future(r.nextInt())
-  } yield (a, b)
+  yield (a, b)
 }
 ```
 
@@ -300,9 +300,8 @@ package cats
 
 ```scala mdoc:silent
 
-trait Functor[F[_]] {
+trait Functor[F[_]]:
   def map[A, B](fa: F[A])(f: A => B): F[B]
-}
 ```
 
 If you haven't seen syntax like `F[_]` before,

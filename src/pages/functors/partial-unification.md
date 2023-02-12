@@ -19,17 +19,15 @@ val func3 = func1.map(func2)
 (the function argument and the result type):
 
 ```scala
-trait Function1[-A, +B] {
+trait Function1[-A, +B]:
   def apply(arg: A): B
-}
 ```
 
 However, `Functor` accepts a type constructor with one parameter:
 
 ```scala
-trait Functor[F[_]] {
+trait Functor[F[_]]:
   def map[A, B](fa: F[A])(func: A => B): F[B]
-}
 ```
 
 The compiler has to fix one of the two parameters
