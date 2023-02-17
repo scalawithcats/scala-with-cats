@@ -57,7 +57,7 @@ object Printable {
     p.format(input)
 
   def print[A](input: A)(implicit p: Printable[A]): Unit =
-    println(format(input))
+    println(p.format(input))
 }
 ```
 </div>
