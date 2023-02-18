@@ -1,4 +1,4 @@
-## Working with Given Instances and Using Clauses
+## Working with Contextual Abstractions
 
 ```scala mdoc:invisible
 // Forward definitions
@@ -36,7 +36,7 @@ Working with type classes in Scala means
 working with given instances and using clauses.
 There are a few rules we need to know to do this effectively.
 
-### Implicit Scope
+### Contextual Abstractions Scope
 
 As we saw above, the compiler searches
 for candidate type class instances by type.
@@ -49,10 +49,10 @@ Json.toJson("A string!")
 ```
 
 The places where the compiler searches for candidate instances
-is known as the *implicit scope*.
-The implicit scope applies at the call site;
+is known as the *contextual abstractions scope*.
+The contextual abstractions scope applies at the call site;
 that is the point where we call a method with a using clause.
-The implicit scope which roughly consists of:
+The contextual abstractions scope which roughly consists of:
 
 - local or inherited definitions;
 
@@ -101,14 +101,14 @@ For our purposes, we can package type class instances in roughly five ways:
 
 With option 1 and 2 we bring given instances into scope by `importing` them explicitly.
 With option 3 we bring them into scope with inheritance.
-With options 4 and 5 instances are *always* in implicit scope,
+With options 4 and 5 instances are *always* in the contextual abstractions scope,
 regardless of where we try to use them.
 
 It is conventional to put type class instances in a companion object (option 4 and 5 above)
 if there is only one sensible implementation,
 or at least one implementation that is widely accepted as the default.
 This makes type class instances easier to use
-as no import is required to bring them into the implicit scope.
+as no import is required to bring them into the contextual abstractions scope.
 
 [^implicit-search]: If you're interested in the finer rules of implicit resolution in Scala,
 start by taking a look at [this Stack Overflow post on implicit scope][link-so-implicit-scope]
@@ -203,7 +203,9 @@ a combination that creates a type class instance
 of the correct overall type.
 
 <div class="callout callout-warning">
-*Implicit Conversions*
+*Contextual Implicit Conversions*
+
+// TODO: https://docs.scala-lang.org/scala3/reference/contextual/conversions.html
 
 When you create a type class instance constructor
 using an `given`,
@@ -230,11 +232,6 @@ trait JsonWriter[A]:
 ```scala modc:warn
 given optionWriter[A](writer: JsonWriter[A]): JsonWriter[Option[A]] =
   ???
-// warning: implicit conversion method foo should be enabled
-// by making the implicit value scala.language.implicitConversions visible.
-// This can be achieved by adding the import clause 'import scala.language.implicitConversions'
-// or by setting the compiler option -language:implicitConversions.
-// See the Scaladoc for value scala.language.implicitConversions for a discussion
-// why the feature should be explicitly enabled.
+// TODO: Fix formatting
 ```
 </div>
