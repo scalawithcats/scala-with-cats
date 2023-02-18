@@ -141,26 +141,25 @@ for the using clauses and fills them in for us:
 Person("Dave", "dave@example.com").toJson(using personWriter)
 ```
 
-**The *implicitly* Method**
+**The *summon* Method**
 
 The Scala standard library provides
-a generic type class interface called `implicitly`.
+a generic type class interface called `summon`.
 Its definition is very simple:
 
 ```scala
-def implicitly[A](using value: A): A =
-  value
+def summon[A](using value: A): A = value
 ```
 
-We can use `implicitly` to summon any value from implicit scope.
-We provide the type we want and `implicitly` does the rest:
+We can use `summon` to summon any value from the contextual abstractions scope.
+We provide the type we want and `summon` does the rest:
 
 ```scala mdoc
-implicitly[JsonWriter[String]]
+summon[JsonWriter[String]]
 ```
 
 Most type classes in Cats provide other means to summon instances.
-However, `implicitly` is a good fallback for debugging purposes.
-We can insert a call to `implicitly` within the general flow of our code
+However, `summon` is a good fallback for debugging purposes.
+We can insert a call to `summon` within the general flow of our code
 to ensure the compiler can find an instance of a type class
 and ensure that there are no ambiguous given instances errors.
