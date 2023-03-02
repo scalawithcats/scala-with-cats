@@ -148,6 +148,8 @@ which accepts a function of type `(A, A) => Boolean` and returns an `Eq[A]`:
 ```scala mdoc:silent
 import java.util.Date
 import cats.instances.long._ // for Eq
+import cats.Eq
+import cats.syntax.eq._
 ```
 
 ```scala mdoc:silent
@@ -159,6 +161,7 @@ implicit val dateEq: Eq[Date] =
 
 ```scala mdoc:silent
 val x = new Date() // now
+Thread.sleep(1000)
 val y = new Date() // a bit later than now
 ```
 
