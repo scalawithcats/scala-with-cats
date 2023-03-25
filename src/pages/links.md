@@ -106,7 +106,7 @@
 [link-don-stewart-so]: http://stackoverflow.com/questions/27852709/enterprise-patterns-with-functional-programming/27860072#27860072
 [link-don-stewart]: https://donsbot.wordpress.com
 [link-essential-scala]: http://underscore.io/books/essential-scala
-[link-github]: https://github.com/underscoreio/advanced-scala
+[link-github]: https://github.com/scalawithcats/scala-with-cats
 [link-hadoop]: http://hadoop.apache.org
 [link-hyperloglog]: http://en.wikipedia.org/wiki/HyperLogLog
 [link-implicit-priority]: http://eed3si9n.com/revisiting-implicits-without-import-tax
