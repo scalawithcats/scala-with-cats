@@ -101,7 +101,7 @@ monadError.handleErrorWith(failure) {
 ```
 
 If we know we can handle all possible errors 
-we can use `handleWith`.
+we can use `handleError`.
 
 ```scala mdoc
 monadError.handleError(failure) {
