@@ -132,7 +132,7 @@ As the type parameter `A` is generic a `FunctionK` cannot inspect
 any values contained with the type constructor `M`.
 The conversion must be performed
 purely in terms of the structure of the type constructors `M` and `F`.
-We can in `optionToList` above
+We can see in `optionToList` above
 this is indeed the case.
 
 So in summary,
