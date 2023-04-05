@@ -21,7 +21,6 @@ This gives us more freedom when defining
 instances of `Semigroupal` than we get when defining `Monads`.
 
 [^semigroupal-name]: It
-
 is also the winner of Underscore's 2017 award for
 the most difficult functional programming term
 to work into a coherent English sentence.
