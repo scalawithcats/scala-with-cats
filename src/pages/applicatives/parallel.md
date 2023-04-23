@@ -17,7 +17,7 @@ stops at the first error.
 
 ```scala mdoc:silent
 import cats.Semigroupal
-import cats.instances.either._ // for Semigroupal
+import cats.instances.either.* // for Semigroupal
 
 type ErrorOr[A] = Either[Vector[String], A]
 val error1: ErrorOr[Int] = Left(Vector("Error 1"))
@@ -33,8 +33,8 @@ using `tupled`
 as a short-cut.
 
 ```scala mdoc:silent
-import cats.syntax.apply._ // for tupled
-import cats.instances.vector._ // for Semigroup on Vector
+import cats.syntax.apply.* // for tupled
+import cats.instances.vector.* // for Semigroup on Vector
 ```
 ```scala mdoc
 (error1, error2).tupled
@@ -45,7 +45,7 @@ we simply replace `tupled` with its "parallel" version
 called `parTupled`.
 
 ```scala mdoc:silent
-import cats.syntax.parallel._ // for parTupled
+import cats.syntax.parallel.* // for parTupled
 ```
 ```scala mdoc
 (error1, error2).parTupled
@@ -57,7 +57,7 @@ Any type that has a `Semigroup` instance will work.
 For example, here we use `List` instead.
 
 ```scala mdoc:silent
-import cats.instances.list._ // for Semigroup on List
+import cats.instances.list.* // for Semigroup on List
 
 type ErrorOrList[A] = Either[List[String], A]
 val errStr1: ErrorOrList[Int] = Left(List("error 1"))
@@ -88,13 +88,12 @@ Let's dig into how `Parallel` works.
 The definition below is the core of `Parallel`.
 
 ```scala
-trait Parallel[M[_]] {
+trait Parallel[M[_]]:
   type F[_]
   
   def applicative: Applicative[F]
   def monad: Monad[M]
   def parallel: ~>[M, F]
-}
 ```
 
 This tells us if there is a `Parallel` instance for some type constructor `M` then:
@@ -115,13 +114,11 @@ by defining a `FunctionK` that converts an `Option` to a `List`.
 ```scala mdoc:silent
 import cats.arrow.FunctionK
 
-object optionToList extends FunctionK[Option, List] {
+object optionToList extends FunctionK[Option, List]:
   def apply[A](fa: Option[A]): List[A] =
-    fa match {
+    fa match
       case None    => List.empty[A]
       case Some(a) => List(a)
-    }
-}
 ```
 ```scala mdoc
 optionToList(Some(1))
@@ -160,7 +157,7 @@ insted of creating the cartesian product.
 We can see by writing a little bit of code.
 
 ```scala mdoc:silent
-import cats.instances.list._
+import cats.instances.list.*
 ```
 ```scala mdoc
 (List(1, 2), List(3, 4)).tupled

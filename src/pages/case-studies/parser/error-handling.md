@@ -12,17 +12,16 @@ We will fix this by thinking and coding systematically. The first thing is ask o
 
 Once we make this realisation the code follows straight-away. For this type of data we use the *sealed trait* pattern.
 
-### The Sealed Trait Pattern
+### Enum Pattern
 
 If some data `A` can be a `B` or a `C` and nothing else, we should write
 
 ~~~ scala
-sealed trait A
-final case class B() extends A
-final case class C() extends A
+enum A {
+  case B()
+  case C()
+}
 ~~~
-
-Sealed traits. Extension points (final / non-final)
 
 ### Exercise
 
@@ -35,9 +34,10 @@ Implement a better `ParserResult`. This exercise is deliberately vague about wha
 Here's my implementation. It follows the existing pattern for success, maintaining the `result` and `remainder` fields, but returns an error message on failure. I also renamed `ParseResult` to just `Parse`. With the subtypes it's fairly obvious that a `Parse` is the result of a `Parser`.
 
 ~~~ scala
-sealed trait Parse
-final case class Failure(message: String) extends Parse
-final case class Success(result: String, remainder: String) extends Parse
+enum Parse {
+  case class Failure(message: String)
+  case class Success(result: String, remainder: String)
+}
 ~~~
 </div>
 
@@ -129,11 +129,8 @@ Implement a parser for digits using the regular expression `"[0-9]"` to match a 
 ~~~ scala
 package underscore.parser
 
-object NumericParser {
-
+object NumericParser:
   val digits = Parser.regex("[0-9]").+
-
-}
 ~~~
 </div>
 
@@ -184,14 +181,11 @@ If `add` was a normal method we'ld only print `"Hi"` once.
 If we make the parameter of `~` and `|` call-by-name, our `Parser` will work. Try it and you'll see another issue---the way the grammar is written we'll stop after parsing the first number. (Try `expression.parse("123+456")` and you'll see.) The solution is to rewrite the grammar so we look for compound expressions first and we proceed left-to-right.
 
 ~~~ scala
-object NumericParser {
-
+object NumericParser:
   val digits = Parser.regex("[0-9]").+
 
   def expression: Parser =
     (digits ~ Parser.string("+") ~ expression) | (digits ~ Parser.string("-") ~ expression) | digits
-
-}
 ~~~
 
 The code is tagged with `parser-numeric-expression`.

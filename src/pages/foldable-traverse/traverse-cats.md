@@ -10,14 +10,13 @@ Here's the abbreviated definition:
 ```scala
 package cats
 
-trait Traverse[F[_]] {
+trait Traverse[F[_]]:
   def traverse[G[_]: Applicative, A, B]
       (inputs: F[A])(func: A => G[B]): G[F[B]]
 
   def sequence[G[_]: Applicative, B]
       (inputs: F[G[B]]): G[F[B]] =
     traverse(inputs)(identity)
-}
 ```
 
 Cats provides instances of `Traverse`
@@ -28,8 +27,8 @@ and use the `traverse` and `sequence` methods
 as described in the previous section:
 
 ```scala mdoc:invisible
-import scala.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent.*
+import scala.concurrent.duration.*
 import scala.concurrent.ExecutionContext.Implicits.global
 
 val hostnames = List(
@@ -44,8 +43,8 @@ def getUptime(hostname: String): Future[Int] =
 
 ```scala mdoc:silent
 import cats.Traverse
-import cats.instances.future._ // for Applicative
-import cats.instances.list._   // for Traverse
+import cats.instances.future.* // for Applicative
+import cats.instances.list.*   // for Traverse
 
 val totalUptime: Future[List[Int]] =
   Traverse[List].traverse(hostnames)(getUptime)
@@ -70,12 +69,12 @@ There are also syntax versions of the methods,
 imported via [`cats.syntax.traverse`][cats.syntax.traverse]:
 
 ```scala mdoc:silent
-import cats.syntax.traverse._ // for sequence and traverse
+import cats.syntax.traverse.* // for sequence and traverse
 ```
 
 ```scala mdoc
-Await.result(hostnames.traverse(getUptime), 1.second)
-Await.result(numbers.sequence, 1.second)
+Await.result(hostnames.traverse[Future, Int](getUptime), 1.second)
+Await.result(numbers.sequence[Future, Int], 1.second)
 ```
 
 As you can see, this is much more compact and readable

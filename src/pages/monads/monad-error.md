@@ -28,7 +28,7 @@ of the definition of `MonadError`:
 ```scala
 package cats
 
-trait MonadError[F[_], E] extends Monad[F] {
+trait MonadError[F[_], E] extends Monad[F]:
   // Lift an error into the `F` context:
   def raiseError[A](e: E): F[A]
 
@@ -41,7 +41,6 @@ trait MonadError[F[_], E] extends Monad[F] {
   // Test an instance of `F`,
   // failing if the predicate is not satisfied:
   def ensure[A](fa: F[A])(e: E)(f: A => Boolean): F[A]
-}
 ```
 
 `MonadError` is defined in terms of two type parameters:
@@ -55,7 +54,7 @@ instantiate the type class for `Either`:
 
 ```scala mdoc:silent
 import cats.MonadError
-import cats.instances.either._ // for MonadError
+import cats.instances.either.* // for MonadError
 
 type ErrorOr[A] = Either[String, A]
 
@@ -126,14 +125,14 @@ and `ensure` via [`cats.syntax.monadError`][cats.syntax.monadError]:
 
 ```scala mdoc:invisible:reset
 import cats.MonadError
-import cats.instances.either._ // for MonadError
+import cats.instances.either.* // for MonadError
 
 type ErrorOr[A] = Either[String, A]
 ```
 ```scala mdoc:silent
-import cats.syntax.applicative._      // for pure
-import cats.syntax.applicativeError._ // for raiseError etc
-import cats.syntax.monadError._       // for ensure
+import cats.syntax.applicative.*      // for pure
+import cats.syntax.applicativeError.* // for raiseError etc
+import cats.syntax.monadError.*       // for ensure
 ```
 
 ```scala mdoc
@@ -165,7 +164,7 @@ always represent errors as `Throwables`:
 
 ```scala mdoc:silent
 import scala.util.Try
-import cats.instances.try_._ // for MonadError
+import cats.instances.try_.* // for MonadError
 
 val exn: Throwable =
   new RuntimeException("It's all gone wrong")
@@ -180,14 +179,14 @@ exn.raiseError[Try, Int]
 Implement a method `validateAdult` with the following signature
 
 ```scala
-def validateAdult[F[_]](age: Int)(implicit me: MonadError[F, Throwable]): F[Int] =
+def validateAdult[F[_]](age: Int)(using me: MonadError[F, Throwable]): F[Int] =
   ???
 ```
 
 When passed an `age` greater than or equal to 18 it should return that value as a success. Otherwise it should return a error represented as an `IllegalArgumentException`.
 
 ```scala mdoc:invisible
-def validateAdult[F[_]](age: Int)(implicit me: MonadError[F, Throwable]): F[Int] =
+def validateAdult[F[_]](age: Int)(using me: MonadError[F, Throwable]): F[Int] =
   if(age >= 18) age.pure[F]
   else new IllegalArgumentException("Age must be greater than or equal to 18").raiseError[F, Int]
 ```
@@ -206,10 +205,10 @@ We can solve this using `pure` and `raiseError`. Note the use of type parameters
 
 ```scala mdoc:invisible:reset-object
 import cats.MonadError
-import cats.implicits._
+import cats.implicits.*
 ```
 ```scala mdoc:silent
-def validateAdult[F[_]](age: Int)(implicit me: MonadError[F, Throwable]): F[Int] =
+def validateAdult[F[_]](age: Int)(using me: MonadError[F, Throwable]): F[Int] =
   if(age >= 18) age.pure[F]
   else new IllegalArgumentException("Age must be greater than or equal to 18").raiseError[F, Int]
 ```

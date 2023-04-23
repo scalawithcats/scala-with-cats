@@ -121,7 +121,7 @@ that only represent transformations on the state:
 
 ```scala mdoc:silent:reset-object
 import cats.data.State
-import State._
+import State.*
 ```
 
 ```scala mdoc
@@ -234,13 +234,12 @@ type CalcState[A] = State[List[Int], A]
 ```
 ```scala
 def evalOne(sym: String): CalcState[Int] =
-  sym match {
+  sym match
     case "+" => operator(_ + _)
     case "-" => operator(_ - _)
     case "*" => operator(_ * _)
     case "/" => operator(_ / _)
     case num => operand(num.toInt)
-  }
 ```
 
 Let's look at `operand` first.
@@ -275,13 +274,12 @@ def operator(func: (Int, Int) => Int): CalcState[Int] =
 
 ```scala mdoc:invisible
 def evalOne(sym: String): CalcState[Int] =
-  sym match {
+  sym match
     case "+" => operator(_ + _)
     case "-" => operator(_ - _)
     case "*" => operator(_ * _)
     case "/" => operator(_ / _)
     case num => operand(num.toInt)
-  }
 ```
 </div>
 
@@ -342,16 +340,15 @@ def operator(func: (Int, Int) => Int): CalcState[Int] =
       sys.error("Fail!")
   }
 def evalOne(sym: String): CalcState[Int] =
-  sym match {
+  sym match
     case "+" => operator(_ + _)
     case "-" => operator(_ - _)
     case "*" => operator(_ * _)
     case "/" => operator(_ / _)
     case num => operand(num.toInt)
-  }
 ```
 ```scala mdoc:silent
-import cats.syntax.applicative._ // for pure
+import cats.syntax.applicative.* // for pure
 
 def evalAll(input: List[String]): CalcState[Int] =
   input.foldLeft(0.pure[CalcState]) { (a, b) =>

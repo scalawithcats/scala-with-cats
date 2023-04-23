@@ -49,7 +49,7 @@ In Scala 2.12+ we can either omit this import
 or leave it in place without breaking anything:
 
 ```scala mdoc:silent
-import cats.syntax.either._ // for map and flatMap
+import cats.syntax.either.* // for map and flatMap
 
 for {
   a <- either1
@@ -64,7 +64,7 @@ we can also import the `asLeft` and `asRight` extension methods
 from [`cats.syntax.either`][cats.syntax.either]:
 
 ```scala mdoc:silent
-import cats.syntax.either._ // for asRight
+import cats.syntax.either.* // for asRight
 ```
 
 ```scala mdoc
@@ -154,7 +154,7 @@ can use `orElse` and `getOrElse` to extract
 values from the right side or return a default:
 
 ```scala mdoc:silent
-import cats.syntax.either._
+import cats.syntax.either.*
 ```
 
 ```scala mdoc
@@ -235,17 +235,15 @@ Another approach is to define an algebraic data type
 to represent errors that may occur in our program:
 
 ```scala mdoc:silent
-object wrapper {
-  sealed trait LoginError extends Product with Serializable
+object wrapper:
+  enum LoginError:
+    case UserNotFound(username: String)
+    case PasswordIncorrect(username: String)
+    case UnexpectedError
 
-  final case class UserNotFound(username: String)
-    extends LoginError
+import wrapper.*
 
-  final case class PasswordIncorrect(username: String)
-    extends LoginError
-
-  case object UnexpectedError extends LoginError
-}; import wrapper._
+import LoginError.*
 ```
 
 ```scala mdoc:silent
@@ -263,7 +261,7 @@ on any pattern matching we do:
 ```scala mdoc:silent
 // Choose error-handling behaviour based on type:
 def handleError(error: LoginError): Unit =
-  error match {
+  error match
     case UserNotFound(u) =>
       println(s"User not found: $u")
 
@@ -272,7 +270,6 @@ def handleError(error: LoginError): Unit =
 
     case UnexpectedError =>
       println(s"Unexpected error")
-  }
 ```
 
 ```scala mdoc

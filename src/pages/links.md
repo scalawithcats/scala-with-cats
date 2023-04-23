@@ -113,6 +113,7 @@
 [link-iterator-pattern]: https://www.cs.ox.ac.uk/jeremy.gibbons/publications/iterator.pdf
 [link-json]: http://json.org/
 [link-kind-projector]: https://github.com/typelevel/kind-projector
+[link-kind-projector-migration]: https://docs.scala-lang.org/scala3/guides/migration/plugin-kind-projector.html
 [link-map-reduce-monoid]: http://arxiv.org/abs/1304.7544
 [link-map-reduce]: http://research.google.com/archive/map-reduce.html
 [link-mdoc]: https://github.com/scalameta/mdoc
@@ -122,7 +123,6 @@
 [link-phil-freeman-tailrecm]: http://functorial.com/stack-safety-for-free/index.pdf
 [link-play-json-format]: https://www.playframework.com/documentation/2.6.x/ScalaJsonCombinators#Format
 [link-sbt]: http://www.scala-sbt.org/
-[link-sbt-catalysts]: https://github.com/typelevel/sbt-catalysts
 [link-scalactic]: http://scalactic.org
 [link-scalaz-contrib]: https://github.com/typelevel/scalaz-contrib
 [link-scodec-codec]: http://scodec.org/guide/Core+Algebra.html#Codec

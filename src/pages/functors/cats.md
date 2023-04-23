@@ -14,8 +14,8 @@ the [`cats.instances`][cats.instances] package:
 
 ```scala mdoc:silent:reset-object
 import cats.Functor
-import cats.instances.list._   // for Functor
-import cats.instances.option._ // for Functor
+import cats.instances.list.*   // for Functor
+import cats.instances.option.* // for Functor
 ```
 
 ```scala mdoc
@@ -60,8 +60,8 @@ Scala's `Function1` type doesn't have a `map` method
 so there are no naming conflicts:
 
 ```scala mdoc:silent
-import cats.instances.function._ // for Functor
-import cats.syntax.functor._     // for map
+import cats.instances.function.* // for Functor
+import cats.syntax.functor.*     // for map
 ```
 
 ```scala mdoc:silent
@@ -83,11 +83,11 @@ no matter what functor context it's in:
 
 ```scala mdoc:silent
 def doMath[F[_]](start: F[Int])
-    (implicit functor: Functor[F]): F[Int] =
+    (using functor: Functor[F]): F[Int] =
   start.map(n => n + 1 * 2)
 
-import cats.instances.option._ // for Functor
-import cats.instances.list._   // for Functor
+import cats.instances.option.* // for Functor
+import cats.instances.list.*   // for Functor
 ```
 
 ```scala mdoc
@@ -101,11 +101,10 @@ the `map` method in `cats.syntax.functor`.
 Here's a simplified version of the code:
 
 ```scala
-implicit class FunctorOps[F[_], A](src: F[A]) {
+extension [F[_], A](src: F[A])
   def map[B](func: A => B)
-      (implicit functor: Functor[F]): F[B] =
+      (using functor: Functor[F]): F[B] =
     functor.map(src)(func)
-}
 ```
 
 The compiler can use this extension method
@@ -115,16 +114,8 @@ to insert a `map` method wherever no built-in `map` is available:
 foo.map(value => value + 1)
 ```
 
-Assuming `foo` has no built-in `map` method,
-the compiler detects the potential error and
-wraps the expression in a `FunctorOps` to fix the code:
-
-```scala
-new FunctorOps(foo).map(value => value + 1)
-```
-
-The `map` method of `FunctorOps` requires
-an implicit `Functor` as a parameter.
+The `map` extension method requires
+a using clause of `Functor` as a parameter.
 This means this code will only compile
 if we have a `Functor` for `F` in scope.
 If we don't, we get a compiler error:
@@ -153,35 +144,30 @@ even though such a thing already exists in [`cats.instances`][cats.instances].
 The implementation is trivial---we simply call `Option's` `map` method:
 
 ```scala mdoc:silent
-implicit val optionFunctor: Functor[Option] =
-  new Functor[Option] {
-    def map[A, B](value: Option[A])(func: A => B): Option[B] =
-      value.map(func)
-  }
+given optionFunctor: Functor[Option] with
+  def map[A, B](value: Option[A])(func: A => B): Option[B] =
+    value.map(func)
 ```
 
 Sometimes we need to inject dependencies into our instances.
 For example, if we had to define a custom `Functor` for `Future`
 (another hypothetical example---Cats provides one in `cats.instances.future`)
-we would need to account for the implicit `ExecutionContext` parameter on `future.map`.
+we would need to account for the using clause `ExecutionContext` parameter on `future.map`.
 We can't add extra parameters to `functor.map`
 so we have to account for the dependency when we create the instance:
 
 ```scala mdoc:silent
 import scala.concurrent.{Future, ExecutionContext}
 
-implicit def futureFunctor
-    (implicit ec: ExecutionContext): Functor[Future] =
-  new Functor[Future] {
-    def map[A, B](value: Future[A])(func: A => B): Future[B] =
-      value.map(func)
-  }
+given futureFunctor(using ec: ExecutionContext): Functor[Future] with
+  def map[A, B](value: Future[A])(func: A => B): Future[B] =
+    value.map(func)
 ```
 
 Whenever we summon a `Functor` for `Future`,
 either directly using `Functor.apply`
 or indirectly via the `map` extension method,
-the compiler will locate `futureFunctor` by implicit resolution
+the compiler will locate `futureFunctor` by given instance resolution
 and recursively search for an `ExecutionContext` at the call site.
 This is what the expansion might look like:
 
@@ -190,10 +176,10 @@ This is what the expansion might look like:
 Functor[Future]
 
 // The compiler expands to this first:
-Functor[Future](futureFunctor)
+Functor[Future](using futureFunctor)
 
 // And then to this:
-Functor[Future](futureFunctor(executionContext))
+Functor[Future](using futureFunctor(using executionContext))
 ```
 
 ### Exercise: Branching out with Functors
@@ -202,12 +188,9 @@ Write a `Functor` for the following binary tree data type.
 Verify that the code works as expected on instances of `Branch` and `Leaf`:
 
 ```scala mdoc:silent
-sealed trait Tree[+A]
-
-final case class Branch[A](left: Tree[A], right: Tree[A])
-  extends Tree[A]
-
-final case class Leaf[A](value: A) extends Tree[A]
+enum Tree[+A]:
+  case Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+  case Leaf[A](value: A) extends Tree[A]
 ```
 
 <div class="solution">
@@ -218,17 +201,15 @@ with the same pattern of `Branch` and `Leaf` nodes:
 
 ```scala mdoc:silent
 import cats.Functor
+import Tree.{Branch, Leaf}
 
-implicit val treeFunctor: Functor[Tree] =
-  new Functor[Tree] {
-    def map[A, B](tree: Tree[A])(func: A => B): Tree[B] =
-      tree match {
-        case Branch(left, right) =>
-          Branch(map(left)(func), map(right)(func))
-        case Leaf(value) =>
-          Leaf(func(value))
-      }
-  }
+given treeFunctor: Functor[Tree] with
+  def map[A, B](tree: Tree[A])(func: A => B): Tree[B] =
+    tree match
+      case Branch(left, right) =>
+        Branch(map(left)(func), map(right)(func))
+      case Leaf(value) =>
+        Leaf(func(value))
 ```
 
 Let's use our `Functor` to transform some `Trees`:
@@ -243,13 +224,12 @@ The compiler can find a `Functor` instance for `Tree` but not for `Branch` or `L
 Let's add some smart constructors to compensate:
 
 ```scala mdoc:silent
-object Tree {
+object Tree:
   def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
     Branch(left, right)
 
   def leaf[A](value: A): Tree[A] =
     Leaf(value)
-}
 ```
 
 Now we can use our `Functor` properly:

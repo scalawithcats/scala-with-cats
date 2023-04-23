@@ -34,7 +34,7 @@ We can create a `Writer` from values of each type as follows:
 
 ```scala mdoc:silent
 import cats.data.Writer
-import cats.instances.vector._ // for Monoid
+import cats.instances.vector.* // for Monoid
 ```
 
 ```scala mdoc
@@ -67,8 +67,8 @@ To do this we must have a `Monoid[W]` in scope
 so Cats knows how to produce an empty log:
 
 ```scala mdoc:silent
-import cats.instances.vector._   // for Monoid
-import cats.syntax.applicative._ // for pure
+import cats.instances.vector.*   // for Monoid
+import cats.syntax.applicative.* // for pure
 
 type Logged[A] = Writer[Vector[String], A]
 ```
@@ -82,7 +82,7 @@ we can create a `Writer[Unit]` using the `tell` syntax
 from [`cats.syntax.writer`][cats.syntax.writer]:
 
 ```scala mdoc:silent
-import cats.syntax.writer._ // for tell
+import cats.syntax.writer.* // for tell
 ```
 
 ```scala mdoc
@@ -95,7 +95,7 @@ or we can use the `writer` syntax
 from [`cats.syntax.writer`][cats.syntax.writer]:
 
 ```scala mdoc:silent
-import cats.syntax.writer._ // for writer
+import cats.syntax.writer.* // for writer
 ```
 
 ```scala mdoc
@@ -214,9 +214,9 @@ This makes it difficult to see
 which messages come from which computation:
 
 ```scala
-import scala.concurrent._
-import scala.concurrent.ExecutionContext.Implicits._
-import scala.concurrent.duration._
+import scala.concurrent.*
+import scala.concurrent.ExecutionContext.Implicits.*
+import scala.concurrent.duration.*
 
 Await.result(Future.sequence(Vector(
   Future(factorial(5)),
@@ -255,8 +255,8 @@ so we can use it with `pure` syntax:
 
 ```scala mdoc:silent:reset-object
 import cats.data.Writer
-import cats.instances.vector._
-import cats.syntax.applicative._ // for pure
+import cats.instances.vector.*
+import cats.syntax.applicative.* // for pure
 
 type Logged[A] = Writer[Vector[String], A]
 ```
@@ -268,7 +268,7 @@ type Logged[A] = Writer[Vector[String], A]
 We'll import the `tell` syntax as well:
 
 ```scala mdoc:silent
-import cats.syntax.writer._ // for tell
+import cats.syntax.writer.* // for tell
 ```
 
 ```scala mdoc
@@ -280,7 +280,7 @@ the `Semigroup` instance for `Vector`.
 We need this to `map` and `flatMap` over `Logged`:
 
 ```scala mdoc:silent
-import cats.instances.vector._ // for Monoid
+import cats.instances.vector.* // for Monoid
 ```
 
 ```scala mdoc

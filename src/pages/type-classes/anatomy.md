@@ -5,14 +5,14 @@ the *type class* itself,
 *instances* for particular types,
 and the methods that *use* type classes.
 
-Type classes in Scala are implemented using *implicit values* and *parameters*,
-and optionally using *implicit classes*.
+Type classes in Scala are implemented using *traits*, *given instances* and *using clauses*,
+and optionally using *extension methods*.
 Scala language constructs correspond to the components of type classes as follows:
 
 - traits: type classes;
-- implicit values: type class instances;
-- implicit parameters: type class use; and
-- implicit classes: optional utilities that make type classes easier to use.
+- given instances: type class instances;
+- using clauses: type class use; and
+- extension methods: optional utilities that make type classes easier to use.
 
 Let's see how this works in detail.
 
@@ -27,16 +27,15 @@ as follows:
 
 ```scala mdoc:silent:reset-object
 // Define a very simple JSON AST
-sealed trait Json
-final case class JsObject(get: Map[String, Json]) extends Json
-final case class JsString(get: String) extends Json
-final case class JsNumber(get: Double) extends Json
-final case object JsNull extends Json
+enum Json:
+  case JsObject(get: Map[String, Json])
+  case JsString(get: String)
+  case JsNumber(get: Double)
+  case JsNull
 
 // The "serialize to JSON" behaviour is encoded in this trait
-trait JsonWriter[A] {
+trait JsonWriter[A]:
   def write(value: A): Json
-}
 ```
 
 `JsonWriter` is our type class in this example,
@@ -53,40 +52,33 @@ and types from our domain model.
 
 In Scala we define instances by creating
 concrete implementations of the type class
-and tagging them with the `implicit` keyword:
+and tagging them with the `given` keyword:
 
 ```scala mdoc:silent
 final case class Person(name: String, email: String)
 
-object JsonWriterInstances {
-  implicit val stringWriter: JsonWriter[String] =
-    new JsonWriter[String] {
-      def write(value: String): Json =
-        JsString(value)
-    }
+given stringWriter: JsonWriter[String] with
+  def write(value: String): Json =
+    Json.JsString(value)
 
-  implicit val personWriter: JsonWriter[Person] =
-    new JsonWriter[Person] {
-      def write(value: Person): Json =
-        JsObject(Map(
-          "name" -> JsString(value.name),
-          "email" -> JsString(value.email)
-        ))
-    }
+given personWriter: JsonWriter[Person] with
+  def write(value: Person): Json =
+    Json.JsObject(Map(
+      "name" -> Json.JsString(value.name),
+      "email" -> Json.JsString(value.email)
+    ))
 
-  // etc...
-}
+// etc...
 ```
 
-These are known as implicit values.
-
+These are known as given instances.
 
 ### Type Class Use
 
 A type class *use* is any functionality 
 that requires a type class instance to work.
 In Scala this means any method 
-that accepts instances of the type class as implicit parameters.
+that accepts instances of the type class as using clauses.
 
 Cats provides utilities that make type classes easier to use,
 and you will sometimes seem these patterns in other libraries.
@@ -98,30 +90,25 @@ The simplest way of creating an interface that uses a type class
 is to place methods in a singleton object:
 
 ```scala mdoc:silent
-object Json {
-  def toJson[A](value: A)(implicit w: JsonWriter[A]): Json =
+object Json:
+  def toJson[A](value: A)(using w: JsonWriter[A]): Json =
     w.write(value)
-}
 ```
 
 To use this object, we import any type class instances we care about
 and call the relevant method:
-
-```scala mdoc:silent
-import JsonWriterInstances._
-```
 
 ```scala mdoc
 Json.toJson(Person("Dave", "dave@example.com"))
 ```
 
 The compiler spots that we've called the `toJson` method
-without providing the implicit parameters.
+without providing the using clauses.
 It tries to fix this by searching for type class instances
 of the relevant types and inserting them at the call site:
 
 ```scala mdoc:silent
-Json.toJson(Person("Dave", "dave@example.com"))(personWriter)
+Json.toJson(Person("Dave", "dave@example.com"))(using personWriter)
 ```
 
 **Interface Syntax**
@@ -135,55 +122,44 @@ referred to as "type enrichment" or "pimping".
 These are older terms that we don't use anymore.
 
 ```scala mdoc:silent
-object JsonSyntax {
-  implicit class JsonWriterOps[A](value: A) {
-    def toJson(implicit w: JsonWriter[A]): Json =
-      w.write(value)
-  }
-}
+extension [A](value: A)
+  def toJson(using w: JsonWriter[A]): Json =
+    w.write(value)
 ```
 
 We use interface syntax by importing it
 alongside the instances for the types we need:
-
-```scala mdoc:silent
-import JsonWriterInstances._
-import JsonSyntax._
-```
 
 ```scala mdoc
 Person("Dave", "dave@example.com").toJson
 ```
 
 Again, the compiler searches for candidates
-for the implicit parameters and fills them in for us:
+for the using clauses and fills them in for us:
 
 ```scala mdoc:silent
-Person("Dave", "dave@example.com").toJson(personWriter)
+Person("Dave", "dave@example.com").toJson(using personWriter)
 ```
 
-**The *implicitly* Method**
+**The *summon* Method**
 
 The Scala standard library provides
-a generic type class interface called `implicitly`.
+a generic type class interface called `summon`.
 Its definition is very simple:
 
 ```scala
-def implicitly[A](implicit value: A): A =
-  value
+def summon[A](using value: A): A = value
 ```
 
-We can use `implicitly` to summon any value from implicit scope.
-We provide the type we want and `implicitly` does the rest:
+We can use `summon` to summon any value from the contextual abstractions scope.
+We provide the type we want and `summon` does the rest:
 
 ```scala mdoc
-import JsonWriterInstances._
-
-implicitly[JsonWriter[String]]
+summon[JsonWriter[String]]
 ```
 
 Most type classes in Cats provide other means to summon instances.
-However, `implicitly` is a good fallback for debugging purposes.
-We can insert a call to `implicitly` within the general flow of our code
+However, `summon` is a good fallback for debugging purposes.
+We can insert a call to `summon` within the general flow of our code
 to ensure the compiler can find an instance of a type class
-and ensure that there are no ambiguous implicit errors.
+and ensure that there are no ambiguous given instances errors.

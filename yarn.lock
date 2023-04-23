@@ -96,8 +96,8 @@ coffeeify@1.0.0:
     through "^2.3.6"
 
 coffeescript@^2.5.1:
-  version "2.5.1"
-  resolved "https://registry.npmjs.org/coffeescript/-/coffeescript-2.5.1.tgz"
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/coffeescript/-/coffeescript-2.7.0.tgz"
 
 combined-stream@^1.0.6, combined-stream@~1.0.6:
   version "1.0.8"

@@ -34,10 +34,9 @@ between instances of any given type:
 ```scala
 package cats
 
-trait Eq[A] {
+trait Eq[A]:
   def eqv(a: A, b: A): Boolean
   // other concrete methods based on eqv...
-}
 ```
 
 The interface syntax, defined in [`cats.syntax.eq`][cats.syntax.eq],
@@ -58,7 +57,7 @@ import cats.Eq
 Now let's grab an instance for `Int`:
 
 ```scala mdoc:silent
-import cats.instances.int._ // for Eq
+import cats.instances.int.* // for Eq
 
 val eqInt = Eq[Int]
 ```
@@ -82,7 +81,7 @@ We can also import the interface syntax in [`cats.syntax.eq`][cats.syntax.eq]
 to use the `===` and `=!=` methods:
 
 ```scala mdoc:silent
-import cats.syntax.eq._ // for === and =!=
+import cats.syntax.eq.* // for === and =!=
 ```
 
 ```scala mdoc
@@ -103,8 +102,8 @@ To compare values of type `Option[Int]`
 we need to import instances of `Eq` for `Option` as well as `Int`:
 
 ```scala mdoc:silent
-import cats.instances.int._    // for Eq
-import cats.instances.option._ // for Eq
+import cats.instances.int.*    // for Eq
+import cats.instances.option.* // for Eq
 ```
 
 Now we can try some comparisons:
@@ -132,7 +131,7 @@ Option(1) === Option.empty[Int]
 or using special syntax from [`cats.syntax.option`][cats.syntax.option]:
 
 ```scala mdoc:silent
-import cats.syntax.option._ // for some and none
+import cats.syntax.option.* // for some and none
 ```
 
 ```scala mdoc
@@ -147,11 +146,11 @@ which accepts a function of type `(A, A) => Boolean` and returns an `Eq[A]`:
 
 ```scala mdoc:silent
 import java.util.Date
-import cats.instances.long._ // for Eq
+import cats.instances.long.* // for Eq
 ```
 
 ```scala mdoc:silent
-implicit val dateEq: Eq[Date] =
+given dateEq: Eq[Date] =
   Eq.instance[Date] { (date1, date2) =>
     date1.getTime === date2.getTime
   }
@@ -193,7 +192,7 @@ We'll bring instances of `Eq` into scope as we need them below:
 
 ```scala mdoc:silent:reset-object
 import cats.Eq
-import cats.syntax.eq._ // for ===
+import cats.syntax.eq.* // for ===
 ```
 
 Our `Cat` class is the same as ever:
@@ -206,10 +205,10 @@ We bring the `Eq` instances for `Int` and `String`
 into scope for the implementation of `Eq[Cat]`:
 
 ```scala mdoc:silent
-import cats.instances.int._    // for Eq
-import cats.instances.string._ // for Eq
+import cats.instances.int.*    // for Eq
+import cats.instances.string.* // for Eq
 
-implicit val catEqual: Eq[Cat] =
+given catEqual: Eq[Cat] =
   Eq.instance[Cat] { (cat1, cat2) =>
     (cat1.name  === cat2.name ) &&
     (cat1.age   === cat2.age  ) &&
@@ -228,7 +227,7 @@ cat1 =!= cat2
 ```
 
 ```scala mdoc:silent
-import cats.instances.option._ // for Eq
+import cats.instances.option.* // for Eq
 ```
 
 ```scala mdoc

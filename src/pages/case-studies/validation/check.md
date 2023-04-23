@@ -28,11 +28,10 @@ We will probably want to add custom methods to `Check`
 so let's declare it as a `trait` instead of a type alias:
 
 ```scala mdoc:silent:reset-object
-trait Check[E, A] {
+trait Check[E, A]:
   def apply(value: A): Either[E, A]
 
   // other methods...
-}
 ```
 
 As we said in [Essential Scala][link-essential-scala],
@@ -56,12 +55,11 @@ Think about implementing this method now.
 You should hit some problems. Read on when you do!
 
 ```scala mdoc:silent:reset-object
-trait Check[E, A] {
+trait Check[E, A]:
   def and(that: Check[E, A]): Check[E, A] =
     ???
 
   // other methods...
-}
 ```
 
 The problem is: what do you do when *both* checks fail?
@@ -83,8 +81,8 @@ the `combine` method or its associated `|+|` syntax:
 
 ```scala mdoc:silent
 import cats.Semigroup
-import cats.instances.list._   // for Semigroup
-import cats.syntax.semigroup._ // for |+|
+import cats.instances.list.*   // for Semigroup
+import cats.syntax.semigroup.* // for |+|
 
 val semigroup = Semigroup[List[String]]
 ```
@@ -131,17 +129,17 @@ we'll call this implementation `CheckF`:
 
 ```scala mdoc:silent
 import cats.Semigroup
-import cats.syntax.either._    // for asLeft and asRight
-import cats.syntax.semigroup._ // for |+|
+import cats.syntax.either.*    // for asLeft and asRight
+import cats.syntax.semigroup.* // for |+|
 ```
 
 ```scala mdoc:silent
-final case class CheckF[E, A](func: A => Either[E, A]) {
+final case class CheckF[E, A](func: A => Either[E, A]):
   def apply(a: A): Either[E, A] =
     func(a)
 
   def and(that: CheckF[E, A])
-        (implicit s: Semigroup[E]): CheckF[E, A] =
+        (using s: Semigroup[E]): CheckF[E, A] =
     CheckF { a =>
       (this(a), that(a)) match {
         case (Left(e1),  Left(e2))  => (e1 |+| e2).asLeft
@@ -150,14 +148,13 @@ final case class CheckF[E, A](func: A => Either[E, A]) {
         case (Right(_), Right(_)) => a.asRight
       }
     }
-}
 ```
 
 Let's test the behaviour we get.
 First we'll setup some checks:
 
 ```scala mdoc:silent
-import cats.instances.list._ // for Semigroup
+import cats.instances.list.* // for Semigroup
 
 val a: CheckF[List[String], Int] =
   CheckF { v =>
@@ -193,14 +190,14 @@ What happens if we create instances of `CheckF[Nothing, A]`?
 
 ```scala mdoc:invisible:reset-object
 import cats.Semigroup
-import cats.syntax.semigroup._
-import cats.syntax.either._
-final case class CheckF[E, A](func: A => Either[E, A]) {
+import cats.syntax.semigroup.*
+import cats.syntax.either.*
+final case class CheckF[E, A](func: A => Either[E, A]):
   def apply(a: A): Either[E, A] =
     func(a)
 
   def and(that: CheckF[E, A])
-        (implicit s: Semigroup[E]): CheckF[E, A] =
+        (using s: Semigroup[E]): CheckF[E, A] =
     CheckF { a =>
       (this(a), that(a)) match {
         case (Left(e1),  Left(e2))  => (e1 |+| e2).asLeft
@@ -209,7 +206,6 @@ final case class CheckF[E, A](func: A => Either[E, A]) {
         case (Right(_), Right(_)) => a.asRight
       }
     }
-}
 ```
 ```scala mdoc:silent
 val a: CheckF[Nothing, Int] =
@@ -235,19 +231,19 @@ We'll call this implementation `Check`:
 
 ```scala mdoc:invisible:reset-object
 import cats.Semigroup
-import cats.syntax.either._    // for asLeft and asRight
-import cats.syntax.semigroup._ // for |+|
+import cats.syntax.either.*    // for asLeft and asRight
+import cats.syntax.semigroup.* // for |+|
 ```
 
 ```scala mdoc:silent
-sealed trait Check[E, A] {
-  import Check._
+sealed trait Check[E, A]:
+  import Check.*
 
   def and(that: Check[E, A]): Check[E, A] =
     And(this, that)
 
-  def apply(a: A)(implicit s: Semigroup[E]): Either[E, A] =
-    this match {
+  def apply(a: A)(using s: Semigroup[E]): Either[E, A] =
+    this match
       case Pure(func) =>
         func(a)
 
@@ -258,9 +254,9 @@ sealed trait Check[E, A] {
           case (Right(_),  Left(e))   => e.asLeft
           case (Right(_), Right(_)) => a.asRight
         }
-    }
-}
-object Check {
+    end match
+
+object Check:
   final case class And[E, A](
     left: Check[E, A],
     right: Check[E, A]) extends Check[E, A]
@@ -270,7 +266,6 @@ object Check {
     
   def pure[E, A](f: A => Either[E, A]): Check[E, A] =
     Pure(f)
-}
 ```
 
 Let's see an example:
@@ -332,33 +327,31 @@ Here's the complete implementation:
 ```scala mdoc:silent:reset-object
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.apply._     // for mapN
+import cats.syntax.apply.*     // for mapN
 ```
 
 ```scala mdoc:silent
-sealed trait Check[E, A] {
-  import Check._
+sealed trait Check[E, A]:
+  import Check.*
 
   def and(that: Check[E, A]): Check[E, A] =
     And(this, that)
 
-  def apply(a: A)(implicit s: Semigroup[E]): Validated[E, A] =
-    this match {
+  def apply(a: A)(using s: Semigroup[E]): Validated[E, A] =
+    this match
       case Pure(func) =>
         func(a)
 
       case And(left, right) =>
         (left(a), right(a)).mapN((_, _) => a)
-    }
-}
-object Check {
+
+object Check:
   final case class And[E, A](
     left: Check[E, A],
     right: Check[E, A]) extends Check[E, A]
   
   final case class Pure[E, A](
     func: A => Validated[E, A]) extends Check[E, A]
-}
 ```
 </div>
 
@@ -375,14 +368,14 @@ is implicit in the semantics of "or".
 ```scala mdoc:silent:reset-object
 import cats.Semigroup
 import cats.data.Validated
-import cats.syntax.semigroup._ // for |+|
-import cats.syntax.apply._     // for mapN
-import cats.data.Validated._   // for Valid and Invalid
+import cats.syntax.semigroup.* // for |+|
+import cats.syntax.apply.*     // for mapN
+import cats.data.Validated.*   // for Valid and Invalid
 ```
 
 ```scala mdoc:silent
-sealed trait Check[E, A] {
-  import Check._
+sealed trait Check[E, A]:
+  import Check.*
 
   def and(that: Check[E, A]): Check[E, A] =
     And(this, that)
@@ -390,8 +383,8 @@ sealed trait Check[E, A] {
   def or(that: Check[E, A]): Check[E, A] =
     Or(this, that)
 
-  def apply(a: A)(implicit s: Semigroup[E]): Validated[E, A] =
-    this match {
+  def apply(a: A)(using s: Semigroup[E]): Validated[E, A] =
+    this match
       case Pure(func) =>
         func(a)
 
@@ -407,9 +400,9 @@ sealed trait Check[E, A] {
               case Invalid(e2) => Invalid(e1 |+| e2)
             }
         }
-    }
-}
-object Check {
+    end match
+
+object Check:
   final case class And[E, A](
     left: Check[E, A],
     right: Check[E, A]) extends Check[E, A]
@@ -420,7 +413,6 @@ object Check {
   
   final case class Pure[E, A](
     func: A => Validated[E, A]) extends Check[E, A]
-}
 ```
 </div>
 

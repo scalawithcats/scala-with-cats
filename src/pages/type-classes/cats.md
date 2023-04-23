@@ -17,9 +17,8 @@ Here's an abbreviated definition:
 ```scala
 package cats
 
-trait Show[A] {
+trait Show[A]:
   def show(value: A): String
-}
 ```
 
 ### Importing Type Classes
@@ -35,12 +34,8 @@ The companion object of every Cats type class has an `apply` method
 that locates an instance for any type we specify:
 
 ```scala mdoc
-val showInt = Show.apply[Int]
+given showInt: Show[Int] = Show.apply[Int]
 ```
-
-Oops---that didn't work!
-The `apply` method uses *implicits* to look up individual instances,
-so we'll have to bring some instances into scope.
 
 ### Importing Default Instances {#sec:importing-default-instances}
 
@@ -63,8 +58,8 @@ Let's import the instances of `Show` for `Int` and `String`:
 
 ```scala mdoc:reset:silent
 import cats.Show
-import cats.instances.int._    // for Show
-import cats.instances.string._ // for Show
+import cats.instances.int.*    // for Show
+import cats.instances.string.* // for Show
 
 val showInt:    Show[Int]    = Show.apply[Int]
 val showString: Show[String] = Show.apply[String]
@@ -89,7 +84,7 @@ This adds an extension method called `show`
 to any type for which we have an instance of `Show` in scope:
 
 ```scala mdoc:silent
-import cats.syntax.show._ // for show
+import cats.syntax.show.* // for show
 ```
 
 ```scala mdoc
@@ -108,9 +103,9 @@ exactly which instances and syntax you need in each example.
 However, this doesn't add value in production code.
 It is simpler and faster to use the following imports:
 
-- `import cats._` imports all of Cats' type classes in one go;
+- `import cats.*` imports all of Cats' type classes in one go;
 
-- `import cats.implicits._` imports
+- `import cats.implicits.*` imports
   all of the standard type class instances
   *and* all of the syntax in one go.
 
@@ -123,11 +118,9 @@ simply by implementing the trait for a given type:
 ```scala mdoc:silent
 import java.util.Date
 
-implicit val dateShow: Show[Date] =
-  new Show[Date] {
-    def show(date: Date): String =
-      s"${date.getTime}ms since the epoch."
-  }
+given dateShow: Show[Date] with
+  def show(date: Date): String =
+    s"${date.getTime}ms since the epoch."
 ```
 ```scala mdoc
 new Date().show
@@ -139,7 +132,7 @@ There are two construction methods on the companion object of `Show`
 that we can use to define instances for our own types:
 
 ```scala
-object Show {
+object Show:
   // Convert a function to a `Show` instance:
   def show[A](f: A => String): Show[A] =
     ???
@@ -147,7 +140,6 @@ object Show {
   // Create a `Show` instance from a `toString` method:
   def fromToString[A]: Show[A] =
     ???
-}
 ```
 
 These allow us to quickly construct instances
@@ -158,7 +150,7 @@ import cats.Show
 import java.util.Date
 ```
 ```scala mdoc:silent
-implicit val dateShow: Show[Date] =
+given dateShow: Show[Date] =
   Show.show(date => s"${date.getTime}ms since the epoch.")
 ```
 
@@ -181,9 +173,9 @@ and the interface syntax:
 
 ```scala mdoc:reset-object:silent
 import cats.Show
-import cats.instances.int._    // for Show
-import cats.instances.string._ // for Show
-import cats.syntax.show._      // for show
+import cats.instances.int.*    // for Show
+import cats.instances.string.* // for Show
+import cats.syntax.show.*      // for show
 ```
 
 Our definition of `Cat` remains the same:
@@ -196,7 +188,7 @@ In the companion object we replace our `Printable` with an instance of `Show`
 using one of the definition helpers discussed above:
 
 ```scala mdoc:silent
-implicit val catShow: Show[Cat] = Show.show[Cat] { cat =>
+given catShow: Show[Cat] = Show.show[Cat] { cat =>
   val name  = cat.name.show
   val age   = cat.age.show
   val color = cat.color.show

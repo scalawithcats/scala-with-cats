@@ -5,8 +5,8 @@ we saw a functor instance for `Function1`.
 
 ```scala mdoc:silent
 import cats.Functor
-import cats.instances.function._ // for Functor
-import cats.syntax.functor._     // for map
+import cats.instances.function.* // for Functor
+import cats.syntax.functor.*     // for map
 
 val func1 = (x: Int)    => x.toDouble
 val func2 = (y: Double) => y * 2
@@ -19,17 +19,15 @@ val func3 = func1.map(func2)
 (the function argument and the result type):
 
 ```scala
-trait Function1[-A, +B] {
+trait Function1[-A, +B]:
   def apply(arg: A): B
-}
 ```
 
 However, `Functor` accepts a type constructor with one parameter:
 
 ```scala
-trait Functor[F[_]] {
+trait Functor[F[_]]:
   def map[A, B](fa: F[A])(func: A => B): F[B]
-}
 ```
 
 The compiler has to fix one of the two parameters
@@ -123,7 +121,7 @@ If we try this for real, however,
 our code won't compile:
 
 ```scala mdoc:silent
-import cats.syntax.contravariant._ // for contramap
+import cats.syntax.contravariant.* // for contramap
 ```
 
 ```scala mdoc:fail

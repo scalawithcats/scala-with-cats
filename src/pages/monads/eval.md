@@ -310,12 +310,11 @@ Make it so using `Eval`:
 
 ```scala mdoc:silent
 def foldRight[A, B](as: List[A], acc: B)(fn: (A, B) => B): B =
-  as match {
+  as match
     case head :: tail =>
       fn(head, foldRight(tail, acc)(fn))
     case Nil =>
       acc
-  }
 ```
 
 <div class="solution">
@@ -330,12 +329,11 @@ import cats.Eval
 
 def foldRightEval[A, B](as: List[A], acc: Eval[B])
     (fn: (A, Eval[B]) => Eval[B]): Eval[B] =
-  as match {
+  as match
     case head :: tail =>
       Eval.defer(fn(head, foldRightEval(tail, acc)(fn)))
     case Nil =>
       acc
-  }
 ```
 
 We can redefine `foldRight` simply in terms of `foldRightEval`

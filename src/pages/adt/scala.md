@@ -20,10 +20,8 @@ Not everyone makes their case classes `final`, but they should. A non-`final` ca
 A logical or (a sum type) is represented by an `enum`. For the sum type `A` is a `B` **or** `C` the Scala 3 representation is
 
 ```scala
-enum A {
-  case B
-  case C
-}
+enum A:
+  case B, C
 ```
 
 There are a few wrinkles to be aware of. 
@@ -37,13 +35,12 @@ If we have a sum of products, such as:
 the representation is
 
 ```scala
-enum A {
+enum A:
   case B(d: D, e: E)
   case C(f: F, g: G)
-}
 ```
 
-In other words you can't write `final case class` inside an `enum`. You also can't nest `enum` inside `enum`. Nexted logical ors  can be rewritten into a single logical or containing only logical ands (known as disjunctive normal form) so this is not a limitation in practice. However the Scala 2 representation is still available in Scala 3 should you want more expressivity.
+In other words you can't write `final case class` inside an `enum`. You also can't nest `enum` inside `enum`. Nested logical ors can be rewritten into a single logical or containing only logical ands (known as disjunctive normal form) so this is not a limitation in practice. However the Scala 2 representation is still available in Scala 3 should you want more expressivity.
 
 
 ### Algebraic Data Types in Scala 2

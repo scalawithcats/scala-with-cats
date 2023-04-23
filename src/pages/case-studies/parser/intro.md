@@ -32,18 +32,14 @@ package underscore.parser
 
 import scala.annotation.tailrec
 
-case class ParseResult(result: String, remainder: String) {
-
+case class ParseResult(result: String, remainder: String):
   def failed: Boolean =
     result.isEmpty
 
   def success: Boolean =
     !failed
 
-}
-
-case class Parser(parse: String => ParseResult) {
-
+case class Parser(parse: String => ParseResult):
   def ~(next: Parser): Parser = ???
 
   def `*`: Parser =
@@ -51,20 +47,16 @@ case class Parser(parse: String => ParseResult) {
       @tailrec
       def loop(result: String, remainder: String): ParseResult = {
         val result1 = this.parse(remainder)
-        result1 match {
+        result1 match
           case _ if result1.failed =>
             ParseResult(result, remainder)
           case ParseResult(result1, remainder1) =>
             loop(result + result1, remainder1)
-        }
       }
       loop("", input)
     }
 
-}
-
-object Parser {
-
+object Parser:
   def string(literal: String): Parser =
     Parser { input =>
       if(input.startsWith(literal))
@@ -72,8 +64,6 @@ object Parser {
       else
         ParseResult("", input)
     }
-
-}
 ~~~
 
 What does the code do? The first thing is to look at what a `Parser` is. It is basically a wrapper around a function `String => ParseResult`. The `String` parameter is the input to parse, and returned is the result of parsing that `String`.
@@ -115,18 +105,18 @@ Checkout the `parser-initial-a` tag to see the complete code with `~` implemente
 def ~(next: Parser): Parser =
   Parser { input =>
     val result = this.parse(input)
-    result match {
+    result match
       case _ if result.failed =>
         result
       case ParseResult(parsed, remainder) =>
         val result1 = next.parse(remainder)
-        result1 match {
+        result1 match
           case _ if result1.failed =>
             ParseResult("", input)
           case ParseResult(parsed1, remainder1) =>
             ParseResult(parsed + parsed1, remainder1)
-        }
-    }
+        end match
+    end match
   }
 ~~~
 </div>

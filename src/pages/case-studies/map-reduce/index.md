@@ -161,14 +161,14 @@ Here's some sample output for reference:
 
 ```scala mdoc:invisible:reset
 import cats.Monoid
-import cats.syntax.semigroup._ // for |+|
+import cats.syntax.semigroup.* // for |+|
 
 def foldMap[A, B: Monoid](values: Vector[A])(func: A => B): B =
   values.foldLeft(Monoid[B].empty)(_ |+| func(_))
 ```
 
 ```scala mdoc:silent
-import cats.instances.int._ // for Monoid
+import cats.instances.int.* // for Monoid
 ```
 
 ```scala mdoc
@@ -176,7 +176,7 @@ foldMap(Vector(1, 2, 3))(identity)
 ```
 
 ```scala mdoc:silent
-import cats.instances.string._ // for Monoid
+import cats.instances.string.* // for Monoid
 ```
 
 ```scala mdoc
@@ -194,7 +194,7 @@ as described in Section [@sec:monoid-syntax]:
 
 ```scala mdoc:reset:silent
 import cats.Monoid
-import cats.syntax.semigroup._ // for |+|
+import cats.syntax.semigroup.* // for |+|
 
 def foldMap[A, B : Monoid](as: Vector[A])(func: A => B): B =
   as.map(func).foldLeft(Monoid[B].empty)(_ |+| _)
@@ -204,7 +204,7 @@ We can make a slight alteration to this code to do everything in one step:
 
 ```scala mdoc:reset:invisible
 import cats.Monoid
-import cats.syntax.semigroup._
+import cats.syntax.semigroup.*
 ```
 ```scala mdoc:silent
 def foldMap[A, B : Monoid](as: Vector[A])(func: A => B): B =
@@ -304,9 +304,9 @@ Future.sequence(List(Future(1), Future(2), Future(3)))
 or an instance of `Traverse`:
 
 ```scala mdoc:silent
-import cats.instances.future._ // for Applicative
-import cats.instances.list._   // for Traverse
-import cats.syntax.traverse._  // for sequence
+import cats.instances.future.* // for Applicative
+import cats.instances.list.*   // for Traverse
+import cats.syntax.traverse.*  // for sequence
 ```
 
 ```scala mdoc
@@ -318,8 +318,8 @@ Finally, we can use `Await.result`
 to block on a `Future` until a result is available:
 
 ```scala mdoc:silent
-import scala.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent.*
+import scala.concurrent.duration.*
 ```
 
 ```scala mdoc
@@ -331,8 +331,8 @@ available from `cats.instances.future`:
 
 ```scala mdoc:silent
 import cats.{Monad, Monoid}
-import cats.instances.int._    // for Monoid
-import cats.instances.future._ // for Monad and Monoid
+import cats.instances.int.*    // for Monoid
+import cats.instances.future.* // for Monad and Monoid
 
 Monad[Future].pure(42)
 
@@ -385,10 +385,10 @@ splits out each `map` and `fold`
 into a separate line of code:
 
 ```scala mdoc:invisible:reset
-import cats._
-import cats.implicits._
-import scala.concurrent._
-import scala.concurrent.duration._
+import cats.*
+import cats.implicits.*
+import scala.concurrent.*
+import scala.concurrent.duration.*
 import scala.concurrent.ExecutionContext.Implicits.global
 ```
 ```scala mdoc:silent
@@ -432,10 +432,10 @@ are actually equivalent to a single call to `foldMap`,
 shortening the entire algorithm as follows:
 
 ```scala mdoc:reset:invisible
-import cats._
-import cats.implicits._
-import scala.concurrent._
-import scala.concurrent.duration._
+import cats.*
+import cats.implicits.*
+import scala.concurrent.*
+import scala.concurrent.duration.*
 import scala.concurrent.ExecutionContext.Implicits.global
 def foldMap[A, B : Monoid](as: Vector[A])(func: A => B): B =
   as.foldLeft(Monoid[B].empty)(_ |+| func(_))
@@ -482,15 +482,15 @@ We'll restate all of the necessary imports for completeness:
 ```scala mdoc:silent:reset
 import cats.Monoid
 
-import cats.instances.int._    // for Monoid
-import cats.instances.future._ // for Applicative and Monad
-import cats.instances.vector._ // for Foldable and Traverse
+import cats.instances.int.*    // for Monoid
+import cats.instances.future.* // for Applicative and Monad
+import cats.instances.vector.* // for Foldable and Traverse
 
-import cats.syntax.foldable._  // for combineAll and foldMap
-import cats.syntax.traverse._  // for traverse
+import cats.syntax.foldable.*  // for combineAll and foldMap
+import cats.syntax.traverse.*  // for traverse
 
-import scala.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent.*
+import scala.concurrent.duration.*
 import scala.concurrent.ExecutionContext.Implicits.global
 ```
 

@@ -4,7 +4,7 @@ ThisBuild / name               := "scala-with-cats"
 ThisBuild / organization       := "com.scalawithcats"
 ThisBuild / version            := "0.0.1"
 
-ThisBuild / scalaVersion       := "2.13.8"
+ThisBuild / scalaVersion       := "3.2.2"
 
 ThisBuild / useSuperShell      := false
 Global    / logLevel           := Level.Warn
@@ -14,11 +14,14 @@ enablePlugins(MdocPlugin)
 mdocIn  := sourceDirectory.value / "pages"
 mdocOut := target.value          / "pages"
 
-val catsVersion  = "2.7.0"
+scalacOptions ++= Seq(
+  "-explain", // Better diagnostics
+  "-Ykind-projector:underscores" // In-lieu of kind-projector
+)
+
+val catsVersion  = "2.9.0"
 
 libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % catsVersion)
-
-addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
 
 mdocVariables := Map(
   "SCALA_VERSION" -> scalaVersion.value,

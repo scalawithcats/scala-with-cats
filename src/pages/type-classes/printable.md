@@ -12,8 +12,7 @@ Let's define a `Printable` type class to work around these problems:
  1. Define a type class `Printable[A]` containing a single method `format`.
     `format` should accept a value of type `A` and return a `String`.
 
- 2. Create an object `PrintableInstances`
-    containing instances of `Printable` for `String` and `Int`.
+ 2. Create instances of `Printable` for `String` and `Int`.
 
  3. Define an object `Printable` with two generic interface methods:
 
@@ -29,36 +28,29 @@ These steps define the three main components of our type class.
 First we define `Printable`---the *type class* itself:
 
 ```scala mdoc:silent:reset-object
-trait Printable[A] {
+trait Printable[A]:
   def format(value: A): String
-}
 ```
 
-Then we define some default *instances* of `Printable`
-and package them in `PrintableInstances`:
+Then we define some default *instances* of `Printable`:
 
 ```scala mdoc:silent
-object PrintableInstances {
-  implicit val stringPrintable = new Printable[String] {
-    def format(input: String) = input
-  }
+given stringPrintable: Printable[String] with
+  def format(input: String) = input
 
-  implicit val intPrintable = new Printable[Int] {
-    def format(input: Int) = input.toString
-  }
-}
+given intPrintable: Printable[Int] with
+  def format(input: Int) = input.toString
 ```
 
 Finally we define an *interface* object, `Printable`:
 
 ```scala mdoc:silent
-object Printable {
-  def format[A](input: A)(implicit p: Printable[A]): String =
+object Printable:
+  def format[A](input: A)(using p: Printable[A]): String =
     p.format(input)
 
-  def print[A](input: A)(implicit p: Printable[A]): Unit =
+  def print[A](input: A)(using p: Printable[A]): Unit =
     println(p.format(input))
-}
 ```
 </div>
 
@@ -104,16 +96,13 @@ These either go into the companion object of `Cat`
 or a separate object to act as a namespace:
 
 ```scala mdoc:silent
-import PrintableInstances._
-
-implicit val catPrintable = new Printable[Cat] {
+given catPrintable: Printable[Cat] with
   def format(cat: Cat) = {
     val name  = Printable.format(cat.name)
     val age   = Printable.format(cat.age)
     val color = Printable.format(cat.color)
     s"$name is a $age year-old $color cat."
   }
-}
 ```
 
 Finally, we use the type class by
@@ -135,44 +124,34 @@ Printable.print(cat)
 Let's make our printing library easier to use
 by defining some extension methods to provide better syntax:
 
- 1. Create an object called `PrintableSyntax`.
+ 1. Define an `extension [A](value: A)` to wrap up a value of type `A`.
 
- 2. Inside `PrintableSyntax` define an `implicit class PrintableOps[A]`
-    to wrap up a value of type `A`.
+ 2. Define the following extension methods:
 
- 3. In `PrintableOps` define the following methods:
-
-     - `format` accepts an implicit `Printable[A]`
+     - `format` using a `Printable[A]`
        and returns a `String` representation of the wrapped `A`;
 
-     - `print` accepts an implicit `Printable[A]` and returns `Unit`.
+     - `print` using a `Printable[A]` and returns `Unit`.
        It prints the wrapped `A` to the console.
 
- 4. Use the extension methods to print the example `Cat`
+  3. Use the extension methods to print the example `Cat`
     you created in the previous exercise.
 
 <div class="solution">
-First we define an `implicit class` containing our extension methods:
+First we define our extension methods:
 
 ```scala mdoc:silent
-object PrintableSyntax {
-  implicit class PrintableOps[A](value: A) {
-    def format(implicit p: Printable[A]): String =
-      p.format(value)
+extension [A](value: A)
+  def format(using p: Printable[A]): String =
+    p.format(value)
 
-    def print(implicit p: Printable[A]): Unit =
-      println(format(p))
-  }
-}
+  def print(using p: Printable[A]): Unit =
+    println(format(using p))
 ```
 
-With `PrintableOps` in scope,
+With the extensions in scope,
 we can call the imaginary `print` and `format` methods
 on any value for which Scala can locate an implicit instance of `Printable`:
-
-```scala mdoc:silent
-import PrintableSyntax._
-```
 
 ```scala mdoc
 Cat("Garfield", 41, "ginger and black").print

@@ -46,7 +46,7 @@ That is, do monads *compose*?
 We can try to write the code but we soon hit problems:
 
 ```scala mdoc:silent
-import cats.syntax.applicative._ // for pure
+import cats.syntax.applicative.* // for pure
 ```
 
 ```scala
@@ -120,8 +120,8 @@ using the `OptionT` constructor,
 or more conveniently using `pure`:
 
 ```scala mdoc:silent
-import cats.instances.list._     // for Monad
-import cats.syntax.applicative._ // for pure
+import cats.instances.list.*     // for Monad
+import cats.syntax.applicative.* // for pure
 ```
 
 ```scala mdoc
@@ -246,7 +246,7 @@ In other words, we build monad stacks from the inside out:
 
 ```scala mdoc:invisible:reset
 import cats.data.OptionT
-import cats.syntax.applicative._ // for pure
+import cats.syntax.applicative.* // for pure
 ```
 ```scala mdoc:silent
 type ListOption[A] = OptionT[List, A]
@@ -277,7 +277,7 @@ We can use `pure`, `map`, and `flatMap` as usual
 to create and transform instances:
 
 ```scala mdoc:silent
-import cats.instances.either._ // for Monad
+import cats.instances.either.* // for Monad
 ```
 
 ```scala mdoc
@@ -297,9 +297,8 @@ However, we can't define this in one line
 because `EitherT` has three type parameters:
 
 ```scala
-case class EitherT[F[_], E, A](stack: F[Either[E, A]]) {
+case class EitherT[F[_], E, A](stack: F[Either[E, A]]):
   // etc...
-}
 ```
 
 The three type parameters are as follows:
@@ -325,10 +324,10 @@ and our `map` and `flatMap` methods
 cut through three layers of abstraction:
 
 ```scala mdoc:silent
-import cats.instances.future._ // for Monad
+import cats.instances.future.* // for Monad
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 ```
 
 ```scala mdoc:silent
@@ -351,7 +350,7 @@ to make it easier to define partially applied type constructors.
 For example:
 
 ```scala mdoc
-import cats.instances.option._ // for Monad
+import cats.instances.option.* // for Monad
 
 123.pure[EitherT[Option, String, *]]
 ```
@@ -452,7 +451,7 @@ and use a fusion `Future` and `Either` everywhere in our code:
 
 ```scala mdoc:invisible:reset-object
 import cats.data.EitherT
-import cats.instances.list._
+import cats.instances.list.*
 import scala.concurrent.Future
 ```
 ```scala mdoc:silent
@@ -482,10 +481,9 @@ type Logged[A] = Writer[List[String], A]
 
 // Methods generally return untransformed stacks:
 def parseNumber(str: String): Logged[Option[Int]] =
-  util.Try(str.toInt).toOption match {
+  util.Try(str.toInt).toOption match
     case Some(num) => Writer(List(s"Read $str"), Some(num))
     case None      => Writer(List(s"Failed on $str"), None)
-  }
 
 // Consumers use monad transformers locally to simplify composition:
 def addAll(a: String, b: String, c: String): Logged[Option[Int]] = {
@@ -589,7 +587,7 @@ val powerLevels = Map(
 )
 ```
 ```scala mdoc:silent
-import cats.instances.future._ // for Monad
+import cats.instances.future.* // for Monad
 import scala.concurrent.ExecutionContext.Implicits.global
 
 type Response[A] = EitherT[Future, String, A]
@@ -621,8 +619,8 @@ We request the power level from each ally
 and use `map` and `flatMap` to combine the results:
 
 ```scala mdoc:invisible:reset-object
-import cats.implicits._
-import cats.data._
+import cats.implicits.*
+import cats.data.*
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -664,8 +662,8 @@ We use the `value` method to unpack the monad stack
 and `Await` and `fold` to unpack the `Future` and `Either`:
 
 ```scala mdoc:invisible:reset
-import cats.implicits._
-import cats.data._
+import cats.implicits.*
+import cats.data.*
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -687,7 +685,7 @@ def getPowerLevel(ally: String): Response[Int] = {
 ```scala mdoc:silent
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 def canSpecialMove(ally1: String, ally2: String): Response[Boolean] =
   for {

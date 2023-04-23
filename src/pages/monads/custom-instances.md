@@ -47,7 +47,7 @@ and many monads have some notion of stopping.
 We can write this method in terms of `flatMap`.
 
 ```scala mdoc:silent
-import cats.syntax.flatMap._ // For flatMap
+import cats.syntax.flatMap.* // For flatMap
 
 def retry[F[_]: Monad, A](start: A)(f: A => F[A]): F[A] =
   f(start).flatMap{ a =>
@@ -59,7 +59,7 @@ Unfortunately it is not stack-safe.
 It works for small input.
 
 ```scala mdoc
-import cats.instances.option._
+import cats.instances.option.*
 
 retry(100)(a => if(a == 0) None else Some(a - 1))
 ```
@@ -75,7 +75,7 @@ We can instead rewrite this method
 using `tailRecM`.
 
 ```scala mdoc:silent
-import cats.syntax.functor._ // for map
+import cats.syntax.functor.* // for map
 
 def retryTailRecM[F[_]: Monad, A](start: A)(f: A => F[A]): F[A] =
   Monad[F].tailRecM(start){ a =>
@@ -104,7 +104,7 @@ in terms of `iterateWhileM`
 and we don't have to explicitly call `tailRecM`.
 
 ```scala mdoc:silent
-import cats.syntax.monad._ // for iterateWhileM
+import cats.syntax.monad.* // for iterateWhileM
 
 def retryM[F[_]: Monad, A](start: A)(f: A => F[A]): F[A] =
   start.iterateWhileM(f)(a => true)
@@ -127,12 +127,12 @@ Let's write a `Monad` for our `Tree` data type from last chapter.
 Here's the type again:
 
 ```scala mdoc:silent
-sealed trait Tree[+A]
+enum Tree[+A] {
+  case Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+  case Leaf[A](value: A) extends Tree[A]
+}
 
-final case class Branch[A](left: Tree[A], right: Tree[A])
-  extends Tree[A]
-
-final case class Leaf[A](value: A) extends Tree[A]
+import Tree.{Branch, Leaf}
 
 def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
   Branch(left, right)
@@ -167,28 +167,26 @@ the non-tail-recursive solution falls out:
 ```scala mdoc:silent
 import cats.Monad
 
-implicit val treeMonad = new Monad[Tree] {
+given treeMonad: Monad[Tree] with
   def pure[A](value: A): Tree[A] =
     Leaf(value)
 
   def flatMap[A, B](tree: Tree[A])
       (func: A => Tree[B]): Tree[B] =
-    tree match {
+    tree match
       case Branch(l, r) =>
         Branch(flatMap(l)(func), flatMap(r)(func))
       case Leaf(value)  =>
         func(value)
-    }
 
- def tailRecM[A, B](a: A)
-     (func: A => Tree[Either[A, B]]): Tree[B] =
-   flatMap(func(a)) {
-     case Left(value) =>
-       tailRecM(value)(func)
-     case Right(value) =>
-       Leaf(value)
-   }
-}
+  def tailRecM[A, B](a: A)
+      (func: A => Tree[Either[A, B]]): Tree[B] =
+    flatMap(func(a)) {
+      case Left(value) =>
+        tailRecM(value)(func)
+      case Right(value) =>
+        Leaf(value)
+    }
 ```
 
 The solution above is perfectly fine for this exercise.
@@ -219,26 +217,26 @@ def leaf[A](value: A): Tree[A] =
 import cats.Monad
 import scala.annotation.tailrec
 
-implicit val treeMonad = new Monad[Tree] {
+given treeMonad: Monad[Tree] with
   def pure[A](value: A): Tree[A] =
     Leaf(value)
 
   def flatMap[A, B](tree: Tree[A])
       (func: A => Tree[B]): Tree[B] =
-    tree match {
+    tree match
       case Branch(l, r) =>
         Branch(flatMap(l)(func), flatMap(r)(func))
       case Leaf(value)  =>
         func(value)
-    }
 
-  def tailRecM[A, B](arg: A)
-      (func: A => Tree[Either[A, B]]): Tree[B] = {
+  def tailRecM[A, B](arg: A)(
+    func: A => Tree[Either[A, B]]
+  ): Tree[B] = {
     @tailrec
     def loop(
           open: List[Tree[Either[A, B]]],
           closed: List[Option[Tree[B]]]): List[Tree[B]] =
-      open match {
+      open match
         case Branch(l, r) :: next =>
           loop(l :: r :: next, None :: closed)
 
@@ -255,19 +253,18 @@ implicit val treeMonad = new Monad[Tree] {
               branch(left, right) :: tail
             }
           }
-      }
+      end match
 
     loop(List(func(arg)), Nil).head
   }
-}
 ```
 
 Regardless of which version of `tailRecM` we define,
 we can use our `Monad` to `flatMap` and `map` on `Trees`:
 
 ```scala mdoc:silent
-import cats.syntax.functor._ // for map
-import cats.syntax.flatMap._ // for flatMap
+import cats.syntax.functor.* // for map
+import cats.syntax.flatMap.* // for flatMap
 ```
 
 ```scala mdoc

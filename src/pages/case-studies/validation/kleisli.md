@@ -65,7 +65,7 @@ through three steps:
 
 ```scala mdoc:silent
 import cats.data.Kleisli
-import cats.instances.list._ // for Monad
+import cats.instances.list.* // for Monad
 ```
 
 These steps each transform an input `Int`
@@ -125,15 +125,14 @@ Like `apply`, the method must accept an implicit `Semigroup`:
 import cats.Semigroup
 import cats.data.Validated
 
-sealed trait Predicate[E, A] {
-  def run(implicit s: Semigroup[E]): A => Either[E, A] =
+sealed trait Predicate[E, A]:
+  def run(using s: Semigroup[E]): A => Either[E, A] =
     (a: A) => this(a).toEither
 
   def apply(a: A): Validated[E, A] =
     ??? // etc...
 
   // other methods...
-}
 ```
 </div>
 
@@ -172,13 +171,13 @@ def checkPred[A](pred: Predicate[Errors, A]): Check[A, A] =
 // Foreword declarations
 
 import cats.Semigroup
-import cats.syntax.apply._     // for mapN
-import cats.syntax.semigroup._ // for |+|
+import cats.syntax.apply.*     // for mapN
+import cats.syntax.semigroup.* // for |+|
 import cats.data.Validated
 import cats.data.Validated.{Valid, Invalid}
 
-sealed trait Predicate[E, A] {
-  import Predicate._
+sealed trait Predicate[E, A]:
+  import Predicate.*
 
   def and(that: Predicate[E, A]): Predicate[E, A] =
     And(this, that)
@@ -186,11 +185,11 @@ sealed trait Predicate[E, A] {
   def or(that: Predicate[E, A]): Predicate[E, A] =
     Or(this, that)
 
-  def run(implicit s: Semigroup[E]): A => Either[E, A] =
+  def run(using s: Semigroup[E]): A => Either[E, A] =
     (a: A) => this(a).toEither
 
-  def apply(a: A)(implicit s: Semigroup[E]): Validated[E, A] =
-    this match {
+  def apply(a: A)(using s: Semigroup[E]): Validated[E, A] =
+    this match
       case Pure(func) =>
         func(a)
 
@@ -206,10 +205,10 @@ sealed trait Predicate[E, A] {
               case Invalid(e2) => Invalid(e1 |+| e2)
             }
         }
-    }
-}
+    end match
+end Predicate
 
-object Predicate {
+object Predicate:
   final case class And[E, A](
     left: Predicate[E, A],
     right: Predicate[E, A]) extends Predicate[E, A]
@@ -226,7 +225,7 @@ object Predicate {
 
   def lift[E, A](error: E, func: A => Boolean): Predicate[E, A] =
     Pure(a => if(func(a)) Valid(a) else Invalid(error))
-}
+end Predicate
 ```
 
 Working around limitations of type inference
@@ -237,7 +236,7 @@ simplifies things, but the process is still complex:
 
 ```scala mdoc:silent
 import cats.data.{Kleisli, NonEmptyList}
-import cats.instances.either._   // for Semigroupal
+import cats.instances.either.*   // for Semigroupal
 ```
 
 Here is the preamble we suggested in
@@ -330,7 +329,7 @@ def createUser(
       email: String): Either[Errors, User] = (
   checkUsername.run(username),
   checkEmail.run(email)
-).mapN(User)
+).mapN(User.apply)
 ```
 
 ```scala mdoc

@@ -15,16 +15,14 @@ Given a nested tuple like `((1, 2), 3)` we could write an implicit conversion to
 
 ### Exercise: Flattening
 
-Define a `Tuple2Flatten` implicit class with an extension method `flatten`, and an instance of `Flattener` for a nested tuple like `((1, 2), 3)`.
+Define an extension method `flatten`, and an instance of `Flattener` for a nested tuple like `((1, 2), 3)`.
 
 <div class="solution">
 ~~~ scala
-implicit class Tuple2Flatten[A, B, C](val in: ((A, B), C)) extends AnyVal {
+extension [A, B, C](in: ((A, B), C))
   def flatten: (A, B, C) =
-    in match {
+    in match
       case ((a, b), c) => (a, b, c)
-    }
-}
 ~~~
 
 It's fairly straightforward to define this class, but we can't abstract over it in any way. If we want to define `flatten` for a tuple like `(a, (b, c))` we need to define a new extension method. Similarly if we want to flatten a tuple with four elements.
@@ -107,8 +105,8 @@ The method is called `ap` and types `F[A]` that implement it are called **applic
 The Scalaz library provides an applicative functor type class, and instances for `Option` and many other types. In Scalaz, `ap` is written as `<*>` for consistency with Haskell. Here's an example:
 
 ~~~ scala
-import scalaz.syntax.applicative._
-import scalaz.std.option._
+import scalaz.syntax.applicative.*
+import scalaz.std.option.*
 
 val adder = ((x: Int, y: Int, z: Int) => x + y + z).curried
 // adder: Int => (Int => (Int => Int)) = <function1>
@@ -145,13 +143,12 @@ Let's implement an instance of Scalaz's `Applicative` type class for our `Parser
 Define a typeclass instance of `Applicative` for `Parser`. You must implement the following trait:
 
 ~~~ scala
-Applicative[Parser] {
+Applicative[Parser] with
   def point[A](a: => A): Parser[A] =
     ???
 
   def ap[A, B](fa: => Parser[A])(f: => Parser[A => B]): Parser[B] =
     ???
-}
 ~~~
 
 Hints:
@@ -168,25 +165,24 @@ The usual place to define typeclass instances is as implicit elements on the com
 val identity: Parser[Unit] =
   Parser { input => Success(Unit, input) }
 
-implicit object applicativeInstance extends Applicative[Parser] {
+given applicativeInstance: Applicative[Parser] with
   def point[A](a: => A): Parser[A] =
     identity map (_ => a)
 
   def ap[A, B](fa: => Parser[A])(f: => Parser[A => B]): Parser[B] =
     Parser { input =>
-      f.parse(input) match {
+      f.parse(input) match
         case fail @ Failure(_) =>
           fail
         case Success(aToB, remainder) =>
-          fa.parse(remainder) match {
+          fa.parse(remainder) match
             case fail @ Failure(_) =>
               fail
             case Success(a, remainder1) =>
               Success(aToB(a), remainder1)
-          }
-      }
+          end match
+      end match
     }
-}
 ~~~
 
 Checkout the `parser-applicative` tag to see the full code and tests.
@@ -198,7 +194,7 @@ Checkout the `parser-applicative` tag to see the full code and tests.
 Once we have our `Applicative` instance we can take it for a spin:
 
 ~~~ scala
-import scalaz.syntax.applicative._
+import scalaz.syntax.applicative.*
 
 val parser = Parser.string("chicken") <*> ((_: String) => "Tastes like chicken").point[Parser]
 // parser: underscore.parser.Parser[String] = Parser(<function1>)
@@ -258,7 +254,7 @@ Sometime we do need more than one result, so the problem still remains. In these
 Here is it in use
 
 ~~~ scala
-import scalaz.syntax.applicative._
+import scalaz.syntax.applicative.*
 
 def taste(taster: String, action: String, flava: String): String = s"$flava tastes like chicken!"
 // taste: (taster: String, action: String, flava: String)String

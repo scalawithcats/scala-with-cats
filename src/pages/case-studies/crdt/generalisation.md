@@ -113,10 +113,9 @@ our own `BoundedSemiLattice` type class.
 ```scala mdoc:silent
 import cats.kernel.CommutativeMonoid
 
-trait BoundedSemiLattice[A] extends CommutativeMonoid[A] {
+trait BoundedSemiLattice[A] extends CommutativeMonoid[A]:
   def combine(a1: A, a2: A): A
   def empty: A
-}
 ```
 
 In the implementation above,
@@ -146,32 +145,26 @@ import cats.kernel.CommutativeMonoid
 ```
 
 ```scala mdoc:silent
-object wrapper {
-  trait BoundedSemiLattice[A] extends CommutativeMonoid[A] {
+object wrapper:
+  trait BoundedSemiLattice[A] extends CommutativeMonoid[A]:
     def combine(a1: A, a2: A): A
     def empty: A
-  }
 
-  object BoundedSemiLattice {
-    implicit val intInstance: BoundedSemiLattice[Int] =
-      new BoundedSemiLattice[Int] {
-        def combine(a1: Int, a2: Int): Int =
-          a1 max a2
+  given intInstance: BoundedSemiLattice[Int] with
+    def combine(a1: Int, a2: Int): Int =
+      a1 max a2
 
-        val empty: Int =
-          0
-      }
+    val empty: Int =
+      0
 
-    implicit def setInstance[A]: BoundedSemiLattice[Set[A]] =
-      new BoundedSemiLattice[Set[A]]{
-        def combine(a1: Set[A], a2: Set[A]): Set[A] =
-          a1 union a2
+  given setInstance[A]: BoundedSemiLattice[Set[A]] with
+    def combine(a1: Set[A], a2: Set[A]): Set[A] =
+      a1 union a2
 
-        val empty: Set[A] =
-          Set.empty[A]
-      }
-  }
-}; import wrapper._
+    val empty: Set[A] =
+      Set.empty[A]
+
+import wrapper.*
 ```
 </div>
 
@@ -196,25 +189,24 @@ which significantly simplifies
 the process of merging and maximising counters:
 
 ```scala mdoc:silent
-import cats.instances.list._   // for Monoid
-import cats.instances.map._    // for Monoid
-import cats.syntax.semigroup._ // for |+|
-import cats.syntax.foldable._  // for combineAll
+import cats.instances.list.*   // for Monoid
+import cats.instances.map.*    // for Monoid
+import cats.syntax.semigroup.* // for |+|
+import cats.syntax.foldable.*  // for combineAll
 
-final case class GCounter[A](counters: Map[String,A]) {
+final case class GCounter[A](counters: Map[String,A]):
   def increment(machine: String, amount: A)
-        (implicit m: CommutativeMonoid[A]): GCounter[A] = {
+        (using m: CommutativeMonoid[A]): GCounter[A] = {
     val value = amount |+| counters.getOrElse(machine, m.empty)
     GCounter(counters + (machine -> value))
   }
 
   def merge(that: GCounter[A])
-        (implicit b: BoundedSemiLattice[A]): GCounter[A] =
+        (using b: BoundedSemiLattice[A]): GCounter[A] =
     GCounter(this.counters |+| that.counters)
 
-  def total(implicit m: CommutativeMonoid[A]): A =
+  def total(using m: CommutativeMonoid[A]): A =
     this.counters.values.toList.combineAll
-}
 ```
 </div>
 

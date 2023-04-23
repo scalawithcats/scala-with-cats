@@ -7,9 +7,8 @@ a `Semigroupal[F]` allows us to combine them to form an `F[(A, B)]`.
 Its definition in Cats is:
 
 ```scala
-trait Semigroupal[F[_]] {
+trait Semigroupal[F[_]]:
   def product[A, B](fa: F[A], fb: F[B]): F[(A, B)]
-}
 ```
 
 As we discussed at the beginning of this chapter,
@@ -34,7 +33,7 @@ Let's join some `Options` as an example:
 
 ```scala mdoc:silent:reset-object
 import cats.Semigroupal
-import cats.instances.option._ // for Semigroupal
+import cats.instances.option.* // for Semigroupal
 ```
 
 ```scala mdoc
@@ -59,7 +58,7 @@ For example, the methods `tuple2` through `tuple22`
 generalise `product` to different arities:
 
 ```scala mdoc:silent
-import cats.instances.option._ // for Semigroupal
+import cats.instances.option.* // for Semigroupal
 ```
 
 ```scala mdoc
@@ -98,8 +97,8 @@ We import the syntax from [`cats.syntax.apply`][cats.syntax.apply].
 Here's an example:
 
 ```scala mdoc:silent
-import cats.instances.option._ // for Semigroupal
-import cats.syntax.apply._     // for tupled and mapN
+import cats.instances.option.* // for Semigroupal
+import cats.syntax.apply.*     // for tupled and mapN
 ```
 
 The `tupled` method is implicitly added to the tuple of `Options`.
@@ -167,11 +166,11 @@ Here's an example:
 
 ```scala mdoc:silent:reset-object
 import cats.Monoid
-import cats.instances.int._        // for Monoid
-import cats.instances.invariant._  // for Semigroupal
-import cats.instances.list._       // for Monoid
-import cats.instances.string._     // for Monoid
-import cats.syntax.apply._         // for imapN
+import cats.instances.int.*        // for Monoid
+import cats.instances.invariant.*  // for Semigroupal
+import cats.instances.list.*       // for Monoid
+import cats.instances.string.*     // for Monoid
+import cats.syntax.apply.*         // for imapN
 
 final case class Cat(
   name: String,
@@ -185,7 +184,7 @@ val tupleToCat: (String, Int, List[String]) => Cat =
 val catToTuple: Cat => (String, Int, List[String]) =
   cat => (cat.name, cat.yearOfBirth, cat.favoriteFoods)
 
-implicit val catMonoid: Monoid[Cat] = (
+given catMonoid: Monoid[Cat] = (
   Monoid[String],
   Monoid[Int],
   Monoid[List[String]]
@@ -196,7 +195,7 @@ Our `Monoid` allows us to create "empty" `Cats`,
 and add `Cats` together using the syntax from Chapter [@sec:monoids]:
 
 ```scala mdoc:silent
-import cats.syntax.semigroup._ // for |+|
+import cats.syntax.semigroup.* // for |+|
 
 val garfield   = Cat("Garfield", 1978, List("Lasagne"))
 val heathcliff = Cat("Heathcliff", 1988, List("Junk Food"))
