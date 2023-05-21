@@ -4,7 +4,7 @@ ThisBuild / name               := "scala-with-cats"
 ThisBuild / organization       := "com.scalawithcats"
 ThisBuild / version            := "0.0.1"
 
-ThisBuild / scalaVersion       := "2.13.8"
+ThisBuild / scalaVersion       := "2.13.10"
 
 ThisBuild / useSuperShell      := false
 Global    / logLevel           := Level.Warn
@@ -14,7 +14,7 @@ enablePlugins(MdocPlugin)
 mdocIn  := sourceDirectory.value / "pages"
 mdocOut := target.value          / "pages"
 
-val catsVersion  = "2.7.0"
+val catsVersion  = "2.9.0"
 
 libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % catsVersion)
 
