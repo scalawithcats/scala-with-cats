@@ -23,11 +23,12 @@ jobs:
           jdkFile: ${{ steps.download-java.outputs.jdkFile }}
 
       - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 'latest'
-          cache: 'npm'
-        run: npm ci
+        steps:
+          - uses: actions/setup-node@v3
+            with:
+              node-version: 'latest'
+              cache: 'npm'
+          - run: npm ci
 
       - name: Cache sbt
         uses: actions/cache@v3
