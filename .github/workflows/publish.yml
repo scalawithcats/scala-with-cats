@@ -29,13 +29,11 @@ jobs:
           cache: 'npm'
       - run: npm ci
 
-      - name: Setup Latex
-        run: |
-          curl -Ls https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz > /tmp/latex.tgz
-          tar zxvf /tmp/latex.tgz
-          cd install-tl-*
-          sudo perl ./install-tl --no-interaction
-          echo "/usr/local/texlive/2023/bin/x86_64-linux" >> $GITHUB_PATH
+      - name: Install TeX Live
+        uses: zauguin/install-texlive@v2
+        with:
+          packages: >
+            l3build latex latex-bin luatex latex-bin-dev xelatex
 
       - name: Setup Pandoc
         run: |
