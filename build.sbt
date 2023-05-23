@@ -176,19 +176,23 @@ jsonSetup := {
   "mkdir -p dist".!
 }
 
-lazy val pdfPandoc  = taskKey[Unit]("Pandoc component of the PDF build")
-lazy val htmlPandoc = taskKey[Unit]("Pandoc component of the HTML build")
-lazy val epubPandoc = taskKey[Unit]("Pandoc component of the ePub build")
+lazy val pdfPandoc  = taskKey[String]("Pandoc command-line for the PDF build")
+lazy val htmlPandoc = taskKey[String]("Pandoc command-line for the HTML build")
+lazy val epubPandoc = taskKey[String]("Pandoc command-line for the ePub build")
 
-lazy val texPandoc  = taskKey[Unit]("Pandoc component of the TeX debug build")
-lazy val jsonPandoc = taskKey[Unit]("Pandoc component of the JSON AST debug build")
+lazy val texPandoc  = taskKey[String]("Pandoc command-line for the TeX debug build")
+lazy val jsonPandoc = taskKey[String]("Pandoc command-line for the JSON AST debug build")
 
-pdfPandoc  := { Pandoc.commandLine(pages, PandocTarget.Pdf).! }
-htmlPandoc := { Pandoc.commandLine(pages, PandocTarget.Html).! }
-epubPandoc := { Pandoc.commandLine(pages, PandocTarget.Epub).! }
+pdfPandoc  := { Pandoc.commandLineOptions(pages, PandocTarget.Pdf) }
+htmlPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Html) }
+epubPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Epub) }
 
-texPandoc  := { Pandoc.commandLine(pages, PandocTarget.Tex).! }
-jsonPandoc := { Pandoc.commandLine(pages, PandocTarget.Json).! }
+texPandoc  := { Pandoc.commandLineOptions(pages, PandocTarget.Tex) }
+jsonPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Json) }
+
+lazy val printPdfPandoc = taskKey[Unit]("Print the Pandoc command-line for the PDF build")
+
+printPdfPandoc := { println(pdfPandoc.value) }
 
 lazy val pdf  = taskKey[Unit]("Build the PDF version of the book")
 lazy val html = taskKey[Unit]("Build the HTML version of the book")
@@ -197,7 +201,10 @@ lazy val epub = taskKey[Unit]("Build the ePub version of the book")
 lazy val tex = taskKey[Unit]("Build the TeX debug build of the book")
 lazy val json = taskKey[Unit]("Build the JSON AST debug build of the book")
 
-pdf  := Def.sequential(pdfSetup, mdoc.toTask(""), pdfPandoc).value
+pdf  := {
+  val cmdLineOptions = Def.sequential(pdfSetup, mdoc.toTask(""), pdfPandoc).value
+  s"pandoc $cmdLineOptions".!
+}
 
 html := Def.sequential(htmlSetup, mdoc.toTask(""), htmlPandoc).value
 

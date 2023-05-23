@@ -9,7 +9,8 @@ object PandocTarget {
 }
 
 object Pandoc {
-  def commandLine(
+  /** Create the command-line options without `pandoc` command */
+  def commandLineOptions(
     pages: List[String],
     target: PandocTarget,
     usePandocCrossref: Boolean = true,
@@ -18,7 +19,7 @@ object Pandoc {
     pagesDir: String = "target/pages",
     srcDir: String = "src",
     distDir: String = "dist",
-    tocDepth: Int = 3,
+    tocDepth: Int = 3
   ): String = {
     import PandocTarget._
 
@@ -101,11 +102,9 @@ object Pandoc {
       case Json      => List(s"${srcDir}/meta/metadata.yaml")
     }
 
-    val parts = List(
+    val options =
       List(
-        "pandoc",
-        output
-      ),
+      List(output),
       template.toList,
       List(
         "--from=markdown+grid_tables+multiline_tables+fenced_code_blocks+fenced_code_attributes+yaml_metadata_block+implicit_figures+header_attributes+definition_lists+link_attributes",
@@ -125,8 +124,21 @@ object Pandoc {
       relPages,
     ).flatten
 
-    println("====================\n" + parts.mkString(" ") + "\n====================")
+    options.mkString(" ")
+  }
 
-    parts.mkString(" ")
+  def commandLine(
+    pages: List[String],
+    target: PandocTarget,
+    usePandocCrossref: Boolean = true,
+    usePandocInclude: Boolean = true,
+    filenameStem: String = "scala-with-cats",
+    pagesDir: String = "target/pages",
+    srcDir: String = "src",
+    distDir: String = "dist",
+    tocDepth: Int = 3
+  ): String = {
+
+    s"pandoc ${commandLineOptions(pages, target, usePandocCrossref, usePandocInclude, filenameStem, pagesDir, srcDir, distDir, tocDepth)}"
   }
 }

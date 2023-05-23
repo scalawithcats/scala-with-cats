@@ -1,0 +1,59 @@
+name: publish
+run-name: Build and publish book
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v3
+
+      - name: Download Java
+        uses: typelevel/download-java@v1
+        id: download-java
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'jdkfile'
+          java-version: 17
+          jdkFile: ${{ steps.download-java.outputs.jdkFile }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts
+
+      - name: Cache sbt
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.sbt
+            ~/.ivy2/cache
+            ~/.coursier/cache/v1
+            ~/.cache/coursier/v1
+            ~/AppData/Local/Coursier/Cache/v1
+            ~/Library/Caches/Coursier/v1
+          key: ${{ runner.os }}-sbt-cache-v2-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
+
+      - name: Setup PDF generation
+        run: sbt pdfSetup
+
+      - name: Generate Pandoc command-line options
+        id: cmdline
+        run: echo "options=$(sbt printPdfPandoc)" > $GITHUB_OUTPUT
+
+      - uses: docker://pandoc/latex:3.1.1
+        with:
+          args: ${{ steps.cmdline.outputs.options }}
+
+      - name: Publish site
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/develop'
+        uses: peaceiris/actions-gh-pages@v3.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: book/target/creative-scala
+          keep_files: true
