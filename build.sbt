@@ -190,9 +190,6 @@ epubPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Epub) }
 texPandoc  := { Pandoc.commandLineOptions(pages, PandocTarget.Tex) }
 jsonPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Json) }
 
-lazy val writePdfPandoc = taskKey[Unit]("Write the Pandoc command-line for the PDF build to pdf.txt")
-
-writePdfPandoc := { sbt.io.IO.write(file("pdf.txt"), pdfPandoc.value) }
 
 lazy val pdf  = taskKey[Unit]("Build the PDF version of the book")
 lazy val html = taskKey[Unit]("Build the HTML version of the book")
@@ -204,28 +201,42 @@ lazy val json = taskKey[Unit]("Build the JSON AST debug build of the book")
 pdf  := {
   val cmdLineOptions = Def.sequential(pdfSetup, mdoc.toTask(""), pdfPandoc).value
   val cmd = s"pandoc $cmdLineOptions"
-  println(cmd)
+  streams.value.log.info(cmd)
   cmd.!
 }
 
-html := Def.sequential(htmlSetup, mdoc.toTask(""), htmlPandoc).value
+html := {
+  val cmdLineOptions = Def.sequential(htmlSetup, mdoc.toTask(""), htmlPandoc).value
+  val cmd = s"pandoc $cmdLineOptions"
+  streams.value.log.info(cmd)
+  cmd.!
+}
 
-epub := Def.sequential(epubSetup, mdoc.toTask(""), epubPandoc).value
+epub := {
+  val cmdLineOptions = Def.sequential(epubSetup, mdoc.toTask(""), epubPandoc).value
+  val cmd = s"pandoc $cmdLineOptions"
+  streams.value.log.info(cmd)
+  cmd.!
+}
 
-tex  := Def.sequential(texSetup, mdoc.toTask(""), texPandoc).value
+tex := {
+  val cmdLineOptions = Def.sequential(texSetup, mdoc.toTask(""), texPandoc).value
+  val cmd = s"pandoc $cmdLineOptions"
+  streams.value.log.info(cmd)
+  cmd.!
+}
 
-json := Def.sequential(jsonSetup, mdoc.toTask(""), jsonPandoc).value
+json := {
+  val cmdLineOptions = Def.sequential(jsonSetup, mdoc.toTask(""), jsonPandoc).value
+  val cmd = s"pandoc $cmdLineOptions"
+  streams.value.log.info(cmd)
+  cmd.!
+}
 
 lazy val all  = taskKey[Unit]("Build the PDF, HTML, and ePub versions of the book")
 
 all := {
-  pdfSetup.value
-  htmlSetup.value
-  epubSetup.value
-
-  mdoc.toTask("").value
-
-  pdfPandoc.value
-  htmlPandoc.value
-  epubPandoc.value
+  pdf.value
+  html.value
+  epub.value
 }
