@@ -29,6 +29,14 @@ jobs:
           cache: 'npm'
       - run: npm ci
 
+      - name: Setup Latex
+        run: |
+          curl -Ls https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz > /tmp/latex.tgz
+          tar zxvf /tmp/latex.tgz
+          cd install-tl-*
+          sudo perl ./install-tl --no-interaction
+          echo "/usr/local/texlive/2023/bin/x86_64-linux" >> $GITHUB_PATH
+
       - name: Setup Pandoc
         run: |
             curl -Ls https://github.com/jgm/pandoc/releases/download/3.1.2/pandoc-3.1.2-linux-amd64.tar.gz > /tmp/pandoc.tgz
@@ -51,11 +59,6 @@ jobs:
             ~/Library/Caches/Coursier/v1
           key: ${{ runner.os }}-sbt-cache-v2-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
-      - name: Setup PDF generation
-        run: |
-          sbt pdfSetup
-          sbt mdoc
-
       - name: Install Fonts
         run: |
           sudo apt-get update -y
@@ -69,5 +72,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: book/target/creative-scala
+          publish_dir: dist
           keep_files: true
