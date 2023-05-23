@@ -35,7 +35,7 @@ jobs:
       #     packages: >
       #       l3build latex latex-bin luatex latex-bin-dev xetex mdframed amsmath listings xcolor fancyvrb kvoptions etoolbox booktabs hyperref zref infwarerr pdftexcmds iftex needspace
 
-      # MikTex automatically installs packages that are needed by the document
+      # MikTex automatically installs the latex packages that are needed by the document
       - name: Setup MikTex
         run: |
           sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys D6BC243565B2087BC3F897C9277A7293F59E4889
@@ -72,13 +72,18 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y ttf-bitstream-vera
 
-      - name: Generate PDF
-        run: sbt pdf
+      - name: Generate book
+        run: sbt all
+
+      - name: Copy book to site
+        run: |
+          mkdir site/dist
+          mv dist/* site/dist
 
       - name: Publish site
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/develop'
         uses: peaceiris/actions-gh-pages@v3.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dist
+          publish_dir: site
           keep_files: true
