@@ -29,6 +29,12 @@ jobs:
           cache: 'npm'
       - run: npm ci
 
+      - name: Setup Pandoc
+        - run: |
+            curl -Ls https://github.com/jgm/pandoc/releases/download/3.1.2/pandoc-3.1.2-linux-amd64.tar.gz > /tmp/pandoc.tgz
+            tar zxvf /tmp/pandoc.tgz
+            mv pandoc /usr/local/bin/pandoc
+
       - name: Cache sbt
         uses: actions/cache@v3
         with:
@@ -46,15 +52,13 @@ jobs:
           sbt pdfSetup
           sbt mdoc
 
-      - name: Generate Pandoc command-line options
-        id: cmdline
+      - name: Install Fonts
         run: |
-          sbt writePdfPandoc
-          echo "options=$(cat pdf.txt)" > $GITHUB_OUTPUT
+          apt-get update -y
+          apt-get install -y ttf-bitstream-vera
 
-      - uses: docker://pandoc/latex:3.1.1
-        with:
-          args: ${{ steps.cmdline.outputs.options }}
+      - name: Generate PDF
+        run: sbt pdf
 
       - name: Publish site
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/develop'
