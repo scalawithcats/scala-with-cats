@@ -33,7 +33,7 @@ jobs:
         uses: zauguin/install-texlive@v2
         with:
           packages: >
-            l3build latex latex-bin luatex latex-bin-dev xetex
+            l3build latex latex-bin luatex latex-bin-dev xetex mdframed amsmath amssymb listings xcolor ifxetex fixltx2e fancyvrb longtable booktabs array graphicx hyperref
 
       - name: Setup Pandoc
         run: |
