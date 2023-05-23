@@ -190,9 +190,9 @@ epubPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Epub) }
 texPandoc  := { Pandoc.commandLineOptions(pages, PandocTarget.Tex) }
 jsonPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Json) }
 
-lazy val printPdfPandoc = taskKey[Unit]("Print the Pandoc command-line for the PDF build")
+lazy val writePdfPandoc = taskKey[Unit]("Write the Pandoc command-line for the PDF build to pdf.txt")
 
-printPdfPandoc := { println(pdfPandoc.value) }
+writePdfPandoc := { sbt.io.IO.write(file("pdf.txt"), pdfPandoc.value) }
 
 lazy val pdf  = taskKey[Unit]("Build the PDF version of the book")
 lazy val html = taskKey[Unit]("Build the HTML version of the book")

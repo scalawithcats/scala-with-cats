@@ -44,7 +44,9 @@ jobs:
 
       - name: Generate Pandoc command-line options
         id: cmdline
-        run: echo "options=$(sbt printPdfPandoc)" > $GITHUB_OUTPUT
+        run: |
+          sbt writePdfPandoc
+          echo "options=$(cat pdf.txt)" > $GITHUB_OUTPUT
 
       - uses: docker://pandoc/latex:3.1.1
         with:
