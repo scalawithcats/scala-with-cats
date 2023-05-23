@@ -33,7 +33,7 @@ jobs:
         run: |
             curl -Ls https://github.com/jgm/pandoc/releases/download/3.1.2/pandoc-3.1.2-linux-amd64.tar.gz > /tmp/pandoc.tgz
             tar zxvf /tmp/pandoc.tgz
-            mv pandoc /usr/local/bin/pandoc
+            mv pandoc-3.1.2/bin/pandoc /usr/local/bin/pandoc
 
       - name: Cache sbt
         uses: actions/cache@v3
