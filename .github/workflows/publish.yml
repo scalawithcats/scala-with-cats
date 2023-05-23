@@ -40,7 +40,9 @@ jobs:
           key: ${{ runner.os }}-sbt-cache-v2-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
       - name: Setup PDF generation
-        run: sbt pdfSetup
+        run: |
+          sbt pdfSetup
+          sbt mdoc
 
       - name: Generate Pandoc command-line options
         id: cmdline

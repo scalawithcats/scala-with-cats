@@ -1,9 +1,9 @@
-
-# Created by https://www.gitignore.io/api/scala,sbt,metals,bloop,node,visualstudiocode,intellj,sublimetext
-# Edit at https://www.gitignore.io/?templates=scala,sbt,metals,bloop,node,visualstudiocode,intellj,sublimetext
+### Build Stuff ###
+pdf.txt
 
 ### Bloop ###
 .bloop/
+.bsp/
 
 #!! ERROR: intellj is undefined. Use list command to see defined gitignore types !!#
 
