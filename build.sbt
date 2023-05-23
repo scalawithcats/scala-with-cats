@@ -203,7 +203,9 @@ lazy val json = taskKey[Unit]("Build the JSON AST debug build of the book")
 
 pdf  := {
   val cmdLineOptions = Def.sequential(pdfSetup, mdoc.toTask(""), pdfPandoc).value
-  s"pandoc $cmdLineOptions".!
+  val cmd = s"pandoc $cmdLineOptions"
+  println(cmd)
+  cmd.!
 }
 
 html := Def.sequential(htmlSetup, mdoc.toTask(""), htmlPandoc).value
