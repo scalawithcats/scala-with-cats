@@ -1,6 +1,7 @@
-if FORMAT:match 'latex' then
-  function Image(elem)
-    elem.src = string.gsub(elem.src, "%.pdf%+svg", ".pdf")
-    return elem
-  end
-end
+dofile("src/filters/common/vector-images.lua")
+
+return {
+  {
+    Image = createFilter(".pdf")
+  }
+}
