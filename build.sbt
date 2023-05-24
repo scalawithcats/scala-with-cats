@@ -201,6 +201,7 @@ lazy val json = taskKey[Unit]("Build the JSON AST debug build of the book")
 pdf  := {
   val cmdLineOptions = Def.sequential(pdfSetup, mdoc.toTask(""), pdfPandoc).value
   val cmd = s"pandoc $cmdLineOptions"
+  println(cmd)
   streams.value.log.info(cmd)
   cmd.!
 }

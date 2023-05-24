@@ -42,34 +42,33 @@ object Pandoc {
 
     val filters = target match {
       case Pdf | Tex | Json =>
-        List()
-      //   List(
-      //     s"--filter=pandoc-crossref",
-      //     s"--filter=${srcDir}/filters/pdf/unwrap-code.js",
-      //     s"--filter=${srcDir}/filters/pdf/merge-code.js",
-      //     s"--filter=${srcDir}/filters/pdf/callout.js",
-      //     s"--filter=${srcDir}/filters/pdf/columns.js",
-      //     s"--filter=${srcDir}/filters/pdf/solutions.js",
-      //     s"--filter=${srcDir}/filters/pdf/vector-images.js",
-      //     s"--filter=${srcDir}/filters/pdf/listings.js",
-      //   )
-      // case Html =>
-      //   List(
-      //     s"--filter=pandoc-crossref",
-      //     s"--filter=${srcDir}/filters/html/unwrap-code.js",
-      //     s"--filter=${srcDir}/filters/html/merge-code.js",
-      //     s"--filter=${srcDir}/filters/html/tables.js",
-      //     s"--filter=${srcDir}/filters/html/solutions.js",
-      //     s"--filter=${srcDir}/filters/html/vector-images.js",
-      //   )
-      // case Epub =>
-      //   List(
-      //     s"--filter=pandoc-crossref",
-      //     s"--filter=${srcDir}/filters/epub/unwrap-code.js",
-      //     s"--filter=${srcDir}/filters/epub/merge-code.js",
-      //     s"--filter=${srcDir}/filters/epub/solutions.js",
-      //     s"--filter=${srcDir}/filters/epub/vector-images.js",
-      //   )
+        List(
+          s"--filter=pandoc-crossref",
+          s"--filter=${srcDir}/filters/pdf/unwrap-code.js",
+          s"--filter=${srcDir}/filters/pdf/merge-code.js",
+          s"--filter=${srcDir}/filters/pdf/callout.js",
+          s"--filter=${srcDir}/filters/pdf/columns.js",
+          s"--filter=${srcDir}/filters/pdf/solutions.js",
+          s"--lua-filter=${srcDir}/filters/pdf/vector-images.lua",
+          s"--filter=${srcDir}/filters/pdf/listings.js",
+        )
+      case Html =>
+        List(
+          s"--filter=pandoc-crossref",
+          s"--filter=${srcDir}/filters/html/unwrap-code.js",
+          s"--filter=${srcDir}/filters/html/merge-code.js",
+          s"--filter=${srcDir}/filters/html/tables.js",
+          s"--filter=${srcDir}/filters/html/solutions.js",
+          s"--lua-filter=${srcDir}/filters/html/vector-images.lua",
+        )
+      case Epub =>
+        List(
+          s"--filter=pandoc-crossref",
+          s"--filter=${srcDir}/filters/epub/unwrap-code.js",
+          s"--filter=${srcDir}/filters/epub/merge-code.js",
+          s"--filter=${srcDir}/filters/epub/solutions.js",
+          s"--lua-filter=${srcDir}/filters/epub/vector-images.lua",
+        )
     }
 
     val extras = target match {
