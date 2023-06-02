@@ -326,9 +326,8 @@ cut through three layers of abstraction:
 
 ```scala mdoc:silent
 import cats.instances.future._ // for Monad
-import scala.concurrent.Await
+import cats.syntax.applicative._ // for pure
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
 ```
 
 ```scala mdoc:silent
@@ -399,6 +398,9 @@ For example, to `Await` the `FutureEitherOption` stack above,
 we need to call `value` twice:
 
 ```scala mdoc
+import scala.concurrent.Await
+import scala.concurrent.duration._
+
 futureEitherOr
 
 val intermediate = futureEitherOr.value
@@ -455,6 +457,7 @@ import cats.data.EitherT
 import cats.instances.list._
 import scala.concurrent.Future
 ```
+
 ```scala mdoc:silent
 sealed abstract class HttpError
 final case class NotFound(item: String) extends HttpError
@@ -490,6 +493,7 @@ def parseNumber(str: String): Logged[Option[Int]] =
 // Consumers use monad transformers locally to simplify composition:
 def addAll(a: String, b: String, c: String): Logged[Option[Int]] = {
   import cats.data.OptionT
+import cats.instances.list._
 
   val result = for {
     a <- OptionT(parseNumber(a))
