@@ -1,10 +1,8 @@
 ## Algebraic Data Types in Scala 
 
-Now we know about algebraic data types we can turn to their representation in Scala. The important point here is that the translation to Scala is entirely determined by the structure of the data, no thinking is required. In other words the work is finding the structure of the data that best represents the problem at hand. Work out the structure of the data and the code directly follows from it.
+Now we know about algebraic data types we can turn to their representation in Scala. The important point here is that the translation to Scala is entirely determined by the structure of the data. No thinking is required. In other words, the work is in finding the structure of the data that best represents the problem at hand. Work out the structure of the data and the code directly follows from it.
 
-Scala 3 can directly represent algebraic data types using `enum`, but Scala 2 doesn't have this language feature. Hence we'll look at algebraic data types separately in Scala 3 and Scala 2.
-
-As algebraic data types are defined in terms of logical ands and logical ors to represent algebraic data types in Scala we must know how to represent these two concepts in Scala.
+As algebraic data types are defined in terms of logical ands and logical ors, to represent algebraic data types in Scala we must know how to represent these two concepts in Scala. Scala 3 simplifies the representation of algebraic data types compared to Scala 2, so we'll look at each separately.
 
 ### Algebraic Data Types in Scala 3
 
@@ -43,7 +41,7 @@ enum A {
 }
 ```
 
-In other words you can't write `final case class` inside an `enum`. You also can't nest `enum` inside `enum`. Nexted logical ors  can be rewritten into a single logical or containing only logical ands (known as disjunctive normal form) so this is not a limitation in practice. However the Scala 2 representation is still available in Scala 3 should you want more expressivity.
+In other words we don't write `final case class` inside an `enum`. You also can't nest `enum` inside `enum`. Nested logical ors  can be rewritten into a single logical or containing only logical ands (known as disjunctive normal form) so this is not a limitation in practice. However the Scala 2 representation is still available in Scala 3 should you want more expressivity.
 
 
 ### Algebraic Data Types in Scala 2
@@ -64,7 +62,7 @@ final case class C() extends A
 
 Scala 2 has several little tricks to defining algebraic data types.
 
-Firstly, instead of using a `sealed abstract class` you can use a `sealed trait`. There isn't much practical difference between the two. When teaching I'll often use `sealed trait` to avoid having to introduce `sealed abstract class`. I believe `sealed abstract class` may have slightly better performance and Java interoperability but I haven't tested this. I also think `sealed abstract class` is closer, semantically, to the meaning of a sum type.
+Firstly, instead of using a `sealed abstract class` you can use a `sealed trait`. There isn't much practical difference between the two. When teaching I'll often use `sealed trait` to avoid having to introduce `abstract class`. I believe `sealed abstract class` has slightly better performance and Java interoperability but I haven't tested this. I also think `sealed abstract class` is closer, semantically, to the meaning of a sum type.
 
 For extra style points we can `extend Product with Serializable` from `sealed abstract class`. Compare the reported types below with and without this little addition.
 
