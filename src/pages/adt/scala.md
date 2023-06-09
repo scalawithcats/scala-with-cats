@@ -4,6 +4,8 @@ Now we know about algebraic data types we can turn to their representation in Sc
 
 As algebraic data types are defined in terms of logical ands and logical ors, to represent algebraic data types in Scala we must know how to represent these two concepts in Scala. Scala 3 simplifies the representation of algebraic data types compared to Scala 2, so we'll look at each separately.
 
+I'm assuming that you're familiar with the language features we use to represent algebraic data types in Scala, but not with their correspondence to algebraic data types.
+
 
 ### Algebraic Data Types in Scala 3
 
