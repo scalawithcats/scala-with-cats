@@ -89,7 +89,7 @@ In Scala this means any method
 that accepts instances of the type class as implicit parameters.
 
 Cats provides utilities that make type classes easier to use,
-and you will sometimes seem these patterns in other libraries.
+and you will sometimes see these patterns in other libraries.
 There are two ways it does this: *Interface Objects* and *Interface Syntax*.
 
 **Interface Objects**
