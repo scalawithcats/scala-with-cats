@@ -647,7 +647,7 @@ final case class User(username: String, email: String)
 def createUser(
       username: String,
       email: String): Validated[Errors, User] =
-  (checkUsername(username), checkEmail(email)).mapN(User)
+  (checkUsername(username), checkEmail(email)).mapN(User.apply)
 ```
 
 We can check our work by creating

@@ -206,7 +206,7 @@ using an `implicit def`:
 
 ```scala mdoc:silent
 implicit def gcounterInstance[F[_,_], K, V]
-    (implicit kvs: KeyValueStore[F], km: CommutativeMonoid[F[K, V]]) =
+    (implicit kvs: KeyValueStore[F], km: CommutativeMonoid[F[K, V]]): GCounter[F, K, V] =
   new GCounter[F, K, V] {
     def increment(f: F[K, V])(key: K, value: V)
           (implicit m: CommutativeMonoid[V]): F[K, V] = {

@@ -330,7 +330,7 @@ def createUser(
       email: String): Either[Errors, User] = (
   checkUsername.run(username),
   checkEmail.run(email)
-).mapN(User)
+).mapN(User.apply)
 ```
 
 ```scala mdoc

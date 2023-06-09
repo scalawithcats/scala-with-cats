@@ -4,7 +4,7 @@ ThisBuild / name               := "scala-with-cats"
 ThisBuild / organization       := "com.scalawithcats"
 ThisBuild / version            := "0.0.1"
 
-ThisBuild / scalaVersion       := "2.13.10"
+ThisBuild / scalaVersion       := "3.3.0"
 
 ThisBuild / useSuperShell      := false
 Global    / logLevel           := Level.Warn
@@ -18,7 +18,9 @@ val catsVersion  = "2.9.0"
 
 libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % catsVersion)
 
-addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
+// addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
+
+scalacOptions += "-Ykind-projector:underscores"
 
 mdocVariables := Map(
   "SCALA_VERSION" -> scalaVersion.value,

@@ -13,19 +13,19 @@ import scala.annotation.tailrec
 val optionMonad = new Monad[Option] {
   def flatMap[A, B](opt: Option[A])
       (fn: A => Option[B]): Option[B] =
-    opt flatMap fn
+    opt.flatMap(fn)
 
   def pure[A](opt: A): Option[A] =
     Some(opt)
 
   @tailrec
-  def tailRecM[A, B](a: A)
-      (fn: A => Option[Either[A, B]]): Option[B] =
+  def tailRecM[A, B](a: A)(fn: A => Option[Either[A, B]]): Option[B] = {
     fn(a) match {
       case None           => None
       case Some(Left(a1)) => tailRecM(a1)(fn)
       case Some(Right(b)) => Some(b)
     }
+  }
 }
 ```
 
@@ -167,7 +167,7 @@ the non-tail-recursive solution falls out:
 ```scala mdoc:silent
 import cats.Monad
 
-implicit val treeMonad = new Monad[Tree] {
+implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
   def pure[A](value: A): Tree[A] =
     Leaf(value)
 
@@ -180,14 +180,14 @@ implicit val treeMonad = new Monad[Tree] {
         func(value)
     }
 
- def tailRecM[A, B](a: A)
-     (func: A => Tree[Either[A, B]]): Tree[B] =
+ def tailRecM[A, B](a: A)(func: A => Tree[Either[A, B]]): Tree[B] = {
    flatMap(func(a)) {
      case Left(value) =>
        tailRecM(value)(func)
      case Right(value) =>
        Leaf(value)
    }
+ }
 }
 ```
 
@@ -219,7 +219,7 @@ def leaf[A](value: A): Tree[A] =
 import cats.Monad
 import scala.annotation.tailrec
 
-implicit val treeMonad = new Monad[Tree] {
+implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
   def pure[A](value: A): Tree[A] =
     Leaf(value)
 
@@ -251,8 +251,9 @@ implicit val treeMonad = new Monad[Tree] {
         case Nil =>
           closed.foldLeft(Nil: List[Tree[B]]) { (acc, maybeTree) =>
             maybeTree.map(_ :: acc).getOrElse {
-              val left :: right :: tail = acc
-              branch(left, right) :: tail
+              acc match {
+                case left :: right :: tail => branch(left, right) :: tail
+              }
             }
           }
       }
