@@ -4,6 +4,7 @@ Now we know about algebraic data types we can turn to their representation in Sc
 
 As algebraic data types are defined in terms of logical ands and logical ors, to represent algebraic data types in Scala we must know how to represent these two concepts in Scala. Scala 3 simplifies the representation of algebraic data types compared to Scala 2, so we'll look at each separately.
 
+
 ### Algebraic Data Types in Scala 3
 
 In Scala 3 a logical and (a product type) is represented by a `final case class`. If we define a product type `A` is `B` **and** `C`, the representation in Scala 3 is
@@ -94,4 +95,37 @@ val list = List(B(), C())
 
 Much easier to read!
 
-Finally, if a logical and holds no data we can use a `case object` instead of a `case class`. For example, 
+Finally, if a logical and holds no data we can use a `case object` instead of a `case class`. For example, if we're defining some type `A` that holds no data we can just write
+
+```scala mdoc:silent
+case object A
+```
+
+Note there is no need to mark the `case object` as `final`, as objects cannot be extended.
+
+
+### Examples
+
+Let's make the discussion above more concrete with some examples.
+
+
+#### Role
+
+In the discussion forum example, we said a role is normal, moderator, or administrator. This is a logical or, so we can directly translate it to Scala using the appropriate pattern. In Scala 3 we write
+
+```scala mdoc:silent
+enum Role {
+  case Normal
+  case Moderator
+  case Administrator
+}
+```
+
+In Scala 2 we write
+
+```scala mdoc:reset:silent
+sealed abstract class Role extends Product with Serializable
+case object Normal extends Role
+case object Moderator extends Role
+case object Administrator extends Role
+```
