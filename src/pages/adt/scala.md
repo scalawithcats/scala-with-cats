@@ -109,7 +109,7 @@ Note there is no need to mark the `case object` as `final`, as objects cannot be
 Let's make the discussion above more concrete with some examples.
 
 
-#### Role
+#### Role and User
 
 In the discussion forum example, we said a role is normal, moderator, or administrator. This is a logical or, so we can directly translate it to Scala using the appropriate pattern. In Scala 3 we write
 
@@ -128,4 +128,59 @@ sealed abstract class Role extends Product with Serializable
 case object Normal extends Role
 case object Moderator extends Role
 case object Administrator extends Role
+```
+
+The cases within a role don't hold any data, so we used a `case object` in the Scala 2 code.
+
+We defined a user as a screen name, an email address, a password, and a role. In both Scala 3 and Scala 2 this becomes
+
+```scala mdoc:silent
+final case class User(screenName: String, emailAddress: String, password: String, role: Role)
+```
+
+I've used `String` to represent most of the data within a `User`, but in real code we might want to define separate types for each field.
+
+
+#### Paths
+
+We defined a path as a sequence of actions of a virtual pen. The possible actions are usually straight lines, Bezier curves, or movement that doesn't result in visible output. A straight line has an end point (the starting point is implicit), a Bezier curve has two control points and an end point, and a move has an end point. 
+
+
+This has a straightforward translation to Scala. We can represent paths as the following in both Scala 3 and Scala 2.
+
+```scala mdoc:invisible
+type Action = Int
+```
+```scala mdoc:silent
+final case class Path(actions: Seq[Action])
+```
+
+An action is a logical or, so we have different representations in Scala 3 and Scala 2. In Scala 3 we'd write
+
+```scala mdoc:reset:invisible
+type Point = Int
+```
+```scala mdoc:silent
+enum Action {
+  case Line(end: Point)
+  case Curve(cp1: Point, cp2: Point, end: Point)
+  case Move(end: Point)
+}
+```
+
+where `Point` is a suitable representation of a two-dimensional point.
+
+In Scala 2 we have to go with the more verbose
+
+```scala mdoc:reset:invisible
+type Point = Int
+```
+```scala mdoc:silent
+sealed abstract class Action extends Product with Serializable 
+final case class Line(end: Point) extends Action
+final case class Curve(cp1: Point, cp2: Point, end: Point) extends Action
+final case class Move(end: Point) extends Action
+```
+
+
 ```
