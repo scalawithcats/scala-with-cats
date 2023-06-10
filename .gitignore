@@ -5,7 +5,8 @@ pdf.txt
 .bloop/
 .bsp/
 
-#!! ERROR: intellj is undefined. Use list command to see defined gitignore types !!#
+### IntelliJ ###
+.idea
 
 ### Metals ###
 .metals/
