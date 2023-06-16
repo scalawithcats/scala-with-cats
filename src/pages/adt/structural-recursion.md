@@ -28,7 +28,7 @@ Remember in the general case, we can have
 
 which we represent (in Scala 3) as
 
-```scala mdoc:silent
+```scala
 enum A {
   case B(d: D, e: E)
   case C(f: F, g: G)
@@ -118,3 +118,12 @@ enum MyList[A] {
 ```
 
 I've left the `???` to indicate that we haven't finished with this case.
+
+Now we can move on to the problem specific parts.
+Here we have three strategies to help us:
+
+1. reasoning independently by case; 
+2. reasoning using structural recursion; and
+3. following the types
+
+Let's briefly discuss each and then see how they apply to our example.
