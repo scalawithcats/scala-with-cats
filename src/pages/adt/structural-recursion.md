@@ -68,7 +68,7 @@ In Scala 3 we write.
 
 ```scala mdoc:silent
 enum MyList[A] {
-  case Empty
+  case Empty()
   case Pair(head: A, tail: MyList[A])
 }
 ```
@@ -78,7 +78,7 @@ We start with the method skeleton specifying just the name and types.
 
 ```scala mdoc:reset:silent
 enum MyList[A] {
-  case Empty
+  case Empty()
   case Pair(head: A, tail: MyList[A])
   
   def map[B](f: A => B): MyList[B] = 
@@ -90,12 +90,12 @@ Now apply the structural recursion strategy, giving us
 
 ```scala mdoc:reset:silent
 enum MyList[A] {
-  case Empty
+  case Empty()
   case Pair(head: A, tail: MyList[A])
   
   def map[B](f: A => B): MyList[B] = 
     this match {
-      case Empty => ???
+      case Empty() => ???
       case Pair(head, tail) => ???
     }
 }
@@ -106,12 +106,12 @@ The data is recursive in the `tail` of `Pair`, so `map` is recursive there as we
 
 ```scala
 enum MyList[A] {
-  case Empty
+  case Empty()
   case Pair(head: A, tail: MyList[A])
   
   def map[B](f: A => B): MyList[B] = 
     this match {
-      case Empty => ???
+      case Empty() => ???
       case Pair(head, tail) => ??? tail.map(f)
     }
 }
