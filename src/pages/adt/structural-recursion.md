@@ -127,3 +127,79 @@ Here we have three strategies to help us:
 3. following the types
 
 Let's briefly discuss each and then see how they apply to our example.
+
+The first strategy is relatively simple: when we consider the problem specific code on the right hand side of a pattern matching `case`, we can ignore the code in any other pattern matches. So, for example, when considering the case for `Empty` above, we don't need to worry about the case for `Pair`, and vice versa.
+
+The next strategy is a little bit more complicated, and has to do with recursion. Remember that the structural recursion strategy tells us where to place any recursive calls. This means we don't have to think about the recursion. The result is guaranteed to be correct so long as we get the non-recursive parts correct. 
+
+In the example above we have the recursion `tail.map(f)`. We can assume this correctly computes `map` on the tail of the list, and we only need to think about what we should do with the remaining data. In this example we need to think about how to combine whatever we do with the `head` with the result of the recursive call. 
+
+It's this property that allows us to consider cases independently. Recursive calls are the only thing that connect the different cases, and they are given to use by the structural recursion strategy.
+
+Our final strategy is **following the types**. It can be used in many situations, not just structural recursion, so I consider it a separate strategy. The core idea is to use the information in the types to restrict the possible implementations. We can look at the types of inputs and outputs to help us.
+
+Now let's use these strategies to finish the implementation of `map`. We start with
+
+```scala
+enum MyList[A] {
+  case Empty()
+  case Pair(head: A, tail: MyList[A])
+  
+  def map[B](f: A => B): MyList[B] = 
+    this match {
+      case Empty() => ???
+      case Pair(head, tail) => ??? tail.map(f)
+    }
+}
+```
+
+Our first strategy is to consider the cases independently. Let's start with the `Empty` case. There is no recursive call here, so reasoning using structural recursion doesn't come into play here. Let's instead use the types. There is no input here other than the `Empty` case we have already matched, so we cannot use the input types to further restrict the code. However can use the output types. We're trying to create a `MyList[B]`. There are only two ways to create a `MyList[B]`: an `Empty` or a `Pair`. To create a `Pair` we need a `head` of type `B`, which we don't have. So we can only use `Empty`. *This is the only possible code we can write*. The types are sufficiently restrictive that we cannot write incorrect code for this case.
+
+```scala
+enum MyList[A] {
+  case Empty()
+  case Pair(head: A, tail: MyList[A])
+  
+  def map[B](f: A => B): MyList[B] = 
+    this match {
+      case Empty() => Empty()
+      case Pair(head, tail) => ??? tail.map(f)
+    }
+}
+```
+
+Now let's move to the `Pair` case. We can apply both the structural recursion reasoning strategy and following the types. Let's use each in turn.
+
+The case for `Pair` is
+
+```scala 
+case Pair(head, tail) => ??? tail.map(f)
+```
+
+Remember we can consider this independently of the other case. We assume the recursion is correct. This means we only need to think about what we should do with the `head`, and how we should combine this result with `tail.map(f)`. Let's now follow the types to finish the code. Our goal is to produce a `MyList[B]`. We already the following available:
+
+- `tail.map(f)`, which has type `MyList[B]`;
+- `head`, with type `A`;
+- `f`, with type `A => B`; and
+- the constructors `Empty` and `Pair`.
+
+We could return just `Empty`, matching the case we've already written. This has the correct type but we might expect it is not the correct answer because it does not use the result of the recursion, `head`, or `f` in any way.
+
+We could return just `tail.map(f)`. This has the correct type but we might expect it is not correct because we don't use `head` or `f` in any way.
+
+We can call `f` on `head`, producing a value of type `B`, and then combine this value and the result of the recursive call using `Pair` to produce a `MyList[B]`. This is the correct solution.
+
+```scala mdoc:reset:silent
+enum MyList[A] {
+  case Empty()
+  case Pair(head: A, tail: MyList[A])
+  
+  def map[B](f: A => B): MyList[B] = 
+    this match {
+      case Empty() => Empty()
+      case Pair(head, tail) => Pair(f(head), tail.map(f))
+    }
+}
+```
+
+If you've followed this example you've hopefully how we can use the three strategies I gave to systematically find the correct implementation. Notice how we interleaved the recursion strategy and following the types to guide us to a solution for the `Pair` case. Also note how following the types alone gave us three possible implementations for the `Pair` case. In this code, and as is usually the case, the solution was the implementation that used all of the available inputs.
