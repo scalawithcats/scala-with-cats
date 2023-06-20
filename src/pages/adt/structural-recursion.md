@@ -3,7 +3,7 @@
 Structural recursion is our second programming strategy. 
 Algebraic data types tell us how to create data given a certain structure.
 Structural recursion tells us how to transform an algebraic data types into any other type.
-Given an algebraic data type, *any* transformation can be implemented using structural recursion.
+Given an algebraic data type, the transformation can be implemented using structural recursion.
 
 Just like with algebraic data types, there is distinction between the concept of structural recursion and the implementation in Scala.
 In particular, there are two ways structural recursion can be implemented in Scala: via pattern matching or via dynamic dispatch.
@@ -44,7 +44,8 @@ anA match {
 }
 ```
 
-The `???` bits are problem specific, and we cannot give a general solution for them. However we'll soon see strategies to help create them.
+The `???` bits are problem specific, and we cannot give a general solution for them. 
+However we'll soon see strategies to help create them.
 
 
 ### The Recursion in Structural Recursion
@@ -256,10 +257,74 @@ final case class Pair[A](head: A, tail: MyList[A]) extends MyList[A] {
 We can use exactly the same strategies we used in the pattern matching case to create this code.
 The implementation technique is different but the underlying concept is the same.
 So which should we use?
-If we're using `enum` in Scala 3 we don't have a choice. 
-We must use pattern matching.
+If we're using `enum` in Scala 3 we don't have a choice; we must use pattern matching.
 In other situations we can choose between the two.
 I prefer to use pattern matching when I can, as it puts the entire method definition in one place.
-However, particularly in Scala 2 there are some type inference issues using pattern matching in some situations.
+However, Scala 2 in particular has problems inferring types in some pattern matches.
 In these situations we can use dynamic dispatch instead.
 We'll learn more about this when we look at generalized algebraic data types.
+
+
+### Folds as Structural Recursions 
+
+Let's finish by looking at the fold method as an abstraction over structural recursion.
+We know that every algebraic data types has a structural recursion skeleton that is determined entirely by the structure of the algebraic data type.
+For `MyList`, defined as
+
+```scala mdoc:reset:silent
+enum MyList[A] {
+  case Empty()
+  case Pair(head: A, tail: MyList[A])
+}
+```
+
+the skeleton is
+
+```scala
+def doSomething[A,B](list: MyList[A]): B =
+  list match {
+    case Empty() => ???
+    case Pair(head, tail) => ??? doSomething(tail)
+  }
+```
+
+To create a fold, we add method parameters for the problem specific (`???`) parts.
+In the case for `Empty`, we need a value of type `B` (notice that I'm following the types here).
+
+```scala
+def doSomething[A,B](list: MyList[A], empty: B): B =
+  list match {
+    case Empty() => empty
+    case Pair(head, tail) => ??? doSomething(tail, empty)
+  }
+```
+
+For the `Pair` case, we have the head of type `A` and the recursion producing a value of type `B`. This means we need a function to combine these two values.
+
+```scala mdoc:invisible
+import MyList.*
+```
+```scala mdoc:silent
+def foldRight[A,B](list: MyList[A], empty: B, f: (A, B) => B): B =
+  list match {
+    case Empty() => empty
+    case Pair(head, tail) => f(head, foldRight(tail, empty, f))
+  }
+```
+
+This is `foldRight` (and I've renamed the method to indicate this).
+You might have noticed there is another valid solution.
+Both `empty` and the recursion produce values of type `B`.
+If we follow the types we can come up with
+
+```scala mdoc:silent
+def foldLeft[A,B](list: MyList[A], empty: B, f: (A, B) => B): B =
+  list match {
+    case Empty() => empty
+    case Pair(head, tail) => foldLeft(tail, f(head, empty), f)
+  }
+```
+
+which is `foldLeft`, the tail-recursive variant of fold for a list.
+
+We can follow the same process for any algebraic data type for create its folds.
