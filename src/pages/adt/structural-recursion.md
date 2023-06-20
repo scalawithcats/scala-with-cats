@@ -44,7 +44,7 @@ anA match {
 }
 ```
 
-The `???` bits are problem specific, and we cannot give a general solution for them (though we'll soon see strategies to help create them.)
+The `???` bits are problem specific, and we cannot give a general solution for them. However we'll soon see strategies to help create them.
 
 
 ### The Recursion in Structural Recursion
@@ -86,7 +86,9 @@ enum MyList[A] {
 }
 ```
 
-Now apply the structural recursion strategy, giving us
+Our step is to recognize that `map` can be written using a structural recursion.
+`MyList` is an algebraic data type, `map` is transforming this algebraic data type, and therefore structural recursion is applicable.
+We now apply the structural recursion strategy, giving us
 
 ```scala mdoc:reset:silent
 enum MyList[A] {
@@ -209,4 +211,54 @@ If you've followed this example you've hopefully see how we can use the three st
 
 Using dynamic dispatch to implement structural recursion is an implementation technique that may feel more natural to people with a background in object-oriented programming.
 
-The dynamic dispatch 
+The dynamic dispatch approach consists of:
+
+1. defining an *abstract method* at the root of the algebraic data types; and
+2. implementing that abstract method at every leaf of the algebraic data type.
+
+This implementation technique is only available if we use the Scala 2 encoding of algebraic data types.
+
+Let's see it in the `MyList` example we just looked at.
+Our first step is to rewrite the definition of `MyList` to the Scala 2 style.
+
+```scala mdoc:reset:silent
+sealed abstract class MyList[A] extends Product with Serializable
+final case class Empty[A]() extends MyList[A]
+final case class Pair[A](head: A, tail: MyList[A]) extends MyList[A]
+```
+
+Next we define an abstract method for `map` on `MyList`.
+
+```scala mdoc:reset:silent
+sealed abstract class MyList[A] extends Product with Serializable {
+  def map[B](f: A => B)
+}
+final case class Empty[A]() extends MyList[A]
+final case class Pair[A](head: A, tail: MyList[A]) extends MyList[A]
+```
+
+Then we implement `map` on the concrete subtypes `Empty` and `Pair`.
+
+```scala mdoc:reset:silent
+sealed abstract class MyList[A] extends Product with Serializable {
+  def map[B](f: A => B)
+}
+final case class Empty[A]() extends MyList[A] {
+  def map[B](f: A => B) = Empty()
+}
+final case class Pair[A](head: A, tail: MyList[A]) extends MyList[A] {
+  def map[B](f: A => B) =
+    Pair(f(head), tail.map(f))
+}
+```
+
+We can use exactly the same strategies we used in the pattern matching case to create this code.
+The implementation technique is different but the underlying concept is the same.
+So which should we use?
+If we're using `enum` in Scala 3 we don't have a choice. 
+We must use pattern matching.
+In other situations we can choose between the two.
+I prefer to use pattern matching when I can, as it puts the entire method definition in one place.
+However, particularly in Scala 2 there are some type inference issues using pattern matching in some situations.
+In these situations we can use dynamic dispatch instead.
+We'll learn more about this when we look at generalized algebraic data types.
