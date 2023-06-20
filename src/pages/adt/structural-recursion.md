@@ -229,9 +229,9 @@ final case class Pair[A](head: A, tail: MyList[A]) extends MyList[A]
 
 Next we define an abstract method for `map` on `MyList`.
 
-```scala mdoc:reset:silent
+```scala
 sealed abstract class MyList[A] extends Product with Serializable {
-  def map[B](f: A => B)
+  def map[B](f: A => B): MyList[B]
 }
 final case class Empty[A]() extends MyList[A]
 final case class Pair[A](head: A, tail: MyList[A]) extends MyList[A]
@@ -241,13 +241,14 @@ Then we implement `map` on the concrete subtypes `Empty` and `Pair`.
 
 ```scala mdoc:reset:silent
 sealed abstract class MyList[A] extends Product with Serializable {
-  def map[B](f: A => B)
+  def map[B](f: A => B): MyList[B]
 }
 final case class Empty[A]() extends MyList[A] {
-  def map[B](f: A => B) = Empty()
+  def map[B](f: A => B): MyList[B] = 
+    Empty()
 }
 final case class Pair[A](head: A, tail: MyList[A]) extends MyList[A] {
-  def map[B](f: A => B) =
+  def map[B](f: A => B): MyList[B] =
     Pair(f(head), tail.map(f))
 }
 ```
