@@ -265,6 +265,9 @@ In these situations we can use dynamic dispatch instead.
 We'll learn more about this when we look at generalized algebraic data types.
 
 
+### Exhaustivity Checking
+
+
 ### Folds as Structural Recursions 
 
 Let's finish by looking at the fold method as an abstraction over structural recursion.
@@ -281,21 +284,33 @@ enum MyList[A] {
 the skeleton is
 
 ```scala
-def doSomething[A,B](list: MyList[A]): B =
+aList match {
+  case Empty() => ???
+  case Pair(head, tail) => ??? recursion(tail)
+}
+```
+
+For any algebraic data type we can define at least one method, called a fold, that captures all the parts of structural recursion that don't change and allows the caller to specify all the problem specific parts.
+For `MyList` this means defining a method
+
+```scala
+def fold[A, B](list: MyList[A]): B =
   list match {
     case Empty() => ???
-    case Pair(head, tail) => ??? doSomething(tail)
+    case Pair(head, tail) => ??? fold(tail)
   }
 ```
 
-To create a fold, we add method parameters for the problem specific (`???`) parts.
+where `B` is the type the caller wants to create. 
+
+To complete `fold` we add method parameters for the problem specific (`???`) parts.
 In the case for `Empty`, we need a value of type `B` (notice that I'm following the types here).
 
 ```scala
-def doSomething[A,B](list: MyList[A], empty: B): B =
+def fold[A,B](list: MyList[A], empty: B): B =
   list match {
     case Empty() => empty
-    case Pair(head, tail) => ??? doSomething(tail, empty)
+    case Pair(head, tail) => ??? fold(tail, empty)
   }
 ```
 
@@ -327,4 +342,16 @@ def foldLeft[A,B](list: MyList[A], empty: B, f: (A, B) => B): B =
 
 which is `foldLeft`, the tail-recursive variant of fold for a list.
 
-We can follow the same process for any algebraic data type for create its folds.
+We can follow the same process for any algebraic data type for create its folds. 
+The rules are:
+
+- a fold is a function from the algebraic data type and additional parameters to some generic type that I'll call `B` below for simplicity;
+- the fold has one additional parameter for each case in a logical or;
+- each parameter is a function, with result of type `B` and parameters that have the same type as the corresponding constructor arguments *except* recursive values are replaced with `B`; and
+- if the constructor has no arguments (for example, `Empty`) we can use a value of type `B` instead of a function with no arguments.
+
+Returning to `MyList`, it has:
+
+- two cases, and hence two parameters to fold (other than the parameter that is the list itself);
+- `Empty` is a constructor with no arguments and hence we use a parameter of type `B`; and
+- `Pair` is a constructor with one parameter of type `A` and one recursive parameter, and hence the corresponding function has type `(A, B) => B`.
