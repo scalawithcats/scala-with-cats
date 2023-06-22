@@ -230,11 +230,21 @@ enum CssLength {
 If we write a pattern match using the structural recursion strategy,
 the compiler will complain if we're missing a case.
 
-```scala mdoc:warn
+```scala mdoc:fail
+import CssLength.*
+
 CssLength.Em(2.0) match {
   case Em(value) => value
   case Rem(value) => value
 }
+// -- [E029] Pattern Match Exhaustivity Warning: ----------------------------------
+// 1 |CssLength.Em(2.0) match {
+//   |^^^^^^^^^^^^^^^^^
+//   |match may not be exhaustive.
+//   |
+//   |It would fail on pattern case: CssLength.Pt(_)
+//   |
+//   | longer explanation available when compiling with `-explain`
 ```
 
 Exhaustivity checking is incredibly useful.
