@@ -208,6 +208,39 @@ enum MyList[A] {
 If you've followed this example you've hopefully see how we can use the three strategies to systematically find the correct implementation. Notice how we interleaved the recursion strategy and following the types to guide us to a solution for the `Pair` case. Also note how following the types alone gave us three possible implementations for the `Pair` case. In this code, and as is usually the case, the solution was the implementation that used all of the available inputs.
 
 
+### Exhaustivity Checking
+
+Remember that algebraic data types are a closed world: they cannot be extended once defined. 
+The Scala compiler can use this to check that we handle all possible cases in a pattern match,
+so long as we write the pattern match in a way the compiler can work with.
+This is known as **exhaustivity checking**.
+
+Here's a simple example.
+We start by defining a straight-forward algebraic data type.
+
+```scala mdoc:silent
+// Some of the possible units for lengths in CSS
+enum CssLength {
+  case Em(value: Double)
+  case Rem(value: Double)
+  case Pt(value: Double)
+}
+```
+
+If we write a pattern match using the structural recursion strategy,
+the compiler will complain if we're missing a case.
+
+```scala mdoc:warn
+CssLength.Em(2.0) match {
+  case Em(value) => value
+  case Rem(value) => value
+}
+```
+
+Exhaustivity checking is incredibly useful.
+If we change our algebraic data type the compiler will tell us the pattern matches we need to update.
+
+
 ### Dynamic Dispatch
 
 Using dynamic dispatch to implement structural recursion is an implementation technique that may feel more natural to people with a background in object-oriented programming.
@@ -263,9 +296,6 @@ I prefer to use pattern matching when I can, as it puts the entire method defini
 However, Scala 2 in particular has problems inferring types in some pattern matches.
 In these situations we can use dynamic dispatch instead.
 We'll learn more about this when we look at generalized algebraic data types.
-
-
-### Exhaustivity Checking
 
 
 ### Folds as Structural Recursions 
