@@ -65,7 +65,7 @@ Notice it's an algebraic data type as it consists of sums and products.
 It is also recursive: in the pair case the tail is itself a list.
 
 We can directly translate this to code, using the strategy for algebraic data types we saw previously.
-In Scala 3 we write.
+In Scala 3 we write
 
 ```scala mdoc:silent
 enum MyList[A] {
@@ -230,7 +230,7 @@ enum CssLength {
 If we write a pattern match using the structural recursion strategy,
 the compiler will complain if we're missing a case.
 
-```scala mdoc:fail
+```scala
 import CssLength.*
 
 CssLength.Em(2.0) match {
