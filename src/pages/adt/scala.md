@@ -183,6 +183,3 @@ final case class Line(end: Point) extends Action
 final case class Curve(cp1: Point, cp2: Point, end: Point) extends Action
 final case class Move(end: Point) extends Action
 ```
-
-
-```
