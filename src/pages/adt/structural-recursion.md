@@ -6,8 +6,8 @@ Structural recursion tells us how to transform an algebraic data types into any 
 Given an algebraic data type, the transformation can be implemented using structural recursion.
 
 Just like with algebraic data types, there is distinction between the concept of structural recursion and the implementation in Scala.
-In particular, there are two ways structural recursion can be implemented in Scala: via pattern matching or via dynamic dispatch.
-We'll look at both in turn.
+This is more obvious because there are two ways to implement structural recursion in Scala: via pattern matching or via dynamic dispatch.
+We'll look at each in turn.
 
 
 ### Pattern Matching
@@ -87,7 +87,7 @@ enum MyList[A] {
 }
 ```
 
-Our step is to recognize that `map` can be written using a structural recursion.
+Our first step is to recognize that `map` can be written using a structural recursion.
 `MyList` is an algebraic data type, `map` is transforming this algebraic data type, and therefore structural recursion is applicable.
 We now apply the structural recursion strategy, giving us
 
@@ -120,7 +120,7 @@ enum MyList[A] {
 }
 ```
 
-I've left the `???` to indicate that we haven't finished with this case.
+I left the `???` to indicate that we haven't finished with that case.
 
 Now we can move on to the problem specific parts.
 Here we have three strategies to help us:
@@ -131,7 +131,7 @@ Here we have three strategies to help us:
 
 Let's briefly discuss each and then see how they apply to our example.
 
-The first strategy is relatively simple: when we consider the problem specific code on the right hand side of a pattern matching `case`, we can ignore the code in any other pattern matches. So, for example, when considering the case for `Empty` above, we don't need to worry about the case for `Pair`, and vice versa.
+The first strategy is relatively simple: when we consider the problem specific code on the right hand side of a pattern matching `case`, we can ignore the code in any other pattern match cases. So, for example, when considering the case for `Empty` above, we don't need to worry about the case for `Pair`, and vice versa.
 
 The next strategy is a little bit more complicated, and has to do with recursion. Remember that the structural recursion strategy tells us where to place any recursive calls. This means we don't have to think about the recursion. The result is guaranteed to be correct so long as we get the non-recursive parts correct. 
 
@@ -156,7 +156,7 @@ enum MyList[A] {
 }
 ```
 
-Our first strategy is to consider the cases independently. Let's start with the `Empty` case. There is no recursive call here, so reasoning using structural recursion doesn't come into play here. Let's instead use the types. There is no input here other than the `Empty` case we have already matched, so we cannot use the input types to further restrict the code. However can use the output types. We're trying to create a `MyList[B]`. There are only two ways to create a `MyList[B]`: an `Empty` or a `Pair`. To create a `Pair` we need a `head` of type `B`, which we don't have. So we can only use `Empty`. *This is the only possible code we can write*. The types are sufficiently restrictive that we cannot write incorrect code for this case.
+Our first strategy is to consider the cases independently. Let's start with the `Empty` case. There is no recursive call here, so reasoning using structural recursion doesn't come into play. Let's instead use the types. There is no input here other than the `Empty` case we have already matched, so we cannot use the input types to further restrict the code. However can use the output types. We're trying to create a `MyList[B]`. There are only two ways to create a `MyList[B]`: an `Empty` or a `Pair`. To create a `Pair` we need a `head` of type `B`, which we don't have. So we can only use `Empty`. *This is the only possible code we can write*. The types are sufficiently restrictive that we cannot write incorrect code for this case.
 
 ```scala
 enum MyList[A] {
@@ -213,7 +213,7 @@ If you've followed this example you've hopefully see how we can use the three st
 Remember that algebraic data types are a closed world: they cannot be extended once defined. 
 The Scala compiler can use this to check that we handle all possible cases in a pattern match,
 so long as we write the pattern match in a way the compiler can work with.
-This is known as **exhaustivity checking**.
+This is known as exhaustivity checking.
 
 Here's a simple example.
 We start by defining a straight-forward algebraic data type.

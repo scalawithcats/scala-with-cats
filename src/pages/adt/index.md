@@ -2,13 +2,13 @@
 
 In this section we'll see our first example of a programming strategy: **algebraic data types**. Any data we can describe using logical ands and logical ors is an algebraic data type. Once we recognize an algebraic data type we get three things for free:
 
-- the Scala representation of the data; and
-- a **structural recursion** skeleton to transform the algebraic data type into any other type.
+- the Scala representation of the data;
+- a **structural recursion** skeleton to transform the algebraic data type into any other type; and
 - a **structural co-recursion** skeleton to construct the algebraic data type from any other type.
 
 The key point is this: from an implementation independent representation of data we can automatically derive most of the interesting implementation specific parts of working with that data.
 
-We'll start with some examples of data, from which we'll extract the common structure that motivates algebraic data types. We then look at their representation in Scala 2 and Scala 3. We'll then turn to structural recursion, to transform algebraic data types, and structural co-recursion to construct them. We'll finish by looking at the algebra of algebraic data types, which is interesting but not essential.
+We'll start with some examples of data, from which we'll extract the common structure that motivates algebraic data types. We will then look at their representation in Scala 2 and Scala 3. We'll then turn to structural recursion for transforming algebraic data types, and structural co-recursion for constructing them. We'll finish by looking at the algebra of algebraic data types, which is interesting but not essential.
 
 
 
@@ -40,15 +40,6 @@ So algebraic data types consist of sum and product types.
 
 ## Closed Worlds
 
-Algebraic data types are closed worlds, which means they cannot be extended after that fact. In practical terms this means we have to modify the source code where we define the algebraic data type if we want to add or remove elements.
+Algebraic data types are closed worlds, which means they cannot be extended after they have been defined. In practical terms this means we have to modify the source code where we define the algebraic data type if we want to add or remove elements.
 
-The closed world property is important because it gives us some guarantees we would not otherwise have. In particular, it allows the compiler to check, when we use an algebraic data type, that we handle all possible cases and alert us if we don't. This is known as **exhaustivity checking**. This is an example of how functional programming prioritizes reasoning about code---in this case automated reasoning by the compiler---over other properties such as extensibility.
-
-
-## Applications of Algebraic Data Types
-
-## The Algebra of Algebraic Data Types
-
-Algebra of algebraic data types
-
-Exponential types, quotient types.
+The closed world property is important because it gives us guarantees we would not otherwise have. In particular, it allows the compiler to check, when we use an algebraic data type, that we handle all possible cases and alert us if we don't. This is known as **exhaustivity checking**. This is an example of how functional programming prioritizes reasoning about code---in this case automated reasoning by the compiler---over other properties such as extensibility.

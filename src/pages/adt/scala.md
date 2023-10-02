@@ -1,8 +1,8 @@
 ## Algebraic Data Types in Scala 
 
-Now we know about algebraic data types we can turn to their representation in Scala. The important point here is that the translation to Scala is entirely determined by the structure of the data. No thinking is required. In other words, the work is in finding the structure of the data that best represents the problem at hand. Work out the structure of the data and the code directly follows from it.
+Now we know what algebraic data types are, we can turn to their representation in Scala. The important point here is that the translation to Scala is entirely determined by the structure of the data; no thinking is required! This means the work is in finding the structure of the data that best represents the problem at hand. Work out the structure of the data and the code directly follows from it.
 
-As algebraic data types are defined in terms of logical ands and logical ors, to represent algebraic data types in Scala we must know how to represent these two concepts in Scala. Scala 3 simplifies the representation of algebraic data types compared to Scala 2, so we'll look at each separately.
+As algebraic data types are defined in terms of logical ands and logical ors, to represent algebraic data types in Scala we must know how to represent these two concepts in Scala. Scala 3 simplifies the representation of algebraic data types compared to Scala 2, so we'll look at each language version separately.
 
 I'm assuming that you're familiar with the language features we use to represent algebraic data types in Scala, but not with their correspondence to algebraic data types.
 
@@ -65,7 +65,7 @@ final case class C() extends A
 
 Scala 2 has several little tricks to defining algebraic data types.
 
-Firstly, instead of using a `sealed abstract class` you can use a `sealed trait`. There isn't much practical difference between the two. When teaching I'll often use `sealed trait` to avoid having to introduce `abstract class`. I believe `sealed abstract class` has slightly better performance and Java interoperability but I haven't tested this. I also think `sealed abstract class` is closer, semantically, to the meaning of a sum type.
+Firstly, instead of using a `sealed abstract class` you can use a `sealed trait`. There isn't much practical difference between the two. When teaching beginners I'll often use `sealed trait` to avoid having to introduce `abstract class`. I believe `sealed abstract class` has slightly better performance and Java interoperability but I haven't tested this. I also think `sealed abstract class` is closer, semantically, to the meaning of a sum type.
 
 For extra style points we can `extend Product with Serializable` from `sealed abstract class`. Compare the reported types below with and without this little addition.
 
@@ -77,8 +77,9 @@ final case class B() extends A
 final case class C() extends A
 ```
 
-```scala mdoc
+```scala mdoc:silent
 val list = List(B(), C())
+// list: List[A extends Product with Serializable] = List(B(), C())
 ```
 
 Notice how the type of `list` includes `Product` and `Serializable`. 
@@ -97,13 +98,15 @@ val list = List(B(), C())
 
 Much easier to read!
 
+You'll only see this in Scala 2. Scala 3 has the concept of **transparent traits**, which aren't reported in inferred types, so you'll see the same output in Scala 3 no matter whether you add `Product` and `Serializable` or not.
+
 Finally, if a logical and holds no data we can use a `case object` instead of a `case class`. For example, if we're defining some type `A` that holds no data we can just write
 
 ```scala mdoc:silent
 case object A
 ```
 
-Note there is no need to mark the `case object` as `final`, as objects cannot be extended.
+There is no need to mark the `case object` as `final`, as objects cannot be extended.
 
 
 ### Examples
@@ -183,3 +186,12 @@ final case class Line(end: Point) extends Action
 final case class Curve(cp1: Point, cp2: Point, end: Point) extends Action
 final case class Move(end: Point) extends Action
 ```
+
+
+### Representing ADTs in Scala 3
+
+We've seen that the Scala 3 representation of algebraic data types, using `enum`, is more compact than the Scala 2 representation. However the Scala 2 representation is still avaiable. Should you ever use the Scala 2 representation in Scala 3? There are a few cases where you may want to:
+
+- Scala 3's doesn't currently support nested `enums` (`enums` within `enums`). This may change in the future, but right now it can be more convenient to use the Scala 2 representation to express this without having to convert to disjunctive normal form.
+
+- Scala 2's representation can express things that are almost, but not quite, algebraic data types. For example, if you define a method on an `enum` you must be able to define it for all the members of the `enum`. Sometimes you want a case of an `enum` to have methods that are only defined for that case. If so, you'll need to use the Scala 2 representation instead. 
