@@ -283,6 +283,13 @@ enum MyList[A] {
       case Pair(_, tail) => tail
     }
     
+  def map[B](f: A => B): MyList[B] =
+    MyList.unfold(this)(
+      _.isEmpty,
+      pair => f(pair.head),
+      pair => pair.tail
+    )
+    
   override def toString(): String = {
     def loop(list: MyList[A]): List[A] =
       list match {
@@ -361,6 +368,34 @@ MyList.iterate(0, 5)(x => x - 1)
 ```
 </div>
 
+Once you've completed `iterate`, try to implement `map` in terms of `unfold`.
+
+<div class="solution">
+```scala
+def map[B](f: A => B): MyList[B] =
+  MyList.unfold(this)(
+    _.isEmpty,
+    pair => f(pair.head),
+    pair => pair.tail
+  )
+```
+
+```scala mdoc:to-string
+List.iterate(0, 5)(x => x + 1).map(x => x * 2)
+MyList.iterate(0, 5)(x => x + 1).map(x => x * 2)
+```
+</div>
+
+Now a quick discussion on destructors. The destructors must do two things:
+
+1. distinguish the different cases within a sum type; and
+2. extract all the elements from each product type.
+
+So for `MyList` the minimal set of destructors is `isEmpty` (which distinguishes `Empty` from `Pair`), and `head` and `tail`.
+The extractors are partial functions (in the conceptual, not Scala, sense): they are only defined for a particular product type and throw an exception if used on a different case.
+
+The destructors are another part of the duality between structural recursion and corecursion. Whereas structural recursion is defined by pattern matching on the constructors
+
 
 One last thing before we leave `unfold`. If we look at the usual definition of `unfold` we'll usually find the following definition.
 
@@ -368,4 +403,4 @@ One last thing before we leave `unfold`. If we look at the usual definition of `
 def unfold[A, B](in: A)(f: A => Option[(A, B)]): List[B]
 ```
 
-This is equivalent to the definition we used, just a bit more compact in terms of the interface it presents. We used a more explicit definition that is makes the use of the individual elements a little bit easier to understand.
+This is equivalent to the definition we used, just a bit more compact in terms of the interface it presents. We used a more explicit definition that makes the use of the individual elements a little bit easier to understand.
