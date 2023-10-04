@@ -336,7 +336,7 @@ counter = 0
 MyList.fill(5)(getAndInc())
 ```
 
-#### Exercise {-}
+#### Exercise: Iterate {-}
 
 Implement `iterate` using the same reasoning as we did for `fill`.
 This is slightly more complex than `fill` as we need to keep to bits of information: the value of the counter and the current value of type `A`.
@@ -367,6 +367,9 @@ List.iterate(0, 5)(x => x - 1)
 MyList.iterate(0, 5)(x => x - 1)
 ```
 </div>
+
+
+#### Exercise: Map {-}
 
 Once you've completed `iterate`, try to implement `map` in terms of `unfold`.
 
