@@ -15,14 +15,13 @@ We'll see many more applications thoughout the rest of the book, which will rein
 I haven't covered everything there is to know about algebraic data types; I think doing so would be a book in its own right.
 Below are some references that you might find useful if you want to dig in further, as well as some biographical remarks.
 
-
 Algebraic data types are standard in introductory material on functional programming. 
 Structural recursion is certainly extremely common in functional programming, but strangely seems to rarely be explicitly defined as I've done here.
 I learned about both from [How to Design Programs](https://htdp.org/).
 
 I'm not aware of any approachable yet thorough treatment of either algebraic data types or structural recursion.
 Both seem to have become assumed background of any researcher in the field of programming languages,
-and relatively recent work is caked in layers of mathematics that I find difficult reading.
+and relatively recent work is caked in layers of mathematics and obtuse notation that I find difficult reading.
 The infamous [Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire][banana] is an example of such work.
 
 The earliest reference I've found to structural recursion is [Proving Properties of Programs by Structural Induction][structural-induction]), which dates to 1969. 
