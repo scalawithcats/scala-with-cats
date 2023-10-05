@@ -336,10 +336,11 @@ counter = 0
 MyList.fill(5)(getAndInc())
 ```
 
+
 #### Exercise: Iterate {-}
 
 Implement `iterate` using the same reasoning as we did for `fill`.
-This is slightly more complex than `fill` as we need to keep to bits of information: the value of the counter and the current value of type `A`.
+This is slightly more complex than `fill` as we need to keep two bits of information: the value of the counter and the value of type `A`.
 
 <div class="solution">
 ```scala
@@ -371,7 +372,7 @@ MyList.iterate(0, 5)(x => x - 1)
 
 #### Exercise: Map {-}
 
-Once you've completed `iterate`, try to implement `map` in terms of `unfold`.
+Once you've completed `iterate`, try to implement `map` in terms of `unfold`. You'll need to use the destructors to implement it.
 
 <div class="solution">
 ```scala
@@ -389,16 +390,23 @@ MyList.iterate(0, 5)(x => x + 1).map(x => x * 2)
 ```
 </div>
 
-Now a quick discussion on destructors. The destructors must do two things:
+Now a quick discussion on destructors. The destructors do two things:
 
 1. distinguish the different cases within a sum type; and
-2. extract all the elements from each product type.
+2. extract elements from each product type.
 
-So for `MyList` the minimal set of destructors is `isEmpty` (which distinguishes `Empty` from `Pair`), and `head` and `tail`.
-The extractors are partial functions (in the conceptual, not Scala, sense): they are only defined for a particular product type and throw an exception if used on a different case.
+So for `MyList` the minimal set of destructors is `isEmpty`, which distinguishes `Empty` from `Pair`, and `head` and `tail`.
+The extractors are partial functions, in the conceptual, not Scala, sense; they are only defined for a particular product type and throw an exception if used on a different case. You may have also noticed thtat the functions we passed to `fill` are exactly the destructors for natural numbers.
 
-The destructors are another part of the duality between structural recursion and corecursion. Whereas structural recursion is defined by pattern matching on the constructors
+The destructors are another part of the duality between structural recursion and corecursion. Structural recursion is:
 
+- defined by pattern matching on the constructors; and
+- takes apart an algebraic data type into smaller pieces.
+
+Structural corecursion instead is:
+
+- defined by conditions on the input, which may use destructors; and
+- build up an algebraic data type from smaller pieces.
 
 One last thing before we leave `unfold`. If we look at the usual definition of `unfold` we'll usually find the following definition.
 
@@ -406,4 +414,4 @@ One last thing before we leave `unfold`. If we look at the usual definition of `
 def unfold[A, B](in: A)(f: A => Option[(A, B)]): List[B]
 ```
 
-This is equivalent to the definition we used, just a bit more compact in terms of the interface it presents. We used a more explicit definition that makes the use of the individual elements a little bit easier to understand.
+This is equivalent to the definition we used, but a bit more compact in terms of the interface it presents. We used a more explicit definition that makes the structure of the method clearer.
