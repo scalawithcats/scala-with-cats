@@ -1,18 +1,18 @@
 # Algebraic Data Types
 
-In this section we'll see our first example of a programming strategy: **algebraic data types**. Any data we can describe using logical ands and logical ors is an algebraic data type. Once we recognize an algebraic data type we get three things for free:
+This chapter has our first example of a programming strategy: **algebraic data types**. Any data we can describe using logical ands and logical ors is an algebraic data type. Once we recognize an algebraic data type we get three things for free:
 
 - the Scala representation of the data;
 - a **structural recursion** skeleton to transform the algebraic data type into any other type; and
-- a **structural co-recursion** skeleton to construct the algebraic data type from any other type.
+- a **structural corecursion** skeleton to construct the algebraic data type from any other type.
 
 The key point is this: from an implementation independent representation of data we can automatically derive most of the interesting implementation specific parts of working with that data.
 
-We'll start with some examples of data, from which we'll extract the common structure that motivates algebraic data types. We will then look at their representation in Scala 2 and Scala 3. We'll then turn to structural recursion for transforming algebraic data types, and structural co-recursion for constructing them. We'll finish by looking at the algebra of algebraic data types, which is interesting but not essential.
+We'll start with some examples of data, from which we'll extract the common structure that motivates algebraic data types. We will then look at their representation in Scala 2 and Scala 3. Next we'll turn to structural recursion for transforming algebraic data types, followed by structural corecursion for constructing them. We'll finish by looking at the algebra of algebraic data types, which is interesting but not essential.
 
 
 
-## Some Examples of Data
+## Building Algebraic Data Types
 
 Let's start with some examples of data from a few different domains. These are simplified description but they are all representative of real applications.
 
@@ -28,7 +28,7 @@ In two-dimensional vector graphics it's typical to represent shapes as a path, w
 What is common betwen all the examples above is that the individual elements---the atoms, if you like---are connected by either a logical and or a logical or. For example, a user is a screen name **and** an email address **and** a password **and** a role. A 2D action is a straight line **or** a Bezier curve **or** a move. This is the core of algebraic data types: an algebraic data type is data that is combined using logical ands or logical ors. Conversely, whenever we can describe data in terms of logical ands and logicals or we have an algebraic data type. 
 
 
-## Sums and Products
+### Sums and Products
 
 Being functional programmers, we can't let a simple concept go without attaching some fancy jargon:
 
@@ -38,7 +38,7 @@ Being functional programmers, we can't let a simple concept go without attaching
 So algebraic data types consist of sum and product types.
 
 
-## Closed Worlds
+### Closed Worlds
 
 Algebraic data types are closed worlds, which means they cannot be extended after they have been defined. In practical terms this means we have to modify the source code where we define the algebraic data type if we want to add or remove elements.
 

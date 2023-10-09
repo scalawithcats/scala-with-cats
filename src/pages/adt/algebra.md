@@ -5,11 +5,12 @@ A question that sometimes comes up is where the "algebra" in algebraic data type
 The term algebra is used in the sense of abstract algebra, an area of mathematics.
 Abstract algebra deals with algebraic data structures. 
 An algebraic structure consists of a set of values, operations on that set, and properties that those operations must maintain.
-An example is integers, the operations addition and multiplication, and the familiar properties of these operations such as associativity, which says that $a + (b + c) = (a + b) + c$.
+An example is the set of integers, the operations addition and multiplication, and the familiar properties of these operations such as associativity, which says that $a + (b + c) = (a + b) + c$.
 The abstract in abstract algebra means that the field doesn't deal with concrete values like integers---that would be far too easy to understand---and instead with abstractions with wacky names like semigroup and monoid.
+The example of integers above is an instance of a ring.
 We'll see a lot more of these soon enough!
 
-Algebraic data structures correspond to an algebraic structure called a ring.
+Algebraic data types also correspond to the algebraic structure called a ring.
 A ring has two operations, which are conventionally denoted with $+$ and $\times$.
 You'll perhaps guess that these correspond to sum and product types respectively, and you'd be absolutely correct.
 What about the properties of these operations?
@@ -19,7 +20,7 @@ We'll they are similar to what we know from basic algebra:
 - $a + b = b + a$, known as commutivitiy;
 - there is an identity $0$ such that $a + 0 = a$;
 - there is an identity $1$ such that $a \times 1 = a$;
-- there is distribution, such that $a \times (b + c) = (a \times b) + (a \times c)$
+- there is distribution, so that $a \times (b + c) = (a \times b) + (a \times c)$
 
 So far, so abstract. 
 Let's make it concrete by looking at actual examples in Scala.
@@ -31,7 +32,7 @@ So $Int \times String$ is equivalent to
 final case class IntAndString(int: Int, string: String)
 ```
 
-To avoid creating all these names we can use tuples instead
+We can use tuples to avoid creating lots of names.
 
 ```scala mdoc:reset:silent
 type IntAndString = (Int, String)
@@ -51,6 +52,7 @@ or just
 ```scala mdoc:reset:silent
 type IntOrString = Either[Int, String]
 ```
+
 
 #### Exercise: Identities {-}
 
@@ -116,4 +118,4 @@ I'll finish up with a few pointers to other interesting facts:
 
 - Exponential types exist. They are functions! A function `A => B` is equivalent to $b^a$.
 - Quotient types also exist, but they are a bit weird. Read up about them if you're interested.
-- Another interesting algebraic manipulation is taking the derivative of an algebraic data type. This gives us a type of iterator, known as a zipper, for that type.
+- Another interesting algebraic manipulation is taking the derivative of an algebraic data type. This gives us a kind of iterator, known as a zipper, for that type.

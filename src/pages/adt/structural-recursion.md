@@ -5,7 +5,7 @@ Algebraic data types tell us how to create data given a certain structure.
 Structural recursion tells us how to transform an algebraic data types into any other type.
 Given an algebraic data type, the transformation can be implemented using structural recursion.
 
-Just like with algebraic data types, there is distinction between the concept of structural recursion and the implementation in Scala.
+As with algebraic data types, there is distinction between the concept of structural recursion and the implementation in Scala.
 This is more obvious because there are two ways to implement structural recursion in Scala: via pattern matching or via dynamic dispatch.
 We'll look at each in turn.
 
@@ -19,8 +19,7 @@ We have corresponding rules for structural recursion implemented using pattern m
 1. For each branch in a sum type we have a distinct `case` in the pattern match; and
 2. Each `case` corresponds to a product type with the pattern written in the usual way.
 
-Let's see this in code.
-Remember in the general case, we can have
+Let's see this in code, using an example ADT that includes both sum and product types:
 
 - `A` is a `B` or `C`; and
 - `B` is a `D` and `E`; and
@@ -126,18 +125,19 @@ Now we can move on to the problem specific parts.
 Here we have three strategies to help us:
 
 1. reasoning independently by case; 
-2. reasoning using structural recursion; and
+2. assuming recursion is correct; and
 3. following the types
 
+The first two are specific to structural recursion, while the final one is a general strategy we can use in many situations.
 Let's briefly discuss each and then see how they apply to our example.
 
-The first strategy is relatively simple: when we consider the problem specific code on the right hand side of a pattern matching `case`, we can ignore the code in any other pattern match cases. So, for example, when considering the case for `Empty` above, we don't need to worry about the case for `Pair`, and vice versa.
+The first strategy is relatively simple: when we consider the problem specific code on the right hand side of a pattern matching `case`, we can ignore the code in any other pattern match cases. So, for example, when considering the case for `Empty` above we don't need to worry about the case for `Pair`, and vice versa.
 
-The next strategy is a little bit more complicated, and has to do with recursion. Remember that the structural recursion strategy tells us where to place any recursive calls. This means we don't have to think about the recursion. The result is guaranteed to be correct so long as we get the non-recursive parts correct. 
+The next strategy is a little bit more complicated, and has to do with recursion. Remember that the structural recursion strategy tells us where to place any recursive calls. This means we don't have to think through the recursion. Instead we assume the recursive call will correctly compute what it claims, and only consider how to further process the result of the recursion. The result is guaranteed to be correct so long as we get the non-recursive parts correct. 
 
-In the example above we have the recursion `tail.map(f)`. We can assume this correctly computes `map` on the tail of the list, and we only need to think about what we should do with the remaining data. In this example we need to think about how to combine whatever we do with the `head` with the result of the recursive call. 
+In the example above we have the recursion `tail.map(f)`. We can assume this correctly computes `map` on the tail of the list, and we only need to think about what we should do with the remaining data: the `head` and the result of the recursive call. 
 
-It's this property that allows us to consider cases independently. Recursive calls are the only thing that connect the different cases, and they are given to use by the structural recursion strategy.
+It's this property that allows us to consider cases independently. Recursive calls are the only thing that connect the different cases, and they are given to us by the structural recursion strategy.
 
 Our final strategy is **following the types**. It can be used in many situations, not just structural recursion, so I consider it a separate strategy. The core idea is to use the information in the types to restrict the possible implementations. We can look at the types of inputs and outputs to help us.
 
@@ -248,7 +248,7 @@ CssLength.Em(2.0) match {
 ```
 
 Exhaustivity checking is incredibly useful.
-If we change our algebraic data type the compiler will tell us the pattern matches we need to update.
+For example, if we add or remove a case from an algebraic data type, the cmopiler will us all the pattern matches that need to be updated.
 
 
 ### Dynamic Dispatch
@@ -299,7 +299,8 @@ final case class Pair[A](head: A, tail: MyList[A]) extends MyList[A] {
 
 We can use exactly the same strategies we used in the pattern matching case to create this code.
 The implementation technique is different but the underlying concept is the same.
-So which should we use?
+
+Given we have two implementation strategies, which should we use?
 If we're using `enum` in Scala 3 we don't have a choice; we must use pattern matching.
 In other situations we can choose between the two.
 I prefer to use pattern matching when I can, as it puts the entire method definition in one place.
@@ -311,7 +312,7 @@ We'll learn more about this when we look at generalized algebraic data types.
 ### Folds as Structural Recursions 
 
 Let's finish by looking at the fold method as an abstraction over structural recursion.
-We know that every algebraic data types has a structural recursion skeleton that is determined entirely by the structure of the algebraic data type.
+We know that every algebraic data type has a structural recursion skeleton that is determined entirely by the structure of the algebraic data type.
 For `MyList`, defined as
 
 ```scala mdoc:reset:silent
@@ -382,7 +383,7 @@ def foldLeft[A,B](list: MyList[A], empty: B, f: (A, B) => B): B =
 
 which is `foldLeft`, the tail-recursive variant of fold for a list.
 
-We can follow the same process for any algebraic data type for create its folds. 
+We can follow the same process for any algebraic data type to create its folds. 
 The rules are:
 
 - a fold is a function from the algebraic data type and additional parameters to some generic type that I'll call `B` below for simplicity;

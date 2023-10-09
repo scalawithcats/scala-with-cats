@@ -1,16 +1,22 @@
 ## Conclusions
 
-We have covered a lot of material in this chapter. The key points are:
+We have covered a lot of material in this chapter. Let's recap the key points.
 
-- algebraic data types are expressed as logical ands and logical ors of types;
-- algebraic data types are the main way to represent data in Scala;
-- structural recursion gives a skeleton for converting a given algebraic data type into any type; 
-- structural corecursion gives a skeleton for converting any type into a given algebraic data type; and
-- there are other reasoning principles (primarily, following the types) that help us complete structural recursions and corecursions given the skeletons.
+Algebraic data types allow us to express data types by combining existing data types with logical and and logical or. A logical and constructs a sum type while a logical or constructs a product type. Algebraic data types are the main way to represent data in Scala.
 
-There is a lot packed into this chapter.
-Don't worry if you're struggling to take it all in right now.
-We'll see many more applications thoughout the rest of the book, which will reinforce the concepts.
+Structural recursion gives us a skeleton for transforming any given algebraic data type into any other type. Structural recursion can be abstracted into a `fold` method. 
+
+We use several reasoning principles to help us complete the problem specific parts of a structural recursion:
+
+1. reasoning independently by case;
+2. assuming recursion is correct; and
+3. following the types.
+
+Following the types is a very general strategy that is can be used in many other situations.
+
+Structural corecursion gives us a skeleton for creating any given algebraic data type from any other type. Structural corecursion can be abstracted into an `unfold` method. When reasoning about structural corecursion we can reason as we would for an imperative loop, or, if the input is an algebraic data type, use the principles for reasoning about structural recursion.
+
+Notice that the two main themes of functional programming---composition and reasoning---are both already apparent. Algebraic data types are compositional: we compose algebraic data types using sum and product. We've seen many reasoning principles in this chapter.
 
 I haven't covered everything there is to know about algebraic data types; I think doing so would be a book in its own right.
 Below are some references that you might find useful if you want to dig in further, as well as some biographical remarks.
@@ -23,14 +29,15 @@ I'm not aware of any approachable yet thorough treatment of either algebraic dat
 Both seem to have become assumed background of any researcher in the field of programming languages,
 and relatively recent work is caked in layers of mathematics and obtuse notation that I find difficult reading.
 The infamous [Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire][banana] is an example of such work.
+I suspect the core ideas of both date back to at least the emergence of computability theory in the 1930s, well before any digital computers existed.
 
 The earliest reference I've found to structural recursion is [Proving Properties of Programs by Structural Induction][structural-induction]), which dates to 1969. 
 Algebraic data types don't seem to have been fully developed, along with pattern matching, until [NPL][npl] in 1977. 
 NPL was quickly followed by the more influential language [Hope][hope], which spread the concept to other programming languages.
-I suspect the core ideas in both date back to at least the emergence of computability theory in the 1930s, well before any digital computers existed.
 
 Corecursion is a bit better documented in the contemporary literature. [How to Design Co-Programs][htdc] covers the main idea we have looked at here. 
 [The Under-Appreciated Unfold][unfold] discusses uses of `unfold`. 
+
 [The Derivative of a Regular Type is its Type of One-Hole Contexts][deriv] describes the derivative of algebraic data types.
 
 

@@ -1,9 +1,10 @@
 ## Structural Corecursion
 
 Structural corecursion is the opposite—more correctly, the dual—of structural recursion.
-Whereas structural recursion tells us how to take apart an algebraic data types, 
+Whereas structural recursion tells us how to take apart an algebraic data type, 
 structural corecursion tells us how to build up an algebraic data type.
 We can use structural corecursion whenever the output of a method or function is an algebraic data type.
+
 
 <div class="callout callout-info">
 #### Duality in Functional Programming
@@ -15,6 +16,7 @@ So corecursion is the dual of recursion, and sum types, also known as coproducts
 Duality is one of the main themes of this book.
 By relating concepts as duals we can transfer knowledge from one domain to another.
 </div>
+
 
 Structural recursion works by considering all the possible inputs (which we usually represent as patterns), and then working out what we do with each input case.
 Structural corecursion works by considering all the possible outputs, which are the constructors of the algebraic data type, and then working out the conditions under which we'd call each constructor.
@@ -33,7 +35,7 @@ enum MyList[A] {
 }
 ```
 
-If we're writing a method that produces a `MyList` then we can use structural corecursion.
+We can use structural corecursion if we're writing a method that produces a `MyList`.
 A good example is `map`:
 
 ```scala mdoc:reset:silent
@@ -110,7 +112,7 @@ This method would have to use pattern matching in its implementation, so avoidin
 
 Just as we could abstract structural recursion as a fold, for any given algebraic data type we can abstract structural corecursion as an unfold. Unfolds are much less commonly used than folds, but they are still a nice tool to have.
 
-Let's work through the process using `MyList` again.
+Let's work through the process of deriving unfold, using `MyList` as our example again.
 
 ```scala mdoc:reset:silent
 enum MyList[A] {
@@ -119,19 +121,19 @@ enum MyList[A] {
 }
 ```
 
-The skeleton is
+The corecursion skeleton is
 
 ```scala
 if ??? then MyList.Empty()
 else MyList.Pair(???, recursion(???))
 ```
 
-Let's start defining our method `unfold` so we can fill in the missing pieces.
+We start defining our method `unfold` so we can fill in the missing pieces. I'm using the recursion rule immediately in the code below, to save a bit of time in the derivation.
 
 ```scala
 def unfold[A, B](seed: A): MyList[B] =
   if ??? then MyList.Empty()
-  else MyList.Pair(???, unfold(in))
+  else MyList.Pair(???, unfold(seed))
 ```
 
 We can abstract the condition using a function from `A => Boolean`.
@@ -142,7 +144,7 @@ def unfold[A, B](seed: A, stop: A => Boolean): MyList[B] =
   else MyList.Pair(???, unfold(seed, stop))
 ```
 
-Now we need to handle the cases for `Pair`. 
+Now we need to handle the case for `Pair`. 
 We have a value of type `A` (`seed`), so to create the `head` element of `Pair` we can ask for a function `A => B`
 
 ```scala
@@ -161,12 +163,13 @@ def unfold[A, B](seed: A, stop: A => Boolean, f: A => B, next: A => A): MyList[B
 
 At this point we're done.
 Let's see that `unfold` is useful by declaring some other methods in terms of it.
-We're going to declare `map`, which we've already seen is a structural corecursion, using `unfold`, and also `fill` and `iterate`, which correspond to the methods with the same names on `List` in the Scala standard library.
+We're going to declare `map`, which we've already seen is a structural corecursion, using `unfold`.
+We will also define `fill` and `iterate`, which are methods that construct lists and correspond to the methods with the same names on `List` in the Scala standard library.
 
 To make this easier to work with I'm going to declare `unfold` as a method on the `MyList` companion object. 
 I have made a slight tweak to the definition to make type inference work a bit better.
-In Scala, types inferred for one method parameter cannot be used for other method parameters.
-However, types inferred for one methdo parameter list can be used in subsequenst lists.
+In Scala, types inferred for one method parameter cannot be used for other method parameters in the same parameter list.
+However, types inferred for one method parameter list can be used in subsequenst lists.
 Separating the function parameters from the `seed` parameter means that the value inferred for `A` from `seed` can be used for inference of the function parameters' input parameters.
 
 I have also declared some **destructor** methods, which are methods that take apart an algebraic data type.
@@ -234,9 +237,9 @@ You might have noticed that the parameters to `unfold` are almost exactly those 
 3. the statement that advances the counter; and
 4. the body of the loop that uses the counter.
 
-These three correspond to the `seed`, `stop`, `next`, and `f` parameters of `unfold` respectively.
+These correspond to the `seed`, `stop`, `next`, and `f` parameters of `unfold` respectively.
 
-Loop variants and invariants are the standard way of reasoning about imperative loops. I'm not going to describe them here, as probably learned this already (though perhaps not using these terms). Instead I'm going to discuss the second reasoning strategies, which relates writing `unfold` to something we've already discussed: structural recursion.
+Loop variants and invariants are the standard way of reasoning about imperative loops. I'm not going to describe them here, as you have probably already learned how to reason about loops (though perhaps not using these terms). Instead I'm going to discuss the second reasoning strategy, which relates writing `unfold` to something we've already discussed: structural recursion.
 
 Our first step is to note that natural numbers (the integers 0 and larger) are conceptually algebraic data types even though the implementation in Scala---using `Int`---is not. A natural number is either:
 
@@ -246,7 +249,7 @@ Our first step is to note that natural numbers (the integers 0 and larger) are c
 It's the simplest possible algebraic data type that is both a sum and a product type.
 
 Once we see this, we can use the reasoning tools for structural recursion for creating the parameters to `unfold`.
-Let's show how this works with `fill`. The `n` parameter tells us how many elements in the `List`, and the `elem` parameter creates those elements. So our starting point is to consider this as a structural recursion over the natural numbers. We can take `n` as `seed`, and `stop` as the function `x => x == 0`. These are the standard conditions for such a structural recursion. What about `next`? Well, the definition of natural numbers tells us we should subtract one, so `next` becomes `x => x - 1`. We only need `f`, and that comes from the definition of how `fill` is supposed to work. We create the value from `elem`, so `f` is just `_ => elem`
+Let's show how this works with `fill`. The `n` parameter tells us how many elements there are in the `List` we're creating. The `elem` parameter creates those elements, and is called once for each element. So our starting point is to consider this as a structural recursion over the natural numbers. We can take `n` as `seed`, and `stop` as the function `x => x == 0`. These are the standard conditions for a structural recursion over the natural numbers. What about `next`? Well, the definition of natural numbers tells us we should subtract one in the recursive case, so `next` becomes `x => x - 1`. We only need `f`, and that comes from the definition of how `fill` is supposed to work. We create the value from `elem`, so `f` is just `_ => elem`
 
 ```scala
 object MyList {
@@ -396,7 +399,7 @@ Now a quick discussion on destructors. The destructors do two things:
 2. extract elements from each product type.
 
 So for `MyList` the minimal set of destructors is `isEmpty`, which distinguishes `Empty` from `Pair`, and `head` and `tail`.
-The extractors are partial functions, in the conceptual, not Scala, sense; they are only defined for a particular product type and throw an exception if used on a different case. You may have also noticed thtat the functions we passed to `fill` are exactly the destructors for natural numbers.
+The extractors are partial functions in the conceptual, not Scala, sense; they are only defined for a particular product type and throw an exception if used on a different case. You may have also noticed that the functions we passed to `fill` are exactly the destructors for natural numbers.
 
 The destructors are another part of the duality between structural recursion and corecursion. Structural recursion is:
 
@@ -408,7 +411,7 @@ Structural corecursion instead is:
 - defined by conditions on the input, which may use destructors; and
 - build up an algebraic data type from smaller pieces.
 
-One last thing before we leave `unfold`. If we look at the usual definition of `unfold` we'll usually find the following definition.
+One last thing before we leave `unfold`. If we look at the usual definition of `unfold` we'll probably find the following definition.
 
 ```scala
 def unfold[A, B](in: A)(f: A => Option[(A, B)]): List[B]

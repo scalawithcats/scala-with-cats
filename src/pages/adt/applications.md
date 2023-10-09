@@ -1,6 +1,6 @@
 ## Applications of Algebraic Data Types
 
-We seem some examples of algebraic data types already. Some of the simplest are the basic enumeration, like
+We seen some examples of algebraic data types already. Some of the simplest are the basic enumeration, like
 
 ```scala mdoc:silent
 enum Permissions {
@@ -10,19 +10,19 @@ enum Permissions {
 }
 ```
 
-which we might use in a system monitoring application and also our old friend the `case class`
+and our old friend the `case class`
 
 ```scala mdoc:silent
 final case class Uri(protocol: String, host: String, port: Int, path: String)
 ```
 
-I think these are the simplest examples, but those new to algebraic data types often don't realise how many other uses cases there are.
+Those new to algebraic data types often don't realise how many other uses cases there are.
 We'll see combinator libraries, an extremely important use, in the next chapter.
 Here I want to give a few examples of finite state machines as another use case.
 
-Finite state machines occur everywhere in programming. The state of a user interface component, such as open or closed, or visible or invisible, can be modelled as a finite state machine. That's probably not relevant to most Scala programmers, so let's consider instead a distributed job server. The idea is here that users submit jobs to run on a cluster of computers. The supervisor is responsible for selecting a computer on which to run the job, monitoring it, and collecting the result at the end of successful completion.
+Finite state machines occur everywhere in programming. The state of a user interface component, such as open or closed, or visible or invisible, can be modelled as a finite state machine. That's probably not relevant to most Scala programmers, so let's consider instead a distributed job server. The idea is here that users submit jobs to run on a cluster of computers. The supervisor is responsible for selecting a computer on which to run the job, monitoring it, and collecting the result on successful completion.
 
-In a very simple system, we might represent jobs as having four states:
+In a very simple system we might represent jobs as having four states:
 
 1. Queued: the job is in the queue to be run.
 2. Running: the job is running on a computer.
@@ -44,4 +44,4 @@ enum Job[A] {
 }
 ```
 
-If you look around the code you work with, I expect you'll quickly find many other examples.
+If you look around the code you work with I expect you'll quickly find many other examples.
