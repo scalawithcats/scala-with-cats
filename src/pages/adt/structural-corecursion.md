@@ -2,7 +2,7 @@
 
 Structural corecursion is the opposite—more correctly, the dual—of structural recursion.
 Whereas structural recursion tells us how to take apart an algebraic data type, 
-structural corecursion tells us how to build up an algebraic data type.
+structural corecursion tells us how to build up, or construct, an algebraic data type.
 We can use structural corecursion whenever the output of a method or function is an algebraic data type.
 
 
@@ -48,6 +48,8 @@ enum MyList[A] {
 }
 ```
 
+The output of this method is a `MyList`.
+Since we need to construct a `MyList` we can use structural corecursion.
 The structural corecursion strategy says we write down all the constructors and then consider the conditions that will cause us to call each constructor.
 So our starting point is to just write down the two constructors, and put in dummy conditions.
 
@@ -104,7 +106,9 @@ We recognised that we were producing a `List`, that there were two possibilities
 Formalizing structural corecursion as a separate strategy allows us to be more conscious of where we apply it.
 Finally, notice how I switched from an `if` expression to a pattern match expression as we progressed through defining `map`.
 This is perfectly fine.
-Both kinds of expression can achieve the same effect, though if we wanted to continue using an `if` we'd have to define a method (for example, `isEmpty`) that allows us to distinguish an `Empty` element from a `Pair`.
+Both kinds of expression achieve the same effect.
+Pattern matching is a little bit safer due to exhaustivity checking.
+If we wanted to continue using an `if` we'd have to define a method (for example, `isEmpty`) that allows us to distinguish an `Empty` element from a `Pair`.
 This method would have to use pattern matching in its implementation, so avoiding pattern matching directly is just pushing it elsewhere.
 
 

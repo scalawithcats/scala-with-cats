@@ -195,3 +195,32 @@ We've seen that the Scala 3 representation of algebraic data types, using `enum`
 - Scala 3's doesn't currently support nested `enums` (`enums` within `enums`). This may change in the future, but right now it can be more convenient to use the Scala 2 representation to express this without having to convert to disjunctive normal form.
 
 - Scala 2's representation can express things that are almost, but not quite, algebraic data types. For example, if you define a method on an `enum` you must be able to define it for all the members of the `enum`. Sometimes you want a case of an `enum` to have methods that are only defined for that case. To implement this you'll need to use the Scala 2 representation instead. 
+
+
+#### Exercise: Tree {-}
+
+To gain a bit of practice defining algebraic data types, code the following description in Scala (your choice of version, or do both.)
+
+A `Tree` with elements of type `A` is:
+
+- a `Leaf` with a value of type `A`; or
+- a `Node` with a left and right child, which are both `Trees` with elements of type `A`.
+
+<div class="solution">
+We can directly translate this binary tree into Scala. Here's the Scala 3 version.
+
+```scala mdoc:silent
+enum Tree[A] {
+  case Leaf(value: A)
+  case Node(left: Tree[A], right: Tree[A])
+}
+```
+
+In the Scala 2 encoding we write
+
+```scala mdoc:reset:silent
+sealed abstract class Tree[A] extends Product with Serializable
+final case class Leaf[A](value: A) extends Tree[A]
+final case class Node[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+```
+</div>

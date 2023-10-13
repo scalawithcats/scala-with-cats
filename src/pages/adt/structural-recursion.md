@@ -309,30 +309,195 @@ In these situations we can use dynamic dispatch instead.
 We'll learn more about this when we look at generalized algebraic data types.
 
 
+#### Exercise: Methods for Tree {-}
+
+In a previous exercise we created a `Tree` algebraic data type:
+
+```scala mdoc:silent
+enum Tree[A] {
+  case Leaf(value: A)
+  case Node(left: Tree[A], right: Tree[A])
+}
+```
+
+Or, in the Scala 2 encoding:
+
+```scala mdoc:reset:silent
+sealed abstract class Tree[A] extends Product with Serializable
+final case class Leaf[A](value: A) extends Tree[A]
+final case class Node[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+```
+
+Let's get some practice with structural recursion and write some methods for `Tree`. Implement
+
+* `size`, which returns the number of values (`Leafs`) stored in the `Tree`;
+* `contains`, which returns `true` if the `Tree` contains a given element of type `A`, and `false` otherwise; and
+* `map`, which creates a `Tree[B]` given a function `A => B`
+
+Use whichever you prefer of pattern matching or dynamic dispatch to implement the methods.
+
+<div class="solution">
+I chose to use pattern matching to implement these methods. I'm using the Scala 3 encoding so I have no choice.
+
+I start by creating the method declarations with empty bodies.
+
+```scala mdoc:reset:silent
+enum Tree[A] {
+  case Leaf(value: A)
+  case Node(left: Tree[A], right: Tree[A])
+  
+  def size: Int = 
+    ???
+
+  def contains(element: A): Boolean =
+    ???
+    
+  def map[B](f: A => B): Tree[B] =
+    ???
+}
+```
+
+Now these methods all transform an algebraic data type so I can implement them using structural recursion. I write down the structural recursion skeleton for `Tree`, remembering to apply the recursion rule.
+
+```scala
+enum Tree[A] {
+  case Leaf(value: A)
+  case Node(left: Tree[A], right: Tree[A])
+  
+  def size: Int = 
+    this match { 
+      case Leaf(value)       => ???
+      case Node(left, right) => left.size ??? right.size
+    }
+
+  def contains(element: A): Boolean =
+    this match { 
+      case Leaf(value)       => ???
+      case Node(left, right) => left.contains(element) ??? right.contains(element)
+    }
+    
+  def map[B](f: A => B): Tree[B] =
+    this match { 
+      case Leaf(value)       => ???
+      case Node(left, right) => left.map(f) ??? right.map(f)
+    }
+}
+```
+
+Now I can use the other reasoning techniques to complete the method declarations.
+Let's work through `size`. 
+
+```scala
+def size: Int = 
+  this match { 
+    case Leaf(value)       => 1
+    case Node(left, right) => left.size ??? right.size
+  }
+```
+
+I can reason independently by case.
+The size of a `Leaf` is, by definition, 1.
+
+```scala
+def size: Int = 
+  this match { 
+    case Leaf(value)       => 1
+    case Node(left, right) => left.size ??? right.size
+  }
+```
+
+Now I can use the rule for reasoning about recursion: I assume the recursive calls successfully compute the size of the left and right children. What is the size then of the combined tree? It must be the sum of the size of the children. With this, I'm done.
+
+```scala
+def size: Int = 
+  this match { 
+    case Leaf(value)       => 1
+    case Node(left, right) => left.size + right.size
+  }
+```
+
+I can use the same process to work through the other two methods, giving me the complete solution shown below.
+
+```scala mdoc:reset:silent
+enum Tree[A] {
+  case Leaf(value: A)
+  case Node(left: Tree[A], right: Tree[A])
+  
+  def size: Int = 
+    this match { 
+      case Leaf(value)       => 1
+      case Node(left, right) => left.size + right.size
+    }
+
+  def contains(element: A): Boolean =
+    this match { 
+      case Leaf(value)       => element == value
+      case Node(left, right) => left.contains(element) || right.contains(element)
+    }
+    
+  def map[B](f: A => B): Tree[B] =
+    this match { 
+      case Leaf(value)       => Leaf(f(value))
+      case Node(left, right) => Node(left.map(f), right.map(f))
+    }
+}
+```
+</div>
+
+
 ### Folds as Structural Recursions 
 
 Let's finish by looking at the fold method as an abstraction over structural recursion.
-We know that every algebraic data type has a structural recursion skeleton that is determined entirely by the structure of the algebraic data type.
-For `MyList`, defined as
+If you did the `Tree` exercise above, you will have noticed that we wrote the same kind of code again and again. 
+Here are the methods we wrote.
+Notice the left-hand sides of the pattern matches are all the same, and the right-hand sides are very similar.
 
-```scala mdoc:reset:silent
+```scala
+def size: Int = 
+  this match { 
+    case Leaf(value)       => 1
+    case Node(left, right) => left.size + right.size
+  }
+
+def contains(element: A): Boolean =
+  this match { 
+    case Leaf(value)       => element == value
+    case Node(left, right) => left.contains(element) || right.contains(element)
+  }
+  
+def map[B](f: A => B): Tree[B] =
+  this match { 
+    case Leaf(value)       => Leaf(f(value))
+    case Node(left, right) => Node(left.map(f), right.map(f))
+  }
+```
+
+This is the point of structural recursion: we recognize and formalize this similarity.
+However, as programmers we might want to abstract over this repetition.
+Can we write a method that captures everything that doesn't change in a structural recursion, and allows the caller to pass arguments for everything that does change?
+It turns out we can. For any algebraic data type we can define at least one method, called a fold, that captures all the parts of structural recursion that don't change and allows the caller to specify all the problem specific parts.
+
+Let's see how this is done using the example of `MyList`.
+Recall the definition of `MyList` is
+
+```scala mdoc:silent
 enum MyList[A] {
   case Empty()
   case Pair(head: A, tail: MyList[A])
 }
 ```
 
-the skeleton is
+We know the structural recursion skeleton for `MyList` is
 
 ```scala
-aList match {
-  case Empty() => ???
-  case Pair(head, tail) => ??? recursion(tail)
-}
+def doSomething[A](list: MyList[A]) =
+  list match {
+    case Empty()          => ???
+    case Pair(head, tail) => ??? doSomething(tail)
+  } 
 ```
 
-For any algebraic data type we can define at least one method, called a fold, that captures all the parts of structural recursion that don't change and allows the caller to specify all the problem specific parts.
-For `MyList` this means defining a method
+Implementing fold for `MyList` means defining a method
 
 ```scala
 def fold[A, B](list: MyList[A]): B =
@@ -382,6 +547,7 @@ def foldLeft[A,B](list: MyList[A], empty: B, f: (A, B) => B): B =
 ```
 
 which is `foldLeft`, the tail-recursive variant of fold for a list.
+(We'll talk about tail-recursion in the next chapter.)
 
 We can follow the same process for any algebraic data type to create its folds. 
 The rules are:
@@ -396,3 +562,99 @@ Returning to `MyList`, it has:
 - two cases, and hence two parameters to fold (other than the parameter that is the list itself);
 - `Empty` is a constructor with no arguments and hence we use a parameter of type `B`; and
 - `Pair` is a constructor with one parameter of type `A` and one recursive parameter, and hence the corresponding function has type `(A, B) => B`.
+
+
+#### Exercise: Tree Fold {-}
+
+Implement a fold for `Tree` defined earlier.
+There are several different ways to traverse a tree (pre-order, post-order, and in-order). 
+Just choose whichever seems easiest.
+
+<div class="solution">
+I start by add the method declaration without a body.
+
+```scala mdoc:reset:silent
+enum Tree[A] {
+  case Leaf(value: A)
+  case Node(left: Tree[A], right: Tree[A])
+  
+  def fold[B]: B =
+    ???
+}
+```
+
+Next step is to add the structural recursion skeleton.
+
+```scala
+enum Tree[A] {
+  case Leaf(value: A)
+  case Node(left: Tree[A], right: Tree[A])
+  
+  def fold[B]: B =
+    this match {
+      case Leaf(value)       => ???
+      case Node(left, right) => left.fold ??? right.fold
+    }
+}
+```
+
+Now I follow the types to add the method parameters.
+For the `Leaf` case we want a function of type `A => B`.
+
+```scala
+enum Tree[A] {
+  case Leaf(value: A => B)
+  case Node(left: Tree[A], right: Tree[A])
+  
+  def fold[B](leaf: A => B): B =
+    this match {
+      case Leaf(value)       => leaf(value)
+      case Node(left, right) => left.fold ??? right.fold
+    }
+}
+```
+
+For the `Node` case we want a function that combines the two recursive results, and therefore has type `(B, B) => B`.
+
+```scala mdoc:reset:silent
+enum Tree[A] {
+  case Leaf(value: A)
+  case Node(left: Tree[A], right: Tree[A])
+  
+  def fold[B](leaf: A => B)(node: (B, B) => B): B =
+    this match {
+      case Leaf(value)       => leaf(value)
+      case Node(left, right) => node(left.fold(leaf)(node), right.fold(leaf)(node))
+    }
+}
+```
+</div>
+
+
+#### Exercise: Using Fold {-}
+
+Prove to yourself that you can replace structural recursion with calls to fold, by redefining `size`, `contains`, and `map` for `Tree` using only fold.
+
+<div class="solution">
+```scala mdoc:reset:silent
+enum Tree[A] {
+  case Leaf(value: A)
+  case Node(left: Tree[A], right: Tree[A])
+  
+  def fold[B](leaf: A => B)(node: (B, B) => B): B =
+    this match {
+      case Leaf(value)       => leaf(value)
+      case Node(left, right) => node(left.fold(leaf)(node), right.fold(leaf)(node))
+    }
+    
+  def size: Int = 
+    this.fold(_ => 1)(_ + _)
+
+  def contains(element: A): Boolean =
+    this.fold(_ == element)(_ || _)
+    
+  def map[B](f: A => B): Tree[B] =
+    this.fold(v => Leaf(f(v)))((l, r) => Node(l, r))
+}
+```
+</div>
