@@ -48,6 +48,8 @@ lazy val pages = List(
   "adt/algebra.md",
   "adt/conclusions.md",
 
+  "adt-interpreters/index.md",
+
   "type-classes/index.md",
   "type-classes/anatomy.md",
   "type-classes/implicits.md",
