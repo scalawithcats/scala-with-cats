@@ -323,4 +323,7 @@ regexp.matches("Scalal")
 regexp.matches("Scalaland")
 ```
 
-Success!
+Success! At this point we could add many extensions to our library. For example, regular expressions usually have a method (by convention denoted `+`) that matches one or more times, and one that matches zero or once (usually denoted `?`). These are both conveniences we can build on our existing API.
+
+However, our goal at the moment is to fully understand the implementation technique. 
+So in the next section we'll review the programming strategy that helped us create this code.
