@@ -14,6 +14,6 @@ At the craft level we get to actual code, and the language specific nuance that 
 
 In the next section I'll describe the functional programming paradigm. The remainder of this book is primarily concerned with theory and craft. The theory is language agnostic but the craft is firmly in the world of Scala. Before we move onto the functional programming paradigm are two points I want to emphasize:
 
-1. Paradigms are social constructs. They change over time. Object-oriented programming as practiced todays differs from from the style originally used in Simula and Smalltalk, and functional programming todays is very different from the original LISP code.
+1. Paradigms are social constructs. They change over time. Object-oriented programming as practiced todays differs from the style originally used in Simula and Smalltalk, and functional programming todays is very different from the original LISP code.
 
 2. The three level organization is just a tool for thought. In real world is more complicated.

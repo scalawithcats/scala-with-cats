@@ -25,7 +25,7 @@ A product in an e-commerce store might have a stock keeping unit (a unique ident
 
 In two-dimensional vector graphics it's typical to represent shapes as a path, which is a sequence of actions of a virtual pen. The possible actions are usually straight lines, Bezier curves, or movement that doesn't result in visible output. A straight line has an end point (the starting point is implicit), a Bezier curve has two control points and an end point, and a move has an end point.
 
-What is common betwen all the examples above is that the individual elements---the atoms, if you like---are connected by either a logical and or a logical or. For example, a user is a screen name **and** an email address **and** a password **and** a role. A 2D action is a straight line **or** a Bezier curve **or** a move. This is the core of algebraic data types: an algebraic data type is data that is combined using logical ands or logical ors. Conversely, whenever we can describe data in terms of logical ands and logicals or we have an algebraic data type. 
+What is common between all the examples above is that the individual elements---the atoms, if you like---are connected by either a logical and or a logical or. For example, a user is a screen name **and** an email address **and** a password **and** a role. A 2D action is a straight line **or** a Bezier curve **or** a move. This is the core of algebraic data types: an algebraic data type is data that is combined using logical ands or logical ors. Conversely, whenever we can describe data in terms of logical ands and logicals or we have an algebraic data type. 
 
 
 ### Sums and Products
