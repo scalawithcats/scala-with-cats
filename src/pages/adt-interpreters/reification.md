@@ -25,7 +25,7 @@ There are three different types of methods:
 This structure is often called an **algebra** in the functional programming world.
 
 
-## Implementing Interpreters with Reification
+### Implementing Interpreters with Reification
 
 Now that we understand the components of interpreter we can talk more clearly about the implementation strategy we used.
 We used a strategy called a **reification**, **deep embedding**, or **initial algebra**.
@@ -40,3 +40,109 @@ Here are the rules for reification:
 4. Each product type holds exactly the parameters to the constructor or combinator, including the `this` parameter for combinators.
 
 If we do this, the interpreter becomes a structural recursion on the algebraic data type we have just defined.
+
+
+### Exercise: Arithmetic {-}
+
+Now it's your turn to practice using reification. Your task is to implement an interpreter for arithmetic expressions. An expression is:
+
+- a literal number, which takes a `Double` and produces an `Expression`;
+- an addition of two expressions;
+- a substraction of two expressions;
+- a multiplication of two expressions; or
+- a division of two expressions;
+
+Reify this description as a type `Expression`.
+
+<div class="solution">
+```scala mdoc:silent 
+enum Expression {
+  case Literal(value: Double)
+  case Addition(left: Expression, right: Expression)
+  case Subtraction(left: Expression, right: Expression)
+  case Multiplication(left: Expression, right: Expression)
+  case Division(left: Expression, right: Expression)
+}
+object Expression {
+  def apply(value: Double): Expression =
+    Literal(value)
+}
+```
+</div>
+
+Now implement an interpreter `eval` that produces a `Double`. This interpreter should interpret the expression using the usual rules of arithmetic.
+
+<div class="solution">
+```scala mdoc:reset:silent 
+enum Expression {
+  case Literal(value: Double)
+  case Addition(left: Expression, right: Expression)
+  case Subtraction(left: Expression, right: Expression)
+  case Multiplication(left: Expression, right: Expression)
+  case Division(left: Expression, right: Expression)
+  
+  def eval: Double =
+    this match {
+      case Literal(value)              => value
+      case Addition(left, right)       => left.eval + right.eval
+      case Subtraction(left, right)    => left.eval - right.eval
+      case Multiplication(left, right) => left.eval * right.eval
+      case Division(left, right)       => left.eval / right.eval
+    }
+}
+object Expression {
+  def apply(value: Double): Expression =
+    Literal(value)
+}
+```
+</div>
+
+Add methods `+`, `-` and so on that make your system a bit nicer to use. Then write some expressions and show that it works as expected.
+
+<div class="solution">
+Here's the complete code.
+
+```scala mdoc:reset:silent
+enum Expression {
+  case Literal(value: Double)
+  case Addition(left: Expression, right: Expression)
+  case Subtraction(left: Expression, right: Expression)
+  case Multiplication(left: Expression, right: Expression)
+  case Division(left: Expression, right: Expression)
+
+  def +(that: Expression): Expression =
+    Addition(this, that)
+
+  def -(that: Expression): Expression =
+    Subtraction(this, that)
+
+  def *(that: Expression): Expression =
+    Multiplication(this, that)
+
+  def /(that: Expression): Expression =
+    Division(this, that)
+
+  def eval: Double =
+    this match {
+      case Literal(value)              => value
+      case Addition(left, right)       => left.eval + right.eval
+      case Subtraction(left, right)    => left.eval - right.eval
+      case Multiplication(left, right) => left.eval * right.eval
+      case Division(left, right)       => left.eval / right.eval
+    }
+}
+object Expression {
+  def apply(value: Double): Expression =
+    Literal(value)
+}
+```
+
+Here's an example showing use, and that the code is correct.
+
+```scala mdoc:silent
+val fortyTwo = ((Expression(15.0) + Expression(5.0)) * Expression(2.0) + Expression(2.0)) / Expression(1.0)
+```
+```scala mdoc
+fortyTwo.eval
+```
+</div>
