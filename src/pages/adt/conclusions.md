@@ -2,7 +2,7 @@
 
 We have covered a lot of material in this chapter. Let's recap the key points.
 
-Algebraic data types allow us to express data types by combining existing data types with logical and and logical or. A logical and constructs a sum type while a logical or constructs a product type. Algebraic data types are the main way to represent data in Scala.
+Algebraic data types allow us to express data types by combining existing data types with logical and and logical or. A logical and constructs a product type while a logical or constructs a sum type. Algebraic data types are the main way to represent data in Scala.
 
 Structural recursion gives us a skeleton for transforming any given algebraic data type into any other type. Structural recursion can be abstracted into a `fold` method. 
 
