@@ -2,8 +2,8 @@
 
 We'll start this case study by briefly describing the usual task for regular expressions---matching text---and then take a more theoretical view. We'll then move on to implementation.
 
-Programmers mostly commonly use regular expressions to determine if a string matches a particular pattern.
-The simplest regular expression is one that matches only one fixed string.
+We most commonly use regular expressions to determine if a string matches a particular pattern.
+The simplest regular expression is one that matches exactly one string.
 In Scala we can create a regular expression by calling the `r` method on `String`.
 Here's a regular expression that matches exactly the string `"Scala"`.
 
@@ -19,7 +19,10 @@ regexp.matches("Sca")
 regexp.matches("Scalaland")
 ```
 
-When creating regular expressions, there are some characters that have a special meaning.
+Notice we already have a separation between description and action. 
+The description is the regular expression itself, created by calling the `r` method, and the action is calling `matches` method on the regular expression.
+
+There are some characters that have a special meaning within the `String` describing a regular expression.
 For example, the character `*` matches the preceding character zero or more times.
 
 ```scala mdoc:reset:silent
@@ -53,16 +56,16 @@ regexp.matches("Scalal")
 regexp.matches("Scalaland")
 ```
 
-That's all I'm going to say about regular expressions as they exist in Scala. If you'd like to learn more there are many resources online. The [JDK documentation](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html) is one example, which describes all the features available in the JVM implementation of regular expressions.
+That's all I'm going to say about Scala's built-in regular expressions. If you'd like to learn more there are many resources online. The [JDK documentation](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html) is one example, which describes all the features available in the JVM implementation of regular expressions.
 
-Let's turn to the theoretical description. A regular expression is:
+Let's turn to the theoretical description, such as we might find in a textbook. A regular expression is:
 
 1. a string, which matches exactly that string; 
 2. the concatenation of two regular expressions, which matches the first regular expression and then the second;
 3. the union of two regular expressions, which matches if either expression matches; and
 4. the repetition of a regular expression (often known as the Kleene star), which matches zero or more repetitions of the underlying expression.
 
-This description may seem a bit abstract, but it is actually very useful because it defines a minimal API. Let's walk through the four parts of the description and see how they relate to code.
+If you're not useful to this kind of description it may seem a bit abstract, but it is very useful for our purposes because it defines a minimal API that we can implement. Let's walk through the four parts of the description and see how they relate to code.
 
 The first part tells us we need a constructor with type `String => Regexp`.
 In Scala we put constructors on the companion object, so this tells us we need
@@ -122,7 +125,7 @@ trait Regexp {
 Now we've defined the API we can turn to implementation.
 We're going to represent `Regexp` as an algebraic data type, and each method that returns a `Regexp` will return an instance of this algebraic data type.
 What should be the elements that make up the algebraic data type?
-They're going to exactly match the method calls, and their constructor arguments will be exactly the parameters passed to the method *including the hidden `this` parameter for methods on the trait*.
+There will be one element for each method, and the constructor arguments will be exactly the parameters passed to the method *including the hidden `this` parameter for methods on the trait*.
 
 Here's the code.
 
@@ -189,7 +192,7 @@ object Regexp {
 }
 ```
 
-Now we can apply the usual strategies to complete the implementation. We start reasoning independently by case. The case for `Apply` is very simple: we match if the `input` starts with the string we're looking for.
+Now we can apply the usual strategies to complete the implementation. Let's reason independently by case, starting with the case for `Apply`. A reasonable first attempt is to match if the `input` starts with the string we're looking for. This doesn't seem completely correct, as we should on succeed if we match all the input, but it's good enough for now.
 
 ```scala
 def matches(input: String): Boolean =
@@ -201,7 +204,7 @@ def matches(input: String): Boolean =
   }
 ```
 
-Let's choose the `Append` case next. This should match if the `left` regular expression matches the start of the `input`, and the `right` regular expression matches starting where the `left` regular expression stopped. This has uncovered a hidden requirement for us: we need to keep an index into the `input` that tells us where we should start matching from. The easiest way to implement this is with a nested method. Here I've created a nested method that returns an `Option[Int]`. The `Int` is the new index to use, and we return an `Option` to indicate if the regular expression matched or not.
+Let's move on to the `Append` case. This should match if the `left` regular expression matches the start of the `input`, and the `right` regular expression matches starting where the `left` regular expression stopped. This has uncovered a hidden requirement: we need to keep an index into the `input` that tells us where we should start matching from. The easiest way to implement this is with a nested method. Here I've created a nested method that returns an `Option[Int]`. The `Int` is the new index to use, and we return an `Option` to indicate if the regular expression matched or not.
 
 ```scala
 def matches(input: String): Boolean = {
