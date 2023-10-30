@@ -2,7 +2,7 @@
 
 We have covered a lot of material in this chapter. Let's recap the key points.
 
-Algebraic data types allow us to express data types by combining existing data types with logical and and logical or. A logical and constructs a sum type while a logical or constructs a product type. Algebraic data types are the main way to represent data in Scala.
+Algebraic data types allow us to express data types by combining existing data types with logical and and logical or. A logical and constructs a product type while a logical or constructs a sum type. Algebraic data types are the main way to represent data in Scala.
 
 Structural recursion gives us a skeleton for transforming any given algebraic data type into any other type. Structural recursion can be abstracted into a `fold` method. 
 
@@ -31,7 +31,7 @@ and relatively recent work is caked in layers of mathematics and obtuse notation
 The infamous [Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire][banana] is an example of such work.
 I suspect the core ideas of both date back to at least the emergence of computability theory in the 1930s, well before any digital computers existed.
 
-The earliest reference I've found to structural recursion is [Proving Properties of Programs by Structural Induction][structural-induction]), which dates to 1969. 
+The earliest reference I've found to structural recursion is [Proving Properties of Programs by Structural Induction][structural-induction], which dates to 1969. 
 Algebraic data types don't seem to have been fully developed, along with pattern matching, until [NPL][npl] in 1977. 
 NPL was quickly followed by the more influential language [Hope][hope], which spread the concept to other programming languages.
 

@@ -248,7 +248,7 @@ CssLength.Em(2.0) match {
 ```
 
 Exhaustivity checking is incredibly useful.
-For example, if we add or remove a case from an algebraic data type, the cmopiler will us all the pattern matches that need to be updated.
+For example, if we add or remove a case from an algebraic data type, the compiler will us all the pattern matches that need to be updated.
 
 
 ### Dynamic Dispatch
