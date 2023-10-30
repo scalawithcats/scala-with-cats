@@ -31,7 +31,7 @@ and relatively recent work is caked in layers of mathematics and obtuse notation
 The infamous [Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire][banana] is an example of such work.
 I suspect the core ideas of both date back to at least the emergence of computability theory in the 1930s, well before any digital computers existed.
 
-The earliest reference I've found to structural recursion is [Proving Properties of Programs by Structural Induction][structural-induction]), which dates to 1969. 
+The earliest reference I've found to structural recursion is [Proving Properties of Programs by Structural Induction][structural-induction], which dates to 1969. 
 Algebraic data types don't seem to have been fully developed, along with pattern matching, until [NPL][npl] in 1977. 
 NPL was quickly followed by the more influential language [Hope][hope], which spread the concept to other programming languages.
 
