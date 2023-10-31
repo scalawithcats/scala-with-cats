@@ -46,6 +46,7 @@ lazy val pages = List(
   "adt-interpreters/index.md",
   "adt-interpreters/regexp.md",
   "adt-interpreters/reification.md",
+  "adt-interpreters/tail-recursion.md",
   "type-classes/index.md",
   "type-classes/anatomy.md",
   "type-classes/implicits.md",

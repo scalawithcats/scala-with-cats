@@ -7,9 +7,9 @@ In this section we will discuss tail recursion, converting programs to tail recu
 
 ### Tail Position and Tail Calls
 
-Our starting point is a **tail call**. A tail call is a method call that does not take any additional stack space. Only method calls that are in **tail position** are candidates to be turned into tail calls. Even then, not all call in tail position can be converted to tail calls due to runtime limitations.
+Our starting point is a **tail call**. A tail call is a method call that does not take any additional stack space. Only method calls that are in **tail position** are candidates to be turned into tail calls. Even then, not all calls in tail position will be converted to tail calls due to runtime limitations.
 
-A method call in tail position is a call that immediately returns the value of the call.
+A method call in tail position is a call that immediately returns the value returned by the call.
 Below are two versions of a method to calculate the sum of the integers from 0 to `count`.
 
 ```scala mdoc:silent
@@ -23,7 +23,7 @@ def isTailRecursive(count: Int): Int = {
   def loop(count: Int, accum: Int): Int =
     count match {
       case 0 => accum
-      case n => loop(count, accum + n)
+      case n => loop(n - 1, accum + n)
     }
     
   loop(count, 0)
@@ -40,7 +40,7 @@ is not in tail position, because the value returned by the call is used in the a
 However, the call to `loop` in
 
 ```scala
-case n => loop(count, accum + n)
+case n => loop(n - 1, accum + n)
 ```
 
 is in tail position because the value returned by the call to `loop` is itself immediately returned.
@@ -52,10 +52,10 @@ loop(count, 0)
 
 is also in tail position.
 
-A method in tail position is a candidate to be turned into a tail call. Some languages will turn all calls in tail position into tail calls. However, limitations of the JVM and Javascript runtimes mean that this is not the case for Scala. (Scala Native may be getting full tail calls in the future.) In Scala, the only method calls that are converted to tail calls are calls in tail position by a method to itself. This means the call 
+A method call in tail position is a candidate to be turned into a tail call. Limitations of the JVM and Javascript runtimes mean that not all calls in tail position can be made tail calls. (Scala Native may be getting full tail calls in the future.) In general, only calls in tail position from a method to itself will be converted to tail calls. This means
 
 ```scala
-case n => loop(count, accum + n)
+case n => loop(n - 1, accum + n)
 ```
 
 is converted to a tail call, because `loop` is calling itself. However, the call
@@ -64,29 +64,15 @@ is converted to a tail call, because `loop` is calling itself. However, the call
 loop(count, 0)
 ```
 
-is not converted to a tail call, because the call is from `isTailRecursive` to `loop`.
+is not converted to a tail call, because the call is from `isTailRecursive` to `loop`. 
+This will not cause issues with stack consumption, however, because this call only happens once.
 
-All the method calls in `isTailRecursive` are tail calls. Therefore we can say the entire method is tail recursive and it should not consume any stack space when running.
-We can ask the Scala compiler to check this for us by using the `@tailrec` annotation to the method.
+We can ask the Scala compiler to check that all self calls are in tail position  by adding the `@tailrec` annotation to a method.
+The code will fail to compile if any calls from the method to itself are not in tail position.
 
-```scala mdoc:reset-object:silent
+```scala mdoc:reset-object:fail
 import scala.annotation.tailrec
 
-def isTailRecursive(count: Int): Int = {
-  @tailrec
-  def loop(count: Int, accum: Int): Int =
-    count match {
-      case 0 => accum
-      case n => loop(count, accum + n)
-    }
-    
-  loop(count, 0)
-}
-```
-
-The code will fail to compile if the compiler cannot show that the method is tail recursive.
-
-```scala mdoc:fail
 @tailrec
 def isntTailRecursive(count: Int): Int =
   count match {
@@ -95,4 +81,128 @@ def isntTailRecursive(count: Int): Int =
   }
 ```
 
+```scala mdoc:invisible
+def isntTailRecursive(count: Int): Int =
+  count match {
+    case 0 => 0
+    case n => n + isntTailRecursive(n - 1)
+  }
+
+def isTailRecursive(count: Int): Int = {
+  def loop(count: Int, accum: Int): Int =
+    count match {
+      case 0 => accum
+      case n => loop(n - 1, accum + n)
+    }
+    
+  loop(count, 0)
+}
+```
+
+We can check the tail recursive version is truly tail recursive by passing it a very large input.
+The non-tail recursive version crashes.
+
+```scala
+isntTailRecursive(100000)
+// java.lang.StackOverflowError
+```
+
+The tail recursive version runs just fine.
+
+```scala mdoc
+isTailRecursive(100000)
+```
+
+
+### Converting To Tail Recursive Form
+
+Any program can be converted to a tail recursive form, known as **continuation-passing style**, or CPS for short.
+We'll look at two ways to do this. Firstly, the easy way when we can find a simple summary of the program's state, and then the full transformation when no such summary is available.
+
+Let's start our discussion by looking at the two methods we've seen previously.
+
+```scala mdoc:reset-object:silent
+def isntTailRecursive(count: Int): Int =
+  count match {
+    case 0 => 0
+    case n => n + isntTailRecursive(n - 1)
+  }
+
+def isTailRecursive(count: Int): Int = {
+  def loop(count: Int, accum: Int): Int =
+    count match {
+      case 0 => accum
+      case n => loop(n - 1, accum + n)
+    }
+    
+  loop(count, 0)
+}
+```
+
+Both methods calculate the sum of natural numbers from 0 to `count`. Let's us substitution to show how the stack is used by each method, for a small value of `count`.
+
+```scala
+isntTailRecursive(2)
+// expands to
+(2 match {
+  case 0 => 0
+  case n => n + isntTailRecursive(n - 1)
+})
+// expands to
+(2 + isntTailRecursive(1))
+// expands to
+(2 + (1 match {
+        case 0 => 0
+        case n => n + isntTailRecursive(n - 1)
+      }))
+// expands to
+(2 + (1 + isntTailRecursive(n - 1)))
+// expands to
+(2 + (1 + (0 match {
+             case 0 => 0
+             case n => n + isntTailRecursive(n - 1)
+           })))
+// expands to
+(2 + (1 + (0)))
+// expands to
+3
+```
+
+Here each set of brackets indicates a new method call and hence a stack frame allocation.
+
+Now let's do the same for `isTailRecursive`.
+
+```scala
+isTailRecursive(2)
+// expands to
+(loop(2, 0))
+// expands to
+(2 match {
+   case 0 => 0
+   case n => loop(n - 1, 0 + n)
+ })
+// expands to
+(loop(1, 2))
+// call to loop is a tail call, so no stack frame is allocated 
+// expands to
+(1 match {
+   case 0 => 2
+   case n => loop(n - 1, 2 + n)
+ })
+// expands to
+(loop(0, 3))
+// call to loop is a tail call, so no stack frame is allocated 
+// expands to
+(0 match {
+   case 0 => 3
+   case n => loop(n - 1, 3 + n)
+ })
+// expands to
+(3)
+// expands to
+3
+```
+
+The non-tail recursive function computes the result `(2 + (1 + (0)))`
+If we look closely, we'll see that the tail recursive version computes `(((2) + 1) + 0)`.
 
