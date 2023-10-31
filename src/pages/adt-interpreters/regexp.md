@@ -212,8 +212,10 @@ def matches(input: String): Boolean = {
     regexp match {
       case Append(left, right) =>
         loop(left, idx).flatMap(idx => loop(right, idx))
-      case OrElse(first, second) => loop(first, idx) ??? loop(second, ???)
-      case Repeat(source)        => loop(source, idx) ???
+      case OrElse(first, second) => 
+        loop(first, idx) ??? loop(second, ???)
+      case Repeat(source)        => 
+        loop(source, idx) ???
       case Apply(string) =>
         Option.when(input.startsWith(string, idx))(idx + string.size)
     }
@@ -231,7 +233,8 @@ def matches(input: String): Boolean = {
     regexp match {
       case Append(left, right) =>
         loop(left, idx).flatMap(i => loop(right, i))
-      case OrElse(first, second) => loop(first, idx).orElse(loop(second, idx))
+      case OrElse(first, second) => 
+        loop(first, idx).orElse(loop(second, idx))
       case Repeat(source) =>
         loop(source, idx)
           .map(i => loop(regexp, i).getOrElse(i))
