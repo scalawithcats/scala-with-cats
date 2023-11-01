@@ -33,7 +33,7 @@ object Output {
 }
 
 val hello = Output.println("Hello")
-val helloHello = hello.andThen(" ,").andThen(hello).andThen("?")
+val helloHello = hello.andThen(Output.print(" ,")).andThen(hello).andThen(Output.print("?"))
 // hello.andThen(hello).run()
 
 def oddOrEven(phrase: String): Output[Unit] =
@@ -43,3 +43,5 @@ def oddOrEven(phrase: String): Output[Unit] =
       if even then Output.print(s"$phrase has an even number of letters.")
       else Output.print(s"$phrase has an odd number of letters.")
     )
+
+helloHello.andThen(Output.print(" ")).andThen(oddOrEven("Scala"))

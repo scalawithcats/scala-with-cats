@@ -2,7 +2,7 @@
 
 Let's now turn to effects in interpreters. Sometimes this is an optimisation, and sometimes this is the entire point of using the interpreter strategy. We will look at both, starting with the second.
 
-Remember that the interpreter carries out the actions described in the program or description. These programs can describe effects, like writing to a file or opening a network connection. The interpreter will then carry out these effects. We can still reason about our programs in a simple way using substitution. When we run our programs the effects will happen and we can no longer reason so easily. The goal with the interpreter strategy is to compose the entire program we want to run and then call the interpreter once, so that effects only happen once.
+Remember that the interpreter carries out the actions described in the program or description. These programs can describe effects, like writing to a file or opening a network connection. The interpreter will then carry out these effects. We can still reason about our programs in a simple way using substitution. When we run our programs the effects will happen and we can no longer reason so easily. The goal with the interpreter strategy is to compose the entire program we want to run and then call the interpreter once, so that effects---and the difficulties they cause with reasoning---only happen once.
 
 This will become clearer with an example. Possibly the simplest effect is printing to the standard output, as we can do with `println`. A really simple program describing printing output might have:
 
@@ -76,7 +76,7 @@ object Output {
 }
 ```
 
-I have added a few conveniences which are defined in terms of the essential operations in our API.
+I have added a few conveniences which are defined in terms of the essential operations in our API. This already provides some examples of composition in our algebra.
 
 Finally, let's add an interpreter. I recommend you try implementing this yourself before reading on.
 
@@ -101,10 +101,11 @@ val hello = Output.print("Hello")
 Now we can compose this program to create a program that prints `"Hello, Hello?"`.
 
 ```scala mdoc:silent
-val helloHello = hello.andThen(" ,").andThen(hello).andThen("?")
+val helloHello = 
+  hello.andThen(Output.print(" ,")).andThen(hello).andThen(Output.print("?"))
 ```
 
-Notice that we reused the the value `hello`, showing composition of programs. 
+Notice that we reused the the value `hello`, showing composition of programs and reasoning using substitution. 
 This only works because `hello` is a description of an effect, not the effect itself.
 If we tried to compose the effect, as in the following
 
@@ -118,7 +119,7 @@ val helloHello = {
 }
 ```
 
-we don't get the output we expect.
+we don't get the output we expect if we use substitution.
 
 We can also mix in pure computation that has no effects.
 
@@ -130,9 +131,11 @@ def oddOrEven(phrase: String): Output[Unit] =
       if even then Output.print(s"$phrase has an even number of letters.")
       else Output.print(s"$phrase has an odd number of letters.")
     )
+    
+helloHello.andThen(Output.print(" ")).andThen(oddOrEven("Scala"))
 ```
 
-These examples show how we can compose programs that describe effects, and still reason about them using the familiar tool of substitution.
 
-
-Now let's turn to using effects within an interpreter as an optimisation.
+Now let's turn to using effects as an optimisation within an interpreter.
+A common feature of regular expresions is the ability to capture selected parts of the input.
+For example, if we're using a regular expression to parse `"1979-06-01"` we might wish to capture the numeric parts of the input so we can convert them into the year, month, and day respectively.
