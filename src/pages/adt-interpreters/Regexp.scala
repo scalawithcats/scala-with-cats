@@ -15,7 +15,8 @@ enum Regexp {
       regexp match {
         case Append(left, right) =>
           loop(left, idx).flatMap(i => loop(right, i))
-        case OrElse(first, second) => loop(first, idx).orElse(loop(second, idx))
+        case OrElse(first, second) =>
+          loop(first, idx).orElse(loop(second, idx))
         case Repeat(source) =>
           loop(source, idx)
             .map(i => loop(regexp, i).getOrElse(i))
