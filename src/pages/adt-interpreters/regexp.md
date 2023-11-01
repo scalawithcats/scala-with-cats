@@ -214,7 +214,7 @@ def matches(input: String): Boolean = {
         loop(left, idx).flatMap(idx => loop(right, idx))
       case OrElse(first, second) => 
         loop(first, idx) ??? loop(second, ???)
-      case Repeat(source)        => 
+      case Repeat(source) =>
         loop(source, idx) ???
       case Apply(string) =>
         Option.when(input.startsWith(string, idx))(idx + string.size)
