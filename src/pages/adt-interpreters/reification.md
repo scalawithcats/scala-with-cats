@@ -8,7 +8,7 @@ There are two different programming strategies at play here:
 Remember the essence of the **interpreter strategy** is to separate description and action. Therefore whenever we use the interpreter strategy we need at least two things: descriptions and an interpreter that carries out actions. Descriptions are programs; things that we want to happen. The interpreter runs the programs, carrying out the actions described within them.
 
 In the example we just saw, a `Regexp` value is a program. It is a description of a pattern we are looking for within a `String`.
-The `matches` method is an interpreter. It carries our the instructions in the description, looking for the pattern within the input. We could have other interpreters, such as one that matches if only the start of the input matches.
+The `matches` method is an interpreter. It carries out the instructions in the description, looking for the pattern within the input. We could have other interpreters, such as one that matches if only the start of the input matches.
 
 
 ### The Structure of Interpreters
