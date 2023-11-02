@@ -146,7 +146,7 @@ What about the other regular expression methods? Noncapturing regular expression
 
 We can sketch out the API for this. 
 
-```scala mdoc:silent
+```scala mdoc:reset:silent
 trait Regexp[A] {
   def matches(input: String): Option[A]
 }
@@ -155,7 +155,7 @@ trait NonCapturing extends Regexp[Unit] {
   def ++[A](that: Capturing[A]): Capturing[A]
 
   def orElse(that: NonCapturing): NonCapturing
-  def ++[A](that: Capturing[A]): Capturing[A]
+  def orElse[A](that: Capturing[A]): Capturing[A]
 
   def repeat: NonCapturing
 
@@ -166,7 +166,7 @@ trait Capturing[A] extends Regexp[A] {
   def ++(that: NonCapturing): Capturing[A]
   def ++[B](that: Capturing[B]): Capturing[(A, B)]
 
-  wef orElse(that: NonCapturing): Capturing[A]
+  def orElse(that: NonCapturing): Capturing[A]
   def orElse(that: Capturing[A]): Capturing[A]
   
   def map[B](f: A => B): Capturing[B]
