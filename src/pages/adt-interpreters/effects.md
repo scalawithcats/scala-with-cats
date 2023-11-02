@@ -139,3 +139,42 @@ helloHello.andThen(Output.print(" ")).andThen(oddOrEven("Scala"))
 Now let's turn to using effects as an optimisation within an interpreter.
 A common feature of regular expresions is the ability to capture selected parts of the input.
 For example, if we're using a regular expression to parse `"1979-06-01"` we might wish to capture the numeric parts of the input so we can convert them into the year, month, and day respectively.
+
+We're going to disallow nested captures, which gives us a chance to revisit the finite state machines techniques we saw in the previous chapter. In this model, regular expressions can be in two states: noncapturing or capturing. We'll add a `capture` method that transitions from noncapturing to capturing. There is no transition the other way, nor can we capture a capturing regular expression.
+
+What about the other regular expression methods? Noncapturing regular expressions compose as before. Composing a capturing and noncapturing regular expression produces a capturing regular expression, and composing a capturing and capturing regular expression also produces a capturing expression.
+
+We can sketch out the API for this. 
+
+```scala mdoc:silent
+trait Regexp[A] {
+  def matches(input: String): Option[A]
+}
+trait NonCapturing extends Regexp[Unit] {
+  def ++(that: NonCapturing): NonCapturing
+  def ++[A](that: Capturing[A]): Capturing[A]
+
+  def orElse(that: NonCapturing): NonCapturing
+  def ++[A](that: Capturing[A]): Capturing[A]
+
+  def repeat: NonCapturing
+
+  def capture: Capturing[String]
+}
+
+trait Capturing[A] extends Regexp[A] {
+  def ++(that: NonCapturing): Capturing[A]
+  def ++[B](that: Capturing[B]): Capturing[(A, B)]
+
+  wef orElse(that: NonCapturing): Capturing[A]
+  def orElse(that: Capturing[A]): Capturing[A]
+  
+  def map[B](f: A => B): Capturing[B]
+
+  def repeat: Capturing[Seq[A]]
+}
+```
+
+This shows an interpreter `matches` that is shared between both types of regular expression. The combinators are mostly the same between the two types of regular expression, but we have a lot of repetition due to the differing types.
+
+We can now proceed as usual with reification, except we need to distinguish the different overloads. The simplest solution is to add a case to `Capturing` that represents a `NonCapturing` regular expression that doesn't capture.
