@@ -204,5 +204,82 @@ isTailRecursive(2)
 ```
 
 The non-tail recursive function computes the result `(2 + (1 + (0)))`
-If we look closely, we'll see that the tail recursive version computes `(((2) + 1) + 0)`.
+If we look closely, we'll see that the tail recursive version computes `(((2) + 1) + 0)`, which simply accumulates the result in the reverse order.
+This works because addition is associative, meaning `(a + b) + c == a + (b + c)`.
+This is our first criteria for using the "easy" method for converting to a tail recursive form: the operation that accumulates results must be associative.
 
+The second criteria concerns the program being interpreted. It must be possible to represent any arbitrary portion of a program as a list. This is case above, where the "program" is simply a list of numbers. It's not the case for programs that are represented as trees, like `Regexp`. The problem with these structures is that we cannot remove part of the program and still have a valid program left over. For example, consider `case OrElse(first: Regexp, second: Regexp)`. If we remove `first` we aren't left with a valid `Regexp`, whereas if we remove an element from a `List` we're still left with a `List`.
+
+If these two conditions hold, converting to a tail recursive form simply means:
+
+1. create a nested method (I usually call this `loop`) with two parameters: a program and the accumulated result;
+2. write the `loop` as a structural recursion;
+3. the base case is to return the accumulator; and
+4. recursive cases update the accumulator and tail call `loop`.
+
+This method rarely works for interesting programs, for which we need to turn to full continuation-passing style. Our first step is to understand what a **continuation** is.
+
+A continuation is an encapsulation of "what happens next". Let's return to our `Regexp` example. Here's the full code for reference.
+
+```scala mdoc:invisible
+enum Regexp {
+  def ++(that: Regexp): Regexp =
+    Append(this, that)
+
+  def orElse(that: Regexp): Regexp =
+    OrElse(this, that)
+
+  def repeat: Regexp =
+    Repeat(this)
+
+  def `*` : Regexp = this.repeat
+
+  def matches(input: String): Boolean = {
+    def loop(regexp: Regexp, idx: Int): Option[Int] =
+      regexp match {
+        case Append(left, right) =>
+          loop(left, idx).flatMap(i => loop(right, i))
+        case OrElse(first, second) => loop(first, idx).orElse(loop(second, idx))
+        case Repeat(source) =>
+          loop(source, idx)
+            .map(i => loop(regexp, i).getOrElse(i))
+            .orElse(Some(idx))
+        case Apply(string) =>
+          Option.when(input.startsWith(string, idx))(idx + string.size)
+      }
+
+    // Check we matched the entire input
+    loop(this, 0).map(idx => idx == input.size).getOrElse(false)
+  }
+
+  case Append(left: Regexp, right: Regexp)
+  case OrElse(first: Regexp, second: Regexp)
+  case Repeat(source: Regexp)
+  case Apply(string: String)
+}
+object Regexp {
+  def apply(string: String): Regexp =
+    Apply(string)
+}
+```
+
+Let's consider the case for `Append` in `matches`.
+
+```scala
+case Append(left, right) =>
+  loop(left, idx).flatMap(i => loop(right, i))
+```
+
+What happens next when we call `loop(left, idx)`? The answer is `flatMap(i => loop(right, i))`, where we are calling `flatMap` on the `Option[Int]` returned from `loop(left, idx)`. We can represent this as a function:
+
+```scala
+(opt: Option[Int]) => opt.flatMap(i => loop(right, i))
+```
+
+This is exactly the continuation, reified as a value. As is often the case, there is a distinction between the concept and the representation. The concept of continutations always exists in code. It just means "what happens next" and there is always a concept of "what happens next" even that is just "the program halts". We can represent continuations as functions, making the concept concrete and hence reifying it.
+
+Now that we know about continuations, and their reification as functions, we can move on to continuation-passing style.
+In CPS we, as the name suggests, pass around continuations.
+Specifically, in our interpreter loop we add an extra parameter for a continuation.
+In the base cases of our structural recursion we pass the result to the continuation instead of directly returning a result.
+In the recursive cases, we construct a continuation ... to be continued!
