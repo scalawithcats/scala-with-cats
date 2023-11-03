@@ -136,45 +136,217 @@ helloHello.andThen(Output.print(" ")).andThen(oddOrEven("Scala"))
 ```
 
 
-Now let's turn to using effects as an optimisation within an interpreter.
-A common feature of regular expresions is the ability to capture selected parts of the input.
-For example, if we're using a regular expression to parse `"1979-06-01"` we might wish to capture the numeric parts of the input so we can convert them into the year, month, and day respectively.
+We will now turn to using effects as an optimisation within an interpreter.
+In a previous exercise we developed an interpreter for arithmetic expressions.
+The code is below.
 
-We're going to disallow nested captures, which gives us a chance to revisit the finite state machines techniques we saw in the previous chapter. In this model, regular expressions can be in two states: noncapturing or capturing. We'll add a `capture` method that transitions from noncapturing to capturing. There is no transition the other way, nor can we capture a capturing regular expression.
+```scala mdoc:silent
+enum Expression {
+  case Literal(value: Double)
+  case Addition(left: Expression, right: Expression)
+  case Subtraction(left: Expression, right: Expression)
+  case Multiplication(left: Expression, right: Expression)
+  case Division(left: Expression, right: Expression)
 
-What about the other regular expression methods? Noncapturing regular expressions compose as before. Composing a capturing and noncapturing regular expression produces a capturing regular expression, and composing a capturing and capturing regular expression also produces a capturing expression.
+  def +(that: Expression): Expression =
+    Addition(this, that)
 
-We can sketch out the API for this. 
+  def -(that: Expression): Expression =
+    Subtraction(this, that)
 
-```scala mdoc:reset:silent
-trait Regexp[A] {
-  def matches(input: String): Option[A]
+  def *(that: Expression): Expression =
+    Multiplication(this, that)
+
+  def /(that: Expression): Expression =
+    Division(this, that)
+
+  def eval: Double =
+    this match {
+      case Literal(value)              => value
+      case Addition(left, right)       => left.eval + right.eval
+      case Subtraction(left, right)    => left.eval - right.eval
+      case Multiplication(left, right) => left.eval * right.eval
+      case Division(left, right)       => left.eval / right.eval
+    }
 }
-trait NonCapturing extends Regexp[Unit] {
-  def ++(that: NonCapturing): NonCapturing
-  def ++[A](that: Capturing[A]): Capturing[A]
-
-  def orElse(that: NonCapturing): NonCapturing
-  def orElse[A](that: Capturing[A]): Capturing[A]
-
-  def repeat: NonCapturing
-
-  def capture: Capturing[String]
-}
-
-trait Capturing[A] extends Regexp[A] {
-  def ++(that: NonCapturing): Capturing[A]
-  def ++[B](that: Capturing[B]): Capturing[(A, B)]
-
-  def orElse(that: NonCapturing): Capturing[A]
-  def orElse(that: Capturing[A]): Capturing[A]
-  
-  def map[B](f: A => B): Capturing[B]
-
-  def repeat: Capturing[Seq[A]]
+object Expression {
+  def apply(value: Double): Expression =
+    Literal(value)
 }
 ```
 
-This shows an interpreter `matches` that is shared between both types of regular expression. The combinators are mostly the same between the two types of regular expression, but we have a lot of repetition due to the differing types.
+We're going to add a new interpreter that prints expressions.
+The straightforward implementation is show below.
+For simplicity we fully parenthesize expressions when we print them.
 
-We can now proceed as usual with reification, except we need to distinguish the different overloads. The simplest solution is to add a case to `Capturing` that represents a `NonCapturing` regular expression that doesn't capture.
+```scala mdoc:reset:silent
+enum Expression {
+  case Literal(value: Double)
+  case Addition(left: Expression, right: Expression)
+  case Subtraction(left: Expression, right: Expression)
+  case Multiplication(left: Expression, right: Expression)
+  case Division(left: Expression, right: Expression)
+
+  def +(that: Expression): Expression =
+    Addition(this, that)
+
+  def -(that: Expression): Expression =
+    Subtraction(this, that)
+
+  def *(that: Expression): Expression =
+    Multiplication(this, that)
+
+  def /(that: Expression): Expression =
+    Division(this, that)
+
+  def eval: Double =
+    this match {
+      case Literal(value)              => value
+      case Addition(left, right)       => left.eval + right.eval
+      case Subtraction(left, right)    => left.eval - right.eval
+      case Multiplication(left, right) => left.eval * right.eval
+      case Division(left, right)       => left.eval / right.eval
+    }
+  
+  def print: String =
+    this match {
+      case Literal(value) => value.toString
+      case Addition(left, right) => 
+        s"(${left.print} + ${right.print})"
+      case Subtraction(left, right) => 
+        s"(${left.print} - ${right.print})"
+      case Multiplication(left, right) => 
+        s"(${left.print} * ${right.print})"
+      case Division(left, right) => 
+        s"(${left.print} / ${right.print})"
+    }
+}
+object Expression {
+  def apply(value: Double): Expression =
+    Literal(value)
+}
+```
+
+Here's a short example showing it at work.
+
+```scala mdoc:silent
+val expr = Expression(1.0) * Expression(3.0) - Expression(2.0)
+```
+```scala mdoc
+expr.print
+```
+
+This implementation suffers from excessive copying of `Strings`.
+A more efficient implementation will use a mutable `StringBuilder` to accumulate the result.
+It's straightforward to change the `print` interpreter to do this.
+
+```scala
+def print: String = {
+  val builder = new scala.collection.mutable.StringBuilder()
+  
+  def withBinOp(left: Expression, op: Char, right: Expression): StringBuilder = {
+    builder.addOne('(')
+    loop(left)
+    builder.addOne(' ')
+    builder.addOne(op)
+    builder.addOne(' ')
+    loop(right)
+    builder.addOne(')')
+  }
+
+  def loop(expr: Expression): StringBuilder =
+    expr match {
+      case Literal(value) => builder.append(value.toString)
+      case Addition(left, right) => 
+        withBinOp(left, '+', right)
+      case Subtraction(left, right) => 
+        withBinOp(left, '-', right)
+      case Multiplication(left, right) => 
+        withBinOp(left, '*', right)
+      case Division(left, right) => 
+        withBinOp(left, '/', right)
+    }
+    
+  loop(this)
+  builder.toString
+}
+```
+
+```scala mdoc:reset:invisible
+enum Expression {
+  case Literal(value: Double)
+  case Addition(left: Expression, right: Expression)
+  case Subtraction(left: Expression, right: Expression)
+  case Multiplication(left: Expression, right: Expression)
+  case Division(left: Expression, right: Expression)
+
+  def +(that: Expression): Expression =
+    Addition(this, that)
+
+  def -(that: Expression): Expression =
+    Subtraction(this, that)
+
+  def *(that: Expression): Expression =
+    Multiplication(this, that)
+
+  def /(that: Expression): Expression =
+    Division(this, that)
+
+  def eval: Double =
+    this match {
+      case Literal(value)              => value
+      case Addition(left, right)       => left.eval + right.eval
+      case Subtraction(left, right)    => left.eval - right.eval
+      case Multiplication(left, right) => left.eval * right.eval
+      case Division(left, right)       => left.eval / right.eval
+    }
+  
+  def print: String = {
+    val builder = new scala.collection.mutable.StringBuilder()
+    
+    def withBinOp(left: Expression, op: Char, right: Expression): StringBuilder = {
+      builder.addOne('(')
+      loop(left)
+      builder.addOne(' ')
+      builder.addOne(op)
+      builder.addOne(' ')
+      loop(right)
+      builder.addOne(')')
+    }
+  
+    def loop(expr: Expression): StringBuilder =
+      expr match {
+        case Literal(value) => builder.append(value.toString)
+        case Addition(left, right) => 
+          withBinOp(left, '+', right)
+        case Subtraction(left, right) => 
+          withBinOp(left, '-', right)
+        case Multiplication(left, right) => 
+          withBinOp(left, '*', right)
+        case Division(left, right) => 
+          withBinOp(left, '/', right)
+      }
+      
+    loop(this)
+    builder.toString
+  }
+}
+object Expression {
+  def apply(value: Double): Expression =
+    Literal(value)
+}
+```
+
+From the outside, the code works exactly as before except it's faster.
+
+```scala mdoc:silent
+val expr = Expression(1.0) * Expression(3.0) - Expression(2.0)
+```
+```scala mdoc
+expr.print
+```
+
+I haven't benchmarked this implementation, but a similar optimisation in another program made it over 3 times faster. 
+
+We can use side effects, like mutable state, in the interpreter because they are not observable from the outside.
+From the users point of view, they call the interpreter and get the output, and what goes on inside the interpreter is not something they can access in any way.
