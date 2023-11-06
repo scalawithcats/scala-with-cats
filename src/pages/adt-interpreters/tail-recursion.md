@@ -205,7 +205,6 @@ To rewrite this in CPS style we need to create replacements for `+` and `*` with
 type Cont = Int => Int
 
 def add(x: Int, y: Int, k: Cont) = k(x + y)
-
 def mul(x: Int, y: Int, k: Cont) = k(x * y)
 ```
 
