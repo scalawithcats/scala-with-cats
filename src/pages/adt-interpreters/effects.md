@@ -349,4 +349,5 @@ expr.print
 I haven't benchmarked this implementation, but a similar optimisation in another program made it over 3 times faster. 
 
 We can use side effects, like mutable state, in the interpreter because they are not observable from the outside.
-From the users point of view, they call the interpreter and get the output, and what goes on inside the interpreter is not something they can access in any way.
+From the user's point of view, what goes on inside the interpreter is not something they can access in any way.
+From the point of view of the person writing the interpreter, the mutable state causes the usual problems with reasoning but this is a problem that is contained to a specific piece of code and group of programmers.
