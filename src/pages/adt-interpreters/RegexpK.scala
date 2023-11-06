@@ -11,34 +11,57 @@ enum Regexp {
   def `*` : Regexp = this.repeat
 
   def matches(input: String): Boolean = {
+    enum Resumable {
+      case Done(result: Option[Int])
+      case Resume(cont: () => Resumable)
+    }
     // Define a type alias so we can easily write continuations
-    type Cont = Option[Int] => Option[Int]
+    type Cont = Option[Int] => Resumable
 
     def loop(
         regexp: Regexp,
         idx: Int,
-        cont: Option[Int] => Option[Int]
-    ): Option[Int] =
+        cont: Option[Int] => Resumable
+    ): Resumable =
       regexp match {
         case Append(left, right) =>
-          val k: Cont = _.flatMap(i => loop(right, i, cont))
-          loop(left, idx, k)
+          val k: Cont = _ match {
+            case None    => cont(None)
+            case Some(i) => loop(right, i, cont)
+          }
+          Resumable.Resume(() => loop(left, idx, k))
 
         case OrElse(first, second) =>
-          val k: Cont = _.orElse(loop(second, idx, cont))
-          loop(first, idx, k)
+          val k: Cont = _ match {
+            case None => loop(second, idx, cont)
+            case some => cont(some)
+          }
+          Resumable.Resume(() => loop(first, idx, k))
 
         case Repeat(source) =>
           val k: Cont =
-            _.map(i => loop(regexp, i, cont).getOrElse(i)).orElse(Some(idx))
-          loop(source, idx, k)
+            _ match {
+              case None    => cont(Some(idx))
+              case Some(i) => loop(regexp, i, cont)
+            }
+          Resumable.Resume(() => loop(source, idx, k))
 
         case Apply(string) =>
-          cont(Option.when(input.startsWith(string, idx))(idx + string.size))
+          Resumable.Resume(() =>
+            cont(Option.when(input.startsWith(string, idx))(idx + string.size))
+          )
+      }
+
+    def trampoline(cont: Resumable): Option[Int] =
+      cont match {
+        case Resumable.Done(result) => result
+        case Resumable.Resume(cont) => trampoline(cont())
       }
 
     // Check we matched the entire input
-    loop(this, 0, identity).map(idx => idx == input.size).getOrElse(false)
+    trampoline(loop(this, 0, opt => Resumable.Done(opt)))
+      .map(idx => idx == input.size)
+      .getOrElse(false)
   }
 
   case Append(left: Regexp, right: Regexp)
