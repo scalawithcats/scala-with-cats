@@ -114,7 +114,7 @@ isTailRecursive(100000)
 ```
 
 
-### Converting To Tail Recursive Form
+### Continuation-Passing Style
 
 Any program can be converted to a tail recursive form, known as **continuation-passing style**, or CPS for short.
 Our first step is to understand what a **continuation** is.
