@@ -355,6 +355,7 @@ object Expression {
 (Expression(4.0) * (Expression(0.0) + Expression(1.0))).simplify.print
 ```
 However, even though it's strongly normalizing there are still additional simplifications that we could add to our rule set. 
-For example, we could add the distribution rule `a * (b + c) == (a * b) + (a * c)`.
-This rule can increase the size of the expression, so it's not clear to me that adding distribution is strongly normalizing.
-In the absence of strongly normalizing we can run our rules for a fixed number of iterations.
+For example, we could add the distribution rule $a * (b + c) == (a * b) + (a * c)$.
+This rule can increase the size of the expression, so it's not clear to me that adding distribution will keep our rules strongly normalizing.
+This is one rule that is strongly normalizing, which is to simply evaluate the entire expression.
+In the absence of strongly normalization we can run our rules for a fixed number of iterations.
