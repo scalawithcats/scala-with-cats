@@ -72,12 +72,12 @@ Regexp("a").repeat.matches("a" * 20000)
 // java.lang.StackOverflowError
 ```
 
-This is because the interpreter calls `loop` for each instance of a repeat. Every method call requires a small amount of memory, called a stack frame, in a location that is called the stack. If we make enough method calls we have to allocate so many stack frames that we run out of space to hold them on the stack. However, all is not lost. We can rewrite the interpreter in a way that consumes a fixed amount of stack space, and therefore match input that is as large as we like.
+This is because the interpreter calls `loop` for each instance of a repeat. Every method call requires a small amount of memory, called a stack frame, in a location that is called the stack. If we make enough method calls we have to allocate so many stack frames that we run out of space on the stack. When this happens a `StackOverflowError` is raised. However, all is not lost. We can rewrite the interpreter in a way that consumes a fixed amount of stack space, and therefore match input that is as large as we like.
 
 
 ### Tail Calls and Tail Position
 
-Our starting point is a **tail call**. A tail call is a method call that does not take any additional stack space. Only method calls that are in **tail position** are candidates to be turned into tail calls. Even then, not all calls in tail position will be converted to tail calls due to runtime limitations.
+Our starting point is **tail calls**. A tail call is a method call that does not take any additional stack space. Only method calls that are in **tail position** are candidates to be turned into tail calls. Even then, runtime limitations mean that not all calls in tail position will be converted to tail calls.
 
 A method call in tail position is a call that immediately returns the value returned by the call.
 Below are two versions of a method to calculate the sum of the integers from 0 to `count`.
@@ -122,7 +122,7 @@ loop(count, 0)
 
 is also in tail position.
 
-A method call in tail position is a candidate to be turned into a tail call. Limitations of the JVM and Javascript runtimes mean that not all calls in tail position can be made tail calls. (Scala Native may be getting full tail calls in the future.) In general, only calls in tail position from a method to itself will be converted to tail calls. This means
+A method call in tail position is a candidate to be turned into a tail call. Limitations of the JVM and Javascript runtimes mean that not all calls in tail position can be made tail calls. (Both these runtimes and Scala Native may have full tail calls in the future.) Currently, only calls from a method to itself that are also in tail position will be converted to tail calls. This means
 
 ```scala
 case n => loop(n - 1, accum + n)
@@ -137,7 +137,7 @@ loop(count, 0)
 is not converted to a tail call, because the call is from `isTailRecursive` to `loop`. 
 This will not cause issues with stack consumption, however, because this call only happens once.
 
-We can ask the Scala compiler to check that all self calls are in tail position  by adding the `@tailrec` annotation to a method.
+We can ask the Scala compiler to check that all self calls are in tail position by adding the `@tailrec` annotation to a method.
 The code will fail to compile if any calls from the method to itself are not in tail position.
 
 ```scala mdoc:reset-object:fail
@@ -186,13 +186,12 @@ isTailRecursive(100000)
 
 ### Continuation-Passing Style
 
-Any program can be converted to a tail recursive form, known as **continuation-passing style**, or CPS for short.
-Our first step is to understand what a **continuation** is.
+Now that we know about tail calls, how do we convert the regular expression interpreter to use them? Any program can be converted to a form that makes all calls in tail position, known as **continuation-passing style** or CPS for short. Our first step to understanding CPS is to understand **continuations**.
 
 A continuation is an encapsulation of "what happens next". Let's return to our `Regexp` example. Here's the full code for reference.
 
 ```scala mdoc:silent
-enum Regexp {
+enum Regexp extends regexp.Regexp[Regexp] {
   def ++(that: Regexp): Regexp =
     Append(this, that)
 
@@ -209,13 +208,16 @@ enum Regexp {
       regexp match {
         case Append(left, right) =>
           loop(left, idx).flatMap(i => loop(right, i))
-        case OrElse(first, second) => loop(first, idx).orElse(loop(second, idx))
+        case OrElse(first, second) =>
+          loop(first, idx).orElse(loop(second, idx))
         case Repeat(source) =>
           loop(source, idx)
-            .map(i => loop(regexp, i).getOrElse(i))
+            .flatMap(i => loop(regexp, i))
             .orElse(Some(idx))
         case Apply(string) =>
           Option.when(input.startsWith(string, idx))(idx + string.size)
+        case Empty =>
+          None
       }
 
     // Check we matched the entire input
@@ -226,8 +228,11 @@ enum Regexp {
   case OrElse(first: Regexp, second: Regexp)
   case Repeat(source: Regexp)
   case Apply(string: String)
+  case Empty
 }
-object Regexp {
+object Regexp extends regexp.RegexpConstructors[Regexp] {
+  val empty: Regexp = Empty
+
   def apply(string: String): Regexp =
     Apply(string)
 }
@@ -240,10 +245,10 @@ case Append(left, right) =>
   loop(left, idx).flatMap(i => loop(right, i))
 ```
 
-What happens next when we call `loop(left, idx)`? Let's give the name `result` to the result of the call to `loop`. The answer is we run `result.flatMap(i => loop(right, i))`. We can represent this as a function, to which we pass `result`:
+What happens next when we call `loop(left, idx)`? Let's give the name `result` to the value returned by the call to `loop`. The answer is we run `result.flatMap(i => loop(right, i))`. We can represent this as a function, to which we pass `result`:
 
 ```scala
-(opt: Option[Int]) => opt.flatMap(i => loop(right, i))
+(result: Option[Int]) => result.flatMap(i => loop(right, i))
 ```
 
 This is exactly the continuation, reified as a value. 
@@ -263,7 +268,7 @@ Instead of returning a value it calls that continuation with the value.
 (This is another example of duality, in this case between returning a value and calling a continuation.)
 
 Let's see how this works.
-We'll start with a simple example written in the normal style, also known as direct style.
+We'll start with a simple example written in the normal style, also known as **direct style**.
 
 ```scala mdoc:silent
 (1 + 2) * 3
@@ -278,8 +283,8 @@ def add(x: Int, y: Int, k: Cont) = k(x + y)
 def mul(x: Int, y: Int, k: Cont) = k(x * y)
 ```
 
-Now we can rewrite this in CPS. `(1 + 2)` becomes `add(1, 2, k)`, but what is `k`, the continuation?
-What we do next is multiply the result by `3`. In other words `a => mul(a, 3, k2)`. 
+Now we can rewrite our example in CPS. `(1 + 2)` becomes `add(1, 2, k)`, but what is `k`, the continuation?
+What we do next is multiply the result by `3`. Thus the continuation is `a => mul(a, 3, k2)`. 
 What is the next continuation, `k2`?
 Here the program finishes, so we just return the value with the identity continuation `b => b`.
 Put it all together and we get
@@ -343,6 +348,9 @@ def matches(input: String): Boolean = {
 
       case Apply(string) =>
         cont(Option.when(input.startsWith(string, idx))(idx + string.size))
+        
+      case Empty =>
+        cont(None)
     }
 
   // Check we matched the entire input
@@ -350,10 +358,12 @@ def matches(input: String): Boolean = {
 }
 ```
 
-Every call in this interpreter loop is in tail position. However Scala cannot convert these to tail calls, because the calls go from `loop` to a continuation and vice versa.
+Every call in this interpreter loop is in tail position. However Scala cannot convert these to tail calls because the calls go from `loop` to a continuation and vice versa. To make the interpreter fully stack safe we need to add **trampolining**, and before we talk about trampolining we should talk about reifying continatuions once more.
 
-To make the interpreter fully stack safe we need to add **trampolining**. 
-A trampoline is a tail-recursive loop to which we return either a continuation or the final value.
+
+### Reifying Continuations to a Stack
+
+A trampoline is a tail recursive loop to which we return either a continuation or the final value.
 If the trampoline receives a continuation is calls it, otherwise it stops and returns the value.
 In terms of code, we need a type to represent the value the trampoline receives. I've called in `Resumable`.
 

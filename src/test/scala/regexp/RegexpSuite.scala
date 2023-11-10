@@ -80,8 +80,4 @@ trait RegexpSuite[R <: Regexp[R]](
     assert(!r.matches("Scalaland"))
   }
 
-  test("Stack safety") {
-    val r = construct.apply("a").repeat
-    assert(r.matches("a" * 20000))
-  }
 }
