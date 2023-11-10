@@ -363,6 +363,13 @@ Every call in this interpreter loop is in tail position. However Scala cannot co
 
 ### Reifying Continuations to a Stack
 
+We've seen two uses of reification so far:
+
+1. we reified constructor and combinators methods as data; and
+2. we reified the abstract concept of continuations as functions in our program.
+
+We're now going to reify continuations-as-functions as data. If we look at the uses of continuations in the CPS interpreter we see two cases: a continuation that does some work and then calls the next continuation, and a continuation that does nothing except return. In other words it has the same shape as a linked list.
+
 A trampoline is a tail recursive loop to which we return either a continuation or the final value.
 If the trampoline receives a continuation is calls it, otherwise it stops and returns the value.
 In terms of code, we need a type to represent the value the trampoline receives. I've called in `Resumable`.
