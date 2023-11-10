@@ -60,18 +60,31 @@ That's all I'm going to say about Scala's built-in regular expressions. If you'd
 
 Let's turn to the theoretical description, such as we might find in a textbook. A regular expression is:
 
-1. a string, which matches exactly that string; 
-2. the concatenation of two regular expressions, which matches the first regular expression and then the second;
-3. the union of two regular expressions, which matches if either expression matches; and
-4. the repetition of a regular expression (often known as the Kleene star), which matches zero or more repetitions of the underlying expression.
+1. the empty regular expression that matches nothing;
+2. a string, which matches exactly that string (including the empty string); 
+3. the concatenation of two regular expressions, which matches the first regular expression and then the second;
+4. the union of two regular expressions, which matches if either expression matches; and
+5. the repetition of a regular expression (often known as the Kleene star), which matches zero or more repetitions of the underlying expression.
 
-If you're not useful to this kind of description it may seem a bit abstract, but it is very useful for our purposes because it defines a minimal API that we can implement. Let's walk through the four parts of the description and see how they relate to code.
+This kind of description may seem very abstract if you're not used to it. It is very useful for our purposes because it defines a minimal API that we can easily implement. Let's walk through the description and see how each part relates to code.
 
-The first part tells us we need a constructor with type `String => Regexp`.
+The empty regular expression is defining a constructor with type `() => Regexp`, which we can simplify to a value of type `Regexp`.
 In Scala we put constructors on the companion object, so this tells us we need
 
 ```scala
 object Regexp {
+  val empty: Regexp =
+    ???
+}
+```
+
+The second part tells us we need another constructor, this one with type `String => Regexp`.
+
+```scala
+object Regexp {
+  val empty: Regexp =
+    ???
+
   def apply(string: String): Regexp =
     ???
 }
@@ -122,7 +135,8 @@ trait Regexp {
 }
 ```
 
-Now we've defined the API we can turn to implementation.
+This completes our API.
+Now we can turn to implementation.
 We're going to represent `Regexp` as an algebraic data type, and each method that returns a `Regexp` will return an instance of this algebraic data type.
 What should be the elements that make up the algebraic data type?
 There will be one element for each method, and the constructor arguments will be exactly the parameters passed to the method *including the hidden `this` parameter for methods on the trait*.
@@ -149,8 +163,11 @@ enum Regexp {
   case OrElse(first: Regexp, second: Regexp)
   case Repeat(source: Regexp)
   case Apply(string: String)
+  case Empty
 }
 object Regexp {
+  val empty: Regexp = Empty
+  
   def apply(string: String): Regexp =
     Apply(string)
 }
@@ -179,6 +196,7 @@ enum Regexp {
       case OrElse(first, second) => first.matches(???) ??? second.matches(???)
       case Repeat(source)        => source.matches(???) ???
       case Apply(string)         => ???
+	    case Empty                 => ???
     }
 
   case Append(left: Regexp, right: Regexp)
@@ -192,7 +210,9 @@ object Regexp {
 }
 ```
 
-Now we can apply the usual strategies to complete the implementation. Let's reason independently by case, starting with the case for `Apply`. A reasonable first attempt is to match if the `input` starts with the string we're looking for. This doesn't seem completely correct, as we should on succeed if we match all the input, but it's good enough for now.
+Now we can apply the usual strategies to complete the implementation. Let's reason independently by case, starting with the case for `Empty`. This case is trivial as it always fails to match, so we just return `false`.
+
+A reasonable first attempt is to match if the `input` starts with the string we're looking for. This doesn't seem completely correct, as we should on succeed if we match all the input, but it's good enough for now.
 
 ```scala
 def matches(input: String): Boolean =
@@ -200,7 +220,8 @@ def matches(input: String): Boolean =
     case Append(left, right)   => left.matches(???) ??? right.matches(???)
     case OrElse(first, second) => first.matches(???) ??? second.matches(???)
     case Repeat(source)        => source.matches(???) ???
-    case Apply(string)         => input.startsWith(string)
+    case Apply(string)         => ???
+    case Empty                 => false
   }
 ```
 
@@ -214,10 +235,12 @@ def matches(input: String): Boolean = {
         loop(left, idx).flatMap(idx => loop(right, idx))
       case OrElse(first, second) => 
         loop(first, idx) ??? loop(second, ???)
-      case Repeat(source) =>
+      case Repeat(source) => 
         loop(source, idx) ???
-      case Apply(string) =>
-        Option.when(input.startsWith(string, idx))(idx + string.size)
+      case Apply(string) => 
+        ???
+      case Empty =>
+        None
     }
 
   // Check we matched the entire input
@@ -284,13 +307,16 @@ enum Regexp {
       regexp match {
         case Append(left, right) =>
           loop(left, idx).flatMap(i => loop(right, i))
-        case OrElse(first, second) => loop(first, idx).orElse(loop(second, idx))
+        case OrElse(first, second) =>
+          loop(first, idx).orElse(loop(second, idx))
         case Repeat(source) =>
           loop(source, idx)
-            .map(i => loop(regexp, i).getOrElse(i))
+            .flatMap(i => loop(regexp, i))
             .orElse(Some(idx))
         case Apply(string) =>
           Option.when(input.startsWith(string, idx))(idx + string.size)
+        case Empty =>
+          None
       }
 
     // Check we matched the entire input
@@ -301,6 +327,7 @@ enum Regexp {
   case OrElse(first: Regexp, second: Regexp)
   case Repeat(source: Regexp)
   case Apply(string: String)
+  case Empty
 }
 object Regexp {
   def apply(string: String): Regexp =
@@ -329,7 +356,4 @@ regexp.matches("Scalal")
 regexp.matches("Scalaland")
 ```
 
-Success! At this point we could add many extensions to our library. For example, regular expressions usually have a method (by convention denoted `+`) that matches one or more times, and one that matches zero or once (usually denoted `?`). These are both conveniences we can build on our existing API.
-
-However, our goal at the moment is to fully understand interpreters and the implementation technique we've used here.
-So in the next section we'll discuss these in detail.
+Success! At this point we could add many extensions to our library. For example, regular expressions usually have a method (by convention denoted `+`) that matches one or more times, and one that matches zero or once (usually denoted `?`). These are both conveniences we can build on our existing API. However, our goal at the moment is to fully understand interpreters and the implementation technique we've used here. So in the next section we'll discuss these in detail.

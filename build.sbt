@@ -13,9 +13,13 @@ enablePlugins(MdocPlugin)
 mdocIn := sourceDirectory.value / "pages"
 mdocOut := target.value / "pages"
 
-val catsVersion = "2.9.0"
+val catsVersion = "2.10.0"
 
-libraryDependencies ++= Seq("org.typelevel" %% "cats-core" % catsVersion)
+libraryDependencies ++= Seq(
+  "org.typelevel" %% "cats-core" % catsVersion,
+  "org.scalameta" %% "munit" % "0.7.29" % Test,
+  "org.scalameta" %% "munit-scalacheck" % "0.7.29" % Test
+)
 
 // addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full)
 

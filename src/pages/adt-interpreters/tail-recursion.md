@@ -5,7 +5,77 @@ Structural recursion, as we have written it, uses the stack. This is not often a
 In this section we will discuss tail recursion, converting programs to tail recursive form, and limitations and workarounds for the JVM.
 
 
-### Tail Position and Tail Calls
+### The Problem of Stack Safety
+
+Let's start by seeing the problem. In Scala we can create a repeated `String` using the `*` method.
+
+```scala mdoc
+"a" * 4
+```
+
+```scala mdoc:invisible
+enum Regexp {
+  def ++(that: Regexp): Regexp =
+    Append(this, that)
+
+  def orElse(that: Regexp): Regexp =
+    OrElse(this, that)
+
+  def repeat: Regexp =
+    Repeat(this)
+
+  def `*` : Regexp = this.repeat
+
+  def matches(input: String): Boolean = {
+    def loop(regexp: Regexp, idx: Int): Option[Int] =
+      regexp match {
+        case Append(left, right) =>
+          loop(left, idx).flatMap(i => loop(right, i))
+        case OrElse(first, second) =>
+          loop(first, idx).orElse(loop(second, idx))
+        case Repeat(source) =>
+          loop(source, idx)
+            .flatMap(i => loop(regexp, i))
+            .orElse(Some(idx))
+        case Apply(string) =>
+          Option.when(input.startsWith(string, idx))(idx + string.size)
+        case Empty =>
+          None
+      }
+
+    // Check we matched the entire input
+    loop(this, 0).map(idx => idx == input.size).getOrElse(false)
+  }
+
+  case Append(left: Regexp, right: Regexp)
+  case OrElse(first: Regexp, second: Regexp)
+  case Repeat(source: Regexp)
+  case Apply(string: String)
+  case Empty
+}
+object Regexp {
+  def apply(string: String): Regexp =
+    Apply(string)
+}
+```
+
+We can match such a `String` with a regular expression and `repeat`.
+
+```scala mdoc
+Regexp("a").repeat.matches("a" * 4)
+```
+
+However, if we make the input very long the interpreter will fail with a stack overflow exception.
+
+```scala
+Regexp("a").repeat.matches("a" * 20000)
+// java.lang.StackOverflowError
+```
+
+This is because the interpreter calls `loop` for each instance of a repeat. Every method call requires a small amount of memory, called a stack frame, in a location that is called the stack. If we make enough method calls we have to allocate so many stack frames that we run out of space to hold them on the stack. However, all is not lost. We can rewrite the interpreter in a way that consumes a fixed amount of stack space, and therefore match input that is as large as we like.
+
+
+### Tail Calls and Tail Position
 
 Our starting point is a **tail call**. A tail call is a method call that does not take any additional stack space. Only method calls that are in **tail position** are candidates to be turned into tail calls. Even then, not all calls in tail position will be converted to tail calls due to runtime limitations.
 
