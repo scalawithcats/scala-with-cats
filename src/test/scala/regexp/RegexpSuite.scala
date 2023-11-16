@@ -19,7 +19,7 @@ trait RegexpSuite[R <: Regexp[R]](
   }
 
   property("non-empty string matches only given input string") {
-    forAll(nonEmptyAlphaNumStr, nonEmptyAlphaNumStr) {
+    forAllNoShrink(nonEmptyAlphaNumStr, nonEmptyAlphaNumStr) {
       (input: String, junk: String) =>
         val r = construct.apply(input)
         assert(r.matches(input))
@@ -29,7 +29,7 @@ trait RegexpSuite[R <: Regexp[R]](
   }
 
   property("append matches both strings in order") {
-    forAll(nonEmptyAlphaNumStr, nonEmptyAlphaNumStr) {
+    forAllNoShrink(nonEmptyAlphaNumStr, nonEmptyAlphaNumStr) {
       (first: String, second: String) =>
         val r = construct.apply(first) ++ construct.apply(second)
         assert(r.matches(first ++ second))
@@ -41,7 +41,7 @@ trait RegexpSuite[R <: Regexp[R]](
   }
 
   property("orElse matches first or second") {
-    forAll(nonEmptyAlphaNumStr, nonEmptyAlphaNumStr) {
+    forAllNoShrink(nonEmptyAlphaNumStr, nonEmptyAlphaNumStr) {
       (first: String, second: String) =>
         val r = construct.apply(first).orElse(construct.apply(second))
         assert(r.matches(first))
@@ -51,19 +51,20 @@ trait RegexpSuite[R <: Regexp[R]](
   }
 
   property("repeat matches zero or more times") {
-    forAll(nonEmptyAlphaNumStr, Gen.posNum[Int]) { (string: String, n: Int) =>
-      val r = construct.apply(string).repeat
-      assert(r.matches(""))
-      assert(r.matches(string))
-      assert(r.matches(string * n))
-      assert(!r.matches(string ++ ":-)"))
+    forAllNoShrink(nonEmptyAlphaNumStr, Gen.posNum[Int]) {
+      (string: String, n: Int) =>
+        val r = construct.apply(string).repeat
+        assert(r.matches(""))
+        assert(r.matches(string))
+        assert(r.matches(string * n))
+        assert(!r.matches(string ++ ":-)"))
     }
   }
 
   property("empty does not match any string") {
     val r = construct.empty
 
-    forAll(nonEmptyAlphaNumStr) { (string: String) =>
+    forAllNoShrink(nonEmptyAlphaNumStr) { (string: String) =>
       assert(!r.matches(string))
     }
   }

@@ -1,6 +1,8 @@
 package regexp
 
-object ReifiedCps {
+object Trampolined {
+  // Define a type alias so we can easily write continuations
+  type Continuation = Option[Int] => Call
 
   enum Call {
     case Loop(regexp: Regexp, index: Int, continuation: Continuation)
@@ -8,41 +10,7 @@ object ReifiedCps {
     case Done(index: Option[Int])
   }
 
-  enum Continuation {
-    case AppendK(right: Regexp, next: Continuation)
-    case OrElseK(second: Regexp, index: Int, next: Continuation)
-    case RepeatK(regexp: Regexp, index: Int, next: Continuation)
-    case DoneK
-
-    def apply(idx: Option[Int]): Call =
-      this match {
-        case AppendK(right, next) =>
-          idx match {
-            case None    => Call.Continue(None, next)
-            case Some(i) => Call.Loop(right, i, next)
-          }
-
-        case OrElseK(second, index, next) =>
-          idx match {
-            case None => Call.Loop(second, index, next)
-            case some => Call.Continue(some, next)
-          }
-
-        case RepeatK(regexp, index, next) =>
-          idx match {
-            case None    => Call.Continue(Some(index), next)
-            case Some(i) => Call.Loop(regexp, i, next)
-          }
-
-        case DoneK =>
-          Call.Done(idx)
-      }
-
-  }
-
   enum Regexp extends regexp.Regexp[Regexp] {
-    import Continuation.{AppendK, OrElseK, RepeatK, DoneK}
-
     def ++(that: Regexp): Regexp =
       Append(this, that)
 
@@ -55,22 +23,28 @@ object ReifiedCps {
     def `*` : Regexp = this.repeat
 
     def matches(input: String): Boolean = {
-      def loop(
-          regexp: Regexp,
-          idx: Int,
-          cont: Continuation
-      ): Call =
+      def loop(regexp: Regexp, idx: Int, cont: Continuation): Call =
         regexp match {
           case Append(left, right) =>
-            val k: Continuation = AppendK(right, cont)
+            val k: Continuation = _ match {
+              case None    => Call.Continue(None, cont)
+              case Some(i) => Call.Loop(right, i, cont)
+            }
             Call.Loop(left, idx, k)
 
           case OrElse(first, second) =>
-            val k: Continuation = OrElseK(second, idx, cont)
+            val k: Continuation = _ match {
+              case None => Call.Loop(second, idx, cont)
+              case some => Call.Continue(some, cont)
+            }
             Call.Loop(first, idx, k)
 
           case Repeat(source) =>
-            val k: Continuation = RepeatK(regexp, idx, cont)
+            val k: Continuation =
+              _ match {
+                case None    => Call.Continue(Some(idx), cont)
+                case Some(i) => Call.Loop(regexp, i, cont)
+              }
             Call.Loop(source, idx, k)
 
           case Apply(string) =>
@@ -93,7 +67,7 @@ object ReifiedCps {
         }
 
       // Check we matched the entire input
-      trampoline(loop(this, 0, DoneK))
+      trampoline(loop(this, 0, opt => Call.Done(opt)))
         .map(idx => idx == input.size)
         .getOrElse(false)
     }

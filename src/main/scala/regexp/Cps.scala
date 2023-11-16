@@ -15,26 +15,26 @@ object Cps {
 
     def matches(input: String): Boolean = {
       // Define a type alias so we can easily write continuations
-      type Cont = Option[Int] => Option[Int]
+      type Continuation = Option[Int] => Option[Int]
 
-      def loop(regexp: Regexp, idx: Int, cont: Cont): Option[Int] =
+      def loop(regexp: Regexp, idx: Int, cont: Continuation): Option[Int] =
         regexp match {
           case Append(left, right) =>
-            val k: Cont = _ match {
+            val k: Continuation = _ match {
               case None    => cont(None)
               case Some(i) => loop(right, i, cont)
             }
             loop(left, idx, k)
 
           case OrElse(first, second) =>
-            val k: Cont = _ match {
+            val k: Continuation = _ match {
               case None => loop(second, idx, cont)
               case some => cont(some)
             }
             loop(first, idx, k)
 
           case Repeat(source) =>
-            val k: Cont =
+            val k: Continuation =
               _ match {
                 case None    => cont(Some(idx))
                 case Some(i) => loop(regexp, i, cont)

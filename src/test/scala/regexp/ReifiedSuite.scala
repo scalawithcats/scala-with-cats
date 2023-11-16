@@ -2,4 +2,4 @@ package regexp
 
 import munit.ScalaCheckSuite
 
-class ReifiedSuite extends RegexpSuite(regexp.Reified.Regexp)
+class ReifiedSuite extends RegexpSuite(Reified.Regexp)
