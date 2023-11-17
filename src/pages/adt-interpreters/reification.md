@@ -8,7 +8,7 @@ There are two different programming strategies at play in the regular expression
 Remember the essence of the **interpreter strategy** is to separate description and action. Therefore, whenever we use the interpreter strategy we need at least two things: a description and an interpreter. Descriptions are programs; things that we want to happen. The interpreter runs the programs, carrying out the actions described within them.
 
 In the regular expression example, a `Regexp` value is a program. It is a description of a pattern we are looking for within a `String`.
-The `matches` method is an interpreter. It carries out the instructions in the description, looking for the pattern within the input. We could have other interpreters, such as one that matches if at least some part of the input matches the pattern.
+The `matches` method is an interpreter. It carries out the instructions in the description, checking the pattern matches the entire input. We could have other interpreters, such as one that matches if at least some part of the input matches the pattern.
 
 
 ### The Structure of Interpreters
@@ -16,7 +16,7 @@ The `matches` method is an interpreter. It carries out the instructions in the d
 All uses of the interpreter strategy have a particular structure to their methods.
 There are three different types of methods:
 
-1. **constructors**, or **introduction forms**, with type `A => Program`. Here `A` is any type that isn't a program, and `Program` is the type of programs. Constructors conventionally live on the `Program` companion object in Scala. We see that `apply` is a constructor of `Regexp`. It has type `String => Regexp`, which matches the pattern `A => Program` for a constructor.
+1. **constructors**, or **introduction forms**, with type `A => Program`. Here `A` is any type that isn't a program, and `Program` is the type of programs. Constructors conventionally live on the `Program` companion object in Scala. We see that `apply` is a constructor of `Regexp`. It has type `String => Regexp`, which matches the pattern `A => Program` for a constructor. The other constructor, `empty`, is just a value of type `Regexp`. This is equivalent to a method with type `() => Regexp` and so it also matches the pattern for a constructor.
 
 2. **combinators** have at least one program input and a program output. The type is similar to `Program => Program` but there are often additional parameters. All of `++`, `orElse`, and `repeat` are combinators in our regular expression example. They all have a `Regexp` input (the `this` parameter) and produce a `Regexp`. Some of them have additional parameters, such as `++` or `orElse`. For both these methods the single additional parameter is a `Regexp`, but it is not the case that additional parameters to a combinator must be of the program type. Conventionally these methods live on the `Program` type.
 
@@ -27,7 +27,7 @@ This structure is often called an **algebra** or **combinator library** in the f
 
 ### Implementing Interpreters with Reification
 
-Now that we understand the components of interpreter we can talk more clearly about the implementation strategy we used.
+Now that we understand the components of an interpreter we can talk more clearly about the implementation strategy we used.
 We used a strategy called **reification**, **defunctionalization**, **deep embedding**, or an **initial algebra**.
 
 Reification, in an abstract sense, means to make concrete what is abstract. Concretely, reification in the programming sense means to turn methods or functions into data. When using reification in the interpreter strategy we reify all the components that produce the `Program` type. This means reifying constructors and combinators.
@@ -35,7 +35,7 @@ Reification, in an abstract sense, means to make concrete what is abstract. Conc
 Here are the rules for reification:
 
 1. We define some type, which we'll call `Program`, to represent programs.
-2. We make `Program` an algebraic data type.
+2. We implement `Program` as an algebraic data type.
 3. All constructors and combinators become product types within the `Program` algebraic data type.
 4. Each product type holds exactly the parameters to the constructor or combinator, including the `this` parameter for combinators.
 

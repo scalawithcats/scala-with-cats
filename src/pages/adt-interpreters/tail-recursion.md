@@ -1,18 +1,18 @@
 ## Tail Recursive Interpreters
 
-Structural recursion, as we have written it, uses the stack. This is not often a problem, but particularly deep recursions can lead to the stack running out of space. A solution is to write a **tail recursive** program. A tail recursive program does not need to use any stack space, and so is sometimes known as **stack safe**. Any program can be turned into a tail recursive version, though this can require a lot of changes.
+Structural recursion, as we have written it, uses the stack. This is not often a problem, but particularly deep recursions can lead to the stack running out of space. A solution is to write a **tail recursive** program. A tail recursive program does not need to use any stack space, and so is sometimes known as **stack safe**. Any program can be turned into a tail recursive version, which does not use the stack and therefore cannot run out of stack space.
 
 <div class="callout callout-info">
 #### The Call Stack {-}
 
 Method and function calls are usually implemented using an area of memory known as the call stack, or just the stack for short.
 Every method or function call uses a small amount of memory on the stack, called a stack frame.
-When the method or function returns this memory is freed and becomes available for future calls to use.
+When the method or function returns, this memory is freed and becomes available for future calls to use.
 
-A large number of method calls, without corresponding returns, can require more stack frames than the stack can provide. When there is no more memory available on the stack we say we have overflowed the stack. In Scala a `StackOverflowError` is raised when this happens. 
+A large number of method calls, without corresponding returns, can require more stack frames than the stack can accommodate. When there is no more memory available on the stack we say we have overflowed the stack. In Scala a `StackOverflowError` is raised when this happens. 
 </div>
 
-In this section we will discuss tail recursion, converting programs to tail recursive form, and limitations and workarounds for the JVM.
+In this section we will discuss tail recursion, converting programs to tail recursive form, and limitations and workarounds for the Scala's runtimes.
 
 
 ### The Problem of Stack Safety
@@ -90,6 +90,7 @@ This is because the interpreter calls `loop` for each instance of a repeat, with
 Our starting point is **tail calls**. A tail call is a method call that does not take any additional stack space. Only method calls that are in **tail position** are candidates to be turned into tail calls. Even then, runtime limitations mean that not all calls in tail position will be converted to tail calls.
 
 A method call in tail position is a call that immediately returns the value returned by the call.
+Let's see an example.
 Below are two versions of a method to calculate the sum of the integers from 0 to `count`.
 
 ```scala mdoc:silent
@@ -116,7 +117,7 @@ The method call to `isntTailRecursive` in
 case n => n + isntTailRecursive(n - 1)
 ```
 
-is not in tail position, because the value returned by the call is used in the addition.
+is not in tail position, because the value returned by the call is then used in the addition.
 However, the call to `loop` in
 
 ```scala
@@ -148,9 +149,9 @@ is not converted to a tail call, because the call is from `isTailRecursive` to `
 This will not cause issues with stack consumption, however, because this call only happens once.
 
 <div class="callout callout-info">
-#### Runtimes {-}
+#### Runtimes and Tail Calls {-}
 
-Scala supports three different platforms: the JVM, Javascript via Scala.js, and native code via Scala Native. Each platform provides what is known as a runtime, which is code that supports Scala code when it is running. The garbage collector, for example, is part of the runtime.
+Scala supports three different platforms: the JVM, Javascript via Scala.js, and native code via Scala Native. Each platform provides what is known as a runtime, which is code that supports our Scala code when it is running. The garbage collector, for example, is part of the runtime.
 
 At the time of writing none of Scala's runtimes support full tail calls. However, there is reason to think this may change in the future. [Project Loom](https://wiki.openjdk.org/display/loom/Main) should eventually add support for tail calls to the JVM. Scala Native is likely to support tail calls soon, as part of other work to implement continuations. Tail calls have been part of the Javascript specification for a long time, but remain unimplemented by the majority of Javascript runtimes. However, WebAssembly does support tail calls and will probably replace compiling Scala to Javascript in the medium term.
 </div>
@@ -204,7 +205,7 @@ isTailRecursive(100000)
 
 ### Continuation-Passing Style
 
-Now that we know about tail calls, how do we convert the regular expression interpreter to use them? Any program can be converted to an equivalent program with all calls are tail position. This conversion is known as **continuation-passing style** or CPS for short. Our first step to understanding CPS is to understand **continuations**.
+Now that we know about tail calls, how do we convert the regular expression interpreter to use them? Any program can be converted to an equivalent program with all calls in tail position. This conversion is known as **continuation-passing style** or CPS for short. Our first step to understanding CPS is to understand **continuations**.
 
 A continuation is an encapsulation of "what happens next". Let's return to our `Regexp` example. Here's the full code for reference.
 
@@ -288,7 +289,7 @@ This is another example of duality, in this case between returning a value and c
 Let's see how this works.
 We'll start with a simple example written in the normal style, also known as **direct style**.
 
-```scala mdoc:silent
+```scala mdoc
 (1 + 2) * 3
 ```
 
@@ -307,7 +308,7 @@ What is the next continuation, `k2`?
 Here the program finishes, so we just return the value with the identity continuation `b => b`.
 Put it all together and we get
 
-```scala mdoc:silent
+```scala mdoc
 add(1, 2, a => mul(a, 3, b => b))
 ```
 
@@ -324,7 +325,7 @@ def matches(input: String): Boolean = {
   type Continuation = Option[Int] => Option[Int]
 
   def loop(regexp: Regexp, idx: Int, cont: Continuation): Option[Int] =
-  ...
+  // etc...
 }
 ```
 
@@ -384,7 +385,7 @@ Every call in this interpreter loop is in tail position. However Scala cannot co
 Earlier we said that CPS utilizes the duality between function calls and returns: instead of returning a value we call a function with a value. This allows us to transform our code so it only has calls in tail positions. However, we still have a problem with stack safety. Scala's runtimes don't support full tail calls, so calls from a continuation to `loop` or from `loop` to a continuation will use a stack frame. We can use this same duality to avoid using the stack by, instead of making a call, returning a value that reifies the call we want to make. This idea is the core of trampolining. Let's see it in action, which will help clear up what exactly this all means.
 
 Our first step is to reify all the method calls made by the interpreter loop and the continuations.
-There are three cases: calls to `loop`, call to a continuation, and, to avoid an infinite loop, the case when we're done.
+There are three cases: calls to `loop`, calls to a continuation, and, to avoid an infinite loop, the case when we're done.
 
 ```scala
 type Continuation = Option[Int] => Call
@@ -434,9 +435,9 @@ def loop(regexp: Regexp, idx: Int, cont: Continuation): Call =
   }
 ```
 
-Now we have an interpreter loop that returns values instead of making calls, and so does not consume stack space.
-However, we need to actually make this calls at some point, and this is where we add the trampoline.
-The trampoline is simply a tail-recursive loop that actually makes the calls until it reaches `Done`.
+This gives us an interpreter loop that returns values instead of making calls, and so does not consume stack space.
+However, we need to actually make these calls at some point, and doing this is the job of the trampoline.
+The trampoline is simply a tail-recursive loop that makes calls until it reaches `Done`.
 
 ```scala
 def trampoline(next: Call): Option[Int] =
@@ -450,7 +451,7 @@ def trampoline(next: Call): Option[Int] =
 ```
 
 Now every call has a corresponding return, so the stack usage is limited. 
-Our interpreter can now handle input of any size, up to the limits of available memory.
+Our interpreter can handle input of any size, up to the limits of available memory.
 
 Here's the complete code for reference.
 
@@ -541,186 +542,8 @@ object Regexp {
 ```
 
 
-### Reifying Continuations to a Stack
-
-We've seen two uses of reification so far:
-
-1. we reified constructor and combinators methods as data; and
-2. we reified the abstract concept of continuations as functions in our program.
-
-We'll now see a third use, reifying continuations-as-functions as data.
-We can start by applying the same recipe as before: we create a case for each place in which we construct a continuation.
-In our interpreter loop this is for `Append`, `OrElse`, and `Repeat`. We also construct a continuation using the identity function when we first call `loop`, which represents the continuation to call when the loop has finished. This means we need four cases.
-
-```scala
-enum Continuation {
-  case AppendK
-  case OrElseK
-  case RepeatK
-  case DoneK
-}
-```
-
-What data does each case next to hold?
-Let's let look at the structure of the cases within the CPS interpreter.
-The case for `Append` is typical.
-
-```scala
-case Append(left, right) =>
-  val k: Cont = _ match {
-    case None    => cont(None)
-    case Some(i) => loop(right, i, cont)
-  }
-  loop(left, idx, k)
-```
-
-The continuation `k` captures the `Regexp` `right` and the continuation `cont`.
-Our reification should reflect this by holding the same data.
-If we consider all the cases we end up with the following definition.
-
-```scala
-enum Continuation {
-  case AppendK(right: Regexp, next: Continuation)
-  case OrElseK(second: Regexp, index: Int, next: Continuation)
-  case RepeatK(regexp: Regexp, index: Int, next: Continuation)
-  case DoneK
-}
-```
 
 
-Now we can rewrite the interpreter loop using these types.
-
-```scala
-def loop(
-    regexp: Regexp,
-    idx: Int,
-    cont: Continuation
-): Call =
-  regexp match {
-    case Append(left, right) =>
-      val k: Continuation = AppendK(right, cont)
-      Call.Loop(left, idx, k)
-
-    case OrElse(first, second) =>
-      val k: Continuation = OrElseK(second, idx, cont)
-      Call.Loop(first, idx, k)
-
-    case Repeat(source) =>
-      val k: Continuation = RepeatK(regexp, idx, cont)
-      Call.Loop(source, idx, k)
-
-    case Apply(string) =>
-      Call.Continue(
-        Option.when(input.startsWith(string, idx))(idx + string.size),
-        cont
-      )
-
-    case Empty =>
-      Call.Continue(None, cont)
-  }
-```
-
-At this point you're probably wondering what we have achieved with this code transformation. Our end goal, which is now in reach, is to create a stack-safe interpreter. We'll do this in just a moment, when we introduce trampolining. Before we do, let's spend a bit longer looking at the data structures we've created. Our reified continuations have a structure that is similar to a `List`. `DoneK` is equivalent to the empty list. The other cases all have some data, which we can think of as the head, and a tail element that is the next continuation. We construct continuations by adding elements to the front of the existing continuation, which is exactly how we construct lists. Finally, we use continuations from front-to-back; in other words in last-in-first-out (LIFO) order. This is the correct access pattern to use a list efficiently, and also the access pattern that defines a stack. Reifying the continuations has reified the stack, and this allows us to run the interpreter loop without using stack space.
-
-
-### Trampolining
-
-We can now finish implementing a stack-safe interpreter.
-There are two parts to 
-A trampoline is a tail recursive loop 
-If the trampoline receives a continuation is calls it, otherwise it stops and returns the value.
-In terms of code, we need a type to represent the value the trampoline receives. I've called in `Resumable`.
-
-```scala mdoc:silent
-enum Resumable {
-  case Done(result: Option[Int])
-  case Resume(cont: () => Resumable)
-}
-```
-
-The trampoline is a simple loop.
-
-```scala mdoc:silent
-def trampoline(resumable: Resumable): Option[Int] =
-  resumable match {
-    case Resumable.Done(result) => result
-    case Resumable.Resume(cont) => trampoline(cont())
-  }
-```
-
-We next need to change the interpreter so it returns a `Resumable` to the trampoline.
-For example, we could write
-
-```scala
-def loop(
-    regexp: Regexp,
-    idx: Int,
-    cont: Option[Int] => Resumable
-): Resumable =
-  Resumable.Resume(() => regexp match ...)
-```
-
-or we could change every call to `loop` in the body to return a `Resumable.Resume`, or every call to a continuation.
-It doesn't really matter where we do this; we just have to make sure that only a finite amount of recursion can occur before we end up back in the trampoline.
-Each time we return to the trampoline we unwind the stack, which is the secret to avoiding overflowing it.
-
-Here's the implementation I came up with.
-
-```scala 
-def matches(input: String): Boolean = {
-  enum Resumable {
-    case Done(result: Option[Int])
-    case Resume(cont: () => Resumable)
-  }
-  // Define a type alias so we can easily write continuations
-  type Cont = Option[Int] => Resumable
-
-  def loop(
-      regexp: Regexp,
-      idx: Int,
-      cont: Option[Int] => Resumable
-  ): Resumable =
-    regexp match {
-      case Append(left, right) =>
-        val k: Cont = _ match {
-          case None    => cont(None)
-          case Some(i) => loop(right, i, cont)
-        }
-        Resumable.Resume(() => loop(left, idx, k))
-
-      case OrElse(first, second) =>
-        val k: Cont = _ match {
-          case None => loop(second, idx, cont)
-          case some => cont(some)
-        }
-        Resumable.Resume(() => loop(first, idx, k))
-
-      case Repeat(source) =>
-        val k: Cont =
-          _ match {
-            case None    => cont(Some(idx))
-            case Some(i) => loop(regexp, i, cont)
-          }
-        Resumable.Resume(() => loop(source, idx, k))
-
-      case Apply(string) =>
-        Resumable.Resume(() =>
-          cont(Option.when(input.startsWith(string, idx))(idx + string.size))
-        )
-    }
-
-  def trampoline(cont: Resumable): Option[Int] =
-    cont match {
-      case Resumable.Done(result) => result
-      case Resumable.Resume(cont) => trampoline(cont())
-    }
-
-  // Check we matched the entire input
-  trampoline(loop(this, 0, opt => Resumable.Done(opt)))
-    .map(idx => idx == input.size)
-    .getOrElse(false)
-}
-```
 
 Doing a full CPS conversion can be quite involved. Some methods can made tail recursive or stack safe without requiring full CPS.
 Remember these examples we looked at earlier?

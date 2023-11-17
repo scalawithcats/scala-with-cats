@@ -3,7 +3,7 @@
 We'll start this case study by briefly describing the usual task for regular expressions---matching text---and then take a more theoretical view. We'll then move on to implementation.
 
 We most commonly use regular expressions to determine if a string matches a particular pattern.
-The simplest regular expression is one that matches exactly one string.
+The simplest regular expression is one that matches only one string.
 In Scala we can create a regular expression by calling the `r` method on `String`.
 Here's a regular expression that matches exactly the string `"Scala"`.
 
@@ -20,7 +20,7 @@ regexp.matches("Scalaland")
 ```
 
 Notice we already have a separation between description and action. 
-The description is the regular expression itself, created by calling the `r` method, and the action is calling `matches` method on the regular expression.
+The description is the regular expression itself, created by calling the `r` method, and the action is calling the `matches` method on the regular expression.
 
 There are some characters that have a special meaning within the `String` describing a regular expression.
 For example, the character `*` matches the preceding character zero or more times.
@@ -141,7 +141,7 @@ We're going to represent `Regexp` as an algebraic data type, and each method tha
 What should be the elements that make up the algebraic data type?
 There will be one element for each method, and the constructor arguments will be exactly the parameters passed to the method *including the hidden `this` parameter for methods on the trait*.
 
-Here's the code.
+Here's the resulting code.
 
 ```scala mdoc:silent
 enum Regexp {
@@ -175,44 +175,20 @@ object Regexp {
 
 A quick note about `this`. We can think of every method on an object as accepting a hidden parameter that is the object itself. This is `this`. (If you have used Python, it makes this explicit as the `self` parameter.) As we consider `this` to be a parameter to a method call, and our implementation strategy is to capture all the method parameters in a data structure, we must make sure we capture `this` when it is available. The only case where we don't capture `this` is when we are defining a constructor on a companion object.
 
-Notice that we haven't implemented `matches`. It doesn't return a `Regexp` so we cannot return an element of our algebraic data type. What should we do here? `Regexp` is an algebraic data type, `matches` transforms an algebraic data type into a `Boolean`. Therefore we can use structural recursion! Let's write out the skeleton, including the recursion rule.
+Notice that we haven't implemented `matches`. It doesn't return a `Regexp` so we cannot return an element of our algebraic data type. What should we do here? `Regexp` is an algebraic data type and `matches` transforms an algebraic data type into a `Boolean`. Therefore we can use structural recursion! Let's write out the skeleton, including the recursion rule.
 
 ```scala
-enum Regexp {
-  def ++(that: Regexp): Regexp =
-    Append(this, that)
-
-  def orElse(that: Regexp): Regexp =
-    OrElse(this, that)
-
-  def repeat: Regexp =
-    Repeat(this)
-
-  def `*` : Regexp = this.repeat
-
-  def matches(input: String): Boolean =
-    this match {
-      case Append(left, right)   => left.matches(???) ??? right.matches(???)
-      case OrElse(first, second) => first.matches(???) ??? second.matches(???)
-      case Repeat(source)        => source.matches(???) ???
-      case Apply(string)         => ???
-	    case Empty                 => ???
-    }
-
-  case Append(left: Regexp, right: Regexp)
-  case OrElse(first: Regexp, second: Regexp)
-  case Repeat(source: Regexp)
-  case Apply(string: String)
-}
-object Regexp {
-  def apply(string: String): Regexp =
-    Apply(string)
-}
+def matches(input: String): Boolean =
+  this match {
+    case Append(left, right)   => left.matches(???) ??? right.matches(???)
+    case OrElse(first, second) => first.matches(???) ??? second.matches(???)
+    case Repeat(source)        => source.matches(???) ???
+    case Apply(string)         => ???
+    case Empty                 => ???
+  }
 ```
 
 Now we can apply the usual strategies to complete the implementation. Let's reason independently by case, starting with the case for `Empty`. This case is trivial as it always fails to match, so we just return `false`.
-
-A reasonable first attempt is to match if the `input` starts with the string we're looking for. This doesn't seem completely correct, as we should on succeed if we match all the input, but it's good enough for now.
 
 ```scala
 def matches(input: String): Boolean =
@@ -225,7 +201,7 @@ def matches(input: String): Boolean =
   }
 ```
 
-Let's move on to the `Append` case. This should match if the `left` regular expression matches the start of the `input`, and the `right` regular expression matches starting where the `left` regular expression stopped. This has uncovered a hidden requirement: we need to keep an index into the `input` that tells us where we should start matching from. The easiest way to implement this is with a nested method. Here I've created a nested method that returns an `Option[Int]`. The `Int` is the new index to use, and we return an `Option` to indicate if the regular expression matched or not.
+Let's move on to the `Append` case. This should match if the `left` regular expression matches the start of the `input`, and the `right` regular expression matches starting where the `left` regular expression stopped. This has uncovered a hidden requirement: we need to keep an index into the `input` that tells us where we should start matching from. Using a nested method is the easiest way to keep around additional information that we need. Here I've created a nested method that returns an `Option[Int]`. The `Int` is the new index to use, and we return an `Option` to indicate if the regular expression matched or not.
 
 ```scala
 def matches(input: String): Boolean = {
@@ -260,7 +236,7 @@ def matches(input: String): Boolean = {
         loop(first, idx).orElse(loop(second, idx))
       case Repeat(source) =>
         loop(source, idx)
-          .map(i => loop(regexp, i).getOrElse(i))
+          .flatMap(i => loop(regexp, i))
           .orElse(Some(idx))
       case Apply(string) =>
         Option.when(input.startsWith(string, idx))(idx + string.size)
@@ -276,7 +252,7 @@ The implementation for `Repeat` is a little tricky, so I'll walk through the cod
 ```scala
 case Repeat(source) =>
   loop(source, idx)
-    .map(i => loop(regexp, i).getOrElse(i))
+    .flatMap(i => loop(regexp, i))
     .orElse(Some(idx))
 ```
 
@@ -285,7 +261,7 @@ If it does we loop again, but on `regexp` (which is `Repeat(source)`), not `sour
 This is because we want to repeat an indefinite number of times. 
 If we looped on `source` we would only try twice.
 Remember that failing to match is still a success; repeat matches zero or more times.
-This is why we have the `getOrElse` and the `orElse` clauses.
+This condition is handled by the `orElse` clause.
 
 We should test that our implementation works.
 
@@ -357,3 +333,20 @@ regexp.matches("Scalaland")
 ```
 
 Success! At this point we could add many extensions to our library. For example, regular expressions usually have a method (by convention denoted `+`) that matches one or more times, and one that matches zero or once (usually denoted `?`). These are both conveniences we can build on our existing API. However, our goal at the moment is to fully understand interpreters and the implementation technique we've used here. So in the next section we'll discuss these in detail.
+
+<div class="callout callout-info">
+#### Regular Expression Semantics {-}
+
+Our regular expression implementation handles union differently to Scala's built-in regular expressions. Look at the following example comparing the two.
+
+```scala mdoc:silent
+val r1 = "(z|zxy)ab".r
+val r2 = Regexp("z").orElse(Regexp("zxy")) ++ Regexp("ab")
+```
+```scala mdoc
+r1.matches("zxyab")
+r2.matches("zxyab")
+```
+
+The reason for this difference is that our implementation commits to the first branch in a union that successfully matches some of the input, regardless of how that affects later matching. We should instead try both branches, but doing so makes the implementation more complex. The semantics of regular expressions are not essential to what we're trying to do here; we're just using them as an example to motivate the programming strategies we're learning. I decided the extra complexity of implementing union in the usual way outweighed the benefits, and so kept the simpler implementation. Don't worry, we'll see how to do it properly in the next chapter!
+</div>
