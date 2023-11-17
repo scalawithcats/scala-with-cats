@@ -42,7 +42,7 @@ Here are the rules for reification:
 Once we've defined the `Program` algebraic data type, the interpreter becomes a structural recursion on `Program`.
 
 
-### Exercise: Arithmetic {-}
+#### Exercise: Arithmetic {-}
 
 Now it's your turn to practice using reification. Your task is to implement an interpreter for arithmetic expressions. An expression is:
 
