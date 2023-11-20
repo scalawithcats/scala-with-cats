@@ -686,10 +686,10 @@ object Expression {
 ```
 </div>
 
-**TODO: complete this discussion of simplified CPS**
 
+### When Tail Recursion is Easy
 
-Doing a full CPS conversion can be quite involved. Some methods can made tail recursive or stack safe without requiring full CPS.
+Doing a full CPS conversion and trampoline can be quite involved. Some methods can made tail recursive without so large a change.
 Remember these examples we looked at earlier?
 
 ```scala mdoc:reset-object:silent
@@ -710,7 +710,9 @@ def isTailRecursive(count: Int): Int = {
 }
 ```
 
-Both methods calculate the sum of natural numbers from 0 to `count`. Let's us substitution to show how the stack is used by each method, for a small value of `count`.
+The tail recursive version doesn't seem to involve the complexity of CPS. How can we relate this to what we've just learned, and when can we avoid the work of CPS and trampolining?
+
+Let's use substitution to show how the stack is used by each method, for a small value of `count`.
 
 ```scala
 isntTailRecursive(2)
