@@ -380,6 +380,71 @@ def matches(input: String): Boolean = {
 Every call in this interpreter loop is in tail position. However Scala cannot convert these to tail calls because the calls go from `loop` to a continuation and vice versa. To make the interpreter fully stack safe we need to add **trampolining**. 
 
 
+#### Exercise: CPS Arithmetic {-}
+
+In a previous exercise we wrote an interpreter for arithmetic expressions. Your task now is to CPS this interpreter.
+For reference, the definition of an arithmetic expression is:
+
+- a literal number, which takes a `Double` and produces an `Expression`;
+- an addition of two expressions;
+- a substraction of two expressions;
+- a multiplication of two expressions; or
+- a division of two expressions;
+
+<div class="solution">
+The continuations have a slightly different structure to the regular expression example.
+In the regular expression example, all the information needs by a continuation is either found in the parameter to the continuation (the index) or values extracted via pattern matching.
+In the arithmetic code we need values from previous continuations that are not passed as parameters.
+This is to compute binary operations like additions.
+The solution is to capture these values within the environment of the closure that represents the continuation.
+
+```scala mdoc:reset:silent
+type Continuation = Double => Double
+
+enum Expression {
+  case Literal(value: Double)
+  case Addition(left: Expression, right: Expression)
+  case Subtraction(left: Expression, right: Expression)
+  case Multiplication(left: Expression, right: Expression)
+  case Division(left: Expression, right: Expression)
+
+  def eval: Double = {
+    def loop(expr: Expression, cont: Continuation): Double =
+      expr match {
+        case Literal(value) => cont(value)
+        case Addition(left, right) =>
+          loop(left, l => loop(right, r => cont(l + r)))
+        case Subtraction(left, right) =>
+          loop(left, l => loop(right, r => cont(l - r)))
+        case Multiplication(left, right) =>
+          loop(left, l => loop(right, r => cont(l * r)))
+        case Division(left, right) =>
+          loop(left, l => loop(right, r => cont(l / r)))
+      }
+
+    loop(this, identity)
+  }
+  
+  def +(that: Expression): Expression =
+    Addition(this, that)
+
+  def -(that: Expression): Expression =
+    Subtraction(this, that)
+
+  def *(that: Expression): Expression =
+    Multiplication(this, that)
+
+  def /(that: Expression): Expression =
+    Division(this, that)
+}
+object Expression {
+  def apply(value: Double): Expression =
+    Literal(value)
+}
+```
+</div>
+
+
 ### Trampolining
 
 Earlier we said that CPS utilizes the duality between function calls and returns: instead of returning a value we call a function with a value. This allows us to transform our code so it only has calls in tail positions. However, we still have a problem with stack safety. Scala's runtimes don't support full tail calls, so calls from a continuation to `loop` or from `loop` to a continuation will use a stack frame. We can use this same duality to avoid using the stack by, instead of making a call, returning a value that reifies the call we want to make. This idea is the core of trampolining. Let's see it in action, which will help clear up what exactly this all means.
@@ -542,7 +607,86 @@ object Regexp {
 ```
 
 
+#### Exericse: Trampolined Arithmetic {-}
 
+Convert the CPSed arithmetic interpreter we wrote earlier to a trampolined version.
+
+<div class="solution">
+The process to produce this code is very similar to the regular expression example.
+We just identify all the different types of calls (which are the same as the regular expression example) and reify them.
+
+```scala mdoc:reset:silent
+type Continuation = Double => Call
+
+enum Call {
+  case Continue(value: Double, k: Continuation)
+  case Loop(expr: Expression, k: Continuation)
+  case Done(result: Double)
+}
+
+enum Expression {
+  case Literal(value: Double)
+  case Addition(left: Expression, right: Expression)
+  case Subtraction(left: Expression, right: Expression)
+  case Multiplication(left: Expression, right: Expression)
+  case Division(left: Expression, right: Expression)
+
+  def eval: Double = {
+    def loop(expr: Expression, cont: Continuation): Call =
+      expr match {
+        case Literal(value) => Call.Continue(value, cont)
+        case Addition(left, right) =>
+          Call.Loop(
+            left,
+            l => Call.Loop(right, r => Call.Continue(l + r, cont))
+          )
+        case Subtraction(left, right) =>
+          Call.Loop(
+            left,
+            l => Call.Loop(right, r => Call.Continue(l - r, cont))
+          )
+        case Multiplication(left, right) =>
+          Call.Loop(
+            left,
+            l => Call.Loop(right, r => Call.Continue(l * r, cont))
+          )
+        case Division(left, right) =>
+          Call.Loop(
+            left,
+            l => Call.Loop(right, r => Call.Continue(l / r, cont))
+          )
+      }
+
+    def trampoline(call: Call): Double =
+      call match {
+        case Call.Continue(value, k) => trampoline(k(value))
+        case Call.Loop(expr, k)      => trampoline(loop(expr, k))
+        case Call.Done(result)       => result
+      }
+
+    trampoline(loop(this, x => Call.Done(x)))
+  }
+
+  def +(that: Expression): Expression =
+    Addition(this, that)
+
+  def -(that: Expression): Expression =
+    Subtraction(this, that)
+
+  def *(that: Expression): Expression =
+    Multiplication(this, that)
+
+  def /(that: Expression): Expression =
+    Division(this, that)
+}
+object Expression {
+  def apply(value: Double): Expression =
+    Literal(value)
+}
+```
+</div>
+
+**TODO: complete this discussion of simplified CPS**
 
 
 Doing a full CPS conversion can be quite involved. Some methods can made tail recursive or stack safe without requiring full CPS.
