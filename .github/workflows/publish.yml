@@ -47,11 +47,11 @@ jobs:
 
       - name: Setup Pandoc
         run: |
-            curl -Ls https://github.com/jgm/pandoc/releases/download/3.1.2/pandoc-3.1.2-linux-amd64.tar.gz > /tmp/pandoc.tgz
+            curl -Ls https://github.com/jgm/pandoc/releases/download/2.17.1.1/pandoc-2.17.1.1-linux-amd64.tar.gz > /tmp/pandoc.tgz
             tar zxvf /tmp/pandoc.tgz
-            mv pandoc-3.1.2/bin/pandoc /usr/local/bin/pandoc
+            mv pandoc-2.17.1.1/bin/pandoc /usr/local/bin/pandoc
 
-            curl -Ls https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.16.0/pandoc-crossref-Linux.tar.xz > /tmp/pandoc-crossref.tgz
+            curl -Ls https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.12.2a/pandoc-crossref-Linux.tar.xz > /tmp/pandoc-crossref.tgz
             tar xvf /tmp/pandoc-crossref.tgz
             mv pandoc-crossref /usr/local/bin/pandoc-crossref
 
