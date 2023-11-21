@@ -781,11 +781,19 @@ If we look closely, we'll see that the tail recursive version computes `(((2) + 
 This works because addition is associative, meaning `(a + b) + c == a + (b + c)`.
 This is our first criteria for using the "easy" method for converting to a tail recursive form: the operation that accumulates results must be associative.
 
-The second criteria concerns the program being interpreted. It must be possible to represent any arbitrary portion of a program as a list. This is case above, where the "program" is simply a list of numbers. It's not the case for programs that are represented as trees, like `Regexp`. The problem with these structures is that we cannot remove part of the program and still have a valid program left over. For example, consider `case OrElse(first: Regexp, second: Regexp)`. If we remove `first` we aren't left with a valid `Regexp`, whereas if we remove an element from a `List` we're still left with a `List`.
+This doesn't explain, though, how we come to realize that addition is the correct operation to use. The second criteria is that we don't need any memory beyond the partial result calculated from the data we've already seen. Some implications of this are that we can stop at any time and have a usable result, and that we are only applying a single operation to the data. This is not the case in the regular expression example. For example, we have the following code in the `Append` case:
 
-If these two conditions hold, converting to a tail recursive form simply means:
+```scala
+case Append(left, right) =>
+  loop(left, idx).flatMap(i => loop(right, i))
+```
 
-1. create a nested method (I usually call this `loop`) with two parameters: a program and the accumulated result;
-2. write the `loop` as a structural recursion;
-3. the base case is to return the accumulator; and
-4. recursive cases update the accumulator and tail call `loop`.
+To compute the result for the `Append` we need to compute and combine results from both `left` and `right`. So when we have computed the result for `right` we need to remember both the result from `left` and that we're combining the two results using the rule for `Append` rather than, say, `OrElse`. It's remembering this that is exactly what the continuation does, and what stops us from using the easy method we saw when summing the elements of a list.
+
+So, in summary, if we are applying only a single associative operation to data we can use the simple method for writing a tail recursive method:
+
+1. define an structurally recursive loop with an additional parameter that is the partial result or accumulator;
+2. in the base cases return the accumulator; and
+3. in the recursive cases update the accumulator and call the loop in tail position.
+
+You might be wondering how we handle tree-shaped data with this technique. One consequence of an associative operation is that we can transform any sequence of operations into a list-shaped sequence. If, for example, we have an expression tree that suggests we should call operations in the order `(1 + 2) + (3 + 4)` (where I'm using `+` to indicate the operation) we can rewrite that to `(((1 + 2) + 3) + 4)` via associativity. So we can transform our tree into a list and then apply the recipe above.
