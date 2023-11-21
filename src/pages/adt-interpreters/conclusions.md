@@ -9,14 +9,10 @@ Although the name of the strategy focuses on the interpreter, the design of the 
 
 Our starting implementation technique is reification of the algebra's constructors and compositional methods as an algebraic data type. The interpreter is then a structural recursion over this ADT.
 We saw that the straightforward implementation is not stack-safe, and which caused us to introduction the idea of tail recursion and continuations.
-We reified continuations as functions, as saw that we can convert any program into continuation-passing style which has every method call in tail position.
-Due to Scala runtime limitations not all calls in tail position can be converted to a tail call, so we reified calls and returns these data structures to a recursive loop called a trampoline.
+We reified continuations as functions, and saw that we can convert any program into continuation-passing style which has every method call in tail position.
+Due to Scala runtime limitations not all calls in tail position can be converted to tail calls, so we reified calls and returns these data structures to a recursive loop called a trampoline.
 Underlying all these strategies in the concept of duality. We have seen a duality between functions and data, which we utilize in reification, and a duality between calling functions and returning data, which we use in continuations and trampolines.
 
-centered around reification and duality, which are the concepts underlying continuation-passing style and trampolines.
-
-
-seen techniques for buil
 
 Continuation-Passing Style, Defunctionalization, Accumulations, and Associativity
 https://www.cs.ox.ac.uk/jeremy.gibbons/publications/continued.pdf
