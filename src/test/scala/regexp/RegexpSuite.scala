@@ -5,7 +5,7 @@ import org.scalacheck.Gen
 import org.scalacheck.Prop.*
 
 trait RegexpSuite[R <: Regexp[R]](
-    construct: RegexpConstructors[R]
+    val construct: RegexpConstructors[R]
 ) extends ScalaCheckSuite {
   val nonEmptyAlphaNumStr =
     Gen.posNum[Int].flatMap(n => Gen.stringOfN(n, Gen.alphaNumChar))
