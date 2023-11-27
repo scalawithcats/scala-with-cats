@@ -5,17 +5,15 @@ We're going to return to our regular expression interpreter example, and show ho
 
 We will use a technique known a regular expression derivatives, which provides an extremely simple way to match a regular expression against input with the correct semantics for union (which you may recall we didn't deal with in the previous chapter). As a starting point, let's define what a regular expression derivative is.
 
-The derivative of a regular expression, with respect to a character, is the remaining regular expression after matching the given character. Let's say we have the regular expression that matches the string `"osprey"`. In our library this would be `Regexp("osprey")`. The derivative with respect to the character `o` is `Regexp("sprey")`. The derivative with respect to the character `a` is the regular expression that matches nothing, which is written `Regexp.empty` in our library.
+The derivative of a regular expression, with respect to a character, is the regular expression that remains after matching that character. Let's say we have the regular expression that matches the string `"osprey"`. In our library this would be `Regexp("osprey")`. The derivative with respect to the character `o` is `Regexp("sprey")`. In other words it's the regular expression that is looking for the string `"sprey"`. The derivative with respect to the character `a` is the regular expression that matches nothing, which is written `Regexp.empty` in our library. To take a more complicated example, the derivative with respect to `c` of `Regexp("cats").repeat` is `Regexp("ats") ++ Regexp("cats").repeat`, because we're looking for the string `"ats"` followed by zero or more repeats of `"cats"`
 
 To determine if a regular expression matches some input, all we need to do is calculate successive derivatives with respect to the character in the input in the order they occur. If the resulting regular expression matches the empty string then we have a successful match. Otherwise it has failed to match.
 
-To implement this algorithm we'll need three things:
+To implement this algorithm we need three things:
 
-1. extend our library to explicitly represent the regular expression that matches the empty string;
-2. implement a method that tests if a regular expression matches the empty string; and
-3. implement a method that computes the derivative of a regular expression with respect to a given character.
-
-Let's go!
+1. an explicit representation of the regular expression that matches the empty string;
+2. method that tests if a regular expression matches the empty string; and
+3. method that computes the derivative of a regular expression with respect to a given character.
 
 Our starting point is the basic reified interpreter we developed in the previous chapter. 
 This is the simplest code and therefore the easiest to work with.
@@ -126,193 +124,254 @@ def derivative(ch: Char): Regexp =
   }
 ```
 
-These manipulations can include rewriting the data structure to an equivalent but more efficient form.
-Recall our arithmetic interpreter:
+I think this code is reasonably straightforward, except perhaps for the cases for `OrElse` and `Append`. The case for `OrElse` is trying to match both regular expressions simultaneously, which gets around the problem in our earlier implementation. The definition of `nullable` ensures we match if either side matches. The case for `Append` is attempting to match the `left` side if it is still looking for characters; otherwise it is attempting to match the `right` side.
 
-```scala mdoc:reset:silent
-enum Expression {
-  case Literal(value: Double)
-  case Addition(left: Expression, right: Expression)
-  case Subtraction(left: Expression, right: Expression)
-  case Multiplication(left: Expression, right: Expression)
-  case Division(left: Expression, right: Expression)
-
-  def +(that: Expression): Expression =
-    Addition(this, that)
-
-  def -(that: Expression): Expression =
-    Subtraction(this, that)
-
-  def *(that: Expression): Expression =
-    Multiplication(this, that)
-
-  def /(that: Expression): Expression =
-    Division(this, that)
-
-  def eval: Double =
-    this match {
-      case Literal(value)              => value
-      case Addition(left, right)       => left.eval + right.eval
-      case Subtraction(left, right)    => left.eval - right.eval
-      case Multiplication(left, right) => left.eval * right.eval
-      case Division(left, right)       => left.eval / right.eval
-    }
-}
-object Expression {
-  def apply(value: Double): Expression =
-    Literal(value)
-}
-```
-
-With this we can represent expressions such as `Expression(4.0) * Expression(1.0)`. 
-We know algebra has a lot of rules.
-For instance, we know that multiplication by one, as in the example above, leaves the other argument unchanged.
-So if we see multiplication by one we can just remove it.
-(Formally, we say that one is the identity for multiplication.)
-We can use a collection of such rules to simplify expressions.
-Here's an example.
+With this we redefine `matches` as follows.
 
 ```scala
-def simplify: Expression =
-  this match {
-    // Addition of identity
-    case Addition(Literal(0.0), expr) => expr.simplify
-    case Addition(expr, Literal(0.0)) => expr.simplify
-    // Multiplication of identity
-    case Multiplication(Literal(1.0), expr) => expr.simplify
-    case Multiplication(expr, Literal(1.0)) => expr.simplify
-    // Multiplication by absorbing element
-    case Multiplication(Literal(0.0), expr) => Literal(0.0)
-    case Multiplication(expr, Literal(0.0)) => Literal(0.0)
-    // Subtraction of identity
-    case Subtraction(expr, Literal(0.0)) => expr.simplify
-    // Division of identity
-    case Division(expr, Literal(1.0)) => expr.simplify
-    // Cases with no special treatment
-    case Literal(value) =>
-      Literal(value)
-    case Addition(left, right) =>
-      Addition(left.simplify, right.simplify)
-    case Subtraction(left, right) =>
-      Subtraction(left.simplify, right.simplify)
-    case Multiplication(left, right) =>
-      Multiplication(left.simplify, right.simplify)
-    case Division(left, right) =>
-      Division(left.simplify, right.simplify)
-  }
+def matches(input: String): Boolean = {
+  val r = input.foldLeft(this){ (regexp, ch) => regexp.derivative(ch) }
+  r.nullable
+}
 ```
+
+Here is the complete code for your reference.
+
+```scala mdoc:reset:silent
+enum Regexp {
+  def ++(that: Regexp): Regexp = {
+    Append(this, that)
+  }
+
+  def orElse(that: Regexp): Regexp = {
+    OrElse(this, that)
+  }
+
+  def repeat: Regexp = {
+    Repeat(this)
+  }
+
+  def `*` : Regexp = this.repeat
+
+  /** True if this regular expression accepts the empty string */
+  def nullable: Boolean =
+    this match {
+      case Append(left, right)   => left.nullable && right.nullable
+      case OrElse(first, second) => first.nullable || second.nullable
+      case Repeat(source)        => true
+      case Apply(string)         => false
+      case Epsilon               => true
+      case Empty                 => false
+    }
+
+  def delta: Regexp =
+    if nullable then Epsilon else Empty
+
+  def derivative(ch: Char): Regexp =
+    this match {
+      case Append(left, right) =>
+        (left.derivative(ch) ++ right)
+          .orElse(left.delta ++ right.derivative(ch))
+      case OrElse(first, second) =>
+        first.derivative(ch).orElse(second.derivative(ch))
+      case Repeat(source) =>
+        source.derivative(ch) ++ this
+      case Apply(string) =>
+        if string.size == 1 then
+          if string.charAt(0) == ch then Epsilon
+          else Empty
+        else if string.charAt(0) == ch then Apply(string.tail)
+        else Empty
+      case Epsilon => Empty
+      case Empty   => Empty
+    }
+
+  def matches(input: String): Boolean = {
+    val r = input.foldLeft(this) { (regexp, ch) => regexp.derivative(ch) }
+    r.nullable
+  }
+
+  case Append(left: Regexp, right: Regexp)
+  case OrElse(first: Regexp, second: Regexp)
+  case Repeat(source: Regexp)
+  case Apply(string: String)
+  case Epsilon
+  case Empty
+}
+object Regexp {
+  val empty: Regexp = Empty
+
+  val epsilon: Regexp = Epsilon
+
+  def apply(string: String): Regexp =
+    if string.isEmpty() then Epsilon
+    else Apply(string)
+}
+```
+
+We can show the code works as expected.
+
+```scala mdoc:silent
+val regexp = Regexp("Sca") ++ Regexp("la") ++ Regexp("la").repeat
+```
+```scala mdoc
+regexp.matches("Scala")
+regexp.matches("Scalalalala")
+regexp.matches("Sca")
+regexp.matches("Scalal")
+```
+
+It also solves the problem with the earlier implementation.
+
+```scala mdoc
+Regexp("cat").orElse(Regexp("cats")).matches("cats")
+```
+
+This is a nice result for a very simple algorithm.
+However there is a problem.
+You might notice that our regular expression can become very slow. 
+In fact we can run out of heap space trying a simple match like
+
+```scala
+Regexp("cats").repeat.matches("catscatscatscats")
+```
+
+The reason is that the derivative of the regular expression can grow very large.
+Look at this example, after only a few derivatives.
+
+```scala mdoc:to-string
+Regexp("cats").repeat.derivative('c').derivative('a').derivative('t')
+```
+
+This problem arises because the derivative rules for `Append`, `OrElse`, and `Repeat` can produce a larger regular expression than the one they start with. However the regular expressions so created often contain redundant information. In the example above there are multiple occurrences of `Append(Empty, ...)`, which is equivalent to just `Empty`. This is similar to addition of zero or multiplication by one in arithmetic, and we can use similar algebraic simplification rules to get rid of these unnecessary elements.
+
+We can implement this simplification in one of two ways: we can write a separate method apply simplification rules to an existing `Regexp`, or we can do the simplification as we construct the `Regexp`. I've chosen to do the latter, modifying `++`, `orElse`, and `repeat` as follows:
+
+```scala
+def ++(that: Regexp): Regexp = {
+  (this, that) match {
+    case (Epsilon, re2) => re2
+    case (re1, Epsilon) => re1
+    case (Empty, _) => Empty
+    case (_, Empty) => Empty
+    case _ => Append(this, that)
+  }
+}
+
+def orElse(that: Regexp): Regexp = {
+  (this, that) match {
+    case (Empty, re) => re
+    case (re, Empty) => re
+    case _ => OrElse(this, that)
+  }
+}
+
+def repeat: Regexp = {
+  this match {
+    case Repeat(source) => this
+    case Epsilon => Epsilon
+    case Empty => Empty
+    case _ => Repeat(this)
+  }
+}
+```
+
+With this small change in-place, our regular expressions stay at a reasonable size for any input.
+
+```scala mdoc:reset:invisible
+enum Regexp {
+  def ++(that: Regexp): Regexp = {
+    (this, that) match {
+      case (Epsilon, re2) => re2
+      case (re1, Epsilon) => re1
+      case (Empty, _) => Empty
+      case (_, Empty) => Empty
+      case _ => Append(this, that)
+    }
+  }
+
+  def orElse(that: Regexp): Regexp = {
+    (this, that) match {
+      case (Empty, re) => re
+      case (re, Empty) => re
+      case _ => OrElse(this, that)
+    }
+  }
+
+  def repeat: Regexp = {
+    this match {
+      case Repeat(source) => this
+      case Epsilon => Epsilon
+      case Empty => Empty
+      case _ => Repeat(this)
+    }
+  }
+
+  def `*` : Regexp = this.repeat
+
+  /** True if this regular expression accepts the empty string */
+  def nullable: Boolean =
+    this match {
+      case Append(left, right) => left.nullable && right.nullable
+      case OrElse(first, second) => first.nullable || second.nullable
+      case Repeat(source) => true
+      case Apply(string) => false
+      case Epsilon => true
+      case Empty => false
+    }
+
+  def delta: Regexp =
+    if nullable then Epsilon else Empty
+
+  def derivative(ch: Char): Regexp =
+    this match {
+      case Append(left, right) =>
+        (left.derivative(ch) ++ right).orElse(left.delta ++ right.derivative(ch))
+      case OrElse(first, second) =>
+        first.derivative(ch).orElse(second.derivative(ch))
+      case Repeat(source) =>
+        source.derivative(ch) ++ this
+      case Apply(string) =>
+        if string.size == 1 then
+          if string.charAt(0) == ch then Epsilon
+          else Empty
+        else if string.charAt(0) == ch then Apply(string.tail)
+        else Empty
+      case Epsilon => Empty
+      case Empty => Empty
+    }
+
+  def matches(input: String): Boolean = {
+    val r = input.foldLeft(this){ (regexp, ch) => regexp.derivative(ch) }
+    r.nullable
+  }
+
+  case Append(left: Regexp, right: Regexp)
+  case OrElse(first: Regexp, second: Regexp)
+  case Repeat(source: Regexp)
+  case Apply(string: String)
+  case Epsilon
+  case Empty
+}
+object Regexp {
+  val empty: Regexp = Empty
+
+  val epsilon: Regexp = Epsilon
+
+  def apply(string: String): Regexp =
+    if string.isEmpty() then Epsilon
+    else Apply(string)
+}
+```
+
+```scala mdoc:to-string
+Regexp("cats").repeat.derivative('c').derivative('a').derivative('t')
+```
+
+
 
 Conceptually this is an interpreter, because it uses structural recursion, even though the result is of our program type.
 
-```scala mdoc:reset:invisible
-enum Expression {
-  case Literal(value: Double)
-  case Addition(left: Expression, right: Expression)
-  case Subtraction(left: Expression, right: Expression)
-  case Multiplication(left: Expression, right: Expression)
-  case Division(left: Expression, right: Expression)
-
-  def +(that: Expression): Expression =
-    Addition(this, that)
-
-  def -(that: Expression): Expression =
-    Subtraction(this, that)
-
-  def *(that: Expression): Expression =
-    Multiplication(this, that)
-
-  def /(that: Expression): Expression =
-    Division(this, that)
-
-  def simplify: Expression =
-    this match {
-      // Addition of identity
-      case Addition(Literal(0.0), expr) => expr.simplify
-      case Addition(expr, Literal(0.0)) => expr.simplify
-      // Multiplication of identity
-      case Multiplication(Literal(1.0), expr) => expr.simplify
-      case Multiplication(expr, Literal(1.0)) => expr.simplify
-      // Multiplication by absorbing element
-      case Multiplication(Literal(0.0), expr) => Literal(0.0)
-      case Multiplication(expr, Literal(0.0)) => Literal(0.0)
-      // Subtraction of identity
-      case Subtraction(expr, Literal(0.0)) => expr.simplify
-      // Division of identity
-      case Division(expr, Literal(1.0)) => expr.simplify
-      // Cases with no special treatment
-      case Literal(value) =>
-        Literal(value)
-      case Addition(left, right) =>
-        Addition(left.simplify, right.simplify)
-      case Subtraction(left, right) =>
-        Subtraction(left.simplify, right.simplify)
-      case Multiplication(left, right) =>
-        Multiplication(left.simplify, right.simplify)
-      case Division(left, right) =>
-        Division(left.simplify, right.simplify)
-    }
-
-  def eval: Double =
-    this match {
-      case Literal(value)              => value
-      case Addition(left, right)       => left.eval + right.eval
-      case Subtraction(left, right)    => left.eval - right.eval
-      case Multiplication(left, right) => left.eval * right.eval
-      case Division(left, right)       => left.eval / right.eval
-    }
-
-  def print: String = {
-    val builder = new scala.collection.mutable.StringBuilder()
-
-    def withBinOp(
-        left: Expression,
-        op: Char,
-        right: Expression
-    ): StringBuilder = {
-      builder.addOne('(')
-      loop(left)
-      builder.addOne(' ')
-      builder.addOne(op)
-      builder.addOne(' ')
-      loop(right)
-      builder.addOne(')')
-    }
-
-    def loop(expr: Expression): StringBuilder =
-      expr match {
-        case Literal(value) => builder.append(value.toString)
-        case Addition(left, right) =>
-          withBinOp(left, '+', right)
-        case Subtraction(left, right) =>
-          withBinOp(left, '-', right)
-        case Multiplication(left, right) =>
-          withBinOp(left, '*', right)
-        case Division(left, right) =>
-          withBinOp(left, '/', right)
-      }
-
-    loop(this)
-    builder.toString
-  }
-}
-object Expression {
-  def apply(value: Double): Expression =
-    Literal(value)
-}
-```
-
-We can see that `simplify` does indeed work.
-
-```scala mdoc
-(Expression(4.0) + Expression(0.0)).simplify.print
-(Expression(1.0) * Expression(0.0)).simplify.print
-```
-
-However it misses some opportunities for simplification, such as when one simplification opens up the opportunity for another.
-
-```scala mdoc
-(Expression(4.0) * (Expression(0.0) + Expression(1.0))).simplify.print
-```
 
 There's no general purpose solution to this problem.
 It depends on the nature of the structure we are simplifying and the rules we are using.
@@ -322,159 +381,3 @@ We have already seen one example of a normal form when discussing algebraic data
 Finally, if we can apply a function or method to it's own output, and it reaches a value where the input and the output are the same, we say the function or method has a **fixed point**.
 If rewrite have a fixed point for all possible inputs then they are strongly normalizing.
 
-Our example, `simplify`, has a fixed point for all its inputs. This is because every rule makes the output the same or smaller than the input. Therefore repeated application of the rules is guaranteed to eventually stop.
-We can `simplify` until a fixed point with the following change.
-
-```scala
-def simplify: Expression = {
-  def loop(expr: Expression): Expression = {
-    val result =
-      expr match {
-        // Addition of identity
-        case Addition(Literal(0.0), expr) => expr.simplify
-        case Addition(expr, Literal(0.0)) => expr.simplify
-        // Multiplication of identity
-        case Multiplication(Literal(1.0), expr) => expr.simplify
-        case Multiplication(expr, Literal(1.0)) => expr.simplify
-        // Multiplication by absorbing element
-        case Multiplication(Literal(0.0), expr) => Literal(0.0)
-        case Multiplication(expr, Literal(0.0)) => Literal(0.0)
-        // Subtraction of identity
-        case Subtraction(expr, Literal(0.0)) => expr.simplify
-        // Division of identity
-        case Division(expr, Literal(1.0)) => expr.simplify
-        // Cases with no special treatment
-        case Literal(value) =>
-          Literal(value)
-        case Addition(left, right) =>
-          Addition(left.simplify, right.simplify)
-        case Subtraction(left, right) =>
-          Subtraction(left.simplify, right.simplify)
-        case Multiplication(left, right) =>
-          Multiplication(left.simplify, right.simplify)
-        case Division(left, right) =>
-          Division(left.simplify, right.simplify)
-      }
-
-    if result == expr then result else loop(result)
-  }
-
-  loop(this)
-}
-```
-
-Now more simplifications will be made.
-
-```scala mdoc:invisible:reset
-enum Expression {
-  case Literal(value: Double)
-  case Addition(left: Expression, right: Expression)
-  case Subtraction(left: Expression, right: Expression)
-  case Multiplication(left: Expression, right: Expression)
-  case Division(left: Expression, right: Expression)
-
-  def +(that: Expression): Expression =
-    Addition(this, that)
-
-  def -(that: Expression): Expression =
-    Subtraction(this, that)
-
-  def *(that: Expression): Expression =
-    Multiplication(this, that)
-
-  def /(that: Expression): Expression =
-    Division(this, that)
-
-  def simplify: Expression = {
-    def loop(expr: Expression): Expression = {
-      val result =
-        expr match {
-          // Addition of identity
-          case Addition(Literal(0.0), expr) => expr.simplify
-          case Addition(expr, Literal(0.0)) => expr.simplify
-          // Multiplication of identity
-          case Multiplication(Literal(1.0), expr) => expr.simplify
-          case Multiplication(expr, Literal(1.0)) => expr.simplify
-          // Multiplication by absorbing element
-          case Multiplication(Literal(0.0), expr) => Literal(0.0)
-          case Multiplication(expr, Literal(0.0)) => Literal(0.0)
-          // Subtraction of identity
-          case Subtraction(expr, Literal(0.0)) => expr.simplify
-          // Division of identity
-          case Division(expr, Literal(1.0)) => expr.simplify
-          // Cases with no special treatment
-          case Literal(value) =>
-            Literal(value)
-          case Addition(left, right) =>
-            Addition(left.simplify, right.simplify)
-          case Subtraction(left, right) =>
-            Subtraction(left.simplify, right.simplify)
-          case Multiplication(left, right) =>
-            Multiplication(left.simplify, right.simplify)
-          case Division(left, right) =>
-            Division(left.simplify, right.simplify)
-        }
-
-      if result == expr then result else loop(result)
-    }
-
-    loop(this)
-  }
-
-  def eval: Double =
-    this match {
-      case Literal(value)              => value
-      case Addition(left, right)       => left.eval + right.eval
-      case Subtraction(left, right)    => left.eval - right.eval
-      case Multiplication(left, right) => left.eval * right.eval
-      case Division(left, right)       => left.eval / right.eval
-    }
-
-  def print: String = {
-    val builder = new scala.collection.mutable.StringBuilder()
-
-    def withBinOp(
-        left: Expression,
-        op: Char,
-        right: Expression
-    ): StringBuilder = {
-      builder.addOne('(')
-      loop(left)
-      builder.addOne(' ')
-      builder.addOne(op)
-      builder.addOne(' ')
-      loop(right)
-      builder.addOne(')')
-    }
-
-    def loop(expr: Expression): StringBuilder =
-      expr match {
-        case Literal(value) => builder.append(value.toString)
-        case Addition(left, right) =>
-          withBinOp(left, '+', right)
-        case Subtraction(left, right) =>
-          withBinOp(left, '-', right)
-        case Multiplication(left, right) =>
-          withBinOp(left, '*', right)
-        case Division(left, right) =>
-          withBinOp(left, '/', right)
-      }
-
-    loop(this)
-    builder.toString
-  }
-}
-object Expression {
-  def apply(value: Double): Expression =
-    Literal(value)
-}
-```
-
-```scala mdoc
-(Expression(4.0) * (Expression(0.0) + Expression(1.0))).simplify.print
-```
-However, even though it's strongly normalizing there are still additional simplifications that we could add to our rule set. 
-For example, we could add the distribution rule $a * (b + c) == (a * b) + (a * c)$.
-This rule can increase the size of the expression, so it's not clear to me that adding distribution will keep our rules strongly normalizing.
-This is one rule that is strongly normalizing, which is to simply evaluate the entire expression.
-In the absence of strongly normalization we can run our rules for a fixed number of iterations.
