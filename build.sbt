@@ -7,6 +7,7 @@ ThisBuild / version := "0.0.1"
 ThisBuild / scalaVersion := "3.3.1"
 
 ThisBuild / useSuperShell := false
+Global / onChangedBuildSource := ReloadOnSourceChanges
 Global / logLevel := Level.Warn
 
 enablePlugins(MdocPlugin)
@@ -53,9 +54,10 @@ lazy val pages = List(
   "adt-interpreters/tail-recursion.md",
   "adt-interpreters/conclusions.md",
   "adt-optimization/index.md",
+  "adt-optimization/algebra.md",
   "adt-optimization/stack-machine.md",
   "adt-optimization/effects.md",
-  "adt-optimization/optimization.md",
+  "adt-optimization/conclusions.md",
   "type-classes/index.md",
   "type-classes/anatomy.md",
   "type-classes/implicits.md",
