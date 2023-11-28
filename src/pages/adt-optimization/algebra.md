@@ -452,22 +452,9 @@ object Regexp {
 }
 ```
 
-Let's go through the main points of that we've seen here.
+Let's go through the main points that we've seen here.
 
-Firstly, I hope you find the idea of regular derivatives interesting and a bit surprising. I certainly did when I first read about them. There is a deeper point, which runs throughout the book: most problems have already been solved and we can save a lot of time if we can just find those solutions. I elevate this idea of the status of a strategy, which I call **read the literature** for reasons that will soon be clear. Most developers read the occasional blog post and might attend a conference from time to time. Many fewer, I think, read academic papers. I think this is a shame as academic papers contain some great ideas and present them very concisely. Highlighting this work is one reason that I give paper suggestions in the conclusions of each chapter. Part of the fault is with the academics: they write in a style that is hard to read if you're not used to it. I can only encourage you to perserve, and with time you will find them easier to process.
+Firstly, I hope you find the idea of regular derivatives interesting and a bit surprising. I certainly did when I first read about them. There is a deeper point, which runs throughout the book: most problems have already been solved and we can save a lot of time if we can just find those solutions. I elevate this idea of the status of a strategy, which I call **read the literature** for reasons that will soon be clear. Most developers read the occasional blog post and might attend a conference from time to time. Many fewer, I think, read academic papers. I think this is a shame as academic papers contain some great ideas and present them very concisely. Highlighting this work is one reason that I give paper suggestions in the conclusions of each chapter. Part of the fault is with the academics: they write in a style that is hard to read if you're not used to it. I can only encourage you to persevere, and with time you will find them easier to process.
 
-
-Conceptually this is an interpreter, because it uses structural recursion, even though the result is of our program type.
-
-Domain specific knowledge.
-
-Rewriting as a form of computation.
-
-There's no general purpose solution to this problem.
-It depends on the nature of the structure we are simplifying and the rules we are using.
-If repeated application of the rules is guaranteed to terminate in an expression that has no further possible simplifications, we call the rules **strongly normalizing**. 
-An expression that has no possible further simplifications is said to be in a **normal form**.
-We have already seen one example of a normal form when discussing algebraic data types, where we talked about disjunctive normal form.
-Finally, if we can apply a function or method to it's own output, and it reaches a value where the input and the output are the same, we say the function or method has a **fixed point**.
-If rewrite have a fixed point for all possible inputs then they are strongly normalizing.
-
+We've also seen the power of rewrites. Regular expression matching using derivatives works solely by rewriting the regular expression. We also used rewriting to simplify the regular expressions, avoiding the explosion in size that derivatives can cause.
+The abstract type of these methods is `Program => Program` so we might think they are combinators. However the implementation uses structural recursion and they serve the role of interpreters. Rewrites are the one place where the types alone can lead us astray.
