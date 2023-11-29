@@ -1,6 +1,6 @@
 ## Algebraic Manipulation
 
-Reifying a program represents it as a data structure. We can **rewrite** this data structure to several ends: as a way to simplify and therefore optimize the program being interpreted, and also a general form of computation that we can use to implement the interpreter. In this section we're going to return to our regular expression example, and show how rewriting can be used perform both of these tasks.
+Reifying a program represents it as a data structure. We can **rewrite** this data structure to several ends: as a way to simplify and therefore optimize the program being interpreted, but also as a general form of computation implementing the interpreter. In this section we're going to return to our regular expression example, and show how rewriting can be used perform both of these tasks.
 
 We will use a technique known as regular expression derivatives. Regular expression derivatives provide a simple way to match a regular expression against input (with the correct semantics for union, which you may recall we didn't deal with in the previous chapter). The derivative of a regular expression, with respect to a character, is the regular expression that remains after matching that character. Say we have the regular expression that matches the string `"osprey"`. In our library this would be `Regexp("osprey")`. The derivative with respect to the character `o` is `Regexp("sprey")`. In other words it's the regular expression that is looking for the string `"sprey"`. The derivative with respect to the character `a` is the regular expression that matches nothing, which is written `Regexp.empty` in our library. To take a more complicated example, the derivative with respect to `c` of `Regexp("cats").repeat` is `Regexp("ats") ++ Regexp("cats").repeat`. This indicates we're looking for the string `"ats"` followed by zero or more repeats of `"cats"`
 
@@ -452,9 +452,31 @@ object Regexp {
 }
 ```
 
-Let's go through the main points that we've seen here.
+Notice that our implementation is tail recursive. The only "looping" is the call to the tail recursive `foldLeft` in `matches`. No continuation-passing style transform is necessary here! This may not be surprising if you've studied theory of computation. A key result from that field is the equivalence between regular expressions and finite state machines. If you know this you may have found it a bit surprising we had to use a stack at all in our prior implementations. But hold on a minute. If we think carefully about regular expression derivatives we'll see that they actually are continuations! A continuation means "what comes next", which is exactly what a regular expression derviative defines for a regular expression and a particular character. So our interpreter does use CPS, but reified as a regular expression not a function, and derived through a different route.
 
-Firstly, I hope you find the idea of regular derivatives interesting and a bit surprising. I certainly did when I first read about them. There is a deeper point, which runs throughout the book: most problems have already been solved and we can save a lot of time if we can just find those solutions. I elevate this idea of the status of a strategy, which I call **read the literature** for reasons that will soon be clear. Most developers read the occasional blog post and might attend a conference from time to time. Many fewer, I think, read academic papers. I think this is a shame as academic papers contain some great ideas and present them very concisely. Highlighting this work is one reason that I give paper suggestions in the conclusions of each chapter. Part of the fault is with the academics: they write in a style that is hard to read if you're not used to it. I can only encourage you to persevere, and with time you will find them easier to process.
+Continuations reify control-flow. That is, they give us an explicit representation of how control moves through our program. This means we can change the control flow by applying continuations in a different order. Let's make this concrete. A regular expression derivative represents a continuation. So imagine we're running a regular expression on data that arrives asynchronously; we want to match as much data as we have available, and then suspend the regular expression and continue matching when more data arrives. This is trival. When we run out of data we just store the current derivative. When more data arrives we continue processing using the derivative we stored. Here's an example.
 
-We've also seen the power of rewrites. Regular expression matching using derivatives works solely by rewriting the regular expression. We also used rewriting to simplify the regular expressions, avoiding the explosion in size that derivatives can cause.
+Start by defining the regular expression.
+
+```scala mdoc:silent
+val cats = Regexp("cats").repeat
+```
+
+Process the first piece of data and store the continuation.
+
+```scala mdoc:silent
+val next = "catsca".foldLeft(cats){ (re, char) => re.derivative(ch) }
+```
+
+Continue processing when more data arrives.
+
+```scala mdoc:silent
+"tscats".foldLeft(next){ (re, char) => re.derivative(ch) }
+```
+
+Notice that we could just as easily go back to a previous regular expression if we wanted to. This would give us backtracking. We don't need backtracking for regular expressions, but for more general parsers we do. In fact with continuations we can define any control flow we like, including backtracking search, exceptions, and much much more.
+
+In this section we've also seen the power of rewrites. Regular expression matching using derivatives works solely by rewriting the regular expression. We also used rewriting to simplify the regular expressions, avoiding the explosion in size that derivatives can cause.
 The abstract type of these methods is `Program => Program` so we might think they are combinators. However the implementation uses structural recursion and they serve the role of interpreters. Rewrites are the one place where the types alone can lead us astray.
+
+I hope you find regular expression derivatives interesting and a bit surprising. I certainly did when I first read about them. There is a deeper point here, which runs throughout the book: most problems have already been solved and we can save a lot of time if we can just find those solutions. I elevate this idea of the status of a strategy, which I call **read the literature** for reasons that will soon be clear. Most developers read the occasional blog post and might attend a conference from time to time. Many fewer, I think, read academic papers. This is unfortunate. Part of the fault is with the academics: they write in a style that is hard to read without some practice. However I think many developers think the academic literature is irrelevant. One of the goals of this book is to show the relevance of academic work, which is why each chapter conclusion sketches the development of its main ideas with links to relevant papers.
