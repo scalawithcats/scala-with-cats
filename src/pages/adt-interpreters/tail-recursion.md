@@ -502,7 +502,7 @@ def loop(regexp: Regexp, idx: Int, cont: Continuation): Call =
 
 This gives us an interpreter loop that returns values instead of making calls, and so does not consume stack space.
 However, we need to actually make these calls at some point, and doing this is the job of the trampoline.
-The trampoline is simply a tail-recursive loop that makes calls until it reaches `Done`.
+The trampoline is simply a tail recursive loop that makes calls until it reaches `Done`.
 
 ```scala
 def trampoline(next: Call): Option[Int] =
