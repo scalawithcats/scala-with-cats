@@ -1,13 +1,77 @@
-### Reifying Continuations to a Stack
+## From Continuations to Stacks
 
-We've seen two uses of reification so far:
+In the previous section we explored regular expression derivatives. We saw that they are continuations, but reified as data structures rather than the functions we used when we first worked with continuation-passing style. In this section we'll reify continuations-as-functions as data. In doing so we'll find continuations implicitly encode a stack structure, which we can explicitly reify.
 
-1. we reified constructor and combinators methods as data; and
-2. we reified the abstract concept of continuations as functions in our program.
+We'll start with the CPSed regular expression interpreter, shown below.
 
-We'll now see a third use, reifying continuations-as-functions as data.
-We can start by applying the same recipe as before: we create a case for each place in which we construct a continuation.
-In our interpreter loop this is for `Append`, `OrElse`, and `Repeat`. We also construct a continuation using the identity function when we first call `loop`, which represents the continuation to call when the loop has finished. This means we need four cases.
+```scala mdoc:silent
+enum Regexp {
+  def ++(that: Regexp): Regexp =
+    Append(this, that)
+
+  def orElse(that: Regexp): Regexp =
+    OrElse(this, that)
+
+  def repeat: Regexp =
+    Repeat(this)
+
+  def `*` : Regexp = this.repeat
+
+  def matches(input: String): Boolean = {
+    // Define a type alias so we can easily write continuations
+    type Continuation = Option[Int] => Option[Int]
+
+    def loop(regexp: Regexp, idx: Int, cont: Continuation): Option[Int] =
+      regexp match {
+        case Append(left, right) =>
+          val k: Continuation = _ match {
+            case None    => cont(None)
+            case Some(i) => loop(right, i, cont)
+          }
+          loop(left, idx, k)
+
+        case OrElse(first, second) =>
+          val k: Continuation = _ match {
+            case None => loop(second, idx, cont)
+            case some => cont(some)
+          }
+          loop(first, idx, k)
+
+        case Repeat(source) =>
+          val k: Continuation =
+            _ match {
+              case None    => cont(Some(idx))
+              case Some(i) => loop(regexp, i, cont)
+            }
+          loop(source, idx, k)
+
+        case Apply(string) =>
+          cont(Option.when(input.startsWith(string, idx))(idx + string.size))
+
+        case Empty =>
+          cont(None)
+      }
+
+    // Check we matched the entire input
+    loop(this, 0, identity).map(idx => idx == input.size).getOrElse(false)
+  }
+
+  case Append(left: Regexp, right: Regexp)
+  case OrElse(first: Regexp, second: Regexp)
+  case Repeat(source: Regexp)
+  case Apply(string: String)
+  case Empty
+}
+object Regexp {
+  val empty: Regexp = Empty
+
+  def apply(string: String): Regexp =
+    Apply(string)
+}
+```
+
+To reify the continuations we can apply the same recipe as before: we create a case for each place in which we construct a continuation.
+In our interpreter loop this is for `Append`, `OrElse`, and `Repeat`. We also construct a continuation using the identity function when we first call `loop`, which represents the continuation to call when the loop has finished. This gives us four cases.
 
 ```scala
 enum Continuation {
@@ -31,7 +95,7 @@ case Append(left, right) =>
   loop(left, idx, k)
 ```
 
-The continuation `k` captures the `Regexp` `right` and the continuation `cont`.
+The continuation `k` refers to the `Regexp` `right`, the method `loop`, and the continuation `cont`.
 Our reification should reflect this by holding the same data.
 If we consider all the cases we end up with the following definition.
 
@@ -43,7 +107,6 @@ enum Continuation {
   case DoneK
 }
 ```
-
 
 Now we can rewrite the interpreter loop using these types.
 
