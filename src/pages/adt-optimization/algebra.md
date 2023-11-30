@@ -465,13 +465,13 @@ val cats = Regexp("cats").repeat
 Process the first piece of data and store the continuation.
 
 ```scala mdoc:silent
-val next = "catsca".foldLeft(cats){ (re, char) => re.derivative(ch) }
+val next = "catsca".foldLeft(cats){ (regexp, ch) => regexp.derivative(ch) }
 ```
 
 Continue processing when more data arrives.
 
 ```scala mdoc:silent
-"tscats".foldLeft(next){ (re, char) => re.derivative(ch) }
+"tscats".foldLeft(next){ (regexp, ch) => regexp.derivative(ch) }
 ```
 
 Notice that we could just as easily go back to a previous regular expression if we wanted to. This would give us backtracking. We don't need backtracking for regular expressions, but for more general parsers we do. In fact with continuations we can define any control flow we like, including backtracking search, exceptions, cooperative threading, and much much more.
