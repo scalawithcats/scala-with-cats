@@ -98,46 +98,76 @@ case Append(left, right) =>
 The continuation `k` refers to the `Regexp` `right`, the method `loop`, and the continuation `cont`.
 Our reification should reflect this by holding the same data.
 If we consider all the cases we end up with the following definition.
+Notice that I implemented an `apply` method so we can still call these continuations like a function.
 
 ```scala
+type Loop = (Regexp, Int, Continuation) => Option[Int]
 enum Continuation {
-  case AppendK(right: Regexp, next: Continuation)
-  case OrElseK(second: Regexp, index: Int, next: Continuation)
-  case RepeatK(regexp: Regexp, index: Int, next: Continuation)
+  case AppendK(right: Regexp, loop: Loop, next: Continuation)
+  case OrElseK(second: Regexp, index: Int, loop: Loop, next: Continuation)
+  case RepeatK(regexp: Regexp, index: Int, loop: Loop, next: Continuation)
   case DoneK
+
+  def apply(idx: Option[Int]): Option[Int] =
+    this match {
+      case AppendK(right, loop, next) =>
+        idx match {
+          case None    => next(None)
+          case Some(i) => loop(right, i, next)
+        }
+
+      case OrElseK(second, index, loop, next) =>
+        idx match {
+          case None => loop(second, index, next)
+          case some => next(some)
+        }
+
+      case RepeatK(regexp, index, loop, next) =>
+        idx match {
+          case None    => next(Some(index))
+          case Some(i) => loop(regexp, i, next)
+        }
+
+      case DoneK =>
+        idx
+    }
 }
 ```
 
-Now we can rewrite the interpreter loop using these types.
+Now we can rewrite the interpreter loop using the `Continuation` type.
 
 ```scala
-def loop(
-    regexp: Regexp,
-    idx: Int,
-    cont: Continuation
-): Call =
-  regexp match {
-    case Append(left, right) =>
-      val k: Continuation = AppendK(right, cont)
-      Call.Loop(left, idx, k)
+def matches(input: String): Boolean = {
+  def loop(
+      regexp: Regexp,
+      idx: Int,
+      cont: Continuation
+  ): Option[Int] =
+    regexp match {
+      case Append(left, right) =>
+        val k: Continuation = AppendK(right, loop, cont)
+        loop(left, idx, k)
 
-    case OrElse(first, second) =>
-      val k: Continuation = OrElseK(second, idx, cont)
-      Call.Loop(first, idx, k)
+      case OrElse(first, second) =>
+        val k: Continuation = OrElseK(second, idx, loop, cont)
+        loop(first, idx, k)
 
-    case Repeat(source) =>
-      val k: Continuation = RepeatK(regexp, idx, cont)
-      Call.Loop(source, idx, k)
+      case Repeat(source) =>
+        val k: Continuation = RepeatK(regexp, idx, loop, cont)
+        loop(source, idx, k)
 
-    case Apply(string) =>
-      Call.Continue(
-        Option.when(input.startsWith(string, idx))(idx + string.size),
-        cont
-      )
+      case Apply(string) =>
+        cont(Option.when(input.startsWith(string, idx))(idx + string.size))
 
-    case Empty =>
-      Call.Continue(None, cont)
-  }
+      case Empty =>
+        cont(None)
+    }
+
+  // Check we matched the entire input
+  loop(this, 0, DoneK)
+    .map(idx => idx == input.size)
+    .getOrElse(false)
+}
 ```
 
-At this point you're probably wondering what we have achieved with this code transformation. Our end goal, which is now in reach, is to create a stack-safe interpreter. We'll do this in just a moment, when we introduce trampolining. Before we do, let's spend a bit longer looking at the data structures we've created. Our reified continuations have a structure that is similar to a `List`. `DoneK` is equivalent to the empty list. The other cases all have some data, which we can think of as the head, and a tail element that is the next continuation. We construct continuations by adding elements to the front of the existing continuation, which is exactly how we construct lists. Finally, we use continuations from front-to-back; in other words in last-in-first-out (LIFO) order. This is the correct access pattern to use a list efficiently, and also the access pattern that defines a stack. Reifying the continuations has reified the stack, and this allows us to run the interpreter loop without using stack space.
+The point of this construction is that we've reified the stack: it's now explicitly represented as the `next` field in each `Continuation`. The stack is a last-in first-out (LIFO) data structure: the last element we add to the stack is the first element we use. (This is exactly the same as efficient use of a `List`.) We construct continuations by adding elements to the front of the existing continuation, which is exactly how we construct lists or stacks. We use continuations from front-to-back; in other words in last-in first-out (LIFO) order. This is the correct access pattern to use a list efficiently, and also the access pattern that defines a stack. Reifying the continuations as data has reified the stack. In the next section we'll use this fact to build a compiler that targets a stack machine.
