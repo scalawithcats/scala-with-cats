@@ -364,7 +364,7 @@ object Regexp {
 Regexp("cats").repeat.derivative('c').derivative('a').derivative('t')
 ```
 
-Here's the final code for the complete system.
+Here's the final code.
 
 ```scala mdoc:reset:silent
 enum Regexp {
