@@ -7,3 +7,11 @@ This work is based on [Derivatives of Regular Expressions][regexp-deriv], which 
 [regexp-deriv]: https://dl.acm.org/doi/pdf/10.1145/321239.321249
 [rere]: https://www.khoury.northeastern.edu/home/turon/re-deriv.pdf
 [parsing-deriv]: https://matt.might.net/papers/might2011derivatives.pdf
+
+
+Stack machines versus register machines.
+
+[From Interpreter to Compiler and Virtual Machine: A Functional Derivation][interpreter-to-compiler]
+
+[interpreter-to-compiler]: https://www.brics.dk/RS/03/14/BRICS-RS-03-14.pdf
+
