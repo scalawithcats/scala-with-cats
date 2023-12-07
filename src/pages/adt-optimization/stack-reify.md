@@ -1,8 +1,8 @@
 ## From Continuations to Stacks
 
-In the previous section we explored regular expression derivatives. We saw that they are continuations, but reified as data structures rather than the functions we used when we first worked with continuation-passing style. In this section we'll reify continuations-as-functions as data. In doing so we'll find continuations implicitly encode a stack structure, which we can explicitly reify.
+In the previous section we explored regular expression derivatives. We saw that they are continuations, but reified as data structures rather than the functions we used when we first worked with continuation-passing style. In this section we'll reify continuations-as-functions as data. In doing so we'll find continuations implicitly encode a stack structure. Explicitly reifying this structure is a step towards implementing a stack machine.
 
-We'll start with the CPSed regular expression interpreter, shown below.
+We'll start with the CPSed regular expression interpreter (not using derivatives), shown below.
 
 ```scala mdoc:silent
 enum Regexp {
