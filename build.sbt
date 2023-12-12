@@ -57,7 +57,7 @@ lazy val pages = List(
   "adt-optimization/algebra.md",
   "adt-optimization/stack-reify.md",
   "adt-optimization/stack-machine.md",
-  "adt-optimization/effects.md",
+  // "adt-optimization/effects.md",
   "adt-optimization/conclusions.md",
   "type-classes/index.md",
   "type-classes/anatomy.md",
