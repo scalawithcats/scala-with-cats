@@ -268,12 +268,19 @@ Below are the benchmarks results obtained on an AMD Ryzen 5 3600 and an Apple M1
 | Interpreter              | Ryzen 5 | Speedup | M1      | Speedup |
 +==========================+=========+=========+=========+=========+
 | Baseline                 | 2754.43 | 1       | 3932.93 | 1       |
++--------------------------+---------+---------+---------+---------+
 | Stack                    | 676.43  | 0.25    | 1004.16 | 0.26    |
++--------------------------+---------+---------+---------+---------+
 | Optimized Stack          | 3631.19 | 1.32    | 2953.21 | 0.75    |
++--------------------------+---------+---------+---------+---------+
 | Algebraic Simplification | 1630.93 | 0.59    | 4818.45 | 1.23    |
++--------------------------+---------+---------+---------+---------+
 | Byte Code                | 4057.11 | 1.47    | 3355.75 | 0.85    |
++--------------------------+---------+---------+---------+---------+
 | Stack Caching            | 3698.10 | 1.34    | 3237.17 | 0.82    |
++--------------------------+---------+---------+---------+---------+
 | Superinstructions        | 3706.10 | 1.35    | 4689.02 | 1.19    |
++--------------------------+---------+---------+---------+---------+
 | All                      | 7612.45 | 2.76    | 7098.06 | 1.80    |
 +--------------------------+---------+---------+---------+---------+
 
@@ -286,4 +293,3 @@ Details really matter in optimization. We see the choice of data structure makes
 Compilers, and JIT compilers in particular, are difficult to understand. I cannot explain why, for example, the Algebraic Simplification interpreter is so slow on the Ryzen 5. This interpreter does strictly less work than the Optimized Stack interpreter. Just like the interpreter optimizations I implemented, compiler optimizations apply in restricted cases that the algorithms recognize. If code does not match the patterns the algorithms look for, the optimizations will not apply, which can lead to strange performance cliffs. My best guess is that something about my implementation caused me to run afoul of such an issue.
 
 Finally, differences between platforms are also significant. It's hard to know how much this due to differences in the computer's architecture, and how much is down to differences in the JVM. Either way, be aware of which platform or platforms you expect the majority of users to run on, and don't naively assume performance on one platform will directly translate to another.
-
