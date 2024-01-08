@@ -190,7 +190,7 @@ final case class Move(end: Point) extends Action
 
 ### Representing ADTs in Scala 3
 
-We've seen that the Scala 3 representation of algebraic data types, using `enum`, is more compact than the Scala 2 representation. However the Scala 2 representation is still avaiable. Should you ever use the Scala 2 representation in Scala 3? There are a few cases where you may want to:
+We've seen that the Scala 3 representation of algebraic data types, using `enum`, is more compact than the Scala 2 representation. However the Scala 2 representation is still available. Should you ever use the Scala 2 representation in Scala 3? There are a few cases where you may want to:
 
 - Scala 3's doesn't currently support nested `enums` (`enums` within `enums`). This may change in the future, but right now it can be more convenient to use the Scala 2 representation to express this without having to convert to disjunctive normal form.
 
