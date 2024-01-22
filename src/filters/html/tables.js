@@ -9,7 +9,7 @@ const pandoc = require("pandoc-filter");
 // tables and cache them here to prevent infinite recursion.
 const visited = [];
 
-function action(type, value, format, meta) {
+function action({t: type, c: value}, format, meta) {
   if (type === "Table") {
     const hash = JSON.stringify(value);
 

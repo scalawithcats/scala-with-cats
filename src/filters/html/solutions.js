@@ -3,7 +3,7 @@
 const _ = require("underscore");
 const pandoc = require("pandoc-filter");
 
-pandoc.stdio(function (type, value, format, meta) {
+pandoc.stdio(function ({t: type, c: value}, format, meta) {
   switch (type) {
     case "Header": {
       const [level, [ident, classes, kvs], body] = value;
