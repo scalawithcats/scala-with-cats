@@ -2,7 +2,7 @@
 title: "Functional Programming Strategies in Scala with Cats"
 author: "Noel Welsh"
 date: "Jan 2024"
-tocDepth: 3
+tocDepth: 1
 copyright: "2014-24"
 figPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "$$i$$"
