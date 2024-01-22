@@ -61,6 +61,12 @@ lazy val pages = List(
   "type-classes/equal.md",
   "type-classes/instance-selection.md",
   "type-classes/summary.md",
+  // Interpreters
+  "adt-interpreters/index.md",
+  "adt-interpreters/regexp.md",
+  "adt-interpreters/reification.md",
+  "adt-interpreters/tail-recursion.md",
+  "adt-interpreters/conclusions.md",
   // Part 2: Type Classes
   "parts/part2.md",
   // Monoid
@@ -106,11 +112,6 @@ lazy val pages = List(
   "foldable-traverse/summary.md",
   // Part 3: Interpreters
   "parts/part3.md",
-  "adt-interpreters/index.md",
-  "adt-interpreters/regexp.md",
-  "adt-interpreters/reification.md",
-  "adt-interpreters/tail-recursion.md",
-  "adt-interpreters/conclusions.md",
   "adt-optimization/index.md",
   "adt-optimization/algebra.md",
   "adt-optimization/stack-reify.md",
