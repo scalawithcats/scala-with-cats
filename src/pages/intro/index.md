@@ -1,6 +1,10 @@
-# Thinking About Thinking About Code
+# Functional Programming Strategies
 
-This is a book on strategies to create code in a functional programming (FP) style, seen through a Scala lens. If you understand most of the mechanics of Scala, but feel there is something missing in your understanding of how to use the language effectively, this book might be for you. If you don't know so much Scala, but are prepared to learn it as part of learning about functional programming, this book might also work. It covers the usual functional programming abstractions like monads and monoids, but more than that it tries to teach you how to think and program like a functional programmer. It's a book as much about process as it is about the code that results from process, and in particular it focuses on what I can metacognitive programming strategies.
+This is a book on strategies to create code in a functional programming (FP) style, seen through a Scala lens. 
+If you understand most of the mechanics of Scala, but feel there is something missing in your understanding of how to use the language effectively, this book might be for you. 
+If you don't know so much Scala, but are prepared to learn it as part of learning about functional programming, this book might also work. 
+It covers the usual functional programming abstractions like monads and monoids, but more than that it tries to teach you how to think and program like a functional programmer. 
+It's a book as much about process as it is about the code that results from process, and in particular it focuses on what I can metacognitive programming strategies.
 
 I would guess most programmers would struggle to describe the process they use to write code. I expect some might mention "test driven development" and perhaps "pair programming", but I wouldn't expect much more from the general programming population. Both the above techniques come from eXtreme Programming, which dates to the late 90s, and you would hope our field had added new knowledge in that time. But it's not really the fault of the developers---most of them haven't been taught any explicit process. Our industry certainly likes to talk about process, in the form of agile, kanban boards, and so on, and in recent times a tremendous effort has spent on expanding those who are taught programming. However the actual programming---the bit that produces the code that is the whole point of the endeavour---is still largely treated as magic. It doesn't have to be that way.
 
