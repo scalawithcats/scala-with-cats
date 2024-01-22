@@ -1,4 +1,4 @@
-# Introduction
+# Thinking About Thinking About Code
 
 This is a book on strategies to create code in a functional programming (FP) style, seen through a Scala lens. If you understand most of the mechanics of Scala, but feel there is something missing in your understanding of how to use the language effectively, this book might be for you. If you don't know so much Scala, but are prepared to learn it as part of learning about functional programming, this book might also work. It covers the usual functional programming abstractions like monads and monoids, but more than that it tries to teach you how to think and program like a functional programmer. It's a book as much about process as it is about the code that results from process, and in particular it focuses on what I can metacognitive programming strategies.
 

@@ -1,5 +1,13 @@
 # Preface {-}
 
+## Functional Programming Strategies {-}
+
+This book builds on the bones of an earlier book, *Scala with Cats*.
+This preface will be completed when this book near completion.
+
+
+## Scala with Cats {-}
+
 The aims of this book are two-fold:
 to introduce monads, functors, and other functional programming patterns
 as a way to structure program design,

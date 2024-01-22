@@ -40,25 +40,18 @@ lazy val pages = List(
   "intro/index.md",
   "intro/three-levels.md",
   "intro/what-is-fp.md",
+  // Part 1: Foundations
   "parts/part1.md",
   "adt/index.md",
+  // ADTs
   "adt/scala.md",
   "adt/structural-recursion.md",
   "adt/structural-corecursion.md",
   "adt/applications.md",
   "adt/algebra.md",
   "adt/conclusions.md",
-  "adt-interpreters/index.md",
-  "adt-interpreters/regexp.md",
-  "adt-interpreters/reification.md",
-  "adt-interpreters/tail-recursion.md",
-  "adt-interpreters/conclusions.md",
-  "adt-optimization/index.md",
-  "adt-optimization/algebra.md",
-  "adt-optimization/stack-reify.md",
-  "adt-optimization/stack-machine.md",
-  // "adt-optimization/effects.md",
-  "adt-optimization/conclusions.md",
+  // Objects as Codata
+  // Contextual Abstraction
   "type-classes/index.md",
   "type-classes/anatomy.md",
   "type-classes/implicits.md",
@@ -67,16 +60,21 @@ lazy val pages = List(
   "type-classes/equal.md",
   "type-classes/instance-selection.md",
   "type-classes/summary.md",
+  // Part 2: Type Classes
+  "parts/part2.md",
+  // Monoid
   "monoids/index.md",
   "monoids/cats.md",
   "monoids/applications.md",
   "monoids/summary.md",
+  // Functor
   "functors/index.md",
   "functors/cats.md",
   "functors/contravariant-invariant.md",
   "functors/contravariant-invariant-cats.md",
   "functors/partial-unification.md",
   "functors/summary.md",
+  // Monad
   "monads/index.md",
   "monads/cats.md",
   "monads/id.md",
@@ -90,18 +88,36 @@ lazy val pages = List(
   "monads/summary.md",
   "monad-transformers/index.md",
   "monad-transformers/summary.md",
+  // Applicative
   "applicatives/index.md",
   "applicatives/semigroupal.md",
   "applicatives/examples.md",
   "applicatives/parallel.md",
   "applicatives/applicative.md",
   "applicatives/summary.md",
+  // Parallel
+  // Traverse
   "foldable-traverse/index.md",
   "foldable-traverse/foldable.md",
   "foldable-traverse/foldable-cats.md",
   "foldable-traverse/traverse.md",
   "foldable-traverse/traverse-cats.md",
   "foldable-traverse/summary.md",
+  // Part 3: Interpreters
+  "parts/part3.md",
+  "adt-interpreters/index.md",
+  "adt-interpreters/regexp.md",
+  "adt-interpreters/reification.md",
+  "adt-interpreters/tail-recursion.md",
+  "adt-interpreters/conclusions.md",
+  "adt-optimization/index.md",
+  "adt-optimization/algebra.md",
+  "adt-optimization/stack-reify.md",
+  "adt-optimization/stack-machine.md",
+  // "adt-optimization/effects.md",
+  "adt-optimization/conclusions.md",
+  // Part 4: Craft
+  // Part 5: Case Studies
   "parts/part2.md",
   "case-studies/testing/index.md",
   "case-studies/map-reduce/index.md",
@@ -124,7 +140,7 @@ lazy val pages = List(
   // "case-studies/parser/transforms.md",
   // "case-studies/parser/applicative.md",
 
-  "parts/part3.md",
+  "parts/solutions.md",
   "solutions.md",
   "links.md",
   "parts/part4.md"

@@ -1,9 +1,9 @@
 ---
-title: "Scala with Cats"
-author: "Noel Welsh with Dave Gurnell"
-date: "June 2023"
+title: "Functional Programming Strategies in Scala with Cats"
+author: "Noel Welsh"
+date: "Jan 2024"
 tocDepth: 3
-copyright: "2014-23"
+copyright: "2014-24"
 figPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "$$i$$"
 tblPrefixTemplate: "$$i$$"
