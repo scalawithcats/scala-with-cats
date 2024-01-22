@@ -164,9 +164,11 @@ function createFilter() {
 
   // Tree walkin' ----------------------------------
 
-  return function (type, value, format, meta) {
+  return function ({t: type, c: value}, format, meta) {
     // Hacity hack. Don't generate links in print books:
-    const createLinks = !meta.blackandwhiteprintable;
+    const createLinks =
+      typeof meta.blackandwhiteprintable === "undefined" ||
+      !meta.blackandwhiteprintable;
 
     switch (type) {
       case "Link": {

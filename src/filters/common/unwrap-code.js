@@ -45,7 +45,7 @@ function unindent(text) {
 }
 
 function createFilter() {
-  return function filter(type, value, format, meta) {
+  return function filter({t: type, c: value}, format, meta) {
     if (type !== "CodeBlock") {
       return;
     }

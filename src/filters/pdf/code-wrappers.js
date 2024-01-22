@@ -3,7 +3,7 @@
 const _ = require("underscore");
 const pandoc = require("pandoc-filter");
 
-function action(type, value, format, meta) {
+function action({t: type, c: value}, format, meta) {
   switch (type) {
     case "CodeBlock":
       const [[ident, classes, kvs], body] = value;

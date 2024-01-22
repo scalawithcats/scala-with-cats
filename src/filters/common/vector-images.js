@@ -1,7 +1,7 @@
 const pandoc = require("pandoc-filter");
 
 function createFilter(extension) {
-  return function (type, value, format, meta) {
+  return function ({t: type, c: value}, format, meta) {
     if (type === "Image") {
       const [caption, inline, [filename, prefix]] = value;
 

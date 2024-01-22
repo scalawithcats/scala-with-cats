@@ -14,7 +14,7 @@
     "uglifyify": "2.6.0",
     "lessc": "^1.0.2",
     "underscore": "1.7.0",
-    "pandoc-filter": "0.1.6",
+    "pandoc-filter": "2.2.0",
     "coffeescript": "^2.5.1"
   },
   "author": "Noel Welsh and Dave Gurnell"

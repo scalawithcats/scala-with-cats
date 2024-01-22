@@ -64,7 +64,7 @@ function mergeAll(blocks, accum = []) {
 }
 
 function createFilter() {
-  return function (type, value, format, meta) {
+  return function ({t: type, c: value}, format, meta) {
     switch (type) {
       case "Pandoc": {
         const [meta, blocks] = value;
@@ -100,6 +100,8 @@ function createFilter() {
         const [blocks] = value;
         return pandoc.TableCell(mergeAll(blocks));
       }
+
+      default: return value;
     }
   };
 }

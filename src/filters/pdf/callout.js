@@ -1,6 +1,6 @@
 const pandoc = require("pandoc-filter");
 
-function action(type, value, format, meta) {
+function action({t: type, c: value}, format, meta) {
   if (type === "Div") {
     const [[ident, classes, kvs], body] = value;
 
