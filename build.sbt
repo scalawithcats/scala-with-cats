@@ -42,8 +42,8 @@ lazy val pages = List(
   "intro/what-is-fp.md",
   // Part 1: Foundations
   "parts/part1.md",
-  "adt/index.md",
   // ADTs
+  "adt/index.md",
   "adt/scala.md",
   "adt/structural-recursion.md",
   "adt/structural-corecursion.md",
@@ -51,6 +51,7 @@ lazy val pages = List(
   "adt/algebra.md",
   "adt/conclusions.md",
   // Objects as Codata
+  "codata/index.md",
   // Contextual Abstraction
   "type-classes/index.md",
   "type-classes/anatomy.md",
