@@ -224,11 +224,22 @@ lazy val tex = taskKey[Unit]("Build the TeX debug build of the book")
 lazy val json = taskKey[Unit]("Build the JSON AST debug build of the book")
 
 lazy val pdfCmd = taskKey[Unit](
-  "Run pandoc without running mdoc to create the PDF version of the book"
+  "Run pandoc command to create the PDF version of the book without running mdoc"
+)
+lazy val htmlCmd = taskKey[Unit](
+  "Run pandoc command to create the HTML version of the book without running mdoc"
 )
 
 pdfCmd := {
   val cmdLineOptions = pdfPandoc.value
+  val cmd = s"pandoc $cmdLineOptions"
+  println(cmd)
+  streams.value.log.info(cmd)
+  cmd.!
+}
+
+htmlCmd := {
+  val cmdLineOptions = htmlPandoc.value
   val cmd = s"pandoc $cmdLineOptions"
   println(cmd)
   streams.value.log.info(cmd)
@@ -240,11 +251,7 @@ pdf := {
 }
 
 html := {
-  val cmdLineOptions =
-    Def.sequential(htmlSetup, mdoc.toTask(""), htmlPandoc).value
-  val cmd = s"pandoc $cmdLineOptions"
-  streams.value.log.info(cmd)
-  cmd.!
+  Def.sequential(htmlSetup, mdoc.toTask(""), pdfCmd).value
 }
 
 epub := {
