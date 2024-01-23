@@ -57,7 +57,7 @@ object Pandoc {
         List(
           s"--filter=pandoc-crossref",
           s"--filter=${srcDir}/filters/html/unwrap-code.js",
-          s"--filter=${srcDir}/filters/html/merge-code.js",
+          // s"--filter=${srcDir}/filters/html/merge-code.js",
           s"--filter=${srcDir}/filters/html/tables.js",
           s"--filter=${srcDir}/filters/html/solutions.js",
           s"--lua-filter=${srcDir}/filters/html/vector-images.lua"
@@ -66,7 +66,7 @@ object Pandoc {
         List(
           s"--filter=pandoc-crossref",
           s"--filter=${srcDir}/filters/epub/unwrap-code.js",
-          s"--filter=${srcDir}/filters/epub/merge-code.js",
+          // s"--filter=${srcDir}/filters/epub/merge-code.js",
           s"--filter=${srcDir}/filters/epub/solutions.js",
           s"--lua-filter=${srcDir}/filters/epub/vector-images.lua"
         )
@@ -121,7 +121,7 @@ object Pandoc {
           "--table-of-contents",
           "--highlight-style tango",
           "--standalone",
-          "--self-contained"
+          "--embed-resources"
         ),
         extras,
         metadata,
