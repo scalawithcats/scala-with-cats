@@ -110,12 +110,12 @@ function createFilter() {
 // treats the top-level Pandoc as a single element
 // so we can merge code blocks at the top level -.-
 function stdioComplete(action) {
-  return stdin((json) => {
+  return stdin().then((json) => {
     let data = JSON.parse(json);
     data = Object.assign(data, { blocks: mergeAll(data.blocks) });
     const format = process.argv.length > 2 ? process.argv[2] : "";
     const output = pandoc.filter(data, action, format);
-    process.stdout.write(JSON.stringify(output));
+    output.then(out => process.stdout.write(JSON.stringify(out)));
   });
 }
 
