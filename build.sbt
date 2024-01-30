@@ -251,7 +251,7 @@ pdf := {
 }
 
 html := {
-  Def.sequential(htmlSetup, mdoc.toTask(""), pdfCmd).value
+  Def.sequential(htmlSetup, mdoc.toTask(""), htmlCmd).value
 }
 
 epub := {
