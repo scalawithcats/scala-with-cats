@@ -1,4 +1,9 @@
 nav.navbar {
+    background-color: $white;
+    color: shade-color($primary, 40%);
     max-height: 100vh;
     overflow-y: auto;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: shade-color($primary, 20%);
 }

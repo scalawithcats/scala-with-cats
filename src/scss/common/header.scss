@@ -1,6 +1,7 @@
 header {
-    background-color: $primary-text-emphasis;
+    background-color: shade-color($primary, 40%);
     color: $white;
+    border-color: shade-color($primary, 20%);
     padding-top: $spacer;
     padding-bottom: 4 * $spacer;
 
