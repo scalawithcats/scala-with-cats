@@ -63,6 +63,7 @@
       <p class="date">$date$ Edition</p>
       $endif$
       $endif$
+      <p>Published by <a href="https://inner-product.com/">Inner Product</a></p>
     </div>
   </header>
 
@@ -73,9 +74,9 @@
 </div>
 
 <footer>
-  <div class="container-lg">
-    <div class="text-center">
-      <img class="footer-brand" src="$lib-dir$/templates/images/brand.svg" alt="Underscore" width="200px">
+  <div class="container-lg text-center">
+    <div>
+      <img class="footer-brand" src="$lib-dir$/templates/images/inner-product-white.png" alt="Inner Product" width="150" height="150">
     </div>
 
 $for(include-after)$
@@ -83,29 +84,37 @@ $include-after$
 $endfor$
 
     <div class="row sitemap">
-      <div class="col-sm-6">
-        <h5><a href="http://underscore.io">Underscore</a></h5>
+      <div class="col">
+        <h5><a href="http://inner-product.com">Inner Product</a></h5>
         <ul class="list-unstyled">
-          <li><a href="http://underscore.io/training/bookings">Book a Private Course</a></li>
-          <li><a href="http://underscore.io/training">Our Course Directory</a></li>
-          <li><a href="http://underscore.io/consulting">Our Consulting Services</a></li>
-          <li><a href="http://underscore.io/company">About Us</a></li>
+          <li><a href="http://inner-product.com/services/training/">Our Course Directory</a></li>
+          <li><a href="http://inner-product.com/services/consulting/">Our Consulting Services</a></li>
+          <li><a href="http://inner-product.com/about/">About Us</a></li>
         </ul>
       </div>
 
-      <div class="col-sm-6">
-        <h5><a href="http://underscore.io/contact">Contact</a></h5>
+      <div class="col">
+        <h5><a href="http://inner-product.com/contact">Contact</a></h5>
         <ul class="list-unstyled">
-          <li><a href="http://underscore.io">http://underscore.io</a></li>
-          <li><a href="tel:+442030955332">+44 (0)20 309 55332</a></li>
-          <li><a href="mailto:hello@underscore.io">hello@underscore.io</a></li>
-          <li><a href="http://twitter.com/underscoreuk">@underscoreuk</a></li>
+          <li><a href="http://inner-product.com">http://inner-product.com</a></li>
+          <li><a href="mailto:hello@inner-product.com">hello@inner-product.com</a></li>
+          <li><a href="http://twitter.com/InnerProductLLC">@InnerProductLLC</a></li>
         </ul>
       </div>
     </div>
 
-    <p class="copyright text-center">
+    <div class="small">
+    <p>$title$ $subtitle$ is published by Inner Product</p>
+    <p>
       Copyright $copyright$ $author$.
+    </p>
+    <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/">
+      <span property="dct:title">Functional Programming Strategies in Scala with Cats</span>
+      is licensed under
+      <a href="http://creativecommons.org/licenses/by-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-SA 4.0</a>
+    </p>
+    <p>
+      Portions of Functional Programming in Scala with Cats are based on Scala with Cats, by Dave Gurnell and Noel Welsh. Scala with Cats is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
     </p>
   </div>
 </footer>

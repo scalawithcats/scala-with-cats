@@ -1,9 +1,10 @@
 header {
-    background-color: shade-color($primary, 40%);
+    background-color: $primary;
     color: $white;
-    border-color: shade-color($primary, 20%);
     padding-top: $spacer;
     padding-bottom: 4 * $spacer;
+
+    a { color: $white; }
 
     .title {
         font-size: 2 * $h1-font-size;

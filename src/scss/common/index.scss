@@ -9,7 +9,8 @@
 
 // 4. Include any default map overrides here
 
-$primary: #4cb03a;
+// $primary: #4cb03a;
+$primary: #2e5943;
 // From the old html.less, but they need to be defined here
 $font-size-base: 20px;
 $line-height-base: 1.75;
@@ -79,8 +80,8 @@ $btn-default-border:       #f7f7f7;
 // @import "callouts.less";
 // @import "lists.less";
 // @import "buttons.less";
-// @import "images.less";
+@import "images.scss";
 // @import "tables.less";
 @import "type.scss";
-// @import "footer.less";
+@import "footer.scss";
 // @import "book.less";

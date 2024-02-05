@@ -1,0 +1,22 @@
+article {
+  figure, img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+
+    svg {
+        max-width: 100%;
+    }
+
+    figcaption {
+      @extend .text-center;
+      @extend .text-muted;
+    }
+  }
+
+  .solution .caption {
+      @extend .text-center;
+      @extend .text-muted;
+  }
+}
