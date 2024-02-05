@@ -8,14 +8,14 @@
     "url": "https://github.com/scalawithcats/scala-with-cats"
   },
   "devDependencies": {
-    "bootstrap": "^3.4.1",
+    "bootstrap": "^5.3.2",
     "coffeeify": "1.0.0",
+    "coffeescript": "^2.5.1",
     "jquery": "3.5.0",
-    "uglifyify": "2.6.0",
-    "lessc": "^1.0.2",
-    "underscore": "1.7.0",
     "pandoc-filter": "2.2.0",
-    "coffeescript": "^2.5.1"
+    "sass": "^1.70.0",
+    "uglifyify": "2.6.0",
+    "underscore": "1.7.0"
   },
   "author": "Noel Welsh and Dave Gurnell"
 }

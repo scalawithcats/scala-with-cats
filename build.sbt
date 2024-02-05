@@ -182,7 +182,7 @@ pdfSetup := {
 htmlSetup := {
   "mkdir -p dist src/temp".!
   "npm install".!
-  "npx lessc --include-path=node_modules --strict-imports src/less/html.less src/temp/html.css".!
+  "npx sass --load-path=node_modules src/scss/html.scss src/temp/html.css".!
   "npx browserify src/js/html.js --outfile src/temp/html.js".!
 }
 

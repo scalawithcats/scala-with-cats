@@ -20,7 +20,7 @@ object Pandoc {
       pagesDir: String = "target/pages",
       srcDir: String = "src",
       distDir: String = "dist",
-      tocDepth: Int = 3
+      tocDepth: Int = 2
   ): String = {
     import PandocTarget._
 

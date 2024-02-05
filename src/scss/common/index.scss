@@ -1,0 +1,85 @@
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "bootstrap/scss/functions";
+
+// 2. Include any default variable overrides here
+
+// 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
+
+// 4. Include any default map overrides here
+
+// From the old html.less, but they need to be defined here
+$font-size-base: 20px;
+$line-height-base: 1.75;
+$line-height-computed: floor(($font-size-base * $line-height-base));
+$headings-line-height: $line-height-base;
+
+
+$book-color:               #777777;
+
+$border-radius-base:       0px;
+$border-radius-large:      0px;
+$border-radius-small:      0px;
+
+// $headings-font-weight:     200;
+
+$pre-border-color:         transparent;
+
+$shadow-color:             rgba(0, 0, 0, .15);
+$shadow-default:           0 4px 0 $shadow-color;
+$shadow-active:            0 4px 0 fadeIn($shadow-color, 10%);
+$shadow-navbar:            0 4px 0 fadeOut($shadow-color, 7%);
+
+$btn-default-color:        #333;
+$btn-default-bg:           #f7f7f7;
+$btn-default-border:       #f7f7f7;
+
+// Small screen / tablet
+// $container-tablet:             (720px + $grid-gutter-width);
+// For `$screen-sm-min` and up.
+// $container-sm:                 $container-tablet;
+
+// Medium screen / desktop
+// $container-desktop:            (940px + $grid-gutter-width);
+
+//For `$screen-md-min` and up.
+// $container-md:                 $container-desktop;
+
+// Large screen / wide desktop
+// $container-large-desktop:      (940px + $grid-gutter-width);
+// For `$screen-lg-min` and up.
+// $container-lg:                 $container-large-desktop;
+
+// 5. Include remainder of required parts
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/root";
+
+// 6. Optionally include any other parts as needed
+@import "bootstrap/scss/utilities";
+@import "bootstrap/scss/reboot";
+@import "bootstrap/scss/type";
+@import "bootstrap/scss/images";
+@import "bootstrap/scss/containers";
+@import "bootstrap/scss/grid";
+@import "bootstrap/scss/helpers";
+
+// 7. Optionally include utilities API last to generate classes based on the Sass map in `_utilities.scss`
+@import "bootstrap/scss/utilities/api";
+
+// Book-specific
+// @import "variables.less";
+@import "container.scss";
+@import "header.scss";
+@import "toc.scss";
+@import "syntax.scss";
+@import "source.scss";
+// @import "callouts.less";
+// @import "lists.less";
+// @import "buttons.less";
+// @import "images.less";
+// @import "tables.less";
+@import "type.scss";
+// @import "footer.less";
+// @import "book.less";
