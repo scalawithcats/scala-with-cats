@@ -2969,7 +2969,7 @@ text-align: left !important;
 .text-end {
 text-align: right !important;
 }
-.text-center {
+.text-center, article .solution .caption, article figure figcaption, article img figcaption {
 text-align: center !important;
 }
 .text-decoration-none {
@@ -3046,7 +3046,7 @@ color: rgba(var(--bs-white-rgb), var(--bs-text-opacity)) !important;
 --bs-text-opacity: 1;
 color: rgba(var(--bs-body-color-rgb), var(--bs-text-opacity)) !important;
 }
-.text-muted {
+.text-muted, article .solution .caption, article figure figcaption, article img figcaption {
 --bs-text-opacity: 1;
 color: var(--bs-secondary-color) !important;
 }
@@ -6338,11 +6338,13 @@ div.container-lg {
 max-width: 960px;
 }
 header {
-background-color: #2e6a23;
+background-color: #2e5943;
 color: #fff;
-border-color: #3d8d2e;
 padding-top: 1rem;
 padding-bottom: 4rem;
+}
+header a {
+color: #fff;
 }
 header .title {
 font-size: 5rem;
@@ -6355,12 +6357,12 @@ display: block;
 }
 nav.navbar {
 background-color: #fff;
-color: #2e6a23;
+color: #1c3528;
 max-height: 100vh;
 overflow-y: auto;
 border-bottom-width: 1px;
 border-bottom-style: solid;
-border-bottom-color: #3d8d2e;
+border-bottom-color: #254736;
 }
 @media screen {
 .highlight { 
@@ -6837,8 +6839,66 @@ color: #009999;
 div.sourceCode {
 padding: 1.5rem;
 }
+article figure, article img {
+display: block;
+margin-left: auto;
+margin-right: auto;
+max-width: 100%;
+}
+article figure svg, article img svg {
+max-width: 100%;
+}
 h1, .h1 {
 margin-top: 8rem;
+}
+footer {
+margin-top: 2rem;
+padding: 4rem 0;
+background: #2e5943;
+color: #fff;
+}
+footer a {
+color: #fff;
+}
+footer h1, footer .h1, footer h2, footer .h2, footer h3, footer .h3, footer h4, footer .h4, footer h5, footer .h5, footer h6, footer .h6 {
+color: #fff;
+}
+footer .footer-brand {
+margin: 0;
+}
+footer .sitemap {
+margin: 0 0 35px;
+font-size: 0.9em;
+}
+footer .sitemap ul {
+margin: 0;
+}
+footer .sitemap li {
+text-align: center;
+}
+footer .sitemap h5, footer .sitemap .h5 {
+margin-top: 35px;
+text-align: center;
+}
+footer .sitemap h5 a, footer .sitemap .h5 a {
+font-weight: bold;
+}
+footer .sitemap a {
+display: block;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+color: #fff;
+font-weight: 200;
+text-decoration: none;
+}
+footer .sitemap a:hover {
+text-decoration: underline;
+}
+footer .small {
+margin: 0 0 35px;
+font-size: 0.8em;
+font-weight: 200;
 }
 
 </style>
@@ -7135,7 +7195,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; }
 Strategies<span class="subtitle">In Scala with Cats</span></h1>
             <h3 class="author">By Noel Welsh</h3>
                   <p class="date">February 2024 Edition</p>
-                </div>
+                  <p>Published by <a href="https://inner-product.com/">Inner Product</a></p>
+    </div>
   </header>
 
 <div class="container-lg">
@@ -9510,7 +9571,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     <div class="sourceCode" id="cb110"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> JsonWriterInstances<span class="op">.</span>_</span>
 <span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb110-3"><a href="#cb110-3" aria-hidden="true" tabindex="-1"></a>implicitly<span class="op">[</span>JsonWriter<span class="op">[</span><span class="ex">String</span><span class="op">]]</span></span>
-<span id="cb110-4"><a href="#cb110-4" aria-hidden="true" tabindex="-1"></a><span class="co">// res5: JsonWriter[String] = repl.MdocSession$MdocApp0$JsonWriterInstances$$anon$6@4a07b997</span></span></code></pre></div>
+<span id="cb110-4"><a href="#cb110-4" aria-hidden="true" tabindex="-1"></a><span class="co">// res5: JsonWriter[String] = repl.MdocSession$MdocApp0$JsonWriterInstances$$anon$6@54135160</span></span></code></pre></div>
     <p>Most type classes in Cats provide other means to summon
     instances. However, <code>implicitly</code> is a good fallback for
     debugging purposes. We can insert a call to <code>implicitly</code>
@@ -9858,7 +9919,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     <code>apply</code> method that locates an instance for any type we
     specify:</p>
     <div class="sourceCode" id="cb134"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> showInt <span class="op">=</span> Show<span class="op">.</span>apply<span class="op">[</span><span class="bu">Int</span><span class="op">]</span></span>
-<span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a><span class="co">// showInt: Show[Int] = cats.Show$$$Lambda$18166/0x00007fd026cb4d40@2777ff64</span></span></code></pre></div>
+<span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a><span class="co">// showInt: Show[Int] = cats.Show$$$Lambda$18069/0x00007fcddac94d40@198821dd</span></span></code></pre></div>
     <p>Oops—that didn’t work! The <code>apply</code> method uses
     <em>implicits</em> to look up individual instances, so we’ll have to
     bring some instances into scope.</p>
@@ -9942,7 +10003,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb139-6"><a href="#cb139-6" aria-hidden="true" tabindex="-1"></a>      <span class="ss">s&quot;${</span>date<span class="op">.</span>getTime<span class="ss">}</span><span class="st">ms since the epoch.</span><span class="ss">&quot;</span></span>
 <span id="cb139-7"><a href="#cb139-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div>
     <div class="sourceCode" id="cb140"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb140-1"><a href="#cb140-1" aria-hidden="true" tabindex="-1"></a><span class="kw">new</span> <span class="ex">Date</span><span class="op">().</span>show</span>
-<span id="cb140-2"><a href="#cb140-2" aria-hidden="true" tabindex="-1"></a><span class="co">// res1: String = &quot;1707147406322ms since the epoch.&quot;</span></span></code></pre></div>
+<span id="cb140-2"><a href="#cb140-2" aria-hidden="true" tabindex="-1"></a><span class="co">// res1: String = &quot;1707148491876ms since the epoch.&quot;</span></span></code></pre></div>
     <p>However, Cats also provides a couple of convenient methods to
     simplify the process. There are two construction methods on the
     companion object of <code>Show</code> that we can use to define
@@ -10114,7 +10175,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     <div class="sourceCode" id="cb165"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb165-1"><a href="#cb165-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">===</span> x</span>
 <span id="cb165-2"><a href="#cb165-2" aria-hidden="true" tabindex="-1"></a><span class="co">// res12: Boolean = true</span></span>
 <span id="cb165-3"><a href="#cb165-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">===</span> y</span>
-<span id="cb165-4"><a href="#cb165-4" aria-hidden="true" tabindex="-1"></a><span class="co">// res13: Boolean = false</span></span></code></pre></div>
+<span id="cb165-4"><a href="#cb165-4" aria-hidden="true" tabindex="-1"></a><span class="co">// res13: Boolean = true</span></span></code></pre></div>
     <h3 data-number="4.5.5" id="exercise-equality-liberty-and-felinity"><span class="header-section-number">4.5.5</span> Exercise: Equality,
     Liberty, and Felinity</h3>
     <p>Implement an instance of <code>Eq</code> for our running
@@ -12854,10 +12915,10 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     operates over a functor and has type
     <code>F[A] =&gt; F[B]</code>:</p>
     <div class="sourceCode" id="cb327"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb327-1"><a href="#cb327-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> func <span class="op">=</span> <span class="op">(</span>x<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span> <span class="op">=&gt;</span> x <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb327-2"><a href="#cb327-2" aria-hidden="true" tabindex="-1"></a><span class="co">// func: Function1[Int, Int] = repl.MdocSession$MdocApp0$$$Lambda$19338/0x00007fd026e3ea30@388a2636</span></span>
+<span id="cb327-2"><a href="#cb327-2" aria-hidden="true" tabindex="-1"></a><span class="co">// func: Function1[Int, Int] = repl.MdocSession$MdocApp0$$$Lambda$19346/0x00007fcddae54000@4788966b</span></span>
 <span id="cb327-3"><a href="#cb327-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb327-4"><a href="#cb327-4" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> liftedFunc <span class="op">=</span> Functor<span class="op">[</span><span class="ex">Option</span><span class="op">].</span><span class="fu">lift</span><span class="op">(</span>func<span class="op">)</span></span>
-<span id="cb327-5"><a href="#cb327-5" aria-hidden="true" tabindex="-1"></a><span class="co">// liftedFunc: Function1[Option[Int], Option[Int]] = cats.Functor$$Lambda$19339/0x00007fd026e66270@66adc788</span></span>
+<span id="cb327-5"><a href="#cb327-5" aria-hidden="true" tabindex="-1"></a><span class="co">// liftedFunc: Function1[Option[Int], Option[Int]] = cats.Functor$$Lambda$19347/0x00007fcddad61c10@2701ee94</span></span>
 <span id="cb327-6"><a href="#cb327-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb327-7"><a href="#cb327-7" aria-hidden="true" tabindex="-1"></a><span class="fu">liftedFunc</span><span class="op">(</span><span class="ex">Option</span><span class="op">(</span><span class="dv">1</span><span class="op">))</span></span>
 <span id="cb327-8"><a href="#cb327-8" aria-hidden="true" tabindex="-1"></a><span class="co">// res1: Option[Int] = Some(value = 2)</span></span></code></pre></div>
@@ -13572,7 +13633,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb376-5"><a href="#cb376-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> func1 <span class="op">=</span> <span class="op">(</span>x<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span>    <span class="op">=&gt;</span> x<span class="op">.</span>toDouble</span>
 <span id="cb376-6"><a href="#cb376-6" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> func2 <span class="op">=</span> <span class="op">(</span>y<span class="op">:</span> <span class="ex">Double</span><span class="op">)</span> <span class="op">=&gt;</span> y <span class="op">*</span> <span class="dv">2</span></span></code></pre></div>
     <div class="sourceCode" id="cb377"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb377-1"><a href="#cb377-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> func3 <span class="op">=</span> func1<span class="op">.</span><span class="fu">map</span><span class="op">(</span>func2<span class="op">)</span></span>
-<span id="cb377-2"><a href="#cb377-2" aria-hidden="true" tabindex="-1"></a><span class="co">// func3: Function1[Int, Double] = scala.Function1$$Lambda$19285/0x00007fd026e505d0@925f994</span></span></code></pre></div>
+<span id="cb377-2"><a href="#cb377-2" aria-hidden="true" tabindex="-1"></a><span class="co">// func3: Function1[Int, Double] = scala.Function1$$Lambda$19296/0x00007fcddae22660@2a344f19</span></span></code></pre></div>
     <p><code>Function1</code> has two type parameters (the function
     argument and the result type):</p>
     <div class="sourceCode" id="cb378"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb378-1"><a href="#cb378-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Function1<span class="op">[-</span>A<span class="op">,</span> <span class="op">+</span>B<span class="op">]</span> <span class="op">{</span></span>
@@ -13738,7 +13799,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     we can call <code>contramap</code> as desired:</p>
     <div class="sourceCode" id="cb392"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb392-1"><a href="#cb392-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> func2b<span class="op">:</span> <span class="ex">Double</span> <span class="op">&lt;=</span> <span class="ex">Double</span> <span class="op">=</span> func2</span></code></pre></div>
     <div class="sourceCode" id="cb393"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb393-1"><a href="#cb393-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> func3c <span class="op">=</span> func2b<span class="op">.</span><span class="fu">contramap</span><span class="op">(</span>func1<span class="op">)</span></span>
-<span id="cb393-2"><a href="#cb393-2" aria-hidden="true" tabindex="-1"></a><span class="co">// func3c: Function1[Int, Double] = scala.Function1$$Lambda$19285/0x00007fd026e505d0@7d728a21</span></span></code></pre></div>
+<span id="cb393-2"><a href="#cb393-2" aria-hidden="true" tabindex="-1"></a><span class="co">// func3c: Function1[Int, Double] = scala.Function1$$Lambda$19296/0x00007fcddae22660@5a27dbb6</span></span></code></pre></div>
     <p>The difference between <code>func2</code> and <code>func2b</code>
     is purely syntactic—both refer to the same value and the type
     aliases are otherwise completely compatible. Incredibly, however,
@@ -14278,7 +14339,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     implicit resolution required to summon the instance:</p>
     <div class="sourceCode" id="cb418"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb418-1"><a href="#cb418-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>concurrent<span class="op">.</span>ExecutionContext<span class="op">.</span>Implicits<span class="op">.</span>global</span></code></pre></div>
     <div class="sourceCode" id="cb419"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb419-1"><a href="#cb419-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> fm <span class="op">=</span> Monad<span class="op">[</span><span class="ex">Future</span><span class="op">]</span></span>
-<span id="cb419-2"><a href="#cb419-2" aria-hidden="true" tabindex="-1"></a><span class="co">// fm: Monad[[T &gt;: Nothing &lt;: Any] =&gt; Future[T]] = cats.instances.FutureInstances$$anon$1@fe4e7be</span></span></code></pre></div>
+<span id="cb419-2"><a href="#cb419-2" aria-hidden="true" tabindex="-1"></a><span class="co">// fm: Monad[[T &gt;: Nothing &lt;: Any] =&gt; Future[T]] = cats.instances.FutureInstances$$anon$1@2e8d3bf2</span></span></code></pre></div>
     <p>The <code>Monad</code> instance uses the captured
     <code>ExecutionContext</code> for subsequent calls to
     <code>pure</code> and <code>flatMap</code>:</p>
@@ -14927,12 +14988,12 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb481-3"><a href="#cb481-3" aria-hidden="true" tabindex="-1"></a>  math<span class="op">.</span><span class="fu">random</span><span class="op">()</span></span>
 <span id="cb481-4"><a href="#cb481-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb481-5"><a href="#cb481-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing X</span></span>
-<span id="cb481-6"><a href="#cb481-6" aria-hidden="true" tabindex="-1"></a><span class="co">// x: Double = 0.680403276511287</span></span>
+<span id="cb481-6"><a href="#cb481-6" aria-hidden="true" tabindex="-1"></a><span class="co">// x: Double = 0.6094552361232731</span></span>
 <span id="cb481-7"><a href="#cb481-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb481-8"><a href="#cb481-8" aria-hidden="true" tabindex="-1"></a>x <span class="co">// first access</span></span>
-<span id="cb481-9"><a href="#cb481-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res0: Double = 0.680403276511287 // first access</span></span>
+<span id="cb481-9"><a href="#cb481-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res0: Double = 0.6094552361232731 // first access</span></span>
 <span id="cb481-10"><a href="#cb481-10" aria-hidden="true" tabindex="-1"></a>x <span class="co">// second access</span></span>
-<span id="cb481-11"><a href="#cb481-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res1: Double = 0.680403276511287</span></span></code></pre></div>
+<span id="cb481-11"><a href="#cb481-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res1: Double = 0.6094552361232731</span></span></code></pre></div>
     <p>This is an example of call-by-value evaluation:</p>
     <ul>
     <li>the computation is evaluated at point where it is defined
@@ -14949,10 +15010,10 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb482-5"><a href="#cb482-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb482-6"><a href="#cb482-6" aria-hidden="true" tabindex="-1"></a>y <span class="co">// first access</span></span>
 <span id="cb482-7"><a href="#cb482-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing Y</span></span>
-<span id="cb482-8"><a href="#cb482-8" aria-hidden="true" tabindex="-1"></a><span class="co">// res2: Double = 0.08768610602561899 // first access</span></span>
+<span id="cb482-8"><a href="#cb482-8" aria-hidden="true" tabindex="-1"></a><span class="co">// res2: Double = 0.1646127635678244 // first access</span></span>
 <span id="cb482-9"><a href="#cb482-9" aria-hidden="true" tabindex="-1"></a>y <span class="co">// second access</span></span>
 <span id="cb482-10"><a href="#cb482-10" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing Y</span></span>
-<span id="cb482-11"><a href="#cb482-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res3: Double = 0.1341975961472449</span></span></code></pre></div>
+<span id="cb482-11"><a href="#cb482-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res3: Double = 0.1442915773087854</span></span></code></pre></div>
     <p>These are the properties of call-by-name evaluation:</p>
     <ul>
     <li>the computation is evaluated at the point of use (lazy);
@@ -14971,9 +15032,9 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb483-5"><a href="#cb483-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb483-6"><a href="#cb483-6" aria-hidden="true" tabindex="-1"></a>z <span class="co">// first access</span></span>
 <span id="cb483-7"><a href="#cb483-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing Z</span></span>
-<span id="cb483-8"><a href="#cb483-8" aria-hidden="true" tabindex="-1"></a><span class="co">// res4: Double = 0.9842931838525588 // first access</span></span>
+<span id="cb483-8"><a href="#cb483-8" aria-hidden="true" tabindex="-1"></a><span class="co">// res4: Double = 0.8169375641349305 // first access</span></span>
 <span id="cb483-9"><a href="#cb483-9" aria-hidden="true" tabindex="-1"></a>z <span class="co">// second access</span></span>
-<span id="cb483-10"><a href="#cb483-10" aria-hidden="true" tabindex="-1"></a><span class="co">// res5: Double = 0.9842931838525588</span></span></code></pre></div>
+<span id="cb483-10"><a href="#cb483-10" aria-hidden="true" tabindex="-1"></a><span class="co">// res5: Double = 0.8169375641349305</span></span></code></pre></div>
     <p>Let’s summarize. There are two properties of interest:</p>
     <ul>
     <li>evaluation at the point of definition (eager) versus at the
@@ -14999,19 +15060,19 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     <code>Eval</code>:</p>
     <div class="sourceCode" id="cb484"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb484-1"><a href="#cb484-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> cats<span class="op">.</span>Eval</span></code></pre></div>
     <div class="sourceCode" id="cb485"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb485-1"><a href="#cb485-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> now <span class="op">=</span> Eval<span class="op">.</span><span class="fu">now</span><span class="op">(</span>math<span class="op">.</span><span class="fu">random</span><span class="op">()</span> <span class="op">+</span> <span class="dv">1000</span><span class="op">)</span></span>
-<span id="cb485-2"><a href="#cb485-2" aria-hidden="true" tabindex="-1"></a><span class="co">// now: Eval[Double] = Now(value = 1000.3988403782151)</span></span>
+<span id="cb485-2"><a href="#cb485-2" aria-hidden="true" tabindex="-1"></a><span class="co">// now: Eval[Double] = Now(value = 1000.5689306978653)</span></span>
 <span id="cb485-3"><a href="#cb485-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> always <span class="op">=</span> Eval<span class="op">.</span><span class="fu">always</span><span class="op">(</span>math<span class="op">.</span><span class="fu">random</span><span class="op">()</span> <span class="op">+</span> <span class="dv">3000</span><span class="op">)</span></span>
-<span id="cb485-4"><a href="#cb485-4" aria-hidden="true" tabindex="-1"></a><span class="co">// always: Eval[Double] = cats.Always@616d1611</span></span>
+<span id="cb485-4"><a href="#cb485-4" aria-hidden="true" tabindex="-1"></a><span class="co">// always: Eval[Double] = cats.Always@3359c2fc</span></span>
 <span id="cb485-5"><a href="#cb485-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> later <span class="op">=</span> Eval<span class="op">.</span><span class="fu">later</span><span class="op">(</span>math<span class="op">.</span><span class="fu">random</span><span class="op">()</span> <span class="op">+</span> <span class="dv">2000</span><span class="op">)</span></span>
-<span id="cb485-6"><a href="#cb485-6" aria-hidden="true" tabindex="-1"></a><span class="co">// later: Eval[Double] = cats.Later@6a34e39e</span></span></code></pre></div>
+<span id="cb485-6"><a href="#cb485-6" aria-hidden="true" tabindex="-1"></a><span class="co">// later: Eval[Double] = cats.Later@4dbcb28</span></span></code></pre></div>
     <p>We can extract the result of an <code>Eval</code> using its
     <code>value</code> method:</p>
     <div class="sourceCode" id="cb486"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb486-1"><a href="#cb486-1" aria-hidden="true" tabindex="-1"></a>now<span class="op">.</span>value</span>
-<span id="cb486-2"><a href="#cb486-2" aria-hidden="true" tabindex="-1"></a><span class="co">// res6: Double = 1000.3988403782151</span></span>
+<span id="cb486-2"><a href="#cb486-2" aria-hidden="true" tabindex="-1"></a><span class="co">// res6: Double = 1000.5689306978653</span></span>
 <span id="cb486-3"><a href="#cb486-3" aria-hidden="true" tabindex="-1"></a>always<span class="op">.</span>value</span>
-<span id="cb486-4"><a href="#cb486-4" aria-hidden="true" tabindex="-1"></a><span class="co">// res7: Double = 3000.5865628433667</span></span>
+<span id="cb486-4"><a href="#cb486-4" aria-hidden="true" tabindex="-1"></a><span class="co">// res7: Double = 3000.7058731465186</span></span>
 <span id="cb486-5"><a href="#cb486-5" aria-hidden="true" tabindex="-1"></a>later<span class="op">.</span>value</span>
-<span id="cb486-6"><a href="#cb486-6" aria-hidden="true" tabindex="-1"></a><span class="co">// res8: Double = 2000.8048116006878</span></span></code></pre></div>
+<span id="cb486-6"><a href="#cb486-6" aria-hidden="true" tabindex="-1"></a><span class="co">// res8: Double = 2000.621228699391</span></span></code></pre></div>
     <p>Each type of <code>Eval</code> calculates its result using one of
     the evaluation models defined above. <code>Eval.now</code> captures
     a value <em>right now</em>. Its semantics are similar to a
@@ -15021,39 +15082,39 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb487-3"><a href="#cb487-3" aria-hidden="true" tabindex="-1"></a>  math<span class="op">.</span><span class="fu">random</span><span class="op">()</span></span>
 <span id="cb487-4"><a href="#cb487-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb487-5"><a href="#cb487-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing X</span></span>
-<span id="cb487-6"><a href="#cb487-6" aria-hidden="true" tabindex="-1"></a><span class="co">// x: Eval[Double] = Now(value = 0.10078466584279366)</span></span>
+<span id="cb487-6"><a href="#cb487-6" aria-hidden="true" tabindex="-1"></a><span class="co">// x: Eval[Double] = Now(value = 0.07092121489791903)</span></span>
 <span id="cb487-7"><a href="#cb487-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb487-8"><a href="#cb487-8" aria-hidden="true" tabindex="-1"></a>x<span class="op">.</span>value <span class="co">// first access</span></span>
-<span id="cb487-9"><a href="#cb487-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res10: Double = 0.10078466584279366 // first access</span></span>
+<span id="cb487-9"><a href="#cb487-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res10: Double = 0.07092121489791903 // first access</span></span>
 <span id="cb487-10"><a href="#cb487-10" aria-hidden="true" tabindex="-1"></a>x<span class="op">.</span>value <span class="co">// second access</span></span>
-<span id="cb487-11"><a href="#cb487-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res11: Double = 0.10078466584279366</span></span></code></pre></div>
+<span id="cb487-11"><a href="#cb487-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res11: Double = 0.07092121489791903</span></span></code></pre></div>
     <p><code>Eval.always</code> captures a lazy computation, similar to
     a <code>def</code>:</p>
     <div class="sourceCode" id="cb488"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb488-1"><a href="#cb488-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> y <span class="op">=</span> Eval<span class="op">.</span>always<span class="op">{</span></span>
 <span id="cb488-2"><a href="#cb488-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Computing Y&quot;</span><span class="op">)</span></span>
 <span id="cb488-3"><a href="#cb488-3" aria-hidden="true" tabindex="-1"></a>  math<span class="op">.</span><span class="fu">random</span><span class="op">()</span></span>
 <span id="cb488-4"><a href="#cb488-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb488-5"><a href="#cb488-5" aria-hidden="true" tabindex="-1"></a><span class="co">// y: Eval[Double] = cats.Always@4c7ec218</span></span>
+<span id="cb488-5"><a href="#cb488-5" aria-hidden="true" tabindex="-1"></a><span class="co">// y: Eval[Double] = cats.Always@67d98d52</span></span>
 <span id="cb488-6"><a href="#cb488-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb488-7"><a href="#cb488-7" aria-hidden="true" tabindex="-1"></a>y<span class="op">.</span>value <span class="co">// first access</span></span>
 <span id="cb488-8"><a href="#cb488-8" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing Y</span></span>
-<span id="cb488-9"><a href="#cb488-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res12: Double = 0.43387725000952215 // first access</span></span>
+<span id="cb488-9"><a href="#cb488-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res12: Double = 0.6268844513997183 // first access</span></span>
 <span id="cb488-10"><a href="#cb488-10" aria-hidden="true" tabindex="-1"></a>y<span class="op">.</span>value <span class="co">// second access</span></span>
 <span id="cb488-11"><a href="#cb488-11" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing Y</span></span>
-<span id="cb488-12"><a href="#cb488-12" aria-hidden="true" tabindex="-1"></a><span class="co">// res13: Double = 0.23247838889268868</span></span></code></pre></div>
+<span id="cb488-12"><a href="#cb488-12" aria-hidden="true" tabindex="-1"></a><span class="co">// res13: Double = 0.6121528896049693</span></span></code></pre></div>
     <p>Finally, <code>Eval.later</code> captures a lazy, memoized
     computation, similar to a <code>lazy val</code>:</p>
     <div class="sourceCode" id="cb489"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb489-1"><a href="#cb489-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> z <span class="op">=</span> Eval<span class="op">.</span>later<span class="op">{</span></span>
 <span id="cb489-2"><a href="#cb489-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Computing Z&quot;</span><span class="op">)</span></span>
 <span id="cb489-3"><a href="#cb489-3" aria-hidden="true" tabindex="-1"></a>  math<span class="op">.</span><span class="fu">random</span><span class="op">()</span></span>
 <span id="cb489-4"><a href="#cb489-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb489-5"><a href="#cb489-5" aria-hidden="true" tabindex="-1"></a><span class="co">// z: Eval[Double] = cats.Later@30316183</span></span>
+<span id="cb489-5"><a href="#cb489-5" aria-hidden="true" tabindex="-1"></a><span class="co">// z: Eval[Double] = cats.Later@4e62ebbf</span></span>
 <span id="cb489-6"><a href="#cb489-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb489-7"><a href="#cb489-7" aria-hidden="true" tabindex="-1"></a>z<span class="op">.</span>value <span class="co">// first access</span></span>
 <span id="cb489-8"><a href="#cb489-8" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing Z</span></span>
-<span id="cb489-9"><a href="#cb489-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res14: Double = 0.3286542339404177 // first access</span></span>
+<span id="cb489-9"><a href="#cb489-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res14: Double = 0.5391687528281494 // first access</span></span>
 <span id="cb489-10"><a href="#cb489-10" aria-hidden="true" tabindex="-1"></a>z<span class="op">.</span>value <span class="co">// second access</span></span>
-<span id="cb489-11"><a href="#cb489-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res15: Double = 0.3286542339404177</span></span></code></pre></div>
+<span id="cb489-11"><a href="#cb489-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res15: Double = 0.5391687528281494</span></span></code></pre></div>
     <p>The three behaviours are summarized below:</p>
     <div class="table-responsive">
     <table>
@@ -15098,7 +15159,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     <div class="sourceCode" id="cb490"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb490-1"><a href="#cb490-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> greeting <span class="op">=</span> Eval</span>
 <span id="cb490-2"><a href="#cb490-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span>always<span class="op">{</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Step 1&quot;</span><span class="op">);</span> <span class="st">&quot;Hello&quot;</span> <span class="op">}</span></span>
 <span id="cb490-3"><a href="#cb490-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span>map<span class="op">{</span> str <span class="op">=&gt;</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Step 2&quot;</span><span class="op">);</span> <span class="ss">s&quot;$str</span><span class="st"> world</span><span class="ss">&quot;</span> <span class="op">}</span></span>
-<span id="cb490-4"><a href="#cb490-4" aria-hidden="true" tabindex="-1"></a><span class="co">// greeting: Eval[String] = cats.Eval$$anon$4@39e5340a</span></span>
+<span id="cb490-4"><a href="#cb490-4" aria-hidden="true" tabindex="-1"></a><span class="co">// greeting: Eval[String] = cats.Eval$$anon$4@33518ead</span></span>
 <span id="cb490-5"><a href="#cb490-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb490-6"><a href="#cb490-6" aria-hidden="true" tabindex="-1"></a>greeting<span class="op">.</span>value</span>
 <span id="cb490-7"><a href="#cb490-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Step 1</span></span>
@@ -15115,7 +15176,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb491-6"><a href="#cb491-6" aria-hidden="true" tabindex="-1"></a>  a <span class="op">+</span> b</span>
 <span id="cb491-7"><a href="#cb491-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb491-8"><a href="#cb491-8" aria-hidden="true" tabindex="-1"></a><span class="co">// Calculating A</span></span>
-<span id="cb491-9"><a href="#cb491-9" aria-hidden="true" tabindex="-1"></a><span class="co">// ans: Eval[Int] = cats.Eval$$anon$4@740018bb</span></span>
+<span id="cb491-9"><a href="#cb491-9" aria-hidden="true" tabindex="-1"></a><span class="co">// ans: Eval[Int] = cats.Eval$$anon$4@69898164</span></span>
 <span id="cb491-10"><a href="#cb491-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb491-11"><a href="#cb491-11" aria-hidden="true" tabindex="-1"></a>ans<span class="op">.</span>value <span class="co">// first access</span></span>
 <span id="cb491-12"><a href="#cb491-12" aria-hidden="true" tabindex="-1"></a><span class="co">// Calculating B</span></span>
@@ -15134,7 +15195,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb492-3"><a href="#cb492-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span>map<span class="op">{</span> str <span class="op">=&gt;</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Step 2&quot;</span><span class="op">);</span> <span class="ss">s&quot;$str</span><span class="st"> sat on</span><span class="ss">&quot;</span> <span class="op">}</span></span>
 <span id="cb492-4"><a href="#cb492-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span>memoize</span>
 <span id="cb492-5"><a href="#cb492-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span>map<span class="op">{</span> str <span class="op">=&gt;</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Step 3&quot;</span><span class="op">);</span> <span class="ss">s&quot;$str</span><span class="st"> the mat</span><span class="ss">&quot;</span> <span class="op">}</span></span>
-<span id="cb492-6"><a href="#cb492-6" aria-hidden="true" tabindex="-1"></a><span class="co">// saying: Eval[String] = cats.Eval$$anon$4@4e547a21</span></span>
+<span id="cb492-6"><a href="#cb492-6" aria-hidden="true" tabindex="-1"></a><span class="co">// saying: Eval[String] = cats.Eval$$anon$4@4291221a</span></span>
 <span id="cb492-7"><a href="#cb492-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb492-8"><a href="#cb492-8" aria-hidden="true" tabindex="-1"></a>saying<span class="op">.</span>value <span class="co">// first access</span></span>
 <span id="cb492-9"><a href="#cb492-9" aria-hidden="true" tabindex="-1"></a><span class="co">// Step 1</span></span>
@@ -15551,7 +15612,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb531-3"><a href="#cb531-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> catName<span class="op">:</span> <span class="ex">Reader</span><span class="op">[</span>Cat<span class="op">,</span> <span class="ex">String</span><span class="op">]</span> <span class="op">=</span></span>
 <span id="cb531-4"><a href="#cb531-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">Reader</span><span class="op">(</span>cat <span class="op">=&gt;</span> cat<span class="op">.</span>name<span class="op">)</span></span>
 <span id="cb531-5"><a href="#cb531-5" aria-hidden="true" tabindex="-1"></a><span class="co">// catName: Kleisli[Id, Cat, String] = Kleisli(</span></span>
-<span id="cb531-6"><a href="#cb531-6" aria-hidden="true" tabindex="-1"></a><span class="co">//   run = repl.MdocSession$MdocApp0$$$Lambda$20218/0x00007fd026f25000@66c0327b</span></span>
+<span id="cb531-6"><a href="#cb531-6" aria-hidden="true" tabindex="-1"></a><span class="co">//   run = repl.MdocSession$MdocApp0$$$Lambda$20296/0x00007fcddaf4d000@65527caf</span></span>
 <span id="cb531-7"><a href="#cb531-7" aria-hidden="true" tabindex="-1"></a><span class="co">// )</span></span></code></pre></div>
     <p>We can extract the function again using the <code>Reader&#39;s</code>
     <code>run</code> method and call it using <code>apply</code> as
@@ -15799,27 +15860,27 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     function.</li>
     </ul>
     <div class="sourceCode" id="cb550"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb550-1"><a href="#cb550-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> getDemo <span class="op">=</span> <span class="ex">State</span><span class="op">.</span>get<span class="op">[</span><span class="bu">Int</span><span class="op">]</span></span>
-<span id="cb550-2"><a href="#cb550-2" aria-hidden="true" tabindex="-1"></a><span class="co">// getDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Int] = cats.data.IndexedStateT@6a1715f9</span></span>
+<span id="cb550-2"><a href="#cb550-2" aria-hidden="true" tabindex="-1"></a><span class="co">// getDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Int] = cats.data.IndexedStateT@193515a3</span></span>
 <span id="cb550-3"><a href="#cb550-3" aria-hidden="true" tabindex="-1"></a>getDemo<span class="op">.</span><span class="fu">run</span><span class="op">(</span><span class="dv">10</span><span class="op">).</span>value</span>
 <span id="cb550-4"><a href="#cb550-4" aria-hidden="true" tabindex="-1"></a><span class="co">// res1: Tuple2[Int, Int] = (10, 10)</span></span>
 <span id="cb550-5"><a href="#cb550-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb550-6"><a href="#cb550-6" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> setDemo <span class="op">=</span> <span class="ex">State</span><span class="op">.</span>set<span class="op">[</span><span class="bu">Int</span><span class="op">](</span><span class="dv">30</span><span class="op">)</span></span>
-<span id="cb550-7"><a href="#cb550-7" aria-hidden="true" tabindex="-1"></a><span class="co">// setDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Unit] = cats.data.IndexedStateT@75c53c58</span></span>
+<span id="cb550-7"><a href="#cb550-7" aria-hidden="true" tabindex="-1"></a><span class="co">// setDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Unit] = cats.data.IndexedStateT@7cf0dac</span></span>
 <span id="cb550-8"><a href="#cb550-8" aria-hidden="true" tabindex="-1"></a>setDemo<span class="op">.</span><span class="fu">run</span><span class="op">(</span><span class="dv">10</span><span class="op">).</span>value</span>
 <span id="cb550-9"><a href="#cb550-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res2: Tuple2[Int, Unit] = (30, ())</span></span>
 <span id="cb550-10"><a href="#cb550-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb550-11"><a href="#cb550-11" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> pureDemo <span class="op">=</span> <span class="ex">State</span><span class="op">.</span>pure<span class="op">[</span><span class="bu">Int</span><span class="op">,</span> <span class="ex">String</span><span class="op">](</span><span class="st">&quot;Result&quot;</span><span class="op">)</span></span>
-<span id="cb550-12"><a href="#cb550-12" aria-hidden="true" tabindex="-1"></a><span class="co">// pureDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, String] = cats.data.IndexedStateT@54e9d44a</span></span>
+<span id="cb550-12"><a href="#cb550-12" aria-hidden="true" tabindex="-1"></a><span class="co">// pureDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, String] = cats.data.IndexedStateT@4007be55</span></span>
 <span id="cb550-13"><a href="#cb550-13" aria-hidden="true" tabindex="-1"></a>pureDemo<span class="op">.</span><span class="fu">run</span><span class="op">(</span><span class="dv">10</span><span class="op">).</span>value</span>
 <span id="cb550-14"><a href="#cb550-14" aria-hidden="true" tabindex="-1"></a><span class="co">// res3: Tuple2[Int, String] = (10, &quot;Result&quot;)</span></span>
 <span id="cb550-15"><a href="#cb550-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb550-16"><a href="#cb550-16" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> inspectDemo <span class="op">=</span> <span class="ex">State</span><span class="op">.</span>inspect<span class="op">[</span><span class="bu">Int</span><span class="op">,</span> <span class="ex">String</span><span class="op">](</span>x <span class="op">=&gt;</span> <span class="ss">s&quot;${</span>x<span class="ss">}</span><span class="st">!</span><span class="ss">&quot;</span><span class="op">)</span></span>
-<span id="cb550-17"><a href="#cb550-17" aria-hidden="true" tabindex="-1"></a><span class="co">// inspectDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, String] = cats.data.IndexedStateT@7442e1c</span></span>
+<span id="cb550-17"><a href="#cb550-17" aria-hidden="true" tabindex="-1"></a><span class="co">// inspectDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, String] = cats.data.IndexedStateT@58da5f27</span></span>
 <span id="cb550-18"><a href="#cb550-18" aria-hidden="true" tabindex="-1"></a>inspectDemo<span class="op">.</span><span class="fu">run</span><span class="op">(</span><span class="dv">10</span><span class="op">).</span>value</span>
 <span id="cb550-19"><a href="#cb550-19" aria-hidden="true" tabindex="-1"></a><span class="co">// res4: Tuple2[Int, String] = (10, &quot;10!&quot;)</span></span>
 <span id="cb550-20"><a href="#cb550-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb550-21"><a href="#cb550-21" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> modifyDemo <span class="op">=</span> <span class="ex">State</span><span class="op">.</span>modify<span class="op">[</span><span class="bu">Int</span><span class="op">](</span>_ <span class="op">+</span> <span class="dv">1</span><span class="op">)</span></span>
-<span id="cb550-22"><a href="#cb550-22" aria-hidden="true" tabindex="-1"></a><span class="co">// modifyDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Unit] = cats.data.IndexedStateT@552e5bd0</span></span>
+<span id="cb550-22"><a href="#cb550-22" aria-hidden="true" tabindex="-1"></a><span class="co">// modifyDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Unit] = cats.data.IndexedStateT@6973d192</span></span>
 <span id="cb550-23"><a href="#cb550-23" aria-hidden="true" tabindex="-1"></a>modifyDemo<span class="op">.</span><span class="fu">run</span><span class="op">(</span><span class="dv">10</span><span class="op">).</span>value</span>
 <span id="cb550-24"><a href="#cb550-24" aria-hidden="true" tabindex="-1"></a><span class="co">// res5: Tuple2[Int, Unit] = (11, ())</span></span></code></pre></div>
     <p>We can assemble these building blocks using a for comprehension.
@@ -15834,7 +15895,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb552-5"><a href="#cb552-5" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">&lt;-</span> modify<span class="op">[</span><span class="bu">Int</span><span class="op">](</span>_ <span class="op">+</span> <span class="dv">1</span><span class="op">)</span></span>
 <span id="cb552-6"><a href="#cb552-6" aria-hidden="true" tabindex="-1"></a>  c <span class="op">&lt;-</span> inspect<span class="op">[</span><span class="bu">Int</span><span class="op">,</span> <span class="bu">Int</span><span class="op">](</span>_ <span class="op">*</span> <span class="dv">1000</span><span class="op">)</span></span>
 <span id="cb552-7"><a href="#cb552-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">yield</span> <span class="op">(</span>a<span class="op">,</span> b<span class="op">,</span> c<span class="op">)</span></span>
-<span id="cb552-8"><a href="#cb552-8" aria-hidden="true" tabindex="-1"></a><span class="co">// program: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Tuple3[Int, Int, Int]] = cats.data.IndexedStateT@9d58ad1</span></span>
+<span id="cb552-8"><a href="#cb552-8" aria-hidden="true" tabindex="-1"></a><span class="co">// program: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Tuple3[Int, Int, Int]] = cats.data.IndexedStateT@162e037d</span></span>
 <span id="cb552-9"><a href="#cb552-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb552-10"><a href="#cb552-10" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> <span class="op">(</span>state<span class="op">,</span> result<span class="op">)</span> <span class="op">=</span> program<span class="op">.</span><span class="fu">run</span><span class="op">(</span><span class="dv">1</span><span class="op">).</span>value</span>
 <span id="cb552-11"><a href="#cb552-11" aria-hidden="true" tabindex="-1"></a><span class="co">// state: Int = 3</span></span>
@@ -15950,7 +16011,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb561-3"><a href="#cb561-3" aria-hidden="true" tabindex="-1"></a>  _   <span class="op">&lt;-</span> <span class="fu">evalOne</span><span class="op">(</span><span class="st">&quot;2&quot;</span><span class="op">)</span></span>
 <span id="cb561-4"><a href="#cb561-4" aria-hidden="true" tabindex="-1"></a>  ans <span class="op">&lt;-</span> <span class="fu">evalOne</span><span class="op">(</span><span class="st">&quot;+&quot;</span><span class="op">)</span></span>
 <span id="cb561-5"><a href="#cb561-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">yield</span> ans</span>
-<span id="cb561-6"><a href="#cb561-6" aria-hidden="true" tabindex="-1"></a><span class="co">// program: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], List[Int], List[Int], Int] = cats.data.IndexedStateT@13845425</span></span>
+<span id="cb561-6"><a href="#cb561-6" aria-hidden="true" tabindex="-1"></a><span class="co">// program: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], List[Int], List[Int], Int] = cats.data.IndexedStateT@6ba6e2fb</span></span>
 <span id="cb561-7"><a href="#cb561-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb561-8"><a href="#cb561-8" aria-hidden="true" tabindex="-1"></a>program<span class="op">.</span><span class="fu">runA</span><span class="op">(</span>Nil<span class="op">).</span>value</span>
 <span id="cb561-9"><a href="#cb561-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res11: Int = 3</span></span></code></pre></div>
@@ -15977,7 +16038,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     <p>We can use <code>evalAll</code> to conveniently evaluate
     multi-stage expressions:</p>
     <div class="sourceCode" id="cb564"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb564-1"><a href="#cb564-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> multistageProgram <span class="op">=</span> <span class="fu">evalAll</span><span class="op">(</span><span class="ex">List</span><span class="op">(</span><span class="st">&quot;1&quot;</span><span class="op">,</span> <span class="st">&quot;2&quot;</span><span class="op">,</span> <span class="st">&quot;+&quot;</span><span class="op">,</span> <span class="st">&quot;3&quot;</span><span class="op">,</span> <span class="st">&quot;*&quot;</span><span class="op">))</span></span>
-<span id="cb564-2"><a href="#cb564-2" aria-hidden="true" tabindex="-1"></a><span class="co">// multistageProgram: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], List[Int], List[Int], Int] = cats.data.IndexedStateT@3516bc87</span></span>
+<span id="cb564-2"><a href="#cb564-2" aria-hidden="true" tabindex="-1"></a><span class="co">// multistageProgram: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], List[Int], List[Int], Int] = cats.data.IndexedStateT@618fabcf</span></span>
 <span id="cb564-3"><a href="#cb564-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb564-4"><a href="#cb564-4" aria-hidden="true" tabindex="-1"></a>multistageProgram<span class="op">.</span><span class="fu">runA</span><span class="op">(</span>Nil<span class="op">).</span>value</span>
 <span id="cb564-5"><a href="#cb564-5" aria-hidden="true" tabindex="-1"></a><span class="co">// res13: Int = 9</span></span></code></pre></div>
@@ -15992,7 +16053,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb565-3"><a href="#cb565-3" aria-hidden="true" tabindex="-1"></a>  _   <span class="op">&lt;-</span> <span class="fu">evalAll</span><span class="op">(</span><span class="ex">List</span><span class="op">(</span><span class="st">&quot;3&quot;</span><span class="op">,</span> <span class="st">&quot;4&quot;</span><span class="op">,</span> <span class="st">&quot;+&quot;</span><span class="op">))</span></span>
 <span id="cb565-4"><a href="#cb565-4" aria-hidden="true" tabindex="-1"></a>  ans <span class="op">&lt;-</span> <span class="fu">evalOne</span><span class="op">(</span><span class="st">&quot;*&quot;</span><span class="op">)</span></span>
 <span id="cb565-5"><a href="#cb565-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">yield</span> ans</span>
-<span id="cb565-6"><a href="#cb565-6" aria-hidden="true" tabindex="-1"></a><span class="co">// biggerProgram: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], List[Int], List[Int], Int] = cats.data.IndexedStateT@12c1912e</span></span>
+<span id="cb565-6"><a href="#cb565-6" aria-hidden="true" tabindex="-1"></a><span class="co">// biggerProgram: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], List[Int], List[Int], Int] = cats.data.IndexedStateT@1607192d</span></span>
 <span id="cb565-7"><a href="#cb565-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb565-8"><a href="#cb565-8" aria-hidden="true" tabindex="-1"></a>biggerProgram<span class="op">.</span><span class="fu">runA</span><span class="op">(</span>Nil<span class="op">).</span>value</span>
 <span id="cb565-9"><a href="#cb565-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res14: Int = 21</span></span></code></pre></div>
@@ -16963,7 +17024,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     function that accepts the wrong number or types of parameters, we
     get a compile error:</p>
     <div class="sourceCode" id="cb633"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb633-1"><a href="#cb633-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> add<span class="op">:</span> <span class="op">(</span><span class="bu">Int</span><span class="op">,</span> <span class="bu">Int</span><span class="op">)</span> <span class="op">=&gt;</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">(</span>a<span class="op">,</span> b<span class="op">)</span> <span class="op">=&gt;</span> a <span class="op">+</span> b</span>
-<span id="cb633-2"><a href="#cb633-2" aria-hidden="true" tabindex="-1"></a><span class="co">// add: Function2[Int, Int, Int] = repl.MdocSession$MdocApp0$$$Lambda$18163/0x00007fd026caaf68@5e907978</span></span></code></pre></div>
+<span id="cb633-2"><a href="#cb633-2" aria-hidden="true" tabindex="-1"></a><span class="co">// add: Function2[Int, Int, Int] = repl.MdocSession$MdocApp0$$$Lambda$18078/0x00007fcddac9af68@476cc36a</span></span></code></pre></div>
     <div class="sourceCode" id="cb634"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb634-1"><a href="#cb634-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="ex">Option</span><span class="op">(</span><span class="dv">1</span><span class="op">),</span> <span class="ex">Option</span><span class="op">(</span><span class="dv">2</span><span class="op">),</span> <span class="ex">Option</span><span class="op">(</span><span class="dv">3</span><span class="op">)).</span><span class="fu">mapN</span><span class="op">(</span>add<span class="op">)</span></span>
 <span id="cb634-2"><a href="#cb634-2" aria-hidden="true" tabindex="-1"></a><span class="co">// error:</span></span>
 <span id="cb634-3"><a href="#cb634-3" aria-hidden="true" tabindex="-1"></a><span class="co">// &#39;:&#39; expected, but &#39;(&#39; found</span></span>
@@ -23777,138 +23838,45 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 </div>
 
 <footer>
-  <div class="container-lg">
-    <div class="text-center">
-      <svg id="Layer_1" class="footer-brand" alt="Underscore" width="200px" x="0px" y="0px" height="120px" viewBox="0 0 272 120" enable-background="new 0 0 272 120" xml:space="preserve">
-<g id="Layer_1_BG">
-</g>
-<g id="Layer_1_Logo_1_">
-	<g enable-background="new    ">
-		<path fill="#FFFFFF" d="M18.309,89.144v16.164c0,1.554,0.359,2.756,1.079,3.606c0.719,0.852,1.797,1.277,3.235,1.277
-			c1.058,0,2.049-0.235,2.975-0.707c0.925-0.471,1.801-1.119,2.627-1.945V89.144h6.124v25.436h-3.744
-			c-0.793,0-1.313-0.372-1.562-1.115l-0.421-2.033c-0.529,0.529-1.075,1.013-1.636,1.45c-0.562,0.438-1.161,0.81-1.797,1.115
-			c-0.636,0.307-1.322,0.546-2.058,0.72c-0.735,0.173-1.524,0.26-2.368,0.26c-1.388,0-2.615-0.235-3.681-0.706
-			c-1.066-0.472-1.963-1.137-2.69-1.996c-0.728-0.859-1.276-1.88-1.648-3.062s-0.558-2.482-0.558-3.904V89.144H18.309z" />
-		<path fill="#FFFFFF" d="M40.893,114.579V89.144h3.743c0.793,0,1.314,0.372,1.562,1.116l0.421,2.008
-			c0.512-0.528,1.054-1.008,1.624-1.438c0.57-0.43,1.173-0.802,1.81-1.116c0.636-0.313,1.317-0.553,2.045-0.719
-			c0.727-0.165,1.521-0.248,2.38-0.248c1.388,0,2.62,0.235,3.694,0.707c1.074,0.471,1.971,1.132,2.69,1.983
-			c0.719,0.851,1.264,1.867,1.636,3.049c0.372,1.182,0.558,2.483,0.558,3.904v16.188h-6.123V98.391c0-1.553-0.36-2.756-1.079-3.606
-			c-0.719-0.852-1.797-1.277-3.235-1.277c-1.058,0-2.049,0.24-2.975,0.719c-0.926,0.48-1.802,1.133-2.628,1.959v18.395H40.893z" />
-		<path fill="#FFFFFF" d="M86.978,114.579c-0.793,0-1.313-0.372-1.562-1.115l-0.496-2.455c-0.529,0.596-1.083,1.133-1.661,1.612
-			c-0.579,0.479-1.203,0.892-1.872,1.239c-0.669,0.347-1.389,0.615-2.157,0.806c-0.769,0.189-1.599,0.285-2.492,0.285
-			c-1.388,0-2.661-0.29-3.818-0.868s-2.153-1.417-2.987-2.516c-0.834-1.1-1.479-2.458-1.934-4.078s-0.682-3.471-0.682-5.554
-			c0-1.884,0.256-3.636,0.769-5.255c0.512-1.62,1.248-3.024,2.207-4.215c0.958-1.189,2.107-2.119,3.446-2.789
-			c1.338-0.669,2.842-1.004,4.512-1.004c1.421,0,2.636,0.228,3.644,0.682c1.008,0.455,1.909,1.062,2.702,1.822V77.74h6.124v36.839
-			H86.978z M78.822,110.092c1.272,0,2.355-0.264,3.248-0.793s1.735-1.28,2.528-2.256V95.639c-0.694-0.843-1.45-1.438-2.268-1.784
-			c-0.818-0.348-1.698-0.521-2.64-0.521c-0.926,0-1.765,0.173-2.516,0.521c-0.752,0.347-1.389,0.872-1.909,1.574
-			s-0.921,1.595-1.202,2.677c-0.281,1.083-0.421,2.359-0.421,3.83c0,1.488,0.12,2.748,0.359,3.781
-			c0.239,1.033,0.583,1.876,1.029,2.528c0.446,0.653,0.992,1.124,1.636,1.413S78.029,110.092,78.822,110.092z" />
-		<path fill="#FFFFFF" d="M107.852,88.747c1.603,0,3.078,0.257,4.425,0.769c1.347,0.513,2.508,1.261,3.483,2.244
-			c0.975,0.983,1.735,2.189,2.281,3.619s0.818,3.062,0.818,4.896c0,0.463-0.021,0.847-0.062,1.152
-			c-0.042,0.306-0.116,0.545-0.223,0.719s-0.252,0.298-0.434,0.372c-0.182,0.074-0.414,0.111-0.694,0.111h-15.717
-			c0.182,2.611,0.884,4.528,2.107,5.752c1.223,1.223,2.842,1.834,4.859,1.834c0.992,0,1.847-0.115,2.566-0.347
-			c0.719-0.231,1.347-0.487,1.884-0.769s1.008-0.537,1.413-0.769c0.405-0.231,0.797-0.348,1.178-0.348
-			c0.248,0,0.462,0.05,0.645,0.149c0.182,0.099,0.338,0.239,0.471,0.421l1.785,2.231c-0.678,0.793-1.438,1.459-2.281,1.996
-			s-1.723,0.967-2.64,1.289c-0.917,0.322-1.851,0.549-2.801,0.682c-0.951,0.132-1.872,0.198-2.764,0.198
-			c-1.769,0-3.413-0.294-4.933-0.88c-1.521-0.587-2.843-1.454-3.967-2.604c-1.124-1.148-2.008-2.569-2.652-4.264
-			s-0.967-3.657-0.967-5.888c0-1.735,0.281-3.367,0.843-4.896c0.562-1.528,1.367-2.859,2.417-3.991
-			c1.049-1.132,2.33-2.028,3.842-2.689C104.245,89.078,105.951,88.747,107.852,88.747z M107.976,93.136
-			c-1.785,0-3.182,0.504-4.19,1.512c-1.008,1.009-1.653,2.438-1.934,4.289h11.503c0-0.794-0.108-1.541-0.322-2.244
-			c-0.215-0.702-0.545-1.317-0.992-1.847c-0.446-0.528-1.008-0.945-1.686-1.252C109.677,93.288,108.884,93.136,107.976,93.136z" />
-		<path fill="#FFFFFF" d="M123.841,114.579V89.144h3.595c0.628,0,1.066,0.116,1.313,0.348c0.248,0.231,0.413,0.628,0.496,1.189
-			l0.372,3.074c0.909-1.569,1.975-2.81,3.198-3.719c1.223-0.908,2.594-1.363,4.115-1.363c1.256,0,2.297,0.289,3.124,0.868
-			l-0.794,4.586c-0.049,0.298-0.156,0.508-0.322,0.632c-0.164,0.124-0.388,0.187-0.668,0.187c-0.248,0-0.588-0.058-1.018-0.174
-			c-0.43-0.115-1-0.174-1.71-0.174c-1.273,0-2.364,0.352-3.272,1.054c-0.909,0.703-1.678,1.731-2.306,3.087v15.841H123.841z" />
-		<path fill="#FFFFFF" d="M159.191,94.103c-0.165,0.264-0.339,0.45-0.521,0.558c-0.183,0.107-0.413,0.161-0.694,0.161
-			c-0.297,0-0.615-0.083-0.954-0.248s-0.731-0.351-1.178-0.558s-0.954-0.393-1.524-0.558s-1.244-0.248-2.021-0.248
-			c-1.206,0-2.157,0.256-2.851,0.769c-0.694,0.512-1.041,1.182-1.041,2.008c0,0.545,0.177,1.004,0.533,1.376
-			c0.354,0.372,0.826,0.698,1.412,0.979c0.587,0.281,1.252,0.533,1.996,0.757c0.744,0.223,1.504,0.467,2.28,0.731
-			s1.537,0.566,2.28,0.904c0.744,0.339,1.41,0.769,1.996,1.289c0.587,0.521,1.058,1.145,1.413,1.872s0.533,1.604,0.533,2.628
-			c0,1.223-0.224,2.351-0.669,3.384c-0.447,1.033-1.1,1.926-1.959,2.677c-0.859,0.753-1.921,1.339-3.186,1.761
-			c-1.264,0.421-2.715,0.632-4.351,0.632c-0.876,0-1.731-0.078-2.565-0.235c-0.835-0.157-1.637-0.376-2.405-0.657
-			c-0.769-0.28-1.479-0.611-2.132-0.991c-0.653-0.38-1.227-0.793-1.723-1.239l1.412-2.331c0.182-0.28,0.397-0.495,0.645-0.645
-			c0.248-0.148,0.562-0.223,0.943-0.223c0.379,0,0.738,0.107,1.078,0.322c0.338,0.215,0.73,0.446,1.178,0.694
-			c0.445,0.248,0.971,0.479,1.574,0.693c0.603,0.216,1.367,0.322,2.293,0.322c0.727,0,1.351-0.086,1.871-0.26
-			c0.521-0.174,0.95-0.4,1.289-0.682s0.586-0.607,0.744-0.979c0.156-0.372,0.235-0.756,0.235-1.152c0-0.596-0.178-1.083-0.533-1.463
-			s-0.827-0.711-1.413-0.991c-0.586-0.281-1.256-0.533-2.008-0.757c-0.752-0.223-1.521-0.467-2.306-0.731
-			c-0.785-0.264-1.554-0.573-2.306-0.93c-0.752-0.354-1.422-0.806-2.008-1.351c-0.587-0.546-1.058-1.215-1.413-2.008
-			c-0.355-0.794-0.532-1.752-0.532-2.876c0-1.041,0.205-2.033,0.619-2.975c0.412-0.942,1.02-1.765,1.822-2.467
-			c0.801-0.702,1.801-1.265,3-1.686c1.197-0.422,2.582-0.633,4.152-0.633c1.751,0,3.346,0.29,4.784,0.868
-			c1.438,0.578,2.636,1.339,3.595,2.28L159.191,94.103z" />
-		<path fill="#FFFFFF" d="M183.635,94.523c-0.182,0.231-0.359,0.413-0.533,0.546c-0.174,0.132-0.426,0.198-0.756,0.198
-			c-0.314,0-0.62-0.096-0.918-0.285c-0.297-0.19-0.652-0.405-1.065-0.645s-0.905-0.455-1.476-0.645
-			c-0.57-0.19-1.276-0.285-2.119-0.285c-1.074,0-2.017,0.194-2.826,0.582c-0.811,0.389-1.483,0.946-2.021,1.674
-			s-0.938,1.607-1.202,2.64c-0.265,1.033-0.396,2.203-0.396,3.508c0,1.355,0.145,2.562,0.434,3.62s0.707,1.946,1.252,2.665
-			s1.206,1.264,1.983,1.636c0.776,0.372,1.652,0.558,2.628,0.558c0.975,0,1.764-0.119,2.367-0.359
-			c0.604-0.239,1.111-0.504,1.525-0.793c0.412-0.289,0.771-0.554,1.078-0.793c0.305-0.24,0.648-0.36,1.028-0.36
-			c0.496,0,0.868,0.19,1.116,0.57l1.76,2.231c-0.678,0.793-1.413,1.459-2.207,1.996c-0.793,0.537-1.615,0.967-2.467,1.289
-			c-0.851,0.322-1.73,0.549-2.64,0.682c-0.909,0.132-1.81,0.198-2.702,0.198c-1.57,0-3.049-0.294-4.438-0.88
-			c-1.389-0.587-2.6-1.442-3.632-2.566c-1.033-1.123-1.851-2.499-2.454-4.127s-0.904-3.483-0.904-5.566
-			c0-1.867,0.268-3.598,0.805-5.193c0.537-1.595,1.326-2.975,2.367-4.14c1.042-1.165,2.331-2.078,3.868-2.739
-			c1.536-0.661,3.306-0.992,5.306-0.992c1.899,0,3.564,0.307,4.994,0.918s2.715,1.487,3.855,2.627L183.635,94.523z" />
-		<path fill="#FFFFFF" d="M200.269,88.747c1.9,0,3.624,0.307,5.169,0.918s2.863,1.479,3.954,2.603s1.934,2.496,2.528,4.115
-			c0.596,1.62,0.893,3.43,0.893,5.429c0,2.017-0.297,3.835-0.893,5.454c-0.595,1.62-1.438,3-2.528,4.141
-			c-1.091,1.14-2.409,2.017-3.954,2.628c-1.545,0.61-3.269,0.917-5.169,0.917s-3.628-0.307-5.181-0.917
-			c-1.555-0.611-2.881-1.488-3.979-2.628c-1.1-1.141-1.951-2.521-2.555-4.141c-0.604-1.619-0.904-3.438-0.904-5.454
-			c0-1.999,0.301-3.809,0.904-5.429c0.604-1.619,1.455-2.991,2.555-4.115c1.098-1.124,2.424-1.991,3.979-2.603
-			C196.641,89.054,198.368,88.747,200.269,88.747z M200.269,110.241c2.116,0,3.682-0.711,4.698-2.133
-			c1.016-1.421,1.524-3.503,1.524-6.247c0-2.743-0.509-4.834-1.524-6.271c-1.017-1.438-2.582-2.157-4.698-2.157
-			c-2.148,0-3.735,0.724-4.76,2.169c-1.024,1.446-1.536,3.533-1.536,6.26c0,2.728,0.512,4.806,1.536,6.235
-			S198.12,110.241,200.269,110.241z" />
-		<path fill="#FFFFFF" d="M217.598,114.579V89.144h3.594c0.629,0,1.066,0.116,1.314,0.348s0.412,0.628,0.496,1.189l0.371,3.074
-			c0.909-1.569,1.975-2.81,3.198-3.719c1.223-0.908,2.595-1.363,4.114-1.363c1.256,0,2.299,0.289,3.125,0.868l-0.793,4.586
-			c-0.051,0.298-0.158,0.508-0.322,0.632c-0.166,0.124-0.389,0.187-0.67,0.187c-0.248,0-0.588-0.058-1.018-0.174
-			c-0.43-0.115-0.999-0.174-1.709-0.174c-1.273,0-2.364,0.352-3.273,1.054c-0.908,0.703-1.678,1.731-2.305,3.087v15.841H217.598z" />
-		<path fill="#FFFFFF" d="M248.361,88.747c1.604,0,3.078,0.257,4.426,0.769c1.347,0.513,2.508,1.261,3.482,2.244
-			c0.976,0.983,1.735,2.189,2.281,3.619c0.545,1.43,0.818,3.062,0.818,4.896c0,0.463-0.021,0.847-0.062,1.152
-			s-0.116,0.545-0.223,0.719c-0.108,0.174-0.253,0.298-0.435,0.372s-0.413,0.111-0.693,0.111h-15.718
-			c0.182,2.611,0.884,4.528,2.107,5.752c1.223,1.223,2.843,1.834,4.858,1.834c0.992,0,1.848-0.115,2.566-0.347
-			s1.347-0.487,1.884-0.769s1.008-0.537,1.413-0.769s0.797-0.348,1.178-0.348c0.248,0,0.463,0.05,0.645,0.149
-			c0.182,0.099,0.339,0.239,0.471,0.421l1.785,2.231c-0.678,0.793-1.438,1.459-2.28,1.996c-0.844,0.537-1.724,0.967-2.641,1.289
-			s-1.852,0.549-2.802,0.682c-0.95,0.132-1.871,0.198-2.764,0.198c-1.769,0-3.413-0.294-4.934-0.88
-			c-1.521-0.587-2.843-1.454-3.966-2.604c-1.125-1.148-2.009-2.569-2.653-4.264s-0.967-3.657-0.967-5.888
-			c0-1.735,0.281-3.367,0.843-4.896c0.562-1.528,1.368-2.859,2.417-3.991c1.05-1.132,2.331-2.028,3.843-2.689
-			C244.755,89.078,246.461,88.747,248.361,88.747z M248.485,93.136c-1.784,0-3.182,0.504-4.189,1.512
-			c-1.008,1.009-1.652,2.438-1.934,4.289h11.503c0-0.794-0.107-1.541-0.322-2.244c-0.215-0.702-0.546-1.317-0.991-1.847
-			c-0.446-0.528-1.009-0.945-1.687-1.252C250.188,93.288,249.395,93.136,248.485,93.136z" />
-	</g>
-	<path id="Layer_1_Icon" fill="#FFFFFF" d="M171.926,19.707c-0.502-6.639-6.943-12.618-14.029-13.06c-15.092-0.859-30.184-0.859-45.274,0
-		c-7.087,0.442-13.529,6.421-14.032,13.061c-0.909,13.124-0.909,26.248,0,39.372c0.503,6.641,6.945,12.618,14.032,13.061
-		c15.092,0.858,30.183,0.858,45.274,0c7.086-0.441,13.527-6.42,14.029-13.061C172.835,45.954,172.835,32.83,171.926,19.707z
-		 M138.848,56.703h-24.771v-4.699h24.771V56.703z M155.635,56.186c-0.367,0.367-0.794,0.654-1.279,0.859
-		c-0.488,0.204-1.002,0.308-1.541,0.308c-0.541,0-1.049-0.104-1.523-0.308c-0.477-0.205-0.896-0.492-1.264-0.859
-		c-0.369-0.367-0.653-0.789-0.858-1.262c-0.206-0.478-0.31-0.986-0.31-1.527c0-0.539,0.104-1.053,0.31-1.539
-		c0.205-0.486,0.489-0.913,0.858-1.28c0.756-0.758,1.687-1.135,2.787-1.135c0.539,0,1.053,0.098,1.541,0.293
-		c0.485,0.194,0.912,0.475,1.279,0.842c0.756,0.757,1.135,1.696,1.135,2.819C156.77,54.5,156.391,55.431,155.635,56.186z" />
-</g>
-</svg>
+  <div class="container-lg text-center">
+    <div>
+      <img class="footer-brand" src="data:image/png;base64,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" alt="Inner Product" width="150" height="150">
     </div>
 
 
     <div class="row sitemap">
-      <div class="col-sm-6">
-        <h5><a href="http://underscore.io">Underscore</a></h5>
+      <div class="col">
+        <h5><a href="http://inner-product.com">Inner Product</a></h5>
         <ul class="list-unstyled">
-          <li><a href="http://underscore.io/training/bookings">Book a Private Course</a></li>
-          <li><a href="http://underscore.io/training">Our Course Directory</a></li>
-          <li><a href="http://underscore.io/consulting">Our Consulting Services</a></li>
-          <li><a href="http://underscore.io/company">About Us</a></li>
+          <li><a href="http://inner-product.com/services/training/">Our Course Directory</a></li>
+          <li><a href="http://inner-product.com/services/consulting/">Our Consulting Services</a></li>
+          <li><a href="http://inner-product.com/about/">About Us</a></li>
         </ul>
       </div>
 
-      <div class="col-sm-6">
-        <h5><a href="http://underscore.io/contact">Contact</a></h5>
+      <div class="col">
+        <h5><a href="http://inner-product.com/contact">Contact</a></h5>
         <ul class="list-unstyled">
-          <li><a href="http://underscore.io">http://underscore.io</a></li>
-          <li><a href="tel:+442030955332">+44 (0)20 309 55332</a></li>
-          <li><a href="mailto:hello@underscore.io">hello@underscore.io</a></li>
-          <li><a href="http://twitter.com/underscoreuk">@underscoreuk</a></li>
+          <li><a href="http://inner-product.com">http://inner-product.com</a></li>
+          <li><a href="mailto:hello@inner-product.com">hello@inner-product.com</a></li>
+          <li><a href="http://twitter.com/InnerProductLLC">@InnerProductLLC</a></li>
         </ul>
       </div>
     </div>
 
-    <p class="copyright text-center">
+    <div class="small">
+    <p>Functional Programming Strategies In Scala with
+Cats is published by Inner Product</p>
+    <p>
       Copyright 2022-24 Noel Welsh.
+    </p>
+    <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/">
+      <span property="dct:title">Functional Programming Strategies in Scala with Cats</span>
+      is licensed under
+      <a href="http://creativecommons.org/licenses/by-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-SA 4.0</a>
+    </p>
+    <p>
+      Portions of Functional Programming in Scala with Cats are based on Scala with Cats, by Dave Gurnell and Noel Welsh. Scala with Cats is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
     </p>
   </div>
 </footer>
