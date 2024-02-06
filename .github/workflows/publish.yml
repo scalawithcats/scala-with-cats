@@ -13,13 +13,13 @@ jobs:
         id: download-java
         with:
           distribution: 'temurin'
-          java-version: 21
+          java-version: 17
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'jdkfile'
-          java-version: 21
+          java-version: 17
           jdkFile: ${{ steps.download-java.outputs.jdkFile }}
 
       - name: Setup Node
