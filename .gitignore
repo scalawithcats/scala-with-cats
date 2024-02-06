@@ -89,8 +89,6 @@ typings/
 # nuxt.js build output
 .nuxt
 
-# rollup.js default build output
-dist/
 
 # Uncomment the public line if your project uses Gatsby
 # https://nextjs.org/blog/next-9-1#public-directory-support
@@ -121,7 +119,7 @@ temp/
 # Simple Build Tool
 # http://www.scala-sbt.org/release/docs/Getting-Started/Directories.html#configuring-version-control
 
-dist/*
+/dist/*
 target/
 lib_managed/
 src_managed/

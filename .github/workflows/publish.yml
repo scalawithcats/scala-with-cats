@@ -78,7 +78,6 @@ jobs:
 
       - name: Copy book to site
         run: |
-          mkdir site/dist
           mv dist/* site/dist
 
       - name: Publish site
