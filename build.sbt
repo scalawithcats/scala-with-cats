@@ -191,7 +191,7 @@ htmlSetup := {
 epubSetup := {
   "mkdir -p dist src/temp".!
   "npm install".!
-  "npx lessc --include-path=node_modules --strict-imports src/less/epub.less src/temp/epub.css".!
+  "npx sass --load-path=node_modules src/scss/epub.scss src/temp/epub.css".!
 }
 
 texSetup := {
