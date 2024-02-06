@@ -1,7 +1,5 @@
 # Preface {-}
 
-## Preface to Functional Programming Strategies {-}
-
 This book in a stop along a journey that started about ten years ago with *Scala with Cats*.
 In *Scala with Cats* Dave and I attempted to explain the core type classes found in the Cats library, and their use in building software.
 We wrote what I think is a pretty good book, but time and experience showed us that something was lacking.

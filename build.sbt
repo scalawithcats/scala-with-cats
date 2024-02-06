@@ -37,6 +37,8 @@ lazy val pages = List(
   "preface/conventions.md",
   "preface/contributors.md",
   "preface/backers.md",
+  "preface/license.md",
+  // Intro
   "intro/index.md",
   "intro/three-levels.md",
   "intro/what-is-fp.md",
