@@ -3,15 +3,15 @@
 A question that sometimes comes up is where the "algebra" in algebraic data types comes from. I want to talk about this a little bit and show some of the algebraic manipulations that can be done on algebraic data types.
 
 The term algebra is used in the sense of abstract algebra, an area of mathematics.
-Abstract algebra deals with algebraic data structures. 
+Abstract algebra deals with algebraic structures. 
 An algebraic structure consists of a set of values, operations on that set, and properties that those operations must maintain.
 An example is the set of integers, the operations addition and multiplication, and the familiar properties of these operations such as associativity, which says that $a + (b + c) = (a + b) + c$.
-The abstract in abstract algebra means that the field doesn't deal with concrete values like integers---that would be far too easy to understand---and instead with abstractions with wacky names like semigroup and monoid.
+The abstract in abstract algebra means that it doesn't deal with concrete values like integers---that would be far too easy to understand---and instead with abstractions with wacky names like semigroup, monoid, and ring.
 The example of integers above is an instance of a ring.
 We'll see a lot more of these soon enough!
 
 Algebraic data types also correspond to the algebraic structure called a ring.
-A ring has two operations, which are conventionally denoted with $+$ and $\times$.
+A ring has two operations, which are conventionally written $+$ and $\times$.
 You'll perhaps guess that these correspond to sum and product types respectively, and you'd be absolutely correct.
 What about the properties of these operations?
 We'll they are similar to what we know from basic algebra:
@@ -111,7 +111,7 @@ enum Person {
 }
 ```
 
-Is this representation more useful? I can't say without the context of where the code is being used. However I can say that knowing this manipulation is possible, and correct, is useful.
+Is this representation more useful? I can't say without the context of where the data is being used. However I can say that knowing this manipulation is possible, and correct, is useful.
 
 There is a lot more that could be said about algebraic data types, but at this point I feel we're really getting into the weeds.
 I'll finish up with a few pointers to other interesting facts:

@@ -49,7 +49,7 @@ lazy val pages = List(
   "adt/scala.md",
   "adt/structural-recursion.md",
   "adt/structural-corecursion.md",
-  "adt/applications.md",
+  // "adt/applications.md",
   "adt/algebra.md",
   "adt/conclusions.md",
   // Objects as Codata

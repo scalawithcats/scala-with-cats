@@ -3,18 +3,19 @@
 Structural corecursion is the opposite—more correctly, the dual—of structural recursion.
 Whereas structural recursion tells us how to take apart an algebraic data type, 
 structural corecursion tells us how to build up, or construct, an algebraic data type.
-We can use structural corecursion whenever the output of a method or function is an algebraic data type.
+Whereas we can use structural recursion whenever the input of a method or function is an algebraic data type,
+we can use structural corecursion whenever the output of a method or function is an algebraic data type.
 
 
 <div class="callout callout-info">
 #### Duality in Functional Programming
 
-Duality means that there is some concept or structure that can be translated in a one-to-one fashion to some other concept or structure.
-Duality is often indicated by attaching the co- prefix to a term.
-So corecursion is the dual of recursion, and sum types, also known as coproducts, are the dual of product types.
-
+Two concepts or structures are duals if one can be translated in a one-to-one fashion to the other.
 Duality is one of the main themes of this book.
 By relating concepts as duals we can transfer knowledge from one domain to another.
+
+Duality is often indicated by attaching the co- prefix to one of the structures or concepts.
+For example, corecursion is the dual of recursion, and sum types, also known as coproducts, are the dual of product types.
 </div>
 
 
@@ -48,7 +49,7 @@ enum MyList[A] {
 }
 ```
 
-The output of this method is a `MyList`.
+The output of this method is a `MyList`, which is an algebraic data type.
 Since we need to construct a `MyList` we can use structural corecursion.
 The structural corecursion strategy says we write down all the constructors and then consider the conditions that will cause us to call each constructor.
 So our starting point is to just write down the two constructors, and put in dummy conditions.
@@ -173,7 +174,7 @@ We will also define `fill` and `iterate`, which are methods that construct lists
 To make this easier to work with I'm going to declare `unfold` as a method on the `MyList` companion object. 
 I have made a slight tweak to the definition to make type inference work a bit better.
 In Scala, types inferred for one method parameter cannot be used for other method parameters in the same parameter list.
-However, types inferred for one method parameter list can be used in subsequenst lists.
+However, types inferred for one method parameter list can be used in subsequent lists.
 Separating the function parameters from the `seed` parameter means that the value inferred for `A` from `seed` can be used for inference of the function parameters' input parameters.
 
 I have also declared some **destructor** methods, which are methods that take apart an algebraic data type.
@@ -329,6 +330,10 @@ We should check that our implementation works as intended. We can do this by com
 List.fill(5)(1)
 MyList.fill(5)(1)
 ```
+
+Here's a slightly more complex example, using a stateful method to create a list of ascending numbers.
+First we define the state and method that uses it.
+
 ```scala mdoc:silent
 var counter = 0
 def getAndInc(): Int = {
@@ -337,6 +342,9 @@ def getAndInc(): Int = {
   temp 
 }
 ```
+
+Now we can create it to create lists.
+
 ```scala mdoc:to-string
 List.fill(5)(getAndInc())
 counter = 0

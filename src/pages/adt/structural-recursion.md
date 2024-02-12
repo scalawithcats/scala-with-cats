@@ -472,7 +472,7 @@ def map[B](f: A => B): Tree[B] =
   }
 ```
 
-This is the point of structural recursion: we recognize and formalize this similarity.
+This is the point of structural recursion: to recognize and formalize this similarity.
 However, as programmers we might want to abstract over this repetition.
 Can we write a method that captures everything that doesn't change in a structural recursion, and allows the caller to pass arguments for everything that does change?
 It turns out we can. For any algebraic data type we can define at least one method, called a fold, that captures all the parts of structural recursion that don't change and allows the caller to specify all the problem specific parts.
@@ -513,7 +513,7 @@ To complete `fold` we add method parameters for the problem specific (`???`) par
 In the case for `Empty`, we need a value of type `B` (notice that I'm following the types here).
 
 ```scala
-def fold[A,B](list: MyList[A], empty: B): B =
+def fold[A, B](list: MyList[A], empty: B): B =
   list match {
     case Empty() => empty
     case Pair(head, tail) => ??? fold(tail, empty)
@@ -526,7 +526,7 @@ For the `Pair` case, we have the head of type `A` and the recursion producing a 
 import MyList.*
 ```
 ```scala mdoc:silent
-def foldRight[A,B](list: MyList[A], empty: B, f: (A, B) => B): B =
+def foldRight[A, B](list: MyList[A], empty: B, f: (A, B) => B): B =
   list match {
     case Empty() => empty
     case Pair(head, tail) => f(head, foldRight(tail, empty, f))
@@ -547,7 +547,7 @@ def foldLeft[A,B](list: MyList[A], empty: B, f: (A, B) => B): B =
 ```
 
 which is `foldLeft`, the tail-recursive variant of fold for a list.
-(We'll talk about tail-recursion in the next chapter.)
+(We'll talk about tail-recursion in a later chapter.)
 
 We can follow the same process for any algebraic data type to create its folds. 
 The rules are:
