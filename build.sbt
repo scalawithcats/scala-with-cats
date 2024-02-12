@@ -54,6 +54,7 @@ lazy val pages = List(
   "adt/conclusions.md",
   // Objects as Codata
   "codata/index.md",
+  "codata/functions.md",
   // Contextual Abstraction
   "type-classes/index.md",
   "type-classes/anatomy.md",

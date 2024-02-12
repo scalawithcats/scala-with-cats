@@ -3,24 +3,14 @@
 In this chapter we will look at objects and classes as the dual of algebraic data types, also known as **codata**.
 We'll see that we can transform algebraic data into codata, and vice versa, but that each has different properties that sometimes makes one preferrable over the other.
 
-Classes and objects are familiar to most programmers. Part of their appeal is that they can express so many conceptually different abstractions. For example, we can use objects to express functions, modules, and data. This gives them the surface appearance of simplicity. It seems we need to learn only one abstraction to solve a huge of number of tasks. However this apparent simplicity hides a lot of complexity in actual use. When we come to, say, read others' code, we need to work out the underlying concepts that are encoded in objects and classes.
+Classes and objects are familiar to most programmers. Part of their appeal is that they can express so many conceptually different abstractions. For example, we can use objects to express functions, modules, and data (and we'll see these all in this book). This gives them a surface appearance of simplicity; it seems we need to learn only one abstraction to solve a huge of number of coding problems. However this apparent simplicity hides real complexity, as this variety of uses forces us to reverse engineer the conceptual intention from the code.
 
-Our approach here will limit the object-oriented features we use to a manageable subset. We won't use implementation inheritance, overriding, or state. This gives us a subset of object-oriented code that is easy to reason about and fits within the conceptual model we are building.
+Here we will limit the object-oriented features we use to a manageable subset. We won't use implementation inheritance, overriding, or state. This gives us a subset of object-oriented code that is easy to reason about and fits within the conceptual model we are building.
 
 
 ## Data vs Codata
 
-The core distinction between data and codata is that data focuses on what things are, while codata focuses on what things can do. Data is transparent: we can inspect the values stored inside data.
-
-- What things are vs what we can do with them
-- Algebraic data types focuses on what things are. They are transparent. We know everything about them.
-- Codata focuses on what things can do. They are opaque. We know only what we can do with them. I.e. their interface.
-
-## Functions as Codata
-
-- Functions as codata.
-- In the previous chapter we had the example of HTTP requests and responses as algebraic data types. What about a request handler: something that processes a web request.
-- A function ~Request => Response~. We don't know what is inside it. Only know that we can apply it to a ~Request~ and get a ~Response~. Not the most interesting representation because there is only action. We'll see more interesting ones in a moment.
+The core distinction between data and codata is that data describes what things are, while codata describes what things can do. Data is transparent. If we have an instance of an algebraic data type can inspect all the values stored inside it, by using a pattern match for example. If have an instance of codata we don't know what is inside it, but we do know the operations we can perform on the instance. If you come from the object-oriented world you will recognize this as programming to an interface. In many ways codata is just cleaning up concepts from the object-oriented world and presenting them in a way that is consistent with the rest of the functional programming paradigm.
 
 
 ## Codata in Scala
