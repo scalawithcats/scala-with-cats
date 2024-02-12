@@ -1,17 +1,27 @@
 # Preface {-}
 
-This book in a stop along a journey that started about ten years ago with *Scala with Cats*.
-In *Scala with Cats* Dave and I attempted to explain the core type classes found in the Cats library, and their use in building software.
-We wrote what I think is a pretty good book, but time and experience showed us that something was lacking.
-Type classes are only a small piece of the puzzle of building effective software in a functional programming style.
-If we wanted to write a book that laid out what we had learned in over a decade of building software, we needed a much wider scope.
-Still, writing a book is a lot of work, and we were busy with other projects, so *Scala with Cats* remained largely untouched.
+Some twenty years ago I started my first job in the UK.
+This job involved a commute by train, giving me about an hour a day to read without distraction.
+Around about the same time I first heard about *Structure and Interpretation of Computer Programs*, referred to as the "wizard book" and spoken of in reverential terms.
+It sounded like the just the thing for a recent graduate looking to become a better developer.
+I purchased a copy and spent the journey reading it, doing most of the exercises in my head.
+*Structure and Interpretation of Computer Programs* was already an old book at this time, and it's programming style was archaic.
+However it's core concepts were timeless and it's fair to say it absolutely blew my mind, putting me on a path I'm still on today.
 
-Around 2020 I got the itch to return to *Scala with Cats*, and add the material that I thought was needed to make it a truly great book.
-Dave was busy with other projects so I decided to go alone, building on the foundation of *Scala with Cats* to produce what I hoped would be a truly useful book.
-As the writing got underway I realized that the title *Scala with Cats* no longer fit the content, and hence adopted a new name for what is largely a new book.
+Another notable stop on this path occured some ten years ago when Dave and I started writing *Scala with Cats*.
+In *Scala with Cats* we attempted to explain the core type classes found in the Cats library, and their use in building software.
+I'm proud of the book we wrote together, but time and experience showed that type classes are only a small piece of the puzzle of building software in a functional programming style.
+We needed a much wider scope if we were to show people how to effectively build software with all the tools that functional programming provides.
+Still, writing a book is a lot of work, and we were busy with other projects, so *Scala with Cats* remained largely untouched for many years.
+
+Around 2020 I got the itch to return to *Scala with Cats*.
+My initial plan was simply to update the book for Scala 3.
+Dave was busy with other projects so I decided to go alone.
+As the writing got underway I realized I really wanted to cover the additional topics I thought were missing.
+If *Scala with Cats* was a good book, I wanted to aim to write a great book; one that would contain almost everything I had learned about building software.
+The title *Scala with Cats* no longer fit the content, and hence I adopted a new name for what is largely a new book.
 The result, *Functional Programming Strategies in Scala with Cats*, is what you are reading now.
-I hope I've succeeded, and you find reading this book as interesting as I've have found writing it.
+I hope you find it useful, and I hope that just maybe some young developer will find this book inspiring the same way I found *Structure and Interpretation of Computer Programs* inspiring all those years ago.
 
 
 ## Preface from Scala with Cats {-}

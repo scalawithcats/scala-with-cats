@@ -1,6 +1,6 @@
 ## Three Levels for Thinking About Code
 
-Let's start thinking about thinking about programming with a model that describes three different levels that we can use to describe about code. The levels, from highest to lowest, are paradigm, theory, and craft. Each level provides guidance for the ones below.
+Let's start thinking about thinking about programming, with a model that describes three different levels that we can use to think about code. The levels, from highest to lowest, are paradigm, theory, and craft. Each level provides guidance for the ones below.
 
 The paradigm level refers to the programming paradigm, such as object-oriented or functional programming. You're probably familiar with these terms, but what exactly is a programming paradigm? To me, the core of a programming paradigm is a set of principles that define, usually somewhat loosely, the properties of good code. A paradigm is also, implicitly, a claim that code that follows these principles will be better than code that does not. For functional programming I believe these principles are composition and reasoning. I'll explain these shortly. Object-oriented programmers might point to, say, the SOLID principles as guiding their coding decisions.
 

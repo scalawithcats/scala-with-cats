@@ -8,7 +8,7 @@ Thanks Dave!
 
 Thanks also to Adam Rosien, who gave me low-key encouragement and put up with my bullshit. Also my wife and children, who put up with even more of my bullshit, and gave me the space to finish this project.
 The members of ScalaBridge London and attendees at various training courses acted as experimental subjects for a lot of the material here. Thank you for being willing test subjects; you greatly helped improve the content.
-Finally, thanks for the members of the PLT research group who set me on this path over two decades ago and continue to provide inspiration from afar.
+Finally, thanks for the members of the PLT research group who inspired me directly back in the day, and continue to provide inspiration from afar.
 
 
 ### Acknowledgements from Scala with Cats {-}
