@@ -21,9 +21,9 @@ We have corresponding rules for structural recursion implemented using pattern m
 
 Let's see this in code, using an example ADT that includes both sum and product types:
 
-- `A` is a `B` or `C`; and
-- `B` is a `D` and `E`; and
-- `C` is a `F` and `G`
+- `A` is `B` or `C`; and
+- `B` is `D` and `E`; and
+- `C` is `F` and `G`
 
 which we represent (in Scala 3) as
 
@@ -125,7 +125,7 @@ Now we can move on to the problem specific parts.
 Here we have three strategies to help us:
 
 1. reasoning independently by case; 
-2. assuming recursion is correct; and
+2. assuming recursion the is correct; and
 3. following the types
 
 The first two are specific to structural recursion, while the final one is a general strategy we can use in many situations.
@@ -156,7 +156,7 @@ enum MyList[A] {
 }
 ```
 
-Our first strategy is to consider the cases independently. Let's start with the `Empty` case. There is no recursive call here, so reasoning using structural recursion doesn't come into play. Let's instead use the types. There is no input here other than the `Empty` case we have already matched, so we cannot use the input types to further restrict the code. However can use the output types. We're trying to create a `MyList[B]`. There are only two ways to create a `MyList[B]`: an `Empty` or a `Pair`. To create a `Pair` we need a `head` of type `B`, which we don't have. So we can only use `Empty`. *This is the only possible code we can write*. The types are sufficiently restrictive that we cannot write incorrect code for this case.
+Our first strategy is to consider the cases independently. Let's start with the `Empty` case. There is no recursive call here, so reasoning about recursion doesn't come into play. Let's instead use the types. There is no input here other than the `Empty` case we have already matched, so we cannot use the input types to further restrict the code. Let's instead consider the output type. We're trying to create a `MyList[B]`. There are only two ways to create a `MyList[B]`: an `Empty` or a `Pair`. To create a `Pair` we need a `head` of type `B`, which we don't have. So we can only use `Empty`. *This is the only possible code we can write*. The types are sufficiently restrictive that we cannot write incorrect code for this case.
 
 ```scala
 enum MyList[A] {
@@ -248,7 +248,7 @@ CssLength.Em(2.0) match {
 ```
 
 Exhaustivity checking is incredibly useful.
-For example, if we add or remove a case from an algebraic data type, the compiler will us all the pattern matches that need to be updated.
+For example, if we add or remove a case from an algebraic data type, the compiler will tell us all the pattern matches that need to be updated.
 
 
 ### Dynamic Dispatch

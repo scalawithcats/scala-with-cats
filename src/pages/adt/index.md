@@ -25,12 +25,12 @@ A product in an e-commerce store might have a stock keeping unit (a unique ident
 
 In two-dimensional vector graphics it's typical to represent shapes as a path, which is a sequence of actions of a virtual pen. The possible actions are usually straight lines, Bezier curves, or movement that doesn't result in visible output. A straight line has an end point (the starting point is implicit), a Bezier curve has two control points and an end point, and a move has an end point.
 
-What is common between all the examples above is that the individual elements---the atoms, if you like---are connected by either a logical and or a logical or. For example, a user is a screen name **and** an email address **and** a password **and** a role. A 2D action is a straight line **or** a Bezier curve **or** a move. This is the core of algebraic data types: an algebraic data type is data that is combined using logical ands or logical ors. Conversely, whenever we can describe data in terms of logical ands and logicals or we have an algebraic data type. 
+What is common between all the examples above is that the individual elements---the atoms, if you like---are connected by either a logical and or a logical or. For example, a user is a screen name *and* an email address *and* a password *and* a role. A 2D action is a straight line *or* a Bezier curve *or* a move. This is the core of algebraic data types: an algebraic data type is data that is combined using logical ands or logical ors. Conversely, whenever we can describe data in terms of logical ands and logical ors we have an algebraic data type. 
 
 
 ### Sums and Products
 
-Being functional programmers, we can't let a simple concept go without attaching some fancy jargon:
+Being functional programmers we can't let a simple concept go without attaching some fancy jargon:
 
 - a **product type** means a logical and; and
 - a **sum type** means a logical or.
@@ -42,4 +42,4 @@ So algebraic data types consist of sum and product types.
 
 Algebraic data types are closed worlds, which means they cannot be extended after they have been defined. In practical terms this means we have to modify the source code where we define the algebraic data type if we want to add or remove elements.
 
-The closed world property is important because it gives us guarantees we would not otherwise have. In particular, it allows the compiler to check, when we use an algebraic data type, that we handle all possible cases and alert us if we don't. This is known as **exhaustivity checking**. This is an example of how functional programming prioritizes reasoning about code---in this case automated reasoning by the compiler---over other properties such as extensibility. We'll learn more about exhaustivity checking soon.
+The closed world property is important because it gives us guarantees we would not otherwise have. In particular, it allows the compiler to check that we handle all possible cases when we use an algebraic data type. This is known as **exhaustivity checking**. This is an example of how functional programming prioritizes reasoning about code---in this case automated reasoning by the compiler---over other properties such as extensibility. We'll learn more about exhaustivity checking soon.

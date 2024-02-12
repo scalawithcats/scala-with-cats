@@ -1,15 +1,15 @@
 ## Algebraic Data Types in Scala 
 
-Now we know what algebraic data types are, we can turn to their representation in Scala. The important point here is that the translation to Scala is entirely determined by the structure of the data; no thinking is required! This means the work is in finding the structure of the data that best represents the problem at hand. Work out the structure of the data and the code directly follows from it.
+Now we know what algebraic data types are, we will turn to their representation in Scala. The important point here is that the translation to Scala is entirely determined by the structure of the data; no thinking is required! This means the work is in finding the structure of the data that best represents the problem at hand. Work out the structure of the data and the code directly follows from it.
 
-As algebraic data types are defined in terms of logical ands and logical ors, to represent algebraic data types in Scala we must know how to represent these two concepts in Scala. Scala 3 simplifies the representation of algebraic data types compared to Scala 2, so we'll look at each language version separately.
+As algebraic data types are defined in terms of logical ands and logical ors, to represent algebraic data types in Scala we must know how to represent these two concepts. Scala 3 simplifies the representation of algebraic data types compared to Scala 2, so we'll look at each language version separately.
 
-I'm assuming that you're familiar with the language features we use to represent algebraic data types in Scala, but not with their correspondence to algebraic data types.
+I'm assuming that you're familiar with the language features we use to represent algebraic data types in Scala, so I won't be going over them.
 
 
 ### Algebraic Data Types in Scala 3
 
-In Scala 3 a logical and (a product type) is represented by a `final case class`. If we define a product type `A` is `B` **and** `C`, the representation in Scala 3 is
+In Scala 3 a logical and (a product type) is represented by a `final case class`. If we define a product type `A` is `B` *and* `C`, the representation in Scala 3 is
 
 ```scala
 final case class A(b: B, c: C)
@@ -18,7 +18,7 @@ final case class A(b: B, c: C)
 Not everyone makes their case classes `final`, but they should. A non-`final` case class can still be extended by a class, which breaks the closed world criteria for algebraic data types.
 
 
-A logical or (a sum type) is represented by an `enum`. For the sum type `A` is a `B` **or** `C` the Scala 3 representation is
+A logical or (a sum type) is represented by an `enum`. For the sum type `A` is `B` *or* `C`, the Scala 3 representation is
 
 ```scala
 enum A {
@@ -31,9 +31,9 @@ There are a few wrinkles to be aware of.
 
 If we have a sum of products, such as:
 
-- `A` is a `B` or `C`; and
-- `B` is a `D` and `E`; and
-- `C` is a `F` and `G`
+- `A` is `B` or `C`; and
+- `B` is `D` and `E`; and
+- `C` is `F` and `G`
 
 the representation is
 
@@ -49,13 +49,13 @@ In other words we don't write `final case class` inside an `enum`. You also can'
 
 ### Algebraic Data Types in Scala 2
 
-A logical and (product type) has the same representation in Scala 2 as in Scala 3. If we define a product type `A` is `B` **and** `C`, the representation in Scala 2 is
+A logical and (product type) has the same representation in Scala 2 as in Scala 3. If we define a product type `A` is `B` *and* `C`, the representation in Scala 2 is
 
 ```scala
 final case class A(b: B, c: C)
 ```
 
-A logical or (a sum type) is represented by a `sealed abstract class`.  For the sum type `A` is a `B` **or** `C` the Scala 2 representation is
+A logical or (a sum type) is represented by a `sealed abstract class`.  For the sum type `A` is a `B` *or* `C` the Scala 2 representation is
 
 ```scala
 sealed abstract class A
@@ -65,7 +65,7 @@ final case class C() extends A
 
 Scala 2 has several little tricks to defining algebraic data types.
 
-Firstly, instead of using a `sealed abstract class` you can use a `sealed trait`. There isn't much practical difference between the two. When teaching beginners I'll often use `sealed trait` to avoid having to introduce `abstract class`. I believe `sealed abstract class` has slightly better performance and Java interoperability but I haven't tested this. I also think `sealed abstract class` is closer, semantically, to the meaning of a sum type.
+Firstly, instead of using a `sealed abstract class` you can use a `sealed trait`. There isn't much practical difference between the two. When teaching beginners I'll often use `sealed trait` to avoid having to introduce `abstract class`. I believe `sealed abstract class` has slightly better performance and Java interoperability, but I haven't tested this. I also think `sealed abstract class` is closer, semantically, to the meaning of a sum type.
 
 For extra style points we can `extend Product with Serializable` from `sealed abstract class`. Compare the reported types below with and without this little addition.
 
@@ -140,16 +140,20 @@ The cases within a role don't hold any data, so we used a `case object` in the S
 We defined a user as a screen name, an email address, a password, and a role. In both Scala 3 and Scala 2 this becomes
 
 ```scala mdoc:silent
-final case class User(screenName: String, emailAddress: String, password: String, role: Role)
+final case class User(
+  screenName: String,
+  emailAddress: String,
+  password: String,
+  role: Role
+)
 ```
 
-I've used `String` to represent most of the data within a `User`, but in real code we might want to define separate types for each field.
+I've used `String` to represent most of the data within a `User`, but in real code we might want to define distinct types for each field.
 
 
 #### Paths
 
-We defined a path as a sequence of actions of a virtual pen. The possible actions are usually straight lines, Bezier curves, or movement that doesn't result in visible output. A straight line has an end point (the starting point is implicit), a Bezier curve has two control points and an end point, and a move has an end point. 
-
+We defined a path as a sequence of actions of a virtual pen. The possible actions are straight lines, Bezier curves, or movement that doesn't result in visible output. A straight line has an end point (the starting point is implicit), a Bezier curve has two control points and an end point, and a move has an end point. 
 
 This has a straightforward translation to Scala. We can represent paths as the following in both Scala 3 and Scala 2.
 
@@ -183,7 +187,8 @@ type Point = Int
 ```scala mdoc:silent
 sealed abstract class Action extends Product with Serializable 
 final case class Line(end: Point) extends Action
-final case class Curve(cp1: Point, cp2: Point, end: Point) extends Action
+final case class Curve(cp1: Point, cp2: Point, end: Point)
+  extends Action
 final case class Move(end: Point) extends Action
 ```
 
