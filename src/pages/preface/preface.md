@@ -14,7 +14,7 @@ The result, *Functional Programming Strategies in Scala with Cats*, is what you 
 I hope I've succeeded, and you find reading this book as interesting as I've have found writing it.
 
 
-## Preface to Scala with Cats {-}
+## Preface from Scala with Cats {-}
 
 The aims of this book are two-fold:
 to introduce monads, functors, and other functional programming patterns
