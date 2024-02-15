@@ -2,19 +2,11 @@
 
 In this chapter we will look at **codata**, the dual of algebraic data types.
 We'll see that codata encompasses a large subset of object-oriented programming, whilst putting object-oriented features into a coherent conceptual framework with functional programming concepts such as algebraic data types.
-We'll start by describing codata. We'll then look at the relationship between codata and algebraic data types, and see how we can transform one into the other. Having seen how they are related, we will next look at the differences, which gives guidance on when to choose each representation. We will finish with a case study **todo**.
+We'll start by describing codata and seeing some examples. We'll then look at the relationship between codata and algebraic data types, and see how we can transform one into the other. Having seen how they are related, we will next look at the differences, which gives guidance on when to choose each representation. We will finish with a case study **todo**.
 
 
 
 
-- What codata is. What is vs what can do.
-  - Programming to an interface
-  - Sounds like OO, but we restrict ourselves
-- Examples
-  - Boolean
-  - Set
-- Relationship to algebraic data types
-  - Connected by fold
   - What about differences?
     - Finite vs infinite
     - Lazy vs eager

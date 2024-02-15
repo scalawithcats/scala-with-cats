@@ -91,7 +91,8 @@ final class IndicatorSet[A](indicator: A => Boolean, elements: Set[A])
     new IndicatorSet(indicator, that.union(elements))
 }
 object IndicatorSet {
-  def apply[A](f: A => Boolean): Set[A] = new IndicatorSet(f, ListSet.empty)
+  def apply[A](f: A => Boolean): Set[A] = 
+    new IndicatorSet(f, ListSet.empty)
 }
 ```
 
@@ -122,7 +123,7 @@ enum Bool {
 }
 ```
 
-We can also represent booleans as codata. There are many operations on booleans (for example, and, or, xor, not, and so on) but we can define all of them in terms of a simple and familiar operation, `if`.
+We can also represent booleans as codata. There are many operations on booleans (for example, `and`, `or`, `xor`, `not`, and so on) but we can define all of them in terms of a simple and familiar operation, `if`.
 
 ```scala mdoc:reset:silent
 trait Bool {
@@ -163,3 +164,39 @@ and(True, False).`if`("yes")("no")
 and(False, True).`if`("yes")("no")
 and(False, False).`if`("yes")("no")
 ```
+
+#### Exercise: Or and Not {-}
+
+Test your understanding of `Bool` by implementing `or` and `not` in the same way we implemented `and` above.
+
+<div class="solution">
+We can follow the same structure as `and`.
+
+```scala mdoc:silent
+def or(l: Bool, r: Bool): Bool =
+  new Bool {
+    def `if`[A](t: A)(f: A): A =
+      l.`if`(True)(r).`if`(t)(f)
+  }
+
+def not(b: Bool): Bool =
+  new Bool {
+    def `if`[A](t: A)(f: A): A =
+      b.`if`(False)(True).`if`(t)(f)
+  }
+```
+
+Once again, we can test the entire truth table.
+
+```scala mdoc
+or(True, True).`if`("yes")("no")
+or(True, False).`if`("yes")("no")
+or(False, True).`if`("yes")("no")
+or(False, False).`if`("yes")("no")
+
+not(True).`if`("yes")("no")
+not(False).`if`("yes")("no")
+```
+</div>
+
+There are a couple of important points to note about this example. Firstly, it hints at a connection between data and codata, as we could define `Bool` as either an algebraic data type or as codata. We'll look at this relationship more formally in just a moment. Notice that, once again, computation only happens on demand. In this case, nothing happens until `if` is actually called. Until that point we're just building up a representation of what we want to happen. This again points to the fact that codata can handle infinite data, by only computing the finite amount required by the actual computation.
