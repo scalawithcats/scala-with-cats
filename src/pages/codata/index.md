@@ -36,14 +36,6 @@ We will limit the object-oriented features we use to a subset that is easy to re
 
 
 
-## Codata in Scala
-
-- Representing codata in Scala is probably familiar to most.
-- ~trait~, abstract methods to define an interface
-- ~class~ to define concrete implementations
-- Sane use of object oriented features: we don't have deep inheritance hierarchies. In fact we generally don't want to use any non-trivial inheritance. (Trivial = extending an interface.)
-- Example: set with `union`, `contains`, `insert`, and `isEmpty` as interface. Note we can represent infinite data (set of even numbers for example)
-
 ## Data versus Codata
 
 - Converting between algebraic data types and codata. Church encoding or Boehm-Berarducci encoding. I call it **functionalization** for simplicity. Show Church-encoded list. This is fold! Fold connects algebraic data types and codata.

@@ -109,7 +109,7 @@ final class Empty[A]() extends List[A] {
 }
 ```
 
-I didn't implement the bodies of` foldRight` so I could show this as a separate step. The implementation here directly mirrors `foldRight` on the data implementation, and we can use the strategies to implement the codata equivalents. That is to say, we can use the recursion rule, reasoning by case, and following the types. I'm going to skip these details as we've already gone through them in depth.
+I didn't implement the bodies of` foldRight` so I could show this as a separate step. The implementation here directly mirrors `foldRight` on the data implementation, and we can use the same strategies to implement the codata equivalents. That is to say, we can use the recursion rule, reasoning by case, and following the types. I'm going to skip these details as we've already gone through them in depth. The final code is shown below.
 
 ```scala mdoc:silent
 final class Pair[A](head: A, tail: List[A]) extends List[A] {
@@ -124,3 +124,43 @@ final class Empty[A]() extends List[A] {
 ```
 
 This code is almost the same as the dynamic dispatch implementation, which again shows the relationship between codata and object-oriented code.
+
+The transformation from data to codata goes under several names: **refunctionalization**, **Church encoding**, and **Böhm-Berarducci encoding**. The latter two terms specifically refer to transformations into the untyped and typed lambda calculus respectively. The lambda calculus is a simple model programming language that contains only functions. We're going to take a quick detour to show that we can, indeed, encode lists using just functions. This demonstrates that objects and functions have equivalent power.
+
+The starting point is creating a type alias `List`, which defines a list as a fold. This uses a polymorphic function type, which is new in Scala 3. Inspect the type signature and you'll see it is the same as `foldRight` above.
+
+```scala mdoc:reset:silent
+type List[A, B] = (B, (A, B) => B) => B
+```
+Now we can define `Pair` and `Empty` as functions.
+
+```scala mdoc:silent
+val Empty: [A, B] => () => List[A, B] = 
+  [A, B] => () => (empty, f) => empty
+
+val Pair: [A, B] => (A, List[A, B]) => List[A, B] =
+  [A, B] => (head: A, tail: List[A, B]) => (empty, f) => f(head, tail(empty, f))
+```
+
+Finally, let's see an example to show it working.
+Firstly define the list containing `1`, `2`, `3`.
+Due to a restriction in polymorphic function types, I have to add the useless empty parameter.
+
+```scala mdoc:silent
+val list: [B] => () => List[Int, B] = [B] => () => Pair(1, Pair(2, Pair(3, Empty())))
+```
+
+Now let's compute the sum and product of the elements in this list.
+
+```scala mdoc
+val sum = list()(0, (a, b) => a + b)
+val product = list()(1, (a, b) => a * b)
+```
+
+It works!
+
+The purpose of this little demonstration is to show that functions are just objects (in the codata sense) with a single method. Scala this makes apparent, as functions *are* objects with an `apply` method.
+
+We've seen that data can be translated to codata. The reverse is also possible: we simply tabulate the results of each possible method call. In other words, the data representation is memoisation, a lookup table, or a cache. I won't go into the details here as I haven't found this useful in practice.
+
+At this point you might be wondering why we would bother with codata, if we can convert one to the other. We've already seen one difference: the ability to represent infinite data. We'll discuss this more in the next section, and then look at another difference, which is in how data and codata allow extensibility.
