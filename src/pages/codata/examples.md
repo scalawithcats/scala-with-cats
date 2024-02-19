@@ -61,7 +61,8 @@ Let's define a few sets using `EvenSet` and `ListSet`.
 
 ```scala mdoc:silent
 val evensAndOne = EvenSet.evens.insert(1)
-val evensAndOthers = EvenSet.evens.union(ListSet.empty.insert(1).insert(3))
+val evensAndOthers = 
+  EvenSet.evens.union(ListSet.empty.insert(1).insert(3))
 ```
 
 Now show that they work as expected.
@@ -96,7 +97,7 @@ object IndicatorSet {
 }
 ```
 
-To test this, let's define the infinite set of odd numbers.
+To test this, let's define the infinite set of odd integers.
 
 ```scala mdoc:silent
 val odds = IndicatorSet[Int](_ % 2 == 1)
@@ -110,7 +111,21 @@ odds.contains(2)
 odds.contains(3)
 ```
 
-There are several points we should take from this example. Firstly, we've seen that codata is in fact useful. Mixing different implementations of the same interface allows us create abstractions that we would not otherwise be able to do. The example we've used is typical of what you might see in an object-oriented textbook, so perhaps it's not too surprising to you. Notice that several of the implementations represent an infinite set. This is something that only codata can do. Data must be built up from the base cases in any recursive type, and so must be finite. Codata, being defined only in terms of its operations, only needs to compute the finite amount required by the operations that are used, not the infinite amount required to compute what it is.
+Taking the union of even and odd integers gives us a set that contains all integers.
+
+```scala mdoc:silent
+val integers = EvenSet.evens.union(odds)
+```
+
+It has the expected behaviour.
+
+```scala mdoc
+integers.contains(1)
+integers.contains(2)
+integers.contains(3)
+```
+
+There are several points we should take from this example. Firstly, we've seen that codata is in fact useful. Mixing different implementations of the same interface allows us create abstractions that we would not otherwise be able to do. The example we've used is typical of what you might see in an object-oriented textbook, so perhaps it's not too surprising to you. Notice that several of the implementations represent an infinite set. This is something that only codata can do. Data must be built up from the base cases in its definition, and so must be finite. Codata, being defined only in terms of its operations, only needs to compute the finite amount required by the operations that are used, not the infinite amount required to compute what it is.
 
 In the next section we'll look at the Scala language features we can use in defining codata. First though, let's see another example that may be a bit more surprising than the set example.
 
