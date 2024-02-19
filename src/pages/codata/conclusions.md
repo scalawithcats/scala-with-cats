@@ -9,3 +9,8 @@
 - Exploring Codata: The Relation to Object-Orientation https://www.cs.uoregon.edu/Reports/DRP-201905-Sullivan.pdf
 
 - Beyond Church encoding: Boehm-Berarducci isomorphism of algebraic data types and polymorphic lambda-terms https://okmij.org/ftp/tagless-final/course/Boehm-Berarducci.html
+
+
+- Codatatypes in ML https://www.sciencedirect.com/science/article/pii/S0747717189800653
+
+- Classical (Co)Recursion: Programming https://arxiv.org/pdf/2103.06913.pdf 
