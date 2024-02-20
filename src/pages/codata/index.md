@@ -1,37 +1,20 @@
 # Objects as Codata
 
 In this chapter we will look at **codata**, the dual of algebraic data types.
-We'll see that codata encompasses a large subset of object-oriented programming, and puts these features into a coherent conceptual framework along with other functional programming concepts such as algebraic data types.
-We'll start by describing codata and seeing some examples. We'll then look at the relationship between codata and algebraic data types, and see how we can transform one into the other. Having seen how they are related, we will next look at the differences, which gives guidance on when to choose each representation. We will finish with a case study **todo**.
+Algebraic data types focus on how things are constructed.
+Codata, in contrast, focuses on how things are used.
+Defining codata means defining an interface of operations that can be performed on the type.
+This is very similar to the use of interfaces in object-oriented programming, and this is the first reason that we are interested in codata: codata puts object-oriented programming into a coherent conceptual framework with the other strategies we are discussing.
+That's not all, however.
+Codata also allows us to create structures with an infinite number of elements, such as a list that never ends or a server loop that runs indefinitely. Structural corecursion is the strategy for writing programs that handle codata, including infinite structures. Structural corecursion allows us to, for example, write demand-driven programs, which compute as much of a result as the rest of the program requires. 
+Codata also gives a different form of extensibility to algebraic data.
+Whereas we can easily write new functions that transform algebraic data, we cannot add new cases to the definition of an algebraic data type without changing the existing code.
+The reverse is true for codata. We can easily create new implementations of codata, but functions that transform codata are limited by the interface the codata defines.
 
-A quick note about terminology. We might expect the term algebraic codata for the dual of algebraic data, but conventionally just codata is used. I expect this is because data is usually understood to have a wider meaning than just algebraic data, but codata is not used outside of programming language theory. For simplicity and symmetry, within this chapter I'll just use data to refer to algebraic data types.
+We'll start by more carefully defining codata alongside some concrete examples. 
+We'll then talk about representing codata in Scala, and the relationship to object-oriented programming.
+Once we can create codata, we'll see how to work with it using structural corecursion.
+Next we will look at transforming algebraic data to codata, and vice versa.
+We will then focus on what makes codata distinctive, looking first at infinite structures and then differences in extensibility.
 
-
-  - What about differences?
-    - Finite vs infinite
-    - Lazy vs eager
-    - Extensibility
-
-## Data versus Codata
-
-The core distinction between data and codata is that data describes what things are, while codata describes what things can do. Let's take a very simple algebraic data type:
-
-```scala mdoc:silent
-enum Bool {
-  case True
-  case False
-}
-```
-
-If we have an instance of this algebraic data type we can tell exactly which case it is, by using a pattern match for example. Similarly, if the instances themselves hold data, as in `List` for example, we can always extract all the data within them. Again, we can use pattern matching to achieve this.
-
-Codata, on the other hand, cannot be freely inspected like data. However we do know what operations we can perform on any given instance. A common example is a data structure, such as a set. Sets could be implemented using a hash table, or a tree structure, for example. From the outside we cannot tell what this implementation is but we do know the operations we can perform, such as testing if a set contains an element or performing a set union. If you come from the object-oriented world you might recognize the description of codata above as programming to an interface. In many ways codata is just taking concepts from the object-oriented world and presenting them in a way that is consistent with the rest of the functional programming paradigm.
-
-To be a more precise, data is defined in terms of constructors and consumed using structural recursion. Codata is defined in terms of destructors and produced using structural corecursion.
-
-In the previous chapter we discussed both destructors and structural corecursion, so why introduce them again? Codata allows us to do things that we cannot do with data. For example, codata can represent structures with an infinite number of elements, such as list that never ends or a server loop that runs indefinitely. Structural corecursion provides the framework for writing programs that deal with these structures. For example, we can write demand-driven programs, which compute as much of a result as the rest of the program requires, as corecursions. Finally, codata gives a different form of extensibility to data.
-
-
-This illustrates the difference between the theory and craft level. Data and codata are distinct at the theory level. However Scala, like most programming languages conflates the two. In Scala both data and codata are realized as variations of the same language features of classes and objects. We cannot, for example, define an algebraic data type without also defining names for the fields within the data, and thus defining destructors. Thus we can treat any particular class or object as either data or codata, or even both. 
-
-Part of the appeal, I think, of classes and objects is that they can express so many conceptually different abstractions with the same language constructs. For example, we can use objects to express modules, data, and codata. This gives them a surface appearance of simplicity; it seems we need to learn only one abstraction to solve a huge of number of coding problems. However this apparent simplicity hides real complexity, as this variety of uses forces us to reverse engineer the conceptual intention from the code. Just like we did with algebraic data, we will limit the object-oriented features we in defining codata. In particular, we won't use implementation inheritance, subtyping, overriding, or state. This gives us a subset of object-oriented code that fits within the conceptual model we are building.
+A quick note about terminology before we proceed. We might expect the term algebraic codata for the dual of algebraic data, but conventionally just codata is used. I expect this is because data is usually understood to have a wider meaning than just algebraic data, but codata is not used outside of programming language theory. For simplicity and symmetry, within this chapter I'll just use data to refer to algebraic data types.

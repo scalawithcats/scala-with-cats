@@ -54,8 +54,9 @@ lazy val pages = List(
   "adt/conclusions.md",
   // Objects as Codata
   "codata/index.md",
-  "codata/examples.md",
+  // "codata/examples.md",
   "codata/codata.md",
+  "codata/scala.md",
   "codata/data-codata.md",
   "codata/infinite.md",
   "codata/extensibility.md",
