@@ -31,6 +31,8 @@ The translation to Scala becomes:
 - the overall type becomes a `trait`; and
 - each function becomes a method on that `trait` where the first parameter is the hidden `this` parameter and other parameters become normal parameters to the method.
 
+*TODO: final methods for derived methods*
+
 This gives us the Scala representation we started with.
 
 We also need to actually implement the interface we've just defined. Here the rule is to use a `final` class. This is because we don't want to use implementation inheritance, which is difficult to reason about, nor do we want to expose implementation details like constructor arguments.
