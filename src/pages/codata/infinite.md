@@ -1,6 +1,6 @@
 ## Structural Corecursion and Infinite Codata
 
-In this section we'll explore structural corecursion using an example that illustrates infinite codata: streams of elements. These are the codata equivalent of lists, except where a list must have a finite length a stream's length can be unbounded.
+In this section we'll explore structural corecursion with an example that shows codata representing an: streams of elements. These are the codata equivalent of lists, except where a list must have a finite length a stream's length can be unbounded.
 
 Let's start by reviewing structural corecursion. We previously looked at structural corecursion when we were producing data.
 We saw that structural corecursion works by considering all the possible outputs, which are the constructors of the algebraic data type, and then working out the conditions under which we'd call each constructor. It's similar for codata, but instead of considering each possible constructor we instead consider each method or function in the codata type, and what it's implementation should be.
@@ -10,7 +10,7 @@ We'll make this concrete by looking at an example. As mentioned in the introduct
 - a `head` of type `A`; and
 - a `tail` of type `Stream[A]`.
 
-Notice the similarity to `List`, but the lack of the base case means a `Stream` never stops.
+Notice the similarity to `List`, but the lack of the base case means a `Stream` never ends.
 
 We can translate this to Scala, as we've previously seen, giving us
 
@@ -20,6 +20,19 @@ trait Stream[A] {
   def tail: Stream[A]
 }
 ```
+
+As our first step let's see how to create instances of `Stream`. that we need to create an instance of `Stream`. The simplest constructor takes a `head` and a `tail`. It's important that these parameters are call-by-name so we don't end up with an infinite loop when we create instances.
+
+```scala mdoc:silent
+object Stream {
+  def apply[A](hd: => A, tl: => Stream[A]): Stream[A] =
+    new Stream {
+      def head: A = hd
+      def tail: Stream[A] = tl
+    }
+}
+```
+
 
 Now let's implement a method using structural corecursion. A good choice is `map`. We can start by writing out the method skeleton.
 
@@ -65,17 +78,8 @@ trait Stream[A] {
 }
 ```
 
-This seems correct, but it's always good to test our code. To do that we need to create an instance of `Stream`. The simplest constructor takes a `head` and a `tail`. It's important that these parameters are call-by-name so we don't end up with an infinite loop when we create instances.
+This seems correct, but it's always good to test our code. 
 
-```scala mdoc:silent
-object Stream {
-  def apply[A](hd: => A, tl: => Stream[A]): Stream[A] =
-    new Stream {
-      def head: A = hd
-      def tail: Stream[A] = tl
-    }
-}
-```
 
 Now we create an instance. Notice how we can define this
 
