@@ -1,27 +1,47 @@
 ## Structural Corecursion and Infinite Codata
 
-In this section we'll explore structural corecursion with an example that shows codata representing an: streams of elements. These are the codata equivalent of lists, except where a list must have a finite length a stream's length can be unbounded.
+In this section we'll explore structural corecursion with an example of codata representing a potentially infinite set of elements. In particular, we will build a library for streams, sometimes known as lazy lists. These are the codata equivalent of lists. Where a list must have a finite length a stream's length may be unbounded.
 
-Let's start by reviewing structural corecursion. We previously looked at structural corecursion when we were producing data.
-We saw that structural corecursion works by considering all the possible outputs, which are the constructors of the algebraic data type, and then working out the conditions under which we'd call each constructor. It's similar for codata, but instead of considering each possible constructor we instead consider each method or function in the codata type, and what it's implementation should be.
+Let's start by reviewing structural corecursion. The key idea is to use the output type of the method to drive the process of writing the method. We previously looked at structural corecursion when we were producing data.
+In this case we saw that structural corecursion works by considering all the possible outputs, which are the constructors of the algebraic data type, and then working out the conditions under which we'd call each constructor. The process is similar for codata, but instead of considering each possible constructor we instead consider each method or function in the codata type, and what it's implementation should be.
 
-We'll make this concrete by looking at an example. As mentioned in the introduction, we are going to work with infinite streams. A `Stream` of elements of type `A` is:
+We'll make this concrete by looking at an example. As mentioned in the introduction, we are going to work with potentially infinite streams. The destructors or observations that define a `Stream` of elements of type `A` are:
 
+- `isEmpty` of type `Boolean`, true if this `Stream` has no more elements;
 - a `head` of type `A`; and
 - a `tail` of type `Stream[A]`.
 
-Notice the similarity to `List`, but the lack of the base case means a `Stream` never ends.
+Note these are exactly the destructors of `List`, but because we're implementing codata, not data, we can create an infinite 
 
 We can translate this to Scala, as we've previously seen, giving us
 
 ```scala mdoc:silent
 trait Stream[A] {
+  def isEmpty: Boolean
   def head: A
   def tail: Stream[A]
 }
 ```
 
-As our first step let's see how to create instances of `Stream`. that we need to create an instance of `Stream`. The simplest constructor takes a `head` and a `tail`. It's important that these parameters are call-by-name so we don't end up with an infinite loop when we create instances.
+As our first step let's create some instances of `Stream`. The simplest instance is the empty `Stream`.
+
+```scala mdoc:silent
+def empty[A]: Stream[A] =
+  new Stream[A] {
+    def isEmpty: Boolean = true
+
+    def head: A =
+      throw new IllegalStateException("Cannot get the head of an empty Stream.")
+
+    def tail: Stream[A] =
+      throw new IllegalStateException("Cannot get the tail of an empty Stream.")
+  }
+```
+
+**Discuss implementation here. Anonymous subtype and partial functions.**
+
+
+that we need to create an instance of `Stream`. The simplest constructor takes a `head` and a `tail`. It's important that these parameters are call-by-name so we don't end up with an infinite loop when we create instances.
 
 ```scala mdoc:silent
 object Stream {
