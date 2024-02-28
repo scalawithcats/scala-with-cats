@@ -9887,9 +9887,8 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     <p>You might wonder if we can have both forms of extensibility.
     Achieving this is called the <strong>expression problem</strong>.
     There are various ways to solve the expression problem, and we’ll
-    see one that works particularly well in Scala in a later chapter.
-    &gt;&gt;&gt;&gt;&gt;&gt;&gt; 9467b5a (First draft of extensibility
-    section)</p>
+    see one that works particularly well in Scala in a later
+    chapter.</p>
     <h2 data-number="3.6" id="conclusions-1"><span class="header-section-number">3.6</span> Conclusions</h2>
     <ul>
     <li><p>How to Add Laziness to a Strict Language Without Even Being
@@ -10075,7 +10074,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     <div class="sourceCode" id="cb133"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> JsonWriterInstances<span class="op">.</span>_</span>
 <span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a>implicitly<span class="op">[</span>JsonWriter<span class="op">[</span><span class="ex">String</span><span class="op">]]</span></span>
-<span id="cb133-4"><a href="#cb133-4" aria-hidden="true" tabindex="-1"></a><span class="co">// res5: JsonWriter[String] = repl.MdocSession$MdocApp0$JsonWriterInstances$$anon$6@209ff5ef</span></span></code></pre></div>
+<span id="cb133-4"><a href="#cb133-4" aria-hidden="true" tabindex="-1"></a><span class="co">// res5: JsonWriter[String] = repl.MdocSession$MdocApp0$JsonWriterInstances$$anon$6@3330d4d9</span></span></code></pre></div>
     <p>Most type classes in Cats provide other means to summon
     instances. However, <code>implicitly</code> is a good fallback for
     debugging purposes. We can insert a call to <code>implicitly</code>
@@ -10423,7 +10422,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     <code>apply</code> method that locates an instance for any type we
     specify:</p>
     <div class="sourceCode" id="cb157"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb157-1"><a href="#cb157-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> showInt <span class="op">=</span> Show<span class="op">.</span>apply<span class="op">[</span><span class="bu">Int</span><span class="op">]</span></span>
-<span id="cb157-2"><a href="#cb157-2" aria-hidden="true" tabindex="-1"></a><span class="co">// showInt: Show[Int] = cats.Show$$$Lambda$18091/0x00007f6de6c7f008@5ddfd62</span></span></code></pre></div>
+<span id="cb157-2"><a href="#cb157-2" aria-hidden="true" tabindex="-1"></a><span class="co">// showInt: Show[Int] = cats.Show$$$Lambda$18104/0x00007f8afacab450@48f0c28d</span></span></code></pre></div>
     <p>Oops—that didn’t work! The <code>apply</code> method uses
     <em>implicits</em> to look up individual instances, so we’ll have to
     bring some instances into scope.</p>
@@ -10507,7 +10506,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb162-6"><a href="#cb162-6" aria-hidden="true" tabindex="-1"></a>      <span class="ss">s&quot;${</span>date<span class="op">.</span>getTime<span class="ss">}</span><span class="st">ms since the epoch.</span><span class="ss">&quot;</span></span>
 <span id="cb162-7"><a href="#cb162-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div>
     <div class="sourceCode" id="cb163"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb163-1"><a href="#cb163-1" aria-hidden="true" tabindex="-1"></a><span class="kw">new</span> <span class="ex">Date</span><span class="op">().</span>show</span>
-<span id="cb163-2"><a href="#cb163-2" aria-hidden="true" tabindex="-1"></a><span class="co">// res1: String = &quot;1709124786194ms since the epoch.&quot;</span></span></code></pre></div>
+<span id="cb163-2"><a href="#cb163-2" aria-hidden="true" tabindex="-1"></a><span class="co">// res1: String = &quot;1709124869685ms since the epoch.&quot;</span></span></code></pre></div>
     <p>However, Cats also provides a couple of convenient methods to
     simplify the process. There are two construction methods on the
     companion object of <code>Show</code> that we can use to define
@@ -13419,10 +13418,10 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     operates over a functor and has type
     <code>F[A] =&gt; F[B]</code>:</p>
     <div class="sourceCode" id="cb350"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb350-1"><a href="#cb350-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> func <span class="op">=</span> <span class="op">(</span>x<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span> <span class="op">=&gt;</span> x <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb350-2"><a href="#cb350-2" aria-hidden="true" tabindex="-1"></a><span class="co">// func: Function1[Int, Int] = repl.MdocSession$MdocApp0$$$Lambda$19541/0x00007f6de6e84e20@2df2da71</span></span>
+<span id="cb350-2"><a href="#cb350-2" aria-hidden="true" tabindex="-1"></a><span class="co">// func: Function1[Int, Int] = repl.MdocSession$MdocApp0$$$Lambda$19510/0x00007f8afaec2220@130a5d9f</span></span>
 <span id="cb350-3"><a href="#cb350-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb350-4"><a href="#cb350-4" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> liftedFunc <span class="op">=</span> Functor<span class="op">[</span><span class="ex">Option</span><span class="op">].</span><span class="fu">lift</span><span class="op">(</span>func<span class="op">)</span></span>
-<span id="cb350-5"><a href="#cb350-5" aria-hidden="true" tabindex="-1"></a><span class="co">// liftedFunc: Function1[Option[Int], Option[Int]] = cats.Functor$$Lambda$19542/0x00007f6de6ea5af0@35fad5d8</span></span>
+<span id="cb350-5"><a href="#cb350-5" aria-hidden="true" tabindex="-1"></a><span class="co">// liftedFunc: Function1[Option[Int], Option[Int]] = cats.Functor$$Lambda$19511/0x00007f8afaea9bb8@34e40a6c</span></span>
 <span id="cb350-6"><a href="#cb350-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb350-7"><a href="#cb350-7" aria-hidden="true" tabindex="-1"></a><span class="fu">liftedFunc</span><span class="op">(</span><span class="ex">Option</span><span class="op">(</span><span class="dv">1</span><span class="op">))</span></span>
 <span id="cb350-8"><a href="#cb350-8" aria-hidden="true" tabindex="-1"></a><span class="co">// res1: Option[Int] = Some(value = 2)</span></span></code></pre></div>
@@ -14137,7 +14136,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb399-5"><a href="#cb399-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> func1 <span class="op">=</span> <span class="op">(</span>x<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span>    <span class="op">=&gt;</span> x<span class="op">.</span>toDouble</span>
 <span id="cb399-6"><a href="#cb399-6" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> func2 <span class="op">=</span> <span class="op">(</span>y<span class="op">:</span> <span class="ex">Double</span><span class="op">)</span> <span class="op">=&gt;</span> y <span class="op">*</span> <span class="dv">2</span></span></code></pre></div>
     <div class="sourceCode" id="cb400"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb400-1"><a href="#cb400-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> func3 <span class="op">=</span> func1<span class="op">.</span><span class="fu">map</span><span class="op">(</span>func2<span class="op">)</span></span>
-<span id="cb400-2"><a href="#cb400-2" aria-hidden="true" tabindex="-1"></a><span class="co">// func3: Function1[Int, Double] = scala.Function1$$Lambda$19488/0x00007f6de6e48b80@458aae6a</span></span></code></pre></div>
+<span id="cb400-2"><a href="#cb400-2" aria-hidden="true" tabindex="-1"></a><span class="co">// func3: Function1[Int, Double] = scala.Function1$$Lambda$19480/0x00007f8afae1fc30@19f93ed6</span></span></code></pre></div>
     <p><code>Function1</code> has two type parameters (the function
     argument and the result type):</p>
     <div class="sourceCode" id="cb401"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb401-1"><a href="#cb401-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Function1<span class="op">[-</span>A<span class="op">,</span> <span class="op">+</span>B<span class="op">]</span> <span class="op">{</span></span>
@@ -14303,7 +14302,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     we can call <code>contramap</code> as desired:</p>
     <div class="sourceCode" id="cb415"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb415-1"><a href="#cb415-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> func2b<span class="op">:</span> <span class="ex">Double</span> <span class="op">&lt;=</span> <span class="ex">Double</span> <span class="op">=</span> func2</span></code></pre></div>
     <div class="sourceCode" id="cb416"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb416-1"><a href="#cb416-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> func3c <span class="op">=</span> func2b<span class="op">.</span><span class="fu">contramap</span><span class="op">(</span>func1<span class="op">)</span></span>
-<span id="cb416-2"><a href="#cb416-2" aria-hidden="true" tabindex="-1"></a><span class="co">// func3c: Function1[Int, Double] = scala.Function1$$Lambda$19488/0x00007f6de6e48b80@2c2707e6</span></span></code></pre></div>
+<span id="cb416-2"><a href="#cb416-2" aria-hidden="true" tabindex="-1"></a><span class="co">// func3c: Function1[Int, Double] = scala.Function1$$Lambda$19480/0x00007f8afae1fc30@1387d31d</span></span></code></pre></div>
     <p>The difference between <code>func2</code> and <code>func2b</code>
     is purely syntactic—both refer to the same value and the type
     aliases are otherwise completely compatible. Incredibly, however,
@@ -14843,7 +14842,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     implicit resolution required to summon the instance:</p>
     <div class="sourceCode" id="cb441"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb441-1"><a href="#cb441-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>concurrent<span class="op">.</span>ExecutionContext<span class="op">.</span>Implicits<span class="op">.</span>global</span></code></pre></div>
     <div class="sourceCode" id="cb442"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb442-1"><a href="#cb442-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> fm <span class="op">=</span> Monad<span class="op">[</span><span class="ex">Future</span><span class="op">]</span></span>
-<span id="cb442-2"><a href="#cb442-2" aria-hidden="true" tabindex="-1"></a><span class="co">// fm: Monad[[T &gt;: Nothing &lt;: Any] =&gt; Future[T]] = cats.instances.FutureInstances$$anon$1@2e39104c</span></span></code></pre></div>
+<span id="cb442-2"><a href="#cb442-2" aria-hidden="true" tabindex="-1"></a><span class="co">// fm: Monad[[T &gt;: Nothing &lt;: Any] =&gt; Future[T]] = cats.instances.FutureInstances$$anon$1@364797c5</span></span></code></pre></div>
     <p>The <code>Monad</code> instance uses the captured
     <code>ExecutionContext</code> for subsequent calls to
     <code>pure</code> and <code>flatMap</code>:</p>
@@ -15492,12 +15491,12 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb504-3"><a href="#cb504-3" aria-hidden="true" tabindex="-1"></a>  math<span class="op">.</span><span class="fu">random</span><span class="op">()</span></span>
 <span id="cb504-4"><a href="#cb504-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb504-5"><a href="#cb504-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing X</span></span>
-<span id="cb504-6"><a href="#cb504-6" aria-hidden="true" tabindex="-1"></a><span class="co">// x: Double = 0.10999400766990886</span></span>
+<span id="cb504-6"><a href="#cb504-6" aria-hidden="true" tabindex="-1"></a><span class="co">// x: Double = 0.05481512827519941</span></span>
 <span id="cb504-7"><a href="#cb504-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb504-8"><a href="#cb504-8" aria-hidden="true" tabindex="-1"></a>x <span class="co">// first access</span></span>
-<span id="cb504-9"><a href="#cb504-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res0: Double = 0.10999400766990886 // first access</span></span>
+<span id="cb504-9"><a href="#cb504-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res0: Double = 0.05481512827519941 // first access</span></span>
 <span id="cb504-10"><a href="#cb504-10" aria-hidden="true" tabindex="-1"></a>x <span class="co">// second access</span></span>
-<span id="cb504-11"><a href="#cb504-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res1: Double = 0.10999400766990886</span></span></code></pre></div>
+<span id="cb504-11"><a href="#cb504-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res1: Double = 0.05481512827519941</span></span></code></pre></div>
     <p>This is an example of call-by-value evaluation:</p>
     <ul>
     <li>the computation is evaluated at point where it is defined
@@ -15514,10 +15513,10 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb505-5"><a href="#cb505-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb505-6"><a href="#cb505-6" aria-hidden="true" tabindex="-1"></a>y <span class="co">// first access</span></span>
 <span id="cb505-7"><a href="#cb505-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing Y</span></span>
-<span id="cb505-8"><a href="#cb505-8" aria-hidden="true" tabindex="-1"></a><span class="co">// res2: Double = 0.9431135778580266 // first access</span></span>
+<span id="cb505-8"><a href="#cb505-8" aria-hidden="true" tabindex="-1"></a><span class="co">// res2: Double = 0.6095955423986363 // first access</span></span>
 <span id="cb505-9"><a href="#cb505-9" aria-hidden="true" tabindex="-1"></a>y <span class="co">// second access</span></span>
 <span id="cb505-10"><a href="#cb505-10" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing Y</span></span>
-<span id="cb505-11"><a href="#cb505-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res3: Double = 0.7996571445710531</span></span></code></pre></div>
+<span id="cb505-11"><a href="#cb505-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res3: Double = 0.4778172488894017</span></span></code></pre></div>
     <p>These are the properties of call-by-name evaluation:</p>
     <ul>
     <li>the computation is evaluated at the point of use (lazy);
@@ -15536,9 +15535,9 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb506-5"><a href="#cb506-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb506-6"><a href="#cb506-6" aria-hidden="true" tabindex="-1"></a>z <span class="co">// first access</span></span>
 <span id="cb506-7"><a href="#cb506-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing Z</span></span>
-<span id="cb506-8"><a href="#cb506-8" aria-hidden="true" tabindex="-1"></a><span class="co">// res4: Double = 0.10367562145115217 // first access</span></span>
+<span id="cb506-8"><a href="#cb506-8" aria-hidden="true" tabindex="-1"></a><span class="co">// res4: Double = 0.27145335757137146 // first access</span></span>
 <span id="cb506-9"><a href="#cb506-9" aria-hidden="true" tabindex="-1"></a>z <span class="co">// second access</span></span>
-<span id="cb506-10"><a href="#cb506-10" aria-hidden="true" tabindex="-1"></a><span class="co">// res5: Double = 0.10367562145115217</span></span></code></pre></div>
+<span id="cb506-10"><a href="#cb506-10" aria-hidden="true" tabindex="-1"></a><span class="co">// res5: Double = 0.27145335757137146</span></span></code></pre></div>
     <p>Let’s summarize. There are two properties of interest:</p>
     <ul>
     <li>evaluation at the point of definition (eager) versus at the
@@ -15564,19 +15563,19 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     <code>Eval</code>:</p>
     <div class="sourceCode" id="cb507"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb507-1"><a href="#cb507-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> cats<span class="op">.</span>Eval</span></code></pre></div>
     <div class="sourceCode" id="cb508"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb508-1"><a href="#cb508-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> now <span class="op">=</span> Eval<span class="op">.</span><span class="fu">now</span><span class="op">(</span>math<span class="op">.</span><span class="fu">random</span><span class="op">()</span> <span class="op">+</span> <span class="dv">1000</span><span class="op">)</span></span>
-<span id="cb508-2"><a href="#cb508-2" aria-hidden="true" tabindex="-1"></a><span class="co">// now: Eval[Double] = Now(value = 1000.056697838293)</span></span>
+<span id="cb508-2"><a href="#cb508-2" aria-hidden="true" tabindex="-1"></a><span class="co">// now: Eval[Double] = Now(value = 1000.484136383681)</span></span>
 <span id="cb508-3"><a href="#cb508-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> always <span class="op">=</span> Eval<span class="op">.</span><span class="fu">always</span><span class="op">(</span>math<span class="op">.</span><span class="fu">random</span><span class="op">()</span> <span class="op">+</span> <span class="dv">3000</span><span class="op">)</span></span>
-<span id="cb508-4"><a href="#cb508-4" aria-hidden="true" tabindex="-1"></a><span class="co">// always: Eval[Double] = cats.Always@66399934</span></span>
+<span id="cb508-4"><a href="#cb508-4" aria-hidden="true" tabindex="-1"></a><span class="co">// always: Eval[Double] = cats.Always@311c621e</span></span>
 <span id="cb508-5"><a href="#cb508-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> later <span class="op">=</span> Eval<span class="op">.</span><span class="fu">later</span><span class="op">(</span>math<span class="op">.</span><span class="fu">random</span><span class="op">()</span> <span class="op">+</span> <span class="dv">2000</span><span class="op">)</span></span>
-<span id="cb508-6"><a href="#cb508-6" aria-hidden="true" tabindex="-1"></a><span class="co">// later: Eval[Double] = cats.Later@569dae7b</span></span></code></pre></div>
+<span id="cb508-6"><a href="#cb508-6" aria-hidden="true" tabindex="-1"></a><span class="co">// later: Eval[Double] = cats.Later@389f9b12</span></span></code></pre></div>
     <p>We can extract the result of an <code>Eval</code> using its
     <code>value</code> method:</p>
     <div class="sourceCode" id="cb509"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb509-1"><a href="#cb509-1" aria-hidden="true" tabindex="-1"></a>now<span class="op">.</span>value</span>
-<span id="cb509-2"><a href="#cb509-2" aria-hidden="true" tabindex="-1"></a><span class="co">// res6: Double = 1000.056697838293</span></span>
+<span id="cb509-2"><a href="#cb509-2" aria-hidden="true" tabindex="-1"></a><span class="co">// res6: Double = 1000.484136383681</span></span>
 <span id="cb509-3"><a href="#cb509-3" aria-hidden="true" tabindex="-1"></a>always<span class="op">.</span>value</span>
-<span id="cb509-4"><a href="#cb509-4" aria-hidden="true" tabindex="-1"></a><span class="co">// res7: Double = 3000.0755273030572</span></span>
+<span id="cb509-4"><a href="#cb509-4" aria-hidden="true" tabindex="-1"></a><span class="co">// res7: Double = 3000.971444570083</span></span>
 <span id="cb509-5"><a href="#cb509-5" aria-hidden="true" tabindex="-1"></a>later<span class="op">.</span>value</span>
-<span id="cb509-6"><a href="#cb509-6" aria-hidden="true" tabindex="-1"></a><span class="co">// res8: Double = 2000.5661144305864</span></span></code></pre></div>
+<span id="cb509-6"><a href="#cb509-6" aria-hidden="true" tabindex="-1"></a><span class="co">// res8: Double = 2000.9840345723758</span></span></code></pre></div>
     <p>Each type of <code>Eval</code> calculates its result using one of
     the evaluation models defined above. <code>Eval.now</code> captures
     a value <em>right now</em>. Its semantics are similar to a
@@ -15586,39 +15585,39 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb510-3"><a href="#cb510-3" aria-hidden="true" tabindex="-1"></a>  math<span class="op">.</span><span class="fu">random</span><span class="op">()</span></span>
 <span id="cb510-4"><a href="#cb510-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb510-5"><a href="#cb510-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing X</span></span>
-<span id="cb510-6"><a href="#cb510-6" aria-hidden="true" tabindex="-1"></a><span class="co">// x: Eval[Double] = Now(value = 0.7989684629202868)</span></span>
+<span id="cb510-6"><a href="#cb510-6" aria-hidden="true" tabindex="-1"></a><span class="co">// x: Eval[Double] = Now(value = 0.3851152255176351)</span></span>
 <span id="cb510-7"><a href="#cb510-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb510-8"><a href="#cb510-8" aria-hidden="true" tabindex="-1"></a>x<span class="op">.</span>value <span class="co">// first access</span></span>
-<span id="cb510-9"><a href="#cb510-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res10: Double = 0.7989684629202868 // first access</span></span>
+<span id="cb510-9"><a href="#cb510-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res10: Double = 0.3851152255176351 // first access</span></span>
 <span id="cb510-10"><a href="#cb510-10" aria-hidden="true" tabindex="-1"></a>x<span class="op">.</span>value <span class="co">// second access</span></span>
-<span id="cb510-11"><a href="#cb510-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res11: Double = 0.7989684629202868</span></span></code></pre></div>
+<span id="cb510-11"><a href="#cb510-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res11: Double = 0.3851152255176351</span></span></code></pre></div>
     <p><code>Eval.always</code> captures a lazy computation, similar to
     a <code>def</code>:</p>
     <div class="sourceCode" id="cb511"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb511-1"><a href="#cb511-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> y <span class="op">=</span> Eval<span class="op">.</span>always<span class="op">{</span></span>
 <span id="cb511-2"><a href="#cb511-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Computing Y&quot;</span><span class="op">)</span></span>
 <span id="cb511-3"><a href="#cb511-3" aria-hidden="true" tabindex="-1"></a>  math<span class="op">.</span><span class="fu">random</span><span class="op">()</span></span>
 <span id="cb511-4"><a href="#cb511-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb511-5"><a href="#cb511-5" aria-hidden="true" tabindex="-1"></a><span class="co">// y: Eval[Double] = cats.Always@4add3912</span></span>
+<span id="cb511-5"><a href="#cb511-5" aria-hidden="true" tabindex="-1"></a><span class="co">// y: Eval[Double] = cats.Always@23ecf49c</span></span>
 <span id="cb511-6"><a href="#cb511-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb511-7"><a href="#cb511-7" aria-hidden="true" tabindex="-1"></a>y<span class="op">.</span>value <span class="co">// first access</span></span>
 <span id="cb511-8"><a href="#cb511-8" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing Y</span></span>
-<span id="cb511-9"><a href="#cb511-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res12: Double = 0.485208018140567 // first access</span></span>
+<span id="cb511-9"><a href="#cb511-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res12: Double = 0.0445765543457729 // first access</span></span>
 <span id="cb511-10"><a href="#cb511-10" aria-hidden="true" tabindex="-1"></a>y<span class="op">.</span>value <span class="co">// second access</span></span>
 <span id="cb511-11"><a href="#cb511-11" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing Y</span></span>
-<span id="cb511-12"><a href="#cb511-12" aria-hidden="true" tabindex="-1"></a><span class="co">// res13: Double = 0.5072289317135962</span></span></code></pre></div>
+<span id="cb511-12"><a href="#cb511-12" aria-hidden="true" tabindex="-1"></a><span class="co">// res13: Double = 0.07941827602886953</span></span></code></pre></div>
     <p>Finally, <code>Eval.later</code> captures a lazy, memoized
     computation, similar to a <code>lazy val</code>:</p>
     <div class="sourceCode" id="cb512"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb512-1"><a href="#cb512-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> z <span class="op">=</span> Eval<span class="op">.</span>later<span class="op">{</span></span>
 <span id="cb512-2"><a href="#cb512-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Computing Z&quot;</span><span class="op">)</span></span>
 <span id="cb512-3"><a href="#cb512-3" aria-hidden="true" tabindex="-1"></a>  math<span class="op">.</span><span class="fu">random</span><span class="op">()</span></span>
 <span id="cb512-4"><a href="#cb512-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb512-5"><a href="#cb512-5" aria-hidden="true" tabindex="-1"></a><span class="co">// z: Eval[Double] = cats.Later@59da08a2</span></span>
+<span id="cb512-5"><a href="#cb512-5" aria-hidden="true" tabindex="-1"></a><span class="co">// z: Eval[Double] = cats.Later@717164b</span></span>
 <span id="cb512-6"><a href="#cb512-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb512-7"><a href="#cb512-7" aria-hidden="true" tabindex="-1"></a>z<span class="op">.</span>value <span class="co">// first access</span></span>
 <span id="cb512-8"><a href="#cb512-8" aria-hidden="true" tabindex="-1"></a><span class="co">// Computing Z</span></span>
-<span id="cb512-9"><a href="#cb512-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res14: Double = 0.4810975708676932 // first access</span></span>
+<span id="cb512-9"><a href="#cb512-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res14: Double = 0.5387253884340008 // first access</span></span>
 <span id="cb512-10"><a href="#cb512-10" aria-hidden="true" tabindex="-1"></a>z<span class="op">.</span>value <span class="co">// second access</span></span>
-<span id="cb512-11"><a href="#cb512-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res15: Double = 0.4810975708676932</span></span></code></pre></div>
+<span id="cb512-11"><a href="#cb512-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res15: Double = 0.5387253884340008</span></span></code></pre></div>
     <p>The three behaviours are summarized below:</p>
     <div class="table-responsive">
     <table>
@@ -15663,7 +15662,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     <div class="sourceCode" id="cb513"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb513-1"><a href="#cb513-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> greeting <span class="op">=</span> Eval</span>
 <span id="cb513-2"><a href="#cb513-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span>always<span class="op">{</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Step 1&quot;</span><span class="op">);</span> <span class="st">&quot;Hello&quot;</span> <span class="op">}</span></span>
 <span id="cb513-3"><a href="#cb513-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span>map<span class="op">{</span> str <span class="op">=&gt;</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Step 2&quot;</span><span class="op">);</span> <span class="ss">s&quot;$str</span><span class="st"> world</span><span class="ss">&quot;</span> <span class="op">}</span></span>
-<span id="cb513-4"><a href="#cb513-4" aria-hidden="true" tabindex="-1"></a><span class="co">// greeting: Eval[String] = cats.Eval$$anon$4@7300da94</span></span>
+<span id="cb513-4"><a href="#cb513-4" aria-hidden="true" tabindex="-1"></a><span class="co">// greeting: Eval[String] = cats.Eval$$anon$4@55498825</span></span>
 <span id="cb513-5"><a href="#cb513-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb513-6"><a href="#cb513-6" aria-hidden="true" tabindex="-1"></a>greeting<span class="op">.</span>value</span>
 <span id="cb513-7"><a href="#cb513-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Step 1</span></span>
@@ -15680,7 +15679,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb514-6"><a href="#cb514-6" aria-hidden="true" tabindex="-1"></a>  a <span class="op">+</span> b</span>
 <span id="cb514-7"><a href="#cb514-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb514-8"><a href="#cb514-8" aria-hidden="true" tabindex="-1"></a><span class="co">// Calculating A</span></span>
-<span id="cb514-9"><a href="#cb514-9" aria-hidden="true" tabindex="-1"></a><span class="co">// ans: Eval[Int] = cats.Eval$$anon$4@48d55cf9</span></span>
+<span id="cb514-9"><a href="#cb514-9" aria-hidden="true" tabindex="-1"></a><span class="co">// ans: Eval[Int] = cats.Eval$$anon$4@114ace95</span></span>
 <span id="cb514-10"><a href="#cb514-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb514-11"><a href="#cb514-11" aria-hidden="true" tabindex="-1"></a>ans<span class="op">.</span>value <span class="co">// first access</span></span>
 <span id="cb514-12"><a href="#cb514-12" aria-hidden="true" tabindex="-1"></a><span class="co">// Calculating B</span></span>
@@ -15699,7 +15698,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb515-3"><a href="#cb515-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span>map<span class="op">{</span> str <span class="op">=&gt;</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Step 2&quot;</span><span class="op">);</span> <span class="ss">s&quot;$str</span><span class="st"> sat on</span><span class="ss">&quot;</span> <span class="op">}</span></span>
 <span id="cb515-4"><a href="#cb515-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span>memoize</span>
 <span id="cb515-5"><a href="#cb515-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span>map<span class="op">{</span> str <span class="op">=&gt;</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Step 3&quot;</span><span class="op">);</span> <span class="ss">s&quot;$str</span><span class="st"> the mat</span><span class="ss">&quot;</span> <span class="op">}</span></span>
-<span id="cb515-6"><a href="#cb515-6" aria-hidden="true" tabindex="-1"></a><span class="co">// saying: Eval[String] = cats.Eval$$anon$4@6be3f958</span></span>
+<span id="cb515-6"><a href="#cb515-6" aria-hidden="true" tabindex="-1"></a><span class="co">// saying: Eval[String] = cats.Eval$$anon$4@55c69034</span></span>
 <span id="cb515-7"><a href="#cb515-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb515-8"><a href="#cb515-8" aria-hidden="true" tabindex="-1"></a>saying<span class="op">.</span>value <span class="co">// first access</span></span>
 <span id="cb515-9"><a href="#cb515-9" aria-hidden="true" tabindex="-1"></a><span class="co">// Step 1</span></span>
@@ -16116,7 +16115,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb554-3"><a href="#cb554-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> catName<span class="op">:</span> <span class="ex">Reader</span><span class="op">[</span>Cat<span class="op">,</span> <span class="ex">String</span><span class="op">]</span> <span class="op">=</span></span>
 <span id="cb554-4"><a href="#cb554-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">Reader</span><span class="op">(</span>cat <span class="op">=&gt;</span> cat<span class="op">.</span>name<span class="op">)</span></span>
 <span id="cb554-5"><a href="#cb554-5" aria-hidden="true" tabindex="-1"></a><span class="co">// catName: Kleisli[Id, Cat, String] = Kleisli(</span></span>
-<span id="cb554-6"><a href="#cb554-6" aria-hidden="true" tabindex="-1"></a><span class="co">//   run = repl.MdocSession$MdocApp0$$$Lambda$20365/0x00007f6de6f51480@261a56c2</span></span>
+<span id="cb554-6"><a href="#cb554-6" aria-hidden="true" tabindex="-1"></a><span class="co">//   run = repl.MdocSession$MdocApp0$$$Lambda$20347/0x00007f8afaf35480@5d0b97a8</span></span>
 <span id="cb554-7"><a href="#cb554-7" aria-hidden="true" tabindex="-1"></a><span class="co">// )</span></span></code></pre></div>
     <p>We can extract the function again using the <code>Reader&#39;s</code>
     <code>run</code> method and call it using <code>apply</code> as
@@ -16364,27 +16363,27 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     function.</li>
     </ul>
     <div class="sourceCode" id="cb573"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb573-1"><a href="#cb573-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> getDemo <span class="op">=</span> <span class="ex">State</span><span class="op">.</span>get<span class="op">[</span><span class="bu">Int</span><span class="op">]</span></span>
-<span id="cb573-2"><a href="#cb573-2" aria-hidden="true" tabindex="-1"></a><span class="co">// getDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Int] = cats.data.IndexedStateT@2cc422fa</span></span>
+<span id="cb573-2"><a href="#cb573-2" aria-hidden="true" tabindex="-1"></a><span class="co">// getDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Int] = cats.data.IndexedStateT@65789969</span></span>
 <span id="cb573-3"><a href="#cb573-3" aria-hidden="true" tabindex="-1"></a>getDemo<span class="op">.</span><span class="fu">run</span><span class="op">(</span><span class="dv">10</span><span class="op">).</span>value</span>
 <span id="cb573-4"><a href="#cb573-4" aria-hidden="true" tabindex="-1"></a><span class="co">// res1: Tuple2[Int, Int] = (10, 10)</span></span>
 <span id="cb573-5"><a href="#cb573-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb573-6"><a href="#cb573-6" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> setDemo <span class="op">=</span> <span class="ex">State</span><span class="op">.</span>set<span class="op">[</span><span class="bu">Int</span><span class="op">](</span><span class="dv">30</span><span class="op">)</span></span>
-<span id="cb573-7"><a href="#cb573-7" aria-hidden="true" tabindex="-1"></a><span class="co">// setDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Unit] = cats.data.IndexedStateT@1f56fc2e</span></span>
+<span id="cb573-7"><a href="#cb573-7" aria-hidden="true" tabindex="-1"></a><span class="co">// setDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Unit] = cats.data.IndexedStateT@23fdfc54</span></span>
 <span id="cb573-8"><a href="#cb573-8" aria-hidden="true" tabindex="-1"></a>setDemo<span class="op">.</span><span class="fu">run</span><span class="op">(</span><span class="dv">10</span><span class="op">).</span>value</span>
 <span id="cb573-9"><a href="#cb573-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res2: Tuple2[Int, Unit] = (30, ())</span></span>
 <span id="cb573-10"><a href="#cb573-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb573-11"><a href="#cb573-11" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> pureDemo <span class="op">=</span> <span class="ex">State</span><span class="op">.</span>pure<span class="op">[</span><span class="bu">Int</span><span class="op">,</span> <span class="ex">String</span><span class="op">](</span><span class="st">&quot;Result&quot;</span><span class="op">)</span></span>
-<span id="cb573-12"><a href="#cb573-12" aria-hidden="true" tabindex="-1"></a><span class="co">// pureDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, String] = cats.data.IndexedStateT@6bfcc153</span></span>
+<span id="cb573-12"><a href="#cb573-12" aria-hidden="true" tabindex="-1"></a><span class="co">// pureDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, String] = cats.data.IndexedStateT@3398a1ee</span></span>
 <span id="cb573-13"><a href="#cb573-13" aria-hidden="true" tabindex="-1"></a>pureDemo<span class="op">.</span><span class="fu">run</span><span class="op">(</span><span class="dv">10</span><span class="op">).</span>value</span>
 <span id="cb573-14"><a href="#cb573-14" aria-hidden="true" tabindex="-1"></a><span class="co">// res3: Tuple2[Int, String] = (10, &quot;Result&quot;)</span></span>
 <span id="cb573-15"><a href="#cb573-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb573-16"><a href="#cb573-16" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> inspectDemo <span class="op">=</span> <span class="ex">State</span><span class="op">.</span>inspect<span class="op">[</span><span class="bu">Int</span><span class="op">,</span> <span class="ex">String</span><span class="op">](</span>x <span class="op">=&gt;</span> <span class="ss">s&quot;${</span>x<span class="ss">}</span><span class="st">!</span><span class="ss">&quot;</span><span class="op">)</span></span>
-<span id="cb573-17"><a href="#cb573-17" aria-hidden="true" tabindex="-1"></a><span class="co">// inspectDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, String] = cats.data.IndexedStateT@19e966b6</span></span>
+<span id="cb573-17"><a href="#cb573-17" aria-hidden="true" tabindex="-1"></a><span class="co">// inspectDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, String] = cats.data.IndexedStateT@720ed775</span></span>
 <span id="cb573-18"><a href="#cb573-18" aria-hidden="true" tabindex="-1"></a>inspectDemo<span class="op">.</span><span class="fu">run</span><span class="op">(</span><span class="dv">10</span><span class="op">).</span>value</span>
 <span id="cb573-19"><a href="#cb573-19" aria-hidden="true" tabindex="-1"></a><span class="co">// res4: Tuple2[Int, String] = (10, &quot;10!&quot;)</span></span>
 <span id="cb573-20"><a href="#cb573-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb573-21"><a href="#cb573-21" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> modifyDemo <span class="op">=</span> <span class="ex">State</span><span class="op">.</span>modify<span class="op">[</span><span class="bu">Int</span><span class="op">](</span>_ <span class="op">+</span> <span class="dv">1</span><span class="op">)</span></span>
-<span id="cb573-22"><a href="#cb573-22" aria-hidden="true" tabindex="-1"></a><span class="co">// modifyDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Unit] = cats.data.IndexedStateT@14375483</span></span>
+<span id="cb573-22"><a href="#cb573-22" aria-hidden="true" tabindex="-1"></a><span class="co">// modifyDemo: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Unit] = cats.data.IndexedStateT@539cab8c</span></span>
 <span id="cb573-23"><a href="#cb573-23" aria-hidden="true" tabindex="-1"></a>modifyDemo<span class="op">.</span><span class="fu">run</span><span class="op">(</span><span class="dv">10</span><span class="op">).</span>value</span>
 <span id="cb573-24"><a href="#cb573-24" aria-hidden="true" tabindex="-1"></a><span class="co">// res5: Tuple2[Int, Unit] = (11, ())</span></span></code></pre></div>
     <p>We can assemble these building blocks using a for comprehension.
@@ -16399,7 +16398,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb575-5"><a href="#cb575-5" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">&lt;-</span> modify<span class="op">[</span><span class="bu">Int</span><span class="op">](</span>_ <span class="op">+</span> <span class="dv">1</span><span class="op">)</span></span>
 <span id="cb575-6"><a href="#cb575-6" aria-hidden="true" tabindex="-1"></a>  c <span class="op">&lt;-</span> inspect<span class="op">[</span><span class="bu">Int</span><span class="op">,</span> <span class="bu">Int</span><span class="op">](</span>_ <span class="op">*</span> <span class="dv">1000</span><span class="op">)</span></span>
 <span id="cb575-7"><a href="#cb575-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">yield</span> <span class="op">(</span>a<span class="op">,</span> b<span class="op">,</span> c<span class="op">)</span></span>
-<span id="cb575-8"><a href="#cb575-8" aria-hidden="true" tabindex="-1"></a><span class="co">// program: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Tuple3[Int, Int, Int]] = cats.data.IndexedStateT@3ca87da7</span></span>
+<span id="cb575-8"><a href="#cb575-8" aria-hidden="true" tabindex="-1"></a><span class="co">// program: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], Int, Int, Tuple3[Int, Int, Int]] = cats.data.IndexedStateT@1f4ff2f7</span></span>
 <span id="cb575-9"><a href="#cb575-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb575-10"><a href="#cb575-10" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> <span class="op">(</span>state<span class="op">,</span> result<span class="op">)</span> <span class="op">=</span> program<span class="op">.</span><span class="fu">run</span><span class="op">(</span><span class="dv">1</span><span class="op">).</span>value</span>
 <span id="cb575-11"><a href="#cb575-11" aria-hidden="true" tabindex="-1"></a><span class="co">// state: Int = 3</span></span>
@@ -16515,7 +16514,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb584-3"><a href="#cb584-3" aria-hidden="true" tabindex="-1"></a>  _   <span class="op">&lt;-</span> <span class="fu">evalOne</span><span class="op">(</span><span class="st">&quot;2&quot;</span><span class="op">)</span></span>
 <span id="cb584-4"><a href="#cb584-4" aria-hidden="true" tabindex="-1"></a>  ans <span class="op">&lt;-</span> <span class="fu">evalOne</span><span class="op">(</span><span class="st">&quot;+&quot;</span><span class="op">)</span></span>
 <span id="cb584-5"><a href="#cb584-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">yield</span> ans</span>
-<span id="cb584-6"><a href="#cb584-6" aria-hidden="true" tabindex="-1"></a><span class="co">// program: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], List[Int], List[Int], Int] = cats.data.IndexedStateT@3153c538</span></span>
+<span id="cb584-6"><a href="#cb584-6" aria-hidden="true" tabindex="-1"></a><span class="co">// program: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], List[Int], List[Int], Int] = cats.data.IndexedStateT@692eb721</span></span>
 <span id="cb584-7"><a href="#cb584-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb584-8"><a href="#cb584-8" aria-hidden="true" tabindex="-1"></a>program<span class="op">.</span><span class="fu">runA</span><span class="op">(</span>Nil<span class="op">).</span>value</span>
 <span id="cb584-9"><a href="#cb584-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res11: Int = 3</span></span></code></pre></div>
@@ -16542,7 +16541,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     <p>We can use <code>evalAll</code> to conveniently evaluate
     multi-stage expressions:</p>
     <div class="sourceCode" id="cb587"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb587-1"><a href="#cb587-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> multistageProgram <span class="op">=</span> <span class="fu">evalAll</span><span class="op">(</span><span class="ex">List</span><span class="op">(</span><span class="st">&quot;1&quot;</span><span class="op">,</span> <span class="st">&quot;2&quot;</span><span class="op">,</span> <span class="st">&quot;+&quot;</span><span class="op">,</span> <span class="st">&quot;3&quot;</span><span class="op">,</span> <span class="st">&quot;*&quot;</span><span class="op">))</span></span>
-<span id="cb587-2"><a href="#cb587-2" aria-hidden="true" tabindex="-1"></a><span class="co">// multistageProgram: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], List[Int], List[Int], Int] = cats.data.IndexedStateT@635dd972</span></span>
+<span id="cb587-2"><a href="#cb587-2" aria-hidden="true" tabindex="-1"></a><span class="co">// multistageProgram: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], List[Int], List[Int], Int] = cats.data.IndexedStateT@6d1f600e</span></span>
 <span id="cb587-3"><a href="#cb587-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb587-4"><a href="#cb587-4" aria-hidden="true" tabindex="-1"></a>multistageProgram<span class="op">.</span><span class="fu">runA</span><span class="op">(</span>Nil<span class="op">).</span>value</span>
 <span id="cb587-5"><a href="#cb587-5" aria-hidden="true" tabindex="-1"></a><span class="co">// res13: Int = 9</span></span></code></pre></div>
@@ -16557,7 +16556,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
 <span id="cb588-3"><a href="#cb588-3" aria-hidden="true" tabindex="-1"></a>  _   <span class="op">&lt;-</span> <span class="fu">evalAll</span><span class="op">(</span><span class="ex">List</span><span class="op">(</span><span class="st">&quot;3&quot;</span><span class="op">,</span> <span class="st">&quot;4&quot;</span><span class="op">,</span> <span class="st">&quot;+&quot;</span><span class="op">))</span></span>
 <span id="cb588-4"><a href="#cb588-4" aria-hidden="true" tabindex="-1"></a>  ans <span class="op">&lt;-</span> <span class="fu">evalOne</span><span class="op">(</span><span class="st">&quot;*&quot;</span><span class="op">)</span></span>
 <span id="cb588-5"><a href="#cb588-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">yield</span> ans</span>
-<span id="cb588-6"><a href="#cb588-6" aria-hidden="true" tabindex="-1"></a><span class="co">// biggerProgram: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], List[Int], List[Int], Int] = cats.data.IndexedStateT@4de00ad6</span></span>
+<span id="cb588-6"><a href="#cb588-6" aria-hidden="true" tabindex="-1"></a><span class="co">// biggerProgram: IndexedStateT[[A &gt;: Nothing &lt;: Any] =&gt; Eval[A], List[Int], List[Int], Int] = cats.data.IndexedStateT@5be966ea</span></span>
 <span id="cb588-7"><a href="#cb588-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb588-8"><a href="#cb588-8" aria-hidden="true" tabindex="-1"></a>biggerProgram<span class="op">.</span><span class="fu">runA</span><span class="op">(</span>Nil<span class="op">).</span>value</span>
 <span id="cb588-9"><a href="#cb588-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res14: Int = 21</span></span></code></pre></div>
@@ -17528,7 +17527,7 @@ Strategies<span class="subtitle">In Scala with Cats</span></h1>
     function that accepts the wrong number or types of parameters, we
     get a compile error:</p>
     <div class="sourceCode" id="cb656"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb656-1"><a href="#cb656-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> add<span class="op">:</span> <span class="op">(</span><span class="bu">Int</span><span class="op">,</span> <span class="bu">Int</span><span class="op">)</span> <span class="op">=&gt;</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">(</span>a<span class="op">,</span> b<span class="op">)</span> <span class="op">=&gt;</span> a <span class="op">+</span> b</span>
-<span id="cb656-2"><a href="#cb656-2" aria-hidden="true" tabindex="-1"></a><span class="co">// add: Function2[Int, Int, Int] = repl.MdocSession$MdocApp0$$$Lambda$18113/0x00007f6de6c98f68@7667e63d</span></span></code></pre></div>
+<span id="cb656-2"><a href="#cb656-2" aria-hidden="true" tabindex="-1"></a><span class="co">// add: Function2[Int, Int, Int] = repl.MdocSession$MdocApp0$$$Lambda$18101/0x00007f8afacae000@471f8c9f</span></span></code></pre></div>
     <div class="sourceCode" id="cb657"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb657-1"><a href="#cb657-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="ex">Option</span><span class="op">(</span><span class="dv">1</span><span class="op">),</span> <span class="ex">Option</span><span class="op">(</span><span class="dv">2</span><span class="op">),</span> <span class="ex">Option</span><span class="op">(</span><span class="dv">3</span><span class="op">)).</span><span class="fu">mapN</span><span class="op">(</span>add<span class="op">)</span></span>
 <span id="cb657-2"><a href="#cb657-2" aria-hidden="true" tabindex="-1"></a><span class="co">// error:</span></span>
 <span id="cb657-3"><a href="#cb657-3" aria-hidden="true" tabindex="-1"></a><span class="co">// &#39;:&#39; expected, but &#39;(&#39; found</span></span>
