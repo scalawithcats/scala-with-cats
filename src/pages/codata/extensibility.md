@@ -28,6 +28,8 @@ We know there are lots of methods we can define on `List`. The standard library 
 Imagine `filter` was not defined on `List`. We can easily implement it as
 
 ```scala mdoc:silent
+import List.*
+
 def filter[A](list: List[A], pred: A => Boolean): List[A] = 
   list match {
     case Empty() => Empty()
@@ -39,9 +41,16 @@ def filter[A](list: List[A], pred: A => Boolean): List[A] =
 
 We could even use an extension method to make it appear as a normal method.
 
+```scala mdoc:reset:invisible
+enum List[A] {
+  case Empty()
+  case Pair(head: A, tail: List[A])
+}
+import List.*
+```
 ```scala mdoc:silent
 extension [A](list: List[A]) {
-  def filter[A](pred: A => Boolean): List[A] = 
+  def filter(pred: A => Boolean): List[A] = 
     list match {
       case Empty() => Empty()
       case Pair(head, tail) => 

@@ -38,26 +38,74 @@ def empty[A]: Stream[A] =
   }
 ```
 
-**Discuss implementation here. Anonymous subtype and partial functions.**
+**Discuss implementation here. Method (covariance / invariance), anonymous subtype and partial functions.**
 
-
-that we need to create an instance of `Stream`. The simplest constructor takes a `head` and a `tail`. It's important that these parameters are call-by-name so we don't end up with an infinite loop when we create instances.
+The empty `Stream` is certainly useful, but it's not the most exciting choice. Let's do something that really shows what we can do with codata and implement an infinite stream. In this case the infinite stream of ones.
 
 ```scala mdoc:silent
-object Stream {
-  def apply[A](hd: => A, tl: => Stream[A]): Stream[A] =
-    new Stream {
-      def head: A = hd
-      def tail: Stream[A] = tl
+val ones: Stream[Int] =
+  new Stream {
+    def isEmpty: Boolean = false
+
+    def head: Int = 1
+
+    def tail: Stream[Int] = ones
+  }
+```
+
+**Discuss implementation here. Circular reference is fine because it's behind a def. Following types.**
+
+
+Let's check that this does indeed work.
+
+```scala mdoc
+ones.head
+ones.tail.head
+ones.tail.tail.head
+```
+
+We can't extract all the elements from an infinite `Stream` (at least, not in finite time) so in general we'll have to resort to checking a finite sequence of elements. Since this will come up very often let's implement a method, `take`, to make this easier.
+
+```scala mdoc:reset:silent
+trait Stream[A] {
+  def isEmpty: Boolean
+  def head: A
+  def tail: Stream[A]
+  
+  def take(count: Int): List[A] =
+    count match {
+      case 0 => Nil
+      case n => 
+        if isEmpty then Nil
+        else head :: tail.take(n - 1)
     }
 }
 ```
 
+**Describe derivation of this method. First, it's defined solely in terms of destructors. Second it's a structural recursion and structural corecursion. Then pattern for using codata / Stream**
 
-Now let's implement a method using structural corecursion. A good choice is `map`. We can start by writing out the method skeleton.
+Now we can more easily check our implementations are correct.
+
+```scala mdoc:invisible
+val ones: Stream[Int] =
+  new Stream {
+    def isEmpty: Boolean = false
+
+    def head: Int = 1
+
+    def tail: Stream[Int] = ones
+  }
+```
+```scala mdoc
+ones.take(3)
+```
+
+
+Now let's implement another method using structural corecursion. A good choice is `map`. We can start by writing out the method skeleton.
 
 ```scala mdoc:reset:silent
 trait Stream[A] {
+  def isEmpty: Boolean
   def head: A
   def tail: Stream[A]
   
@@ -70,11 +118,13 @@ The first step in structural corecursion that produces codata is create the skel
 
 ```scala mdoc:reset:silent
 trait Stream[A] {
+  def isEmpty: Boolean
   def head: A
   def tail: Stream[A]
   
   def map[B](f: A => B): Stream[B] =
     new Stream[B] {
+      def isEmpty: Boolean = ???
       def head: B = ???
       def tail: Stream[B] = ???
     }
@@ -85,44 +135,58 @@ The next step is to fill out the implementations of `head` and `tail`. Here we h
 
 ```scala mdoc:reset:silent
 trait Stream[A] {
+  def isEmpty: Boolean
   def head: A
   def tail: Stream[A]
   
   def map[B](f: A => B): Stream[B] = {
     val source = this
     new Stream[B] {
+      def isEmpty: Boolean = source.isEmpty
       def head: B = f(source.head)
       def tail: Stream[B] = source.tail.map(f)
     }
   }
 }
 ```
+```scala mdoc:reset:invisible
+trait Stream[A] {
+  def isEmpty: Boolean
+  def head: A
+  def tail: Stream[A]
+  
+  def take(count: Int): List[A] =
+    count match {
+      case 0 => Nil
+      case n => 
+        if isEmpty then Nil
+        else head :: tail.take(n - 1)
+    }
+
+  def map[B](f: A => B): Stream[B] = {
+    val source = this
+    new Stream[B] {
+      def isEmpty: Boolean = source.isEmpty
+      def head: B = f(source.head)
+      def tail: Stream[B] = source.tail.map(f)
+    }
+  }
+}
+```
+```scala mdoc:invisible
+val ones: Stream[Int] =
+  new Stream {
+    def isEmpty: Boolean = false
+
+    def head: Int = 1
+
+    def tail: Stream[Int] = ones
+  }
+```
 
 This seems correct, but it's always good to test our code. 
-
-
-Now we create an instance. Notice how we can define this
-
-```scala mdoc:silent
-val ones: Stream[Int] = Stream(1, ones)
-```
-
-First, let's check that this does indeed work.
+We can see that `map` is working as expected.
 
 ```scala mdoc
-ones.head
-ones.tail.head
-ones.tail.tail.head
-```
-
-Now we can see that `map` is working as expected.
-
-```scala mdoc:silent
-val twos = ones.map(_ + 1)
-```
-
-```scala mdoc
-twos.head
-twos.tail.head
-twos.tail.tail.head
+ones.map(_ + 1).take(3)
 ```
