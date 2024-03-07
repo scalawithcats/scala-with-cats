@@ -45,3 +45,10 @@ Let's now be a little more precise in our definition, which will make the dualit
 - Data is defined as a sum of products. Each element in the sum is a constructor, and the product is the parameters that the constructor accepts. We can think of constructors as functions which take some arbitrary input and produce an element of data. 
 
 - Codata is defined as a product of functions, these functions being the destructors, or observations, or eliminators. The input to a destructor is always an element of the codata type and possibly some other parameters. The output is usually something that is not of the codata type. 
+
+More abstractly, we can define codata `C` as destructors:
+
+- `D1: (C, A, B, ...) => E`; and
+- `D2: (C, F, G, ...) => H`; and so on.
+
+Codata is similar to objects and classes in a typical object-oriented language, but there are many object-oriented features that we will not use. In particular, we won't use implementation inheritance or state. These two features make code very difficult to reason about, and so we avoid them. This gives us a subset of object-oriented code that fits within the conceptual model we are building.
