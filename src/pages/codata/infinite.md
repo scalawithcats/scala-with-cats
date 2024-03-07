@@ -1,6 +1,6 @@
 ## Structural Corecursion and Infinite Codata
 
-In this section we'll explore structural corecursion with an example of codata representing a potentially infinite set of elements. In particular, we will build a library for streams, sometimes known as lazy lists. These are the codata equivalent of lists. Where a list must have a finite length a stream's length may be unbounded.
+In this section we'll explore structural corecursion using an example of codata that represents a potentially infinite set of elements. In particular, we will build a library for streams, sometimes known as lazy lists. These are the codata equivalent of lists. Where a list must have a finite length, a stream's length may be unbounded.
 
 Let's start by reviewing structural corecursion. The key idea is to use the output type of the method to drive the process of writing the method. We previously looked at structural corecursion when we were producing data.
 In this case we saw that structural corecursion works by considering all the possible outputs, which are the constructors of the algebraic data type, and then working out the conditions under which we'd call each constructor. The process is similar for codata, but instead of considering each possible constructor we instead consider each method or function in the codata type, and what it's implementation should be.
@@ -104,7 +104,12 @@ trait Stream[A] {
 }
 ```
 
-We can use either the structural recursion or structural corecursion strategies for algebraic data to implement `take`. Since we've already covered these in detail I won't go through them here. The important point is that `take` only uses the destructors when interacting with the `Stream`. The pattern of code
+We can use either the structural recursion or structural corecursion strategies for algebraic data to implement `take`. Since we've already covered these in detail I won't go through them here. The important point is that `take` only uses the destructors when interacting with the `Stream`. The pattern of code that uses the `Stream`
+
+```scala
+if isEmpty then ???
+else head ??? tail
+```
 
 **Describe derivation of this method. First, it's defined solely in terms of destructors. Second it's a structural recursion and structural corecursion. Then pattern for using codata / Stream**
 
