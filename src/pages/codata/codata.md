@@ -14,13 +14,13 @@ enum Bool {
 The definition tells us there are two ways to construct an element of type `Bool`.
 Furthermore, if we have such an element we can tell exactly which case it is, by using a pattern match for example. Similarly, if the instances themselves hold data, as in `List` for example, we can always extract all the data within them. Again, we can use pattern matching to achieve this.
 
-Codata, in contrast, is defined in terms of operations we can perform on the elements of the type. These operations are sometimes called **destructors** (which we've already encountered), **observations**, or **eliminators**. Common example of codata are data structures such as sets. We might define the operations on a `Set` with elements of type `A` as:
+Codata, in contrast, is defined in terms of operations we can perform on the elements of the type. These operations are sometimes called **destructors** (which we've already encountered), **observations**, or **eliminators**. A common example of codata is a data structures such as a set. We might define the operations on a `Set` with elements of type `A` as:
 
 - `contains` which takes a `Set[A]` and an element `A` and returns a `Boolean` indicating if the set contains the element,
 - `insert` which takes a `Set[A]` and an element `A` and returns a `Set[A]` containing all the elements from the original set and the new element, and
 - `union` which takes a `Set[A]` and a set `Set[A]` and returns a `Set[A]` containing all the elements of both sets.
 
-In Scala we could translate this definition as
+In Scala we could implement this definition as
 
 ```scala mdoc:silent
 trait Set[A] {
@@ -38,17 +38,26 @@ trait Set[A] {
 
 This definition does not tell us anything about the internal representation of the set. It could use a hash table, a tree, or something more exotic. It does, however, tell us what we can do with the set. We know we can take the union but not the intersection, for example. 
 
-If you come from the object-oriented world you might recognize the description of codata above as programming to an interface. In many ways codata is just taking concepts from the object-oriented world and presenting them in a way that is consistent with the rest of the functional programming paradigm.
+If you come from the object-oriented world you might recognize the description of codata above as programming to an interface. In some ways codata is just taking concepts from the object-oriented world and presenting them in a way that is consistent with the rest of the functional programming paradigm.
 
-Let's now be a little more precise in our definition, which will make the duality between data and codata clearer:
+However, this does not mean adopting all the features of object-oriented programming. We won't use state, which is difficult to reason about. We also won't use implementation inheritance either, for the same reason. In our subset of object-oriented programming we'll either be defining interfaces (which may have default implementations of some methods) or final classes that implement those interfaces. Interestingly, this subset of object-oriented programming that corresponds to codata is one that advocates of object-oriented programming often recommend developers stick with.
 
-- Data is defined as a sum of products. Each element in the sum is a constructor, and the product is the parameters that the constructor accepts. We can think of constructors as functions which take some arbitrary input and produce an element of data. 
+Let's now be a little more precise in our definition of code, which will make the duality between data and codata clearer. Let's start by revisiting the definition of data: algebraic data is defined in terms of sums (logical ors) and products (logical ands). Remember that we can transform any data into a sum of products. Each product in the sum is a constructor, and the product itself is the parameters that the constructor accepts. Finally, we can think of constructors as functions which take some arbitrary input and produce an element of data. Our end point is a sum of functions from arbitrary input to data.
 
-- Codata is defined as a product of functions, these functions being the destructors, or observations, or eliminators. The input to a destructor is always an element of the codata type and possibly some other parameters. The output is usually something that is not of the codata type. 
+More abstractly, if we are defining some type `A` as data it is declared as constructors
 
-More abstractly, we can define codata `C` as destructors:
+- `A1: (B, C, ...) => A`; or
+- `A2: (D, E, ...) => A`; or
+- `A3: (F, G, ...) => A`; and so on.
 
-- `D1: (C, A, B, ...) => E`; and
-- `D2: (C, F, G, ...) => H`; and so on.
 
-Codata is similar to objects and classes in a typical object-oriented language, but there are many object-oriented features that we will not use. In particular, we won't use implementation inheritance or state. These two features make code very difficult to reason about, and so we avoid them. This gives us a subset of object-oriented code that fits within the conceptual model we are building.
+Let's now turn to codata. Codata is defined as a product of functions, these functions being the destructors. The input to a destructor is always an element of the codata type and possibly some other parameters. The output is usually something that is not of the codata type. We can write this as
+
+
+- `A1: (A, B, ...) => C`; and
+- `A2: (A, D, ...) => E`; and
+- `A3: (A, F, ...) => G`; and so on.
+
+This hopefully makes the relationship between the two clearer.
+
+Now we'll turn to representing codata in Scala.

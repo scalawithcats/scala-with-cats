@@ -3,14 +3,16 @@
 In this chapter we will look at **codata**, the dual of algebraic data types.
 Algebraic data types focus on how things are constructed.
 Codata, in contrast, focuses on how things are used.
-Defining codata means defining an set of operations that can be performed on the type.
+We define codata by specifying the operations that can be performed on the type.
 This is very similar to the use of interfaces in object-oriented programming, and this is the first reason that we are interested in codata: codata puts object-oriented programming into a coherent conceptual framework with the other strategies we are discussing.
-That's not all, however.
+
+We're not only interested in codata as lens to view object-oriented programming.
 Codata also allows us to create structures with an infinite number of elements, such as a list that never ends or a server loop that runs indefinitely. 
 Codata also gives a different form of extensibility to algebraic data.
 Whereas we can easily write new functions that transform algebraic data, we cannot add new cases to the definition of an algebraic data type without changing the existing code.
 The reverse is true for codata. We can easily create new implementations of codata, but functions that transform codata are limited by the interface the codata defines.
-In the previous chapter we saw structural recursion and structural corecursion could be used to guide us in writing programs using algebraic data types.
+
+In the previous chapter we saw structural recursion and structural corecursion as strategies to guide us in writing programs using algebraic data types.
 The same holds for codata.
 We can use codata forms of structural recursion and corecursion to guide us in writing programs that consume and produce codata respectively.
 
