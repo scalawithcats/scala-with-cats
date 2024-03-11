@@ -57,8 +57,8 @@ lazy val pages = List(
   // "codata/examples.md",
   "codata/codata.md",
   "codata/scala.md",
+  "codata/structural.md",
   "codata/data-codata.md",
-  "codata/infinite.md",
   "codata/extensibility.md",
   "codata/conclusions.md",
   // Contextual Abstraction
