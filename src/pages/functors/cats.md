@@ -86,8 +86,10 @@ def doMath[F[_]](start: F[Int])
     (implicit functor: Functor[F]): F[Int] =
   start.map(n => n + 1 * 2)
 
+import cats.Functor
 import cats.instances.option._ // for Functor
 import cats.instances.list._   // for Functor
+import cats.syntax.functor._   // for map
 ```
 
 ```scala mdoc
