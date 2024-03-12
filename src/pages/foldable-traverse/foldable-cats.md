@@ -100,7 +100,7 @@ provide stack safe implementations of `foldRight`:
 (1 to 100000).toVector.foldRight(0L)(_ + _)
 ```
 
-We've called out `Stream` because it is an exception to this rule.
+We've called out `LazyList` because it is an exception to this rule.
 Whatever data type we're using, though,
 it's useful to know that `Eval` has our back.
 </div>

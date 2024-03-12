@@ -84,7 +84,7 @@ Await.result(allUptimes, 1.second)
 ```
 
 This is much clearer and more concise---let's see how it works.
-If we ignore distractions like `CanBuildFrom` and `ExecutionContext`,
+If we ignore distractions like `BuildFrom` and `ExecutionContext`,
 the implementation of `Future.traverse` in the standard library looks like this:
 
 ```scala
