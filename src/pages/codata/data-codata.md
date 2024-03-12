@@ -2,9 +2,7 @@
 
 We earlier saw that we could implement `Bool` as both data and codata. This suggests there is some relationship between the two. In this section we'll explore that relationship. We'll look at it in two ways: firstly a very surface-level relationship between the two, and then a deep connection via `fold`.
 
-Remember that (algebraic) data is a sum of products, where the products are constructors. Meanwhile, codata is a product of functions. These two don't appear related on the surface, but let's look a bit more closely.
-
-Constructors are functions: they accept arguments and return a result. When we look at codata, we see a product of functions. We can make an correspondence between these functions and the constructor functions in data. What about the sum part of data? Well, when we have a product of functions we only call one at any point in our code. So the logical or is in the choice of function to call.
+Remember that (algebraic) data is a sum of products, where the products are constructors. Meanwhile, codata is a product of functions. Constructors are functions: they accept arguments and return a result. When we look at codata, we see a product of functions. We can make an correspondence between these functions and the constructor functions in data. What about the sum part of data? Well, when we have a product of functions we only call one at any point in our code. So the logical or is in the choice of function to call.
 
 Let's see how this works with a familiar example of data, `List`. As an algebraic data type we can define
 
@@ -24,7 +22,7 @@ trait List[A] {
 }
 ```
 
-This isn't the pattern we used to represent `Bool` as codata, and it doesn't immediately appear to be useful. In a few chapters we'll see a use for this duality, but for now we'll leave it and move on.
+This isn't the pattern we used to represent `Bool` as codata, and it doesn't immediately appear to be useful. In a few chapters we'll see a use for this relationship, but for now we'll leave it and move on.
 
 The connection between `Bool` as data and `Bool` as codata comes from `fold`. We've already learned how to derive the `fold` for any algebraic data type. For `Bool`, defined as
 
@@ -66,13 +64,13 @@ val False = new Bool {
 }
 ```
 
-The rules here are:
+The rules here for converting from data to codata are:
 
 1. On the interface (`trait`) defining the codata, define a method with the same signature as `fold`.
 2. Define an implementation of the interface for each product case in the data. The data's constructor arguments become constructor arguments on the codata `classes`. If there are no constructor arguments, as in `Bool`, we can define values instead of classes.
 3. Each implementation implements the case of `fold` that it corresponds to.
 
-Let's see an example for `List`. We'll start by defining it as data and implementing `fold`. I've chosen to implement `foldRight` but `foldLeft` would be just as good.
+Let's see how this works for a slightly more complex example: `List`. We'll start by defining it as data and implementing `fold`. I've chosen to implement `foldRight` but `foldLeft` would be just as good.
 
 ```scala mdoc:silent
 enum List[A] {
@@ -95,7 +93,7 @@ trait List[A] {
 }
 ```
 
-Now we define the implementations. There is one for `Pair` and one for `Empty`, which are the two cases in data definition of `List`.
+Now we define the implementations. There is one for `Pair` and one for `Empty`, which are the two cases in data definition of `List`. Notice that in this case the classes have constructor arguments, which correspond to the constructor arguments on the correspnding product types.
 
 ```scala
 final class Pair[A](head: A, tail: List[A]) extends List[A] {
@@ -144,7 +142,7 @@ val Pair: [A, B] => (A, List[A, B]) => List[A, B] =
 ```
 
 Finally, let's see an example to show it working.
-Firstly define the list containing `1`, `2`, `3`.
+We will first define the list containing `1`, `2`, `3`.
 Due to a restriction in polymorphic function types, I have to add the useless empty parameter.
 
 ```scala mdoc:silent
@@ -152,7 +150,7 @@ val list: [B] => () => List[Int, B] =
   [B] => () => Pair(1, Pair(2, Pair(3, Empty())))
 ```
 
-Now let's compute the sum and product of the elements in this list.
+Now we can compute the sum and product of the elements in this list.
 
 ```scala mdoc
 val sum = list()(0, (a, b) => a + b)
