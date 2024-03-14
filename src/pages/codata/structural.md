@@ -8,13 +8,15 @@ Let's start by reviewing structural recursion and corecursion. The key idea is t
 2. write down the skeleton to construct an instance of the codata type, usually using an anonymous subclass; and
 3. fill in the methods, using strategies such as structural recursion or following the types to help.
 
+It's important that any computation takes places within the methods, and so only runs when the methods are called. Once we start creating streams the importance of this will become clear.
+
 For structural recursion the steps are:
 
 1. recognize the input of the method or function is codata;
 2. note the codata's destructors as possible sources of values in writing the method; and
 3. complete the method, using strategies such as following the types or structural corecursion and the methods identified above.
 
-An example will make this clearer, but before we can see an example we need to define our stream type. As this is codata, it is defined in terms of its destructors. The destructors that define a `Stream` of elements of type `A` are:
+Examples will make this clearer, but before we can see an example we need to define our stream type. As this is codata, it is defined in terms of its destructors. The destructors that define a `Stream` of elements of type `A` are:
 
 - a `head` of type `A`; and
 - a `tail` of type `Stream[A]`.
@@ -136,12 +138,6 @@ trait Stream[A] {
   
   def map[B](f: A => B): Stream[B] = 
     ???
-    
-  def take(count: Int): List[A] =
-    count match {
-      case 0 => Nil
-      case n => head :: tail.take(n - 1)
-    }
 }
 ```
 
@@ -156,12 +152,6 @@ trait Stream[A] {
     this.head ???
     this.tail ???
   }
-    
-  def take(count: Int): List[A] =
-    count match {
-      case 0 => Nil
-      case n => head :: tail.take(n - 1)
-    }
 }
 ```
 
@@ -175,22 +165,84 @@ trait Stream[A] {
   def map[B](f: A => B): Stream[B] = {
     this.head ???
     this.tail ???
-  }
     
-  def take(count: Int): List[A] =
-    count match {
-      case 0 => Nil
-      case n => head :: tail.take(n - 1)
+    new Stream[B] {
+      def head: B = ???
+      def tail: Stream[B] = ???
+    }
+  }
+}
+```
+
+Now we've used structural recursion and structural corecursion, a bit of following the types is in order. The quickly arrives at the correct solution.
+
+```scala mdoc:reset:silent
+trait Stream[A] {
+  def head: A
+  def tail: Stream[A]
+  
+  def map[B](f: A => B): Stream[B] = {
+    val self = this 
+    new Stream[B] {
+      def head: B = f(self.head)
+      def tail: Stream[B] = self.tail.map(f)
+    }
+  }
+}
+```
+
+There are two important points. Firstly, notice how I gave the name `self` to `this`. This is so I can access the value inside the new `Stream` where are creating, where `this` would be bound to this new `Stream`. Next, notice that we access `self.head` and `self.tail` inside the methods on the new `Stream`. This maintains the correct semantics of only performing computation when it has been asked for. If we performed the computation outside of the methods that we would do it too early.
+
+As our final example, let's return to constructing `Stream`, and implement the universal constructor `unfold`.
+
+```scala mdoc:reset:silent 
+trait Stream[A] {
+  def head: A
+  def tail: Stream[A]
+}
+object Stream {
+  def unfold[A](seed: A): Stream[B] =
+    ???
+}
+```
+
+structural corecursion
+
+```scala mdoc:reset:silent 
+trait Stream[A] {
+  def head: A
+  def tail: Stream[A]
+}
+object Stream {
+  def unfold[A](seed: A): Stream[B] =
+    new Stream[B]{
+      def head: B = ???
+      def tail: Stream[B] = ???
     }
 }
 ```
-`unfold`
+
+```scala mdoc:reset:silent 
+trait Stream[A] {
+  def head: A
+  def tail: Stream[A]
+}
+object Stream {
+  def unfold[A](seed: A, f: A => B, next: A => A): Stream[B] =
+    new Stream[B]{
+      def head: B = 
+        f(seed)
+      def tail: Stream[B] = 
+        unfold(next(seed), f, next)
+    }
+}
+```
 
 Exercise: `filter`
 Exercise: `zip`
 Exercise: `scan`
 
-Examples: natural
+Examples: naturals
 
 Effects, odd, and even.
 
