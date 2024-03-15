@@ -1,4 +1,4 @@
-## Structural Corecursion and Infinite Codata
+## Structural Recursion and Corecursion, and Infinite Codata
 
 In this section we'll build a library for streams, also known as lazy lists. These are the codata equivalent of lists. Where a list must have a finite length, streams have an infinite length. We'll use this example to explore structural recursion and structural corecursion as applied to codata.
 
@@ -193,7 +193,7 @@ trait Stream[A] {
 
 There are two important points. Firstly, notice how I gave the name `self` to `this`. This is so I can access the value inside the new `Stream` where are creating, where `this` would be bound to this new `Stream`. Next, notice that we access `self.head` and `self.tail` inside the methods on the new `Stream`. This maintains the correct semantics of only performing computation when it has been asked for. If we performed the computation outside of the methods that we would do it too early.
 
-As our final example, let's return to constructing `Stream`, and implement the universal constructor `unfold`.
+As our final example, let's return to constructing `Stream`, and implement the universal constructor `unfold`. We start with the signature for `unfold`, remembering the `seed` parameter.
 
 ```scala mdoc:reset:silent 
 trait Stream[A] {
@@ -201,12 +201,12 @@ trait Stream[A] {
   def tail: Stream[A]
 }
 object Stream {
-  def unfold[A](seed: A): Stream[B] =
+  def unfold[A, B](seed: A): Stream[B] =
     ???
 }
 ```
 
-structural corecursion
+It's natural to apply structural corecursion to make progress.
 
 ```scala mdoc:reset:silent 
 trait Stream[A] {
@@ -214,7 +214,7 @@ trait Stream[A] {
   def tail: Stream[A]
 }
 object Stream {
-  def unfold[A](seed: A): Stream[B] =
+  def unfold[A, B](seed: A): Stream[B] =
     new Stream[B]{
       def head: B = ???
       def tail: Stream[B] = ???
@@ -222,13 +222,15 @@ object Stream {
 }
 ```
 
+Now we can follow the types, adding parameters as we need them. This gives us the complete method shown below.
+
 ```scala mdoc:reset:silent 
 trait Stream[A] {
   def head: A
   def tail: Stream[A]
 }
 object Stream {
-  def unfold[A](seed: A, f: A => B, next: A => A): Stream[B] =
+  def unfold[A, B](seed: A, f: A => B, next: A => A): Stream[B] =
     new Stream[B]{
       def head: B = 
         f(seed)
@@ -238,110 +240,410 @@ object Stream {
 }
 ```
 
-Exercise: `filter`
-Exercise: `zip`
-Exercise: `scan`
+We can use this to implement some interesting streams. Here's a stream that alternates between `1` and `-1`.
 
-Examples: naturals
-
-Effects, odd, and even.
-
-Computing approximations to Pi.
-
-Benefits:
-- represent infinite things (like events)
-- only take as much space as data that is processed
-
-
-
-
-
-Now let's implement another method using structural corecursion. A good choice is `map`. We can start by writing out the method skeleton.
-
-```scala mdoc:reset:silent
-trait Stream[A] {
-  def head: A
-  def tail: Stream[A]
-  
-  def map[B](f: A => B): Stream[B] =
-    ???
-}
-```
-
-Now we have two choices: we can use structural recursion (because `Stream` is an input) or we can use structural corecursion (because the output is also a `Stream`).
-
-The first step in structural corecursion that produces codata is create the skeleton of an instance of the type we're creating. As this is codata we can create an anonymous subtype of `Stream`.
-
-```scala mdoc:reset:silent
-trait Stream[A] {
-  def head: A
-  def tail: Stream[A]
-  
-  def map[B](f: A => B): Stream[B] =
-    new Stream[B] {
-      def isEmpty: Boolean = ???
-      def head: B = ???
-      def tail: Stream[B] = ???
-    }
-}
-```
-
-The next step is to fill out the implementations of `head` and `tail`. Here we have problem-specific parts, but we can follow the types to help us.
-
-```scala mdoc:reset:silent
-trait Stream[A] {
-  def isEmpty: Boolean
-  def head: A
-  def tail: Stream[A]
-  
-  def map[B](f: A => B): Stream[B] = {
-    val source = this
-    new Stream[B] {
-      def isEmpty: Boolean = source.isEmpty
-      def head: B = f(source.head)
-      def tail: Stream[B] = source.tail.map(f)
-    }
-  }
-}
-```
 ```scala mdoc:reset:invisible
 trait Stream[A] {
-  def isEmpty: Boolean
   def head: A
   def tail: Stream[A]
-  
+
   def take(count: Int): List[A] =
     count match {
       case 0 => Nil
-      case n => 
-        if isEmpty then Nil
-        else head :: tail.take(n - 1)
+      case n => head :: tail.take(n - 1)
     }
+}
+object Stream {
+  def unfold[A, B](seed: A, f: A => B, next: A => A): Stream[B] =
+    new Stream[B]{
+      def head: B = 
+        f(seed)
+      def tail: Stream[B] = 
+        unfold(next(seed), f, next)
+    }
+}
+```
 
-  def map[B](f: A => B): Stream[B] = {
-    val source = this
+```scala mdoc:silent
+val alternating = Stream.unfold(
+  true, 
+  x => if x then 1 else -1, 
+  x => !x
+)
+```
+
+We can check it works.
+
+```scala mdoc
+alternating.take(5)
+```
+
+
+#### Exercise: Stream Combinators {-}
+
+It's time for you to get some practice with structural recursion and structural corecursion using codata.
+Implement `filter`, `zip`, and `scanLeft` on `Stream`. They have the same semantics as the same methods on `List` and the signatures shown below.
+
+```scala mdoc:reset:silent
+trait Stream[A] {
+  def head: A
+  def tail: Stream[A]
+
+  def filter(pred: A => Boolean): Stream[A]
+  def zip[B](that: Stream[B]): Stream[(A, B)]
+  def scanLeft[B](zero: B)(f: (B, A) => B): Stream[B]
+}
+```
+
+<div class="solution">
+For all of these methods I found that structural corecursion was the most natural way to tackle them. You could start with structure recursion, though.
+
+You might be worried about the inefficiency of `filter`. That's something we'll discuss a bit later.
+
+```scala mdoc:reset:silent
+trait Stream[A] {
+  def head: A
+  def tail: Stream[A]
+
+  def filter(pred: A => Boolean): Stream[A] = {
+    val self = this
+    new Stream[A] {
+      def head: A = {
+        def loop(stream: Stream[A]): A =
+          if pred(stream.head) then stream.head
+          else loop(stream.tail)
+          
+        loop(self)
+      }
+      
+      def tail: Stream[A] = {
+        def loop(stream: Stream[A]): Stream[A] =
+          if pred(stream.head) then stream.tail
+          else loop(stream.tail)
+          
+        loop(self)
+      }
+    }
+  }
+
+  def zip[B](that: Stream[B]): Stream[(A, B)] = {
+    val self = this 
+    new Stream[(A, B)] {
+      def head: (A, B) = (self.head, that.head)
+      
+      def tail: Stream[(A, B)] =
+        self.tail.zip(that.tail)
+    }
+  }
+
+  def scanLeft[B](zero: B)(f: (B, A) => B): Stream[B] = {
+    val self = this
     new Stream[B] {
-      def isEmpty: Boolean = source.isEmpty
-      def head: B = f(source.head)
-      def tail: Stream[B] = source.tail.map(f)
+      def head: B = f(zero, self.head)
+      
+      def tail: Stream[B] =
+        self.tail.scanLeft(this.head)(f)
     }
   }
 }
 ```
-```scala mdoc:invisible
-val ones: Stream[Int] =
+</div>
+
+With the methods defined about we can do some neat things. For example, here is the streams of natural numbers.
+
+```scala mdoc:reset:invisible
+trait Stream[A] {
+  def head: A
+  def tail: Stream[A]
+
+  def filter(pred: A => Boolean): Stream[A] = {
+    val self = this
+    new Stream[A] {
+      def head: A = {
+        def loop(stream: Stream[A]): A =
+          if pred(stream.head) then stream.head
+          else loop(stream.tail)
+          
+        loop(self)
+      }
+      
+      def tail: Stream[A] = {
+        def loop(stream: Stream[A]): Stream[A] =
+          if pred(stream.head) then stream.tail
+          else loop(stream.tail)
+          
+        loop(self)
+      }
+    }
+  }
+
+  def scanLeft[B](zero: B)(f: (B, A) => B): Stream[B] = {
+    val self = this
+    new Stream[B] {
+      def head: B = f(zero, self.head)
+      
+      def tail: Stream[B] =
+        self.tail.scanLeft(this.head)(f)
+    }
+  }
+
+  def take(count: Int): List[A] =
+    count match {
+      case 0 => Nil
+      case n => head :: tail.take(n - 1)
+    }
+
+  def zip[B](that: Stream[B]): Stream[(A, B)] = {
+    val self = this 
+    new Stream[(A, B)] {
+      def head: (A, B) = (self.head, that.head)
+      
+      def tail: Stream[(A, B)] =
+        self.tail.zip(that.tail)
+    }
+  }
+
+}
+object Stream {
+  def unfold[A, B](seed: A, f: A => B, next: A => A): Stream[B] =
+    new Stream[B]{
+      def head: B = 
+        f(seed)
+      def tail: Stream[B] = 
+        unfold(next(seed), f, next)
+    }
+    
+  val ones = unfold(1, identity, identity)
+}
+```
+
+```scala mdoc:silent
+val naturals = Stream.ones.scanLeft(0)((b, a) => b + a)
+```
+
+As usual, we should check it works.
+
+```scala mdoc
+naturals.take(5)
+```
+
+We could also define `naturals` using `unfold`. 
+More interesting is defining it in terms of itself.
+
+```scala mdoc:reset:invisible
+trait Stream[A] {
+  def head: A
+  def tail: Stream[A]
+
+  def +:(elt: => A): Stream[A] = {
+    val self = this
+    new Stream[A] {
+      def head: A = elt
+      def tail: Stream[A] = self
+    }
+  }
+
+  def filter(pred: A => Boolean): Stream[A] = {
+    val self = this
+    new Stream[A] {
+      def head: A = {
+        def loop(stream: Stream[A]): A =
+          if pred(stream.head) then stream.head
+          else loop(stream.tail)
+          
+        loop(self)
+      }
+      
+      def tail: Stream[A] = {
+        def loop(stream: Stream[A]): Stream[A] =
+          if pred(stream.head) then stream.tail
+          else loop(stream.tail)
+          
+        loop(self)
+      }
+    }
+  }
+
+  def map[B](f: A => B): Stream[B] = {
+    val self = this
+    new Stream[B] {
+      def head: B = f(self.head)
+      def tail: Stream[B] = self.tail.map(f)
+    }
+  }
+
+  def scanLeft[B](zero: B)(f: (B, A) => B): Stream[B] = {
+    val self = this
+    new Stream[B] {
+      def head: B = f(zero, self.head)
+      
+      def tail: Stream[B] =
+        self.tail.scanLeft(this.head)(f)
+    }
+  }
+
+  def take(count: Int): List[A] =
+    count match {
+      case 0 => Nil
+      case n => head :: tail.take(n - 1)
+    }
+
+  def zip[B](that: Stream[B]): Stream[(A, B)] = {
+    val self = this 
+    new Stream[(A, B)] {
+      def head: (A, B) = (self.head, that.head)
+      
+      def tail: Stream[(A, B)] =
+        self.tail.zip(that.tail)
+    }
+  }
+
+}
+object Stream {
+  def unfold[A, B](seed: A, f: A => B, next: A => A): Stream[B] =
+    new Stream[B]{
+      def head: B = 
+        f(seed)
+      def tail: Stream[B] = 
+        unfold(next(seed), f, next)
+    }
+    
+  val ones = unfold(1, identity, identity)
+}
+```
+```scala mdoc:silent
+val naturals: Stream[Int] =
   new Stream {
-    def isEmpty: Boolean = false
-
-    def head: Int = 1
-
-    def tail: Stream[Int] = ones
+    def head = 1
+    def tail = naturals.map(_ + 1)
   }
 ```
 
-This seems correct, but it's always good to test our code. 
-We can see that `map` is working as expected.
+This might be confusing. If so, spend a bit of time thinking about it. It really does work!
 
 ```scala mdoc
-ones.map(_ + 1).take(3)
+naturals.take(5)
 ```
+
+
+### Efficiency and Effects
+
+You may have noticed that our implement recomputes values, possibly many times. 
+A good example is the implementation of `filter`.
+This recalculates the `head` and `tail` on each call, which could be a very expensive operation.
+
+```scala 
+def filter(pred: A => Boolean): Stream[A] = {
+  val self = this
+  new Stream[A] {
+    def head: A = {
+      def loop(stream: Stream[A]): A =
+        if pred(stream.head) then stream.head
+        else loop(stream.tail)
+        
+      loop(self)
+    }
+    
+    def tail: Stream[A] = {
+      def loop(stream: Stream[A]): Stream[A] =
+        if pred(stream.head) then stream.tail
+        else loop(stream.tail)
+        
+      loop(self)
+    }
+  }
+}
+```
+
+We know that delaying the computation until the method is called is important, because that is how we can handle infinite and self-referential data. However we don't need to redo this computation on succesive calls. We can instead cache the result from the first call and use that next time.
+Scala makes this easy with `lazy val`, which is a `val` that is not computed until its first call.
+Additionally, Scala's use of the *uniform access principle* means we can implement a method with no parameters using a `lazy val`.
+Here's a quick example demonstrating it in use.
+
+```scala mdoc:silent
+def always[A](elt: => A): Stream[A] =
+  new Stream[A] {
+    lazy val head: A = elt
+    lazy val tail: Stream[A] = always(head)
+  }
+  
+val twos = always(2)
+```
+
+As usual we should check our work.
+
+```scala mdoc
+twos.take(5)
+```
+
+We get the same result whichever method we choose, because we are assuming that we are only dealing with pure computations that have no dependency on state that might change. In this case a `lazy val` simply consumes additional space to save on time.
+This difference is quite deep.
+Programming language theory differentiates between **call by name** and **call by need** evaluation strategies. 
+The former is what we were doing: not computing a result until needed but then recomputing it every time.
+The latter is our optimization, which reuses the result after the first time it is used.
+Another alternative, called **call by value**, computes results when they are defined instead of waiting until they are needed.
+This is what Scala does by default with method parameters.
+
+We can illustrate the difference between call by name and call by need if we use an impure computation. 
+For example, we use define a stream of random numbers.
+Random number generators depend on some internal state.
+Here's the call by name implementation, using the methods we have already defined.
+
+```scala mdoc:silent
+import scala.util.Random
+
+val randoms: Stream[Double] = 
+  Stream.unfold(Random, r => r.nextDouble(), r => r)
+```
+
+Notice that we get *different* results each time we `take` a section of the `Stream`.
+
+```scala mdoc
+randoms.take(5)
+randoms.take(5)
+```
+
+Now let's define the same stream in a call by need style, using `lazy val`.
+
+```scala mdoc:silent
+val randomsByNeed: Stream[Double] =
+  new Stream[Double] {
+    lazy val head: Double = Random.nextDouble()
+    lazy val tail: Stream[Double] = randomsByNeed
+  }
+```
+
+This time we get the *same* result when we `take` a section, and each number is the same.
+
+```scala mdoc
+randomsByNeed.take(5)
+randomsByNeed.take(5)
+```
+
+If we wanted a stream that had a different random number for each element but those numbers were constant, we could redefine `unfold` to use call by need.
+
+```scala mdoc:silent
+def unfoldByNeed[A, B](seed: A, f: A => B, next: A => A): Stream[B] =
+  new Stream[B]{
+    lazy val head: B = 
+      f(seed)
+    lazy val tail: Stream[B] = 
+      unfoldByNeed(next(seed), f, next)
+  }
+```
+
+Now redefining `randomsByNeed` using `unfoldByNeed` gives us the result we are after. First, redefine it.
+
+```scala mdoc:silent
+val randomsByNeed2 =
+  unfoldByNeed(Random, r => r.nextDouble(), r => r)
+```
+
+Then check it works.
+
+```scala mdoc
+randomsByNeed2.take(5)
+randomsByNeed2.take(5)
+```
+
+These subtleties are one of the reasons that functional programmers try to avoid using state as far as possible.
