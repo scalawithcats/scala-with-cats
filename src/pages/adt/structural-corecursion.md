@@ -133,7 +133,14 @@ if ??? then MyList.Empty()
 else MyList.Pair(???, recursion(???))
 ```
 
-We start defining our method `unfold` so we can fill in the missing pieces. I'm using the recursion rule immediately in the code below, to save a bit of time in the derivation.
+Our starting point is writing the skeleton for `unfold`. It's a little bit unusual in that I've added a parameter `seed`. This is the information we use to create an element. We'll need this, but we cannot derive it from our strategies, so I've added it in here as a starting assumption.
+
+```scala
+def unfold[A, B](seed: A): MyList[B] =
+  ???
+```
+
+Now we start start using our strategies to fill in the missing pieces. I'm using the corecursion skeleton and I've applied the recursion rule immediately in the code below, to save a bit of time in the derivation.
 
 ```scala
 def unfold[A, B](seed: A): MyList[B] =
