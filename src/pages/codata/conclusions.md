@@ -1,8 +1,8 @@
 ## Conclusions
 
-Codata is defined by its interface: what we can do with it. We sometimes call these destructors, observations, or ???
+In this chapter we've explored codata. Codata is defined by its interface: what we can with it. We call the core elements of the interface the destructors, observations, or eliminators.
 
-Structural corecursion.
+Structural corecursion and recursion.
 
 Data can be transformed to codata and vice versa.
 
