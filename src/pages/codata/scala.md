@@ -1,7 +1,6 @@
 ## Codata in Scala
 
-Let's now see the representation of codata in Scala.
-We have already seen an example, which I have repeated here.
+We have already seen an example of codata, which I have repeated below.
 
 ```scala mdoc:silent
 trait Set[A] {
@@ -16,9 +15,9 @@ trait Set[A] {
 
 The abstract definition of this, which is a product of functions, defines a `Set` with elements of type `A` as:
 
-- a function `contains` which takes a `Set[A]` and an element `A` and returns a `Boolean`,
-- a function `insert` which takes a `Set[A]` and an element `A` and returns a `Set[A]`, and
-- a function `union` which takes a `Set[A]` and a set `Set[A]` and returns a `Set[A]`.
+- a function `contains` taking a `Set[A]` and an element `A` and returning a `Boolean`,
+- a function `insert` taking a `Set[A]` and an element `A` and returning a `Set[A]`, and
+- a function `union` taking a `Set[A]` and a set `Set[A]` and returning a `Set[A]`.
 
 Notice that the first parameter of each function is the type we are defining, `Set[A]`.
 
@@ -29,14 +28,14 @@ The translation to Scala is:
 
 This gives us the Scala representation we started with.
 
-This is only half the story for codata. We also need to actually implement the interface we've just defined. Here there are two approaches we can use:
+This is only half the story for codata. We also need to actually implement the interface we've just defined. There are two approaches we can use:
 
-1. We can use a `final` subclass in the case where we want to name the implementation; or
-2. We can use an anonymous subclass.
+1. a `final` subclass, in the case where we want to name the implementation; or
+2. an anonymous subclass.
 
-Using either means we cannot use implementation inheritance, which is difficult to reason about. Using a `class` rather than a `case class` means we don't expose implementation details like constructor arguments.
+Neither `final` nor anonymous subclasses can be further extended, meaning we cannot create deep inheritance hierarchies. This in turn avoids the difficulties that come from reasoning about deep hierarchies. Using a `class` rather than a `case class` means we don't expose implementation details like constructor arguments.
 
-An example is in order. Here's a simple example of `Set`, which uses a `List` to hold the elements in the set.
+Some examples are in order. Here's a simple example of `Set`, which uses a `List` to hold the elements in the set.
 
 ```scala mdoc:silent
 final class ListSet[A](elements: List[A]) extends Set[A] {
@@ -78,7 +77,7 @@ trait Set[A] {
 }
 ```
 
-This uses an anonymous subclass to implement `union` on the `Set` trait, and hence defines the method for all subclasses. In this case it's probably not a great decision to do this, as different representations of `Set` will likely have more efficient ways to implement `union`. Nonetheless it illustrates the technique. Not making the method `final` means that subclasses can override it with a more efficient implementation, though this does open us up to the dangers of implementation inheritance. This is one example of where theory and craft diverge. In theory we never want implementation inheritance, but in practice it can be useful as an optimization.
+This uses an anonymous subclass to implement `union` on the `Set` trait, and hence defines the method for all subclasses. I haven't made the method `final` so that subclasses can override it with a more efficient implementation. This does open up the danger of implementation inheritance. This is an example of where theory and craft diverge. In theory we never want implementation inheritance, but in practice it can be useful as an optimization.
 
 It can also be useful to implement utility methods defined purely in terms of the destructors. Let's say we wanted to implement a method `containsAll` that checks if a `Set` `contains` all the elements in an `Iterable` collection.
 
@@ -104,6 +103,6 @@ trait Set[A] {
 
 Once again we could make this a `final` method. In this case it's probably more justified as it's difficult to imagine a more efficient implementation.
 
-Data and codata are both realized in Scala as variations of the same language features of classes and objects. This means that, when implemented, each can have properties of the other. We cannot, for example, define an algebraic data type without also defining names for the fields within the data and thus defining destructors. This is the same in most languages, which don't make a hard distinction between data and codata. 
+Data and codata are both realized in Scala as variations of the same language features of classes and objects. This means we can define types that have properties of both data and codata. We have actually already done this. When we define data we must define names for the fields within the data, thus defining destructors. This is the same in most languages, which don't make a hard distinction between data and codata. 
 
 Part of the appeal, I think, of classes and objects is that they can express so many conceptually different abstractions with the same language constructs. This gives them a surface appearance of simplicity; it seems we need to learn only one abstraction to solve a huge of number of coding problems. However this apparent simplicity hides real complexity, as this variety of uses forces us to reverse engineer the conceptual intention from the code. 

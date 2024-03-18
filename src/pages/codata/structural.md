@@ -1,8 +1,8 @@
-## Structural Recursion and Corecursion, and Infinite Codata
+## Structural Recursion and Corecursion for Codata
 
-In this section we'll build a library for streams, also known as lazy lists. These are the codata equivalent of lists. Where a list must have a finite length, streams have an infinite length. We'll use this example to explore structural recursion and structural corecursion as applied to codata.
+In this section we'll build a library for streams, also known as lazy lists. These are the codata equivalent of lists. Whereas a list must have a finite length, streams have an infinite length. We'll use this example to explore structural recursion and structural corecursion as applied to codata.
 
-Let's start by reviewing structural recursion and corecursion. The key idea is to use the input or output type, respectively, to drive the process of writing the method. We've already seen how this works with data, where we emphasized structural recursion. With codata it's more often the case the structural corecursion is used. The steps for using structural corecursion are:
+Let's start by reviewing structural recursion and corecursion. The key idea is to use the input or output type, respectively, to drive the process of writing the method. We've already seen how this works with data, where we emphasized structural recursion. With codata it's more often the case that structural corecursion is used. The steps for using structural corecursion are:
 
 1. recognize the output of the method or function is codata;
 2. write down the skeleton to construct an instance of the codata type, usually using an anonymous subclass; and
@@ -16,7 +16,7 @@ For structural recursion the steps are:
 2. note the codata's destructors as possible sources of values in writing the method; and
 3. complete the method, using strategies such as following the types or structural corecursion and the methods identified above.
 
-Examples will make this clearer, but before we can see an example we need to define our stream type. As this is codata, it is defined in terms of its destructors. The destructors that define a `Stream` of elements of type `A` are:
+Our first step is to define our stream type. As this is codata, it is defined in terms of its destructors. The destructors that define a `Stream` of elements of type `A` are:
 
 - a `head` of type `A`; and
 - a `tail` of type `Stream[A]`.
@@ -126,7 +126,7 @@ val ones: Stream[Int] =
   }
 ```
 ```scala mdoc
-ones.take(3)
+ones.take(5)
 ```
 
 For our next task we'll implement `map`. Implementing a method on `Stream` allows us to see both structural recursion and corecursion for codata in action. As usual we begin by writing out the method skeleton.
@@ -141,7 +141,7 @@ trait Stream[A] {
 }
 ```
 
-Now we have a choice of strategy to use. Since we haven't used structural recursion yet, let's start with that. Since the input is codata, a `Stream`, the structural recursion strategy tells us we should consider using the destructors. Let's write them down to remind us of them.
+Now we have a choice of strategy to use. Since we haven't used structural recursion yet, let's start with that. The input is codata, a `Stream`, and the structural recursion strategy tells us we should consider using the destructors. Let's write them down to remind us of them.
 
 ```scala
 trait Stream[A] {
@@ -174,7 +174,7 @@ trait Stream[A] {
 }
 ```
 
-Now we've used structural recursion and structural corecursion, a bit of following the types is in order. The quickly arrives at the correct solution.
+Now we've used structural recursion and structural corecursion, a bit of following the types is in order. This quickly arrives at the correct solution.
 
 ```scala mdoc:reset:silent
 trait Stream[A] {
@@ -191,9 +191,9 @@ trait Stream[A] {
 }
 ```
 
-There are two important points. Firstly, notice how I gave the name `self` to `this`. This is so I can access the value inside the new `Stream` where are creating, where `this` would be bound to this new `Stream`. Next, notice that we access `self.head` and `self.tail` inside the methods on the new `Stream`. This maintains the correct semantics of only performing computation when it has been asked for. If we performed the computation outside of the methods that we would do it too early.
+There are two important points. Firstly, notice how I gave the name `self` to `this`. This is so I can access the value inside the new `Stream` we are creating, where `this` would be bound to this new `Stream`. Next, notice that we access `self.head` and `self.tail` inside the methods on the new `Stream`. This maintains the correct semantics of only performing computation when it has been asked for. If we performed the computation outside of the methods that we would do it too early, which is some cases can lead to an infinite loop.
 
-As our final example, let's return to constructing `Stream`, and implement the universal constructor `unfold`. We start with the signature for `unfold`, remembering the `seed` parameter.
+As our final example, let's return to constructing `Stream`, and implement the universal constructor `unfold`. We start with the skeleton for `unfold`, remembering the `seed` parameter.
 
 ```scala mdoc:reset:silent 
 trait Stream[A] {
@@ -282,7 +282,7 @@ alternating.take(5)
 #### Exercise: Stream Combinators {-}
 
 It's time for you to get some practice with structural recursion and structural corecursion using codata.
-Implement `filter`, `zip`, and `scanLeft` on `Stream`. They have the same semantics as the same methods on `List` and the signatures shown below.
+Implement `filter`, `zip`, and `scanLeft` on `Stream`. They have the same semantics as the same methods on `List`, and the signatures shown below.
 
 ```scala mdoc:reset:silent
 trait Stream[A] {
@@ -296,7 +296,7 @@ trait Stream[A] {
 ```
 
 <div class="solution">
-For all of these methods I found that structural corecursion was the most natural way to tackle them. You could start with structure recursion, though.
+For all of these methods I found that structural corecursion was the most natural way to tackle them. You could start with structural recursion, though.
 
 You might be worried about the inefficiency of `filter`. That's something we'll discuss a bit later.
 
@@ -349,7 +349,7 @@ trait Stream[A] {
 ```
 </div>
 
-With the methods defined about we can do some neat things. For example, here is the streams of natural numbers.
+We can do some neat things with the methods defined above. For example, here is the stream of natural numbers.
 
 ```scala mdoc:reset:invisible
 trait Stream[A] {
@@ -576,17 +576,14 @@ As usual we should check our work.
 twos.take(5)
 ```
 
-We get the same result whichever method we choose, because we are assuming that we are only dealing with pure computations that have no dependency on state that might change. In this case a `lazy val` simply consumes additional space to save on time.
-This difference is quite deep.
-Programming language theory differentiates between **call by name** and **call by need** evaluation strategies. 
-The former is what we were doing: not computing a result until needed but then recomputing it every time.
-The latter is our optimization, which reuses the result after the first time it is used.
-Another alternative, called **call by value**, computes results when they are defined instead of waiting until they are needed.
-This is what Scala does by default with method parameters.
+We get the same result whether we use a method or a `lazy val`, because we are assuming that we are only dealing with pure computations that have no dependency on state that might change. In this case a `lazy val` simply consumes additional space to save on time.
+
+Recomputing a result every time it is needed is known as **call by name**, while caching the result the first time it is computed is known as **call by need**. These two different **evaluation strategies** can be applied to individual values, as we've done here, or across an entire programming. Haskell, for example, uses call by need. All values in Haskell are only computed the first time they are need. This is approach is sometimes known as **lazy evaluation**. Another alternative, called **call by value**, computes results when they are defined instead of waiting until they are needed. This is the default in Scala.
 
 We can illustrate the difference between call by name and call by need if we use an impure computation. 
-For example, we use define a stream of random numbers.
+For example, we can define a stream of random numbers.
 Random number generators depend on some internal state.
+
 Here's the call by name implementation, using the methods we have already defined.
 
 ```scala mdoc:silent
@@ -597,6 +594,7 @@ val randoms: Stream[Double] =
 ```
 
 Notice that we get *different* results each time we `take` a section of the `Stream`.
+We would expect these results to be the same.
 
 ```scala mdoc
 randoms.take(5)
