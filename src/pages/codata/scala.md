@@ -28,10 +28,11 @@ The translation to Scala is:
 
 This gives us the Scala representation we started with.
 
-This is only half the story for codata. We also need to actually implement the interface we've just defined. There are two approaches we can use:
+This is only half the story for codata. We also need to actually implement the interface we've just defined. There are three approaches we can use:
 
-1. a `final` subclass, in the case where we want to name the implementation; or
-2. an anonymous subclass.
+1. a `final` subclass, in the case where we want to name the implementation;
+2. an anonymous subclass; or
+3. more rarely, an `object`.
 
 Neither `final` nor anonymous subclasses can be further extended, meaning we cannot create deep inheritance hierarchies. This in turn avoids the difficulties that come from reasoning about deep hierarchies. Using a `class` rather than a `case class` means we don't expose implementation details like constructor arguments.
 

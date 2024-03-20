@@ -35,33 +35,73 @@ object ListSet {
 }
 ```
 
-Your first challenge is to implement `EvenSet`, the set of even integers. Note this is infinite; you cannot directly represent all the elements in this set. Hint: 
+The implementation for `union` is a bit unsatisfactory; it's doesn't use any of our strategies for writing code. We can implement both `union` and `insert` in a generic way that works for *all* sets (in other words, is implemented on the `Set` trait) and uses the strategies we've seen in this chapter. Go ahead and do this.
 
 <div class="solution">
+I used structural corecursion to implement these methods. I decided to name the subclasses, as I think it's a little bit clearer what's going on in this case.
+
+```scala mdoc:reset:silent
+trait Set[A] {
+  
+  def contains(elt: A): Boolean
+  
+  def insert(elt: A): Set[A] =
+    InsertOneSet(elt, this)
+  
+  def union(that: Set[A]): Set[A] =
+    UnionSet(this, that)
+}
+
+final class InsertOneSet[A](element: A, source: Set[A]) 
+    extends Set[A] {
+
+  def contains(elt: A): Boolean =
+    elt == elt || source.contains(elt)
+}
+
+final class UnionSet[A](first: Set[A], second: Set[A])
+    extends Set[A] {
+
+  def contains(elt: A): Boolean =
+    first.contains(elt) || second.contains(elt)
+}
+```
+</div>
+
+```scala mdoc:invisible
+final class ListSet[A](elements: List[A]) extends Set[A] {
+
+  def contains(elt: A): Boolean =
+    elements.contains(elt)
+
+  override def insert(elt: A): Set[A] =
+    ListSet(elt :: elements)
+}
+object ListSet {
+  def empty[A]: Set[A] = ListSet(List.empty)
+}
+```
+
+Your next challenge is to implement `Evens`, the set of all even integers, which we'll represent as a `Set[Int]`. This is an infinite set; we cannot directly enumerate all the elements in this set. (We actually could enumerate all the even elements that are 32-bit `Ints`, but we don't want to as this would use excessive amounts of space.)
+
+<div class="solution">
+I implemented `Evens` using an `object`. This is possible because all possible instances of this set are the same, so we only need one instance.
+
 ```scala mdoc:silent
-final class EvenSet(elements: Set[Int]) extends Set[Int] {
+object Evens extends Set[Int] {
 
   def contains(elt: Int): Boolean =
-    (elt % 2 == 0) || elements.contains(elt)
-
-  def insert(elt: Int): Set[Int] =
-    EvenSet(elements.insert(elt))
-
-  def union(that: Set[Int]): Set[Int] =
-    EvenSet(that.union(elements))
-}
-object EvenSet {
-  val evens: Set[Int] = EvenSet(ListSet.empty)
+    (elt % 2 == 0)
 }
 ```
 
 It turns out, perhaps surprisingly, that this works.
-Let's define a few sets using `EvenSet` and `ListSet`.
+Let's define a few sets using `Evens` and `ListSet`.
 
 ```scala mdoc:silent
-val evensAndOne = EvenSet.evens.insert(1)
+val evensAndOne = Evens.insert(1)
 val evensAndOthers = 
-  EvenSet.evens.union(ListSet.empty.insert(1).insert(3))
+  Evens.union(ListSet.empty.insert(1).insert(3))
 ```
 
 Now show that they work as expected.
@@ -76,24 +116,15 @@ evensAndOthers.contains(3)
 ```
 </div>
 
-We can generalize this idea to defining sets in terms of **indicator functions**, which is a function of type `A => Boolean`, returning returns true if the input belows to the set. Implement `IndicatorSet`, which accepts
+We can generalize this idea to defining sets in terms of **indicator functions**, which is a function of type `A => Boolean`, returning returns true if the input belows to the set. Implement `IndicatorSet`, which is constructed with a single indicator function parameter.
 
+<div class="solution">
 ```scala mdoc:silent
-final class IndicatorSet[A](indicator: A => Boolean, elements: Set[A])
+final class IndicatorSet[A](indicator: A => Boolean)
     extends Set[A] {
 
   def contains(elt: A): Boolean =
-    indicator(elt) || elements.contains(elt)
-
-  def insert(elt: A): Set[A] =
-    new IndicatorSet(indicator, elements.insert(elt))
-
-  def union(that: Set[A]): Set[A] =
-    new IndicatorSet(indicator, that.union(elements))
-}
-object IndicatorSet {
-  def apply[A](f: A => Boolean): Set[A] = 
-    new IndicatorSet(f, ListSet.empty)
+    indicator(elt)
 }
 ```
 
@@ -114,7 +145,7 @@ odds.contains(3)
 Taking the union of even and odd integers gives us a set that contains all integers.
 
 ```scala mdoc:silent
-val integers = EvenSet.evens.union(odds)
+val integers = Evens.union(odds)
 ```
 
 It has the expected behaviour.
@@ -124,3 +155,4 @@ integers.contains(1)
 integers.contains(2)
 integers.contains(3)
 ```
+</div>
