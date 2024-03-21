@@ -1,25 +1,14 @@
 ## Conclusions
 
-In this chapter we've explored codata. Codata is defined by its interface: what we can with it. We call the core elements of the interface the destructors, observations, or eliminators.
+In this chapter we've explored codata, the dual of data. Codata is defined by its interface---what we can do with it---as opposed to data, which is defined by what it is. More formally, codata is a product of destructors, where destructors are functions from the codata type (and, optionally, some other inputs) to some type. By avoiding the elements of object-oriented programming that make it hard to reason about---state and implementation inheritance---codata brings elements of object-oriented programming that accord with the other functional programming strategies. In Scala we define codata as a `trait`, and implement it as a `final class`, anonymous subclass, or an object.
 
-Structural corecursion and recursion.
+We have two strategies for implementing methods using codata: structural corecursion, which we can use when the result is codata, and structural recursion, which we can use when an input is codata. Structural corecursion is usually the more useful of the two, as it gives more structure (pun intended) to the method we are implementing. The reverse is true for data.
 
-Data can be transformed to codata and vice versa.
+We saw that data is connected to codata via fold: any data can instead be implemented as codata with a single destructor that is the fold for that data. The reverse is also: we can enumerate all potential pairs of inputs and outputs of destructors to represent codata as data. However this does not mean that data and codata are equivalent. We have seen many examples of codata representing infinite structures, such as sets of all even numbers and streams of all natural numbers. We have also seen that data and codata offer different forms of extensibility: data makes it easy to add new functions, but adding new elements requires changing existing code, while it is easy to add new elements to codata but we change existing code if we add new functions.
 
-Infinite elements and extensibility as decision making criteria for choosing between data and codata.
-
-
-- How to Add Laziness to a Strict Language Without Even Being Odd http://hh.diva-portal.org/smash/record.jsf?pid=diva2%3A413532&dswid=-2514
-- Codata in Action
-  https://www.microsoft.com/en-us/research/uploads/prod/2020/01/CoDataInAction.pdf
-- Refunctionalization
+The earliest reference I could find to codata in programming languages is [Codatatypes in ML]( https://www.sciencedirect.com/science/article/pii/S0747717189800653), which dates from 1989. This is much more recent than algebraic data, which I think explains why codata is relatively unknown. There are some excellent recent papers that deal with codata. I highly recommend [Codata in Action](https://www.microsoft.com/en-us/research/uploads/prod/2020/01/CoDataInAction.pdf), which inspired large portions of this chaper. [Exploring Codata: The Relation to Object-Orientation](https://www.cs.uoregon.edu/Reports/DRP-201905-Sullivan.pdf) is also worthwhile.
+[How to Add Laziness to a Strict Language Without Even Being Odd] (http://hh.diva-portal.org/smash/record.jsf?pid=diva2%3A413532&dswid=-2514) is an older paper that discusses the implementation of streams, and in particular the difference between a not-quite-lazy-enough implementation they label odd and the version we saw, which they call even. These correspond to `Stream` and `LazyList` in the Scala standard library respectively.
+[Classical (Co)Recursion: Programming](https://arxiv.org/pdf/2103.06913.pdf) is an interesting survey of corecursion in different languages, and covers many of the same examples that I used here.
+Finally, if you really want to get into the weeds of the relationship between data and codata, [Beyond Church encoding: Boehm-Berarducci isomorphism of algebraic data types and polymorphic lambda-terms]( https://okmij.org/ftp/tagless-final/course/Boehm-Berarducci.html) is for you.
 
 
-- Exploring Codata: The Relation to Object-Orientation https://www.cs.uoregon.edu/Reports/DRP-201905-Sullivan.pdf
-
-- Beyond Church encoding: Boehm-Berarducci isomorphism of algebraic data types and polymorphic lambda-terms https://okmij.org/ftp/tagless-final/course/Boehm-Berarducci.html
-
-
-- Codatatypes in ML https://www.sciencedirect.com/science/article/pii/S0747717189800653
-
-- Classical (Co)Recursion: Programming https://arxiv.org/pdf/2103.06913.pdf 

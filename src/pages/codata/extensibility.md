@@ -99,7 +99,7 @@ If we tabulate this we clearly see that data and codata have orthogonal extensib
 +---------------+------+--------+
 | Extension     | Data | Codata |
 +===============+======+========+
-| Add data      | No   | Yes    |
+| Add elements  | No   | Yes    |
 +---------------+------+--------+
 | Add functions | Yes  | No     |
 +---------------+------+--------+
