@@ -1,4 +1,4 @@
-## Interpreters and Reification {#sec:interpreters:reification }
+## Interpreters and Reification {#sec:interpreters:reification}
 
 There are two different programming strategies at play in the regular expression code we've just written:
 
@@ -11,7 +11,7 @@ In the regular expression example, a `Regexp` value is a program. It is a descri
 The `matches` method is an interpreter. It carries out the instructions in the description, checking the pattern matches the entire input. We could have other interpreters, such as one that matches if at least some part of the input matches the pattern.
 
 
-### The Structure of Interpreters
+### The Structure of Interpreters {#sec:interpreters:structure}
 
 All uses of the interpreter strategy have a particular structure to their methods.
 There are three different kinds of methods:

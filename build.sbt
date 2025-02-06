@@ -4,7 +4,7 @@ ThisBuild / name := "scala-with-cats"
 ThisBuild / organization := "com.scalawithcats"
 ThisBuild / version := "0.0.1"
 
-ThisBuild / scalaVersion := "3.3.3"
+ThisBuild / scalaVersion := "3.3.4"
 
 ThisBuild / useSuperShell := false
 Global / onChangedBuildSource := ReloadOnSourceChanges

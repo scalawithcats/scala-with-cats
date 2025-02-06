@@ -1,4 +1,4 @@
-## The State Monad
+## The State Monad {#sec:monad:state}
 
 [`cats.data.State`][cats.data.State]
 allows us to pass additional state around as part of a computation.
