@@ -180,14 +180,14 @@ implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
         func(value)
     }
 
- def tailRecM[A, B](a: A)(func: A => Tree[Either[A, B]]): Tree[B] = {
-   flatMap(func(a)) {
-     case Left(value) =>
-       tailRecM(value)(func)
-     case Right(value) =>
-       Leaf(value)
-   }
- }
+  def tailRecM[A, B](a: A)(func: A => Tree[Either[A, B]]): Tree[B] = {
+    flatMap(func(a)) {
+      case Left(value) =>
+        tailRecM(value)(func)
+      case Right(value) =>
+        Leaf(value)
+    }
+  }
 }
 ```
 
