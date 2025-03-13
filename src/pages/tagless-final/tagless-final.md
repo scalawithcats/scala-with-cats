@@ -1,7 +1,7 @@
 ## Tagless Final Interpreters
 
 Now we understand codata interpreters we're ready to move on to tagless final.
-Tagless final is a simple extension of the basic codata interpreter.
+The core of tagless final is a simple extension of the basic codata interpreter.
 In our terminal interaction example our programs had type
 
 ```scala
@@ -34,11 +34,13 @@ Changing the interpretation of our terminal programs is more a theoretical than 
 
 ## Algebraic User Interfaces
 
-Broadly speaking, there are two kinds of user interfaces. When operating, say, a digital musical instrument, we require a continuous stream of values from the user interface. In contrast, when working with a form we only require the values once, when the form is submitted. Modeling a continuous stream of values is certainly doable (see functional reactive programming) but it is a distraction from our core goal here, which is to create user interfaces. Therefore we will stick with the simply kind of interface where the user submits values once.
+Broadly speaking, there are two kinds of user interfaces. When operating, say, a digital musical instrument, we require a continuous stream of values from the user interface. In contrast, when working with a form we only require the values once, when the form is submitted. Modeling a continuous stream of values is certainly doable (see functional reactive programming) but it adds inessential complexity. Therefore we will stick with the simpler kind of interface where the user submits values once.
 
 In the previous example we used an ad-hoc process to produce the terminal interaction library, fixing problems as we uncovered them. Here we will take a more systematic approach, to illustrate how we can apply strategies to derive code.
 
-We'll start by defining the algebra we are working with. We'll need at least one each of constructors, combinators, and interpreters. Constructors will be the atomic units of user interface our library can work with. The granularity we use here tradeoffs expressivity for convenience. At the very lowest level we work with vertex buffers and the like, which essentially makes our library a general graphics library. That's far too low level for this case study. At a higher level we might think of atomic units as user interface elements like labels, buttons, text inputs, and so on. This is better, but if we are too granular we'll be requiring the unit to wire up common functionality like field validation and form submission. We will go even higher level and work with atomic elements that are complete user interface elements consisting of a label, a control for user input, and optional validation rules. Let's model two such controls, to illustrate the idea.
+We'll start by defining the algebra we are working with. Remember that algebras consist of constructors, combinators, and interpreters. Let's consider each in turnn. 
+
+Constructors will define the atomic units of user interface our library works with. The granularity we use here trades off expressivity for convenience. At the very lowest level we could work with vertex buffers and the like, which essentially makes our library a general graphics library. This gives us the ultimate flexibility but is far too low level for this case study. At a higher level we might think of atomic units as user interface elements like labels, buttons, text inputs, and so on. This is the level at which HTML operates. At this level we still usually require multiple elements to construct a complete control. For example, in HTML the developer usually has to use a number of DOM elements and Javascript to build common functionality like field validation. We will go even higher level. Our atomic elements will specify the kind of user input we wants, such as a choice between a number of elements, and leave it up to the interpreter to decide how to render this using the platform's available controls. For example, we could render a one-of-many control using either radio buttons or a dropdown, or choose between the two depending on the number of choices. We'll also add labels, and optional validation rules, to each elements. Let's model two such controls, to illustrate the idea.
 
 ```scala mdoc:silent
 type Validation[A] = A => Either[String, A]
@@ -46,13 +48,10 @@ type Validation[A] = A => Either[String, A]
 // The validation rule that always succeeds
 def succeed[A](value: A): Either[String, A] = Right(value)
 
-// The type of user interface elements. We don't know what this is yet.
-type Element[A] = Nothing
+trait Controls[Ui[_]] {
+  def text(label: String, placeholder: String, validation: Validation[String] = succeed): Ui[String]
 
-trait Ui {
-  def text(label: String, placeholder: String, validation: Validation[String] = succeed): Element[String]
-
-  def choice[A](label: String, options: Seq[(String, A)]): Element[A]
+  def choice[A](label: String, options: Seq[(String, A)]): Ui[A]
 }
 ```
 
@@ -60,8 +59,83 @@ trait Ui {
 Here we defined two controls:
 
 - `text`, which creates a text input where the user can enter any text that passes the validation rule; and
-- `choices`, which gives the user a choice of one of the given item.
+- `choices`, which gives the user a choice of one of the given items.
 
-Notice how our modeling decisions restrict our expressiviity. For example, `text` can have a placeholder, which is displayed before the user enters input, but does not have a default value. Notice that we don't have way to control the appearance of controls. This is deliberate; we are pushing that concern into the interpreters. 
+Notice how our modeling decisions restrict our expressivity. For example, `text` can have a placeholder, which is displayed before the user enters input, but does not have a default value. Notice that we don't have any way to control the appearance of controls. This is deliberate; we are pushing that concern into the interpreters. 
 
-These two constructors are enough to illustrate the problem, so we will move on to combinators.
+These controls generate an element of a type parameter `Ui`. Each particular interpreter, corresponding to a backend, will choose a concrete type for `Ui` corresponding to the needs of the user interface toolkit it is working with.
+
+These two constructors are enough to illustrate the problem, so we will move on to combinators. In the context of user interfaces, the most common combinators will specify the layout of elements. As with the constructors, there are a number of possible designs. We could allow a lot of precision in layout, as CSS does for HTML. In keeping with our design for the constructors, and with the need to keep things simple, we will go with a very high-level design. Our single combinator, `and`, only specifies that two elements should occur together. It leaves it up to the interpreter how this should be achieved on the screen. 
+
+```scala mdoc:silent
+trait Layout[Ui[_]] {
+  def and[A, B](first: Ui[A], second: Ui[B]): Ui[(A, B)]
+}
+```
+
+You might have noticed that `and` is another name for `product` from `Semigroupal`, which we encountered in Section [@sec:semigroupal]. It has exactly the same signature, apart from the name, and it represents the same concept as applied to user interfaces.
+
+The next step is to create an interpreter. Here we are going to create an extremely simple interpreter to illustrate the idea and to allow us to show how to write programs using our algebras. We will write more full featured interpreters later.
+
+Our interpreter will use the very basic Console IO features of the standard library to interact with the user.
+
+**TODO Does Cats provide applicative for Function0?**
+
+```scala mdoc:silent
+import cats.syntax.all.*
+import scala.io.StdIn
+import scala.util.Try
+
+type Program[A] = () => A
+
+object Simple extends Controls[Program], Layout[Program] {
+  def and[A, B](first: Program[A], second: Program[B]): Program[(A, B)] =
+    (first, second).tupled
+  
+  def text(label: String, placeholder: String, validation: Validation[String] = succeed): Program[String] =
+    () => {
+      def loop(): String = {
+        println(s"$label ($placeholder):")
+        val input = StdIn.readLine
+        
+        validation(input) match {
+          case Left(msg) => 
+            println(msg)
+            loop()
+          case Right(value) => value
+        }
+      }
+      
+      loop()
+    }
+
+  def choice[A](label: String, options: Seq[(String, A)]): Program[A] = 
+    () => {
+      def loop(): String = {
+        println(label)
+        options.zipWithIndex.foreach{ case ((desc, _), idx) => 
+          println(s"$idx: $desc") 
+        }
+        
+        Try(StdIn.readInt).fold{ 
+          _ => {
+            println("Please enter a valid number.")
+            loop()
+          },
+          idx => {
+            if idx >= 0 and < options.size then options(idx)
+            else {
+              println("Please enter a valid number.")
+              loop()
+            }
+          }
+        }
+      }
+    }
+}
+```
+
+
+```scala
+scala.io.StdIn.readInt
+```
