@@ -31,8 +31,6 @@ First I want to introduce a more motivating example we will use for tagless fina
 
 Changing the interpretation of our terminal programs is more a theoretical than a practical problem. While it is true that different interpretations, such as saving to a text buffer, or tracing the state changes, will have niche uses, the vast majority of the time we'll use the default interpretation. A much more motivating example is a cross-platform user interface library. User interfaces targeting the web and mobile platforms is a great source of the value provided by frameworks such as [Flutter](https://flutter.dev/), [React Native](https://reactnative.dev/), and [Capacitor](https://capacitorjs.com/). We'll be a bit less ambitious here, targeting the terminal and the web browser.
 
-**TODO: Check Flutter URL**
-
 
 ## Algebraic User Interfaces
 
