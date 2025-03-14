@@ -146,3 +146,24 @@ object Simple extends Controls[Program], Layout[Program] {
 }
 ```
 
+Now we can implement a simple example.
+
+```scala mdoc:silent
+def example(): Unit = {
+  def bio[Ui[_]](
+      controls: Controls[Ui],
+      layout: Layout[Ui]
+  ): Ui[(String, Int)] =
+    layout.and(
+      controls.text("What is your name?", "John Doe"),
+      controls.choice(
+        "How many years have you been using Scala?",
+        Seq("0-2" -> 0, "3-5" -> 3, "5-7" -> 5, "8+" -> 8)
+      )
+    )
+
+  val (name, exp) = bio(Simple, Simple)()
+  println(s"Hello $name!")
+  println(s"You've been using Scala for $exp or more years.")
+}
+```
