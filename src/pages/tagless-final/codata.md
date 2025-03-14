@@ -3,7 +3,7 @@
 In this section we'll build a DSL for terminal interaction. The terminal is familiar to most programmers, and terminal applications are common for developer focused tools. Most terminal features are controlled by writing specially formatted text. However, applications benefit from higher-level abstractions, motivating libraries that present a more ergonomic interface[^tuis]. Our implementation will showcase codata interpreters, monads, and the central role of designing for composition and reasoning. 
 
 
-## The Terminal
+### The Terminal
 
 The modern terminal is an accretion of features that started with the [VT-100][vt-100] in 1978 and continues [to this day][kitty-kp].
 Most terminal features are accessed by reading and writing [ANSI escape codes][ansi-escape-code].
@@ -21,7 +21,7 @@ The examples should work with any terminal from the last 40 odd years.
 If you're on Windows you can use Windows Terminal, [WSL][wsl], or another terminal that runs on Windows such as [WezTerm][wezterm].
 
 
-## Color Codes
+### Color Codes
 
 We will start by writing color codes straight to the terminal.
 This will introduce us to controlling the terminal, and show the problems of using ANSI escape codes directly.
@@ -57,7 +57,7 @@ The string `"\u001b[31m"` tells the terminal to set the text foreground color to
 string `"\u001b[0m"` tells the terminal to reset all text styling to the default.
 
 
-## The Trouble with Escape Codes
+### The Trouble with Escape Codes
 
 Escape codes are simple for the terminal to process, but lack useful structure when generating them.
 The code above shows one potential problem: we must remember to reset the color when we finish a run of text. This problem is no different to that of freeing manually allocated memory, and the long history of memory safety problems in C programs show us that we cannot expect to do this reliably. Luckily, we're unlikely to crash our program if we forget an escape code!
@@ -119,7 +119,7 @@ def printRedAndBold(output: String): Unit =
 This is not feasible to implement for all possible combinations of styles. The root problem is that our design is not compositional: there is no way to build a combination of styles from smaller pieces.
 
 
-## Programs and Interpreters
+### Programs and Interpreters
 
 To solve our problem above we need `printRed` and `printBold` to accept not a `String` to print but a program to run. 
 We don't need to know what these programs do; we just need a way to run them.
@@ -348,7 +348,7 @@ Having defined the structure of `Terminal`, the majority of the remaining code m
 
 
 
-## Codata and Extensibility
+### Codata and Extensibility
 
 We made a seemingly arbitrary choice to use a codata interpreter. Let's now explore this choice and its implications.
 
@@ -374,12 +374,12 @@ Using the native representation of programs (i.e. functions) gives us the entire
 We could factor the interpreter in different ways, and it would still be a codata interpreter. For example, we could put a method to write to the terminal on the `Terminal` type. This would give us a bit more flexibility as changing the implementation of `Termainal` could, say, write to a network socket or a terminal embedded in a browser. We still have the limitation that we cannot create truly different interpretations, such as serializing programs to disk, with the codata approach.
 
 
-## Composition and Reasoning
+### Composition and Reasoning
 
 [I've argued before][fp] that the core of functional programming is reasoning and composition. Both of these are central to this case study. We've explicitly designed the DSL for ease of reasoning. Indeed that's the whole point of creating a DSL instead of just spitting control codes at the terminal. An example is how we paid attention to making sure nested calls work as we'd expect. Composition comes in at two levels: both our design and our implementation are compositional. Within the case study we discussed compositionality in the design. Implementationally,  a `Program` is a composition of the state monad and the functions inside the state monad. The state monad provides the sequential flow of the `Terminal` state, and the functions provide the domain specific actions.
 
 
-## Conclusions
+### Conclusions
 
 We've built what we set out to do: a DSL for terminal interaction. It is composable, meaning we can build larger programs out of smaller ones, and we gave it reasonable semantics, allowing, for example, stacked styles with effect that matches the program's nesting. We easily created an implementation by composing the state monad, functions, and a bit of domain specific knowledge about escape codes.
 
