@@ -32,13 +32,13 @@ First I want to introduce a more motivating example we will use for tagless fina
 Changing the interpretation of our terminal programs is more a theoretical than a practical problem. While it is true that different interpretations, such as saving to a text buffer, or tracing the state changes, will have niche uses, the vast majority of the time we'll use the default interpretation. A much more motivating example is a cross-platform user interface library. User interfaces targeting the web and mobile platforms is a great source of the value provided by frameworks such as [Flutter](https://flutter.dev/), [React Native](https://reactnative.dev/), and [Capacitor](https://capacitorjs.com/). We'll be a bit less ambitious here, targeting the terminal and the web browser.
 
 
-## Algebraic User Interfaces
+### Algebraic User Interfaces
 
 Broadly speaking, there are two kinds of user interfaces. When operating, say, a digital musical instrument, we require a continuous stream of values from the user interface. In contrast, when working with a form we only require the values once, when the form is submitted. Modeling a continuous stream of values is certainly doable (see functional reactive programming) but it adds inessential complexity. Therefore we will stick with the simpler kind of interface where the user submits values once.
 
 In the previous example we used an ad-hoc process to produce the terminal interaction library, fixing problems as we uncovered them. Here we will take a more systematic approach, to illustrate how we can apply strategies to derive code.
 
-We'll start by defining the algebra we are working with. Remember that algebras consist of constructors, combinators, and interpreters. Let's consider each in turnn. 
+We'll start by defining the algebra we are working with. Remember that algebras consist of constructors, combinators, and interpreters. Let's consider each in turn. 
 
 Constructors will define the atomic units of user interface our library works with. The granularity we use here trades off expressivity for convenience. At the very lowest level we could work with vertex buffers and the like, which essentially makes our library a general graphics library. This gives us the ultimate flexibility but is far too low level for this case study. At a higher level we might think of atomic units as user interface elements like labels, buttons, text inputs, and so on. This is the level at which HTML operates. At this level we still usually require multiple elements to construct a complete control. For example, in HTML the developer usually has to use a number of DOM elements and Javascript to build common functionality like field validation. We will go even higher level. Our atomic elements will specify the kind of user input we wants, such as a choice between a number of elements, and leave it up to the interpreter to decide how to render this using the platform's available controls. For example, we could render a one-of-many control using either radio buttons or a dropdown, or choose between the two depending on the number of choices. We'll also add labels, and optional validation rules, to each elements. Let's model two such controls, to illustrate the idea.
 
@@ -149,21 +149,85 @@ object Simple extends Controls[Program], Layout[Program] {
 Now we can implement a simple example.
 
 ```scala mdoc:silent
-def example(): Unit = {
-  def bio[Ui[_]](
-      controls: Controls[Ui],
-      layout: Layout[Ui]
-  ): Ui[(String, Int)] =
-    layout.and(
-      controls.text("What is your name?", "John Doe"),
-      controls.choice(
-        "How many years have you been using Scala?",
-        Seq("0-2" -> 0, "3-5" -> 3, "5-7" -> 5, "8+" -> 8)
-      )
+def bio[Ui[_]](
+    controls: Controls[Ui],
+    layout: Layout[Ui]
+): Ui[(String, Int)] =
+  layout.and(
+    controls.text("What is your name?", "John Doe"),
+    controls.choice(
+      "How many years have you been using Scala?",
+      Seq("0-2" -> 0, "3-5" -> 3, "5-7" -> 5, "8+" -> 8)
     )
+  )
+```
 
-  val (name, exp) = bio(Simple, Simple)()
-  println(s"Hello $name!")
-  println(s"You've been using Scala for $exp or more years.")
+We can run this example with code like the following.
+
+```scala
+val (name, exp) = bio(Simple, Simple)()
+println(s"Hello $name!")
+println(s"You've been using Scala for $exp or more years.")
+```
+
+Let's recap what we have seen so far:
+
+* We define constructors and combinators as pure interfaces. These interfaces are parameterized by their output type.
+* Interpreters implement these interfaces with a concrete type for the output type. The output type is whatever makes sense for this particular interpretation.
+* Programs are methods that are parameterized by the output type and the interfaces they need.
+
+The key change, compared to the basic codata interpreter, is the parameterization of the output type. This gives interpreters the flexibility to produce different outputs for different interpretations.
+
+
+### Developer Experience
+
+This basic implementation of tagless final has quite a poor developer experience. Consider refactoring our example.
+
+```scala mdoc:silent:nest
+def name[Ui[_]](controls: Controls[Ui]): Ui[String] =
+  controls.text("What is your name?", "John Doe")
+  
+def experience[Ui[_]](controls: Controls[Ui]): Ui[Int] =
+  controls.choice(
+    "How many years have you been using Scala?",
+    Seq("0-2" -> 0, "3-5" -> 3, "5-7" -> 5, "8+" -> 8)
+  )
+  
+def bio[Ui[_]](
+    controls: Controls[Ui],
+    layout: Layout[Ui]
+): Ui[(String, Int)] =
+  layout.and(name(controls), experience(controls))
+```
+
+This style of code quickly becomes tedious to write. The method signatures are quite involved, and passing the interfaces from method to method is annoying busy work.
+
+The usual approach is to make the interfaces `given` instances. If we define the standard accessors
+
+```scala mdoc:silent
+object Controls {
+  def apply[Ui[_]](using controls: Controls[Ui]): Controls[Ui] =
+    controls
 }
+
+object Layout {
+  def apply[Ui[_]](using layout: Layout[Ui]): Layout[Ui] =
+    layout
+}
+```
+
+we can then write
+
+```scala mdoc:silent:nest
+def name[Ui[_]: Controls]: Ui[String] =
+  Controls[Ui].text("What is your name?", "John Doe")
+  
+def experience[Ui[_]: Controls]: Ui[Int] =
+  Controls[Ui].choice(
+    "How many years have you been using Scala?",
+    Seq("0-2" -> 0, "3-5" -> 3, "5-7" -> 5, "8+" -> 8)
+  )
+  
+def bio[Ui[_]: Controls: Layout]: Ui[(String, Int)] =
+  Layout[Ui].and(name, experience)
 ```
