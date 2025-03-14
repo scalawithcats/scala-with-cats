@@ -83,7 +83,6 @@ The next step is to create an interpreter. Here we are going to create an extrem
 
 Our interpreter will use the very basic Console IO features of the standard library to interact with the user.
 
-**TODO Does Cats provide applicative for Function0?**
 
 ```scala mdoc:silent
 import cats.syntax.all.*
@@ -94,6 +93,7 @@ type Program[A] = () => A
 
 object Simple extends Controls[Program], Layout[Program] {
   def and[A, B](first: Program[A], second: Program[B]): Program[(A, B)] =
+    // Use Cats Semigroupal for Function0
     (first, second).tupled
 
   def text(
