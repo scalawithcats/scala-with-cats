@@ -49,7 +49,11 @@ type Validation[A] = A => Either[String, A]
 def succeed[A](value: A): Either[String, A] = Right(value)
 
 trait Controls[Ui[_]] {
-  def text(label: String, placeholder: String, validation: Validation[String] = succeed): Ui[String]
+  def text(
+      label: String,
+      placeholder: String,
+      validation: Validation[String] = succeed
+  ): Ui[String]
 
   def choice[A](label: String, options: Seq[(String, A)]): Ui[A]
 }
@@ -59,7 +63,7 @@ trait Controls[Ui[_]] {
 Here we defined two controls:
 
 - `text`, which creates a text input where the user can enter any text that passes the validation rule; and
-- `choices`, which gives the user a choice of one of the given items.
+- `choice`, which gives the user a choice of one of the given items.
 
 Notice how our modeling decisions restrict our expressivity. For example, `text` can have a placeholder, which is displayed before the user enters input, but does not have a default value. Notice that we don't have any way to control the appearance of controls. This is deliberate; we are pushing that concern into the interpreters. 
 
@@ -91,51 +95,54 @@ type Program[A] = () => A
 object Simple extends Controls[Program], Layout[Program] {
   def and[A, B](first: Program[A], second: Program[B]): Program[(A, B)] =
     (first, second).tupled
-  
-  def text(label: String, placeholder: String, validation: Validation[String] = succeed): Program[String] =
+
+  def text(
+      label: String,
+      placeholder: String,
+      validation: Validation[String] = succeed
+  ): Program[String] =
     () => {
       def loop(): String = {
-        println(s"$label ($placeholder):")
+        println(s"$label (e.g. $placeholder):")
         val input = StdIn.readLine
-        
-        validation(input) match {
-          case Left(msg) => 
+
+        validation(input).fold(
+          msg => {
             println(msg)
             loop()
-          case Right(value) => value
-        }
+          },
+          value => value
+        )
       }
-      
+
       loop()
     }
 
-  def choice[A](label: String, options: Seq[(String, A)]): Program[A] = 
+  def choice[A](label: String, options: Seq[(String, A)]): Program[A] =
     () => {
-      def loop(): String = {
+      def loop(): A = {
         println(label)
-        options.zipWithIndex.foreach{ case ((desc, _), idx) => 
-          println(s"$idx: $desc") 
+        options.zipWithIndex.foreach { case ((desc, _), idx) =>
+          println(s"$idx: $desc")
         }
-        
-        Try(StdIn.readInt).fold{ 
+
+        Try(StdIn.readInt).fold(
           _ => {
             println("Please enter a valid number.")
             loop()
           },
           idx => {
-            if idx >= 0 and < options.size then options(idx)
+            if idx >= 0 && idx < options.size then options(idx)(1)
             else {
               println("Please enter a valid number.")
               loop()
             }
           }
-        }
+        )
       }
+
+      loop()
     }
 }
 ```
 
-
-```scala
-scala.io.StdIn.readInt
-```
