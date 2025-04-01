@@ -1,42 +1,299 @@
 ## Tagless Final Interpreters
 
-Now we understand codata interpreters we're ready to move on to tagless final.
-The core of tagless final is a simple extension of the basic codata interpreter.
-In our terminal interaction example our programs had type
+We have just implemented a DSL for terminal interaction using a codata interpreter.
+In that case study we used an ad-hoc process to produce the terminal interaction library, fixing problems as we uncovered them. 
+Now we want to be more systematic, illustrating how we can apply strategies to derive code.
+This will in turn make it clearer how we can derive tagless final for the basic codata interpreter.
+
+We'll start by being very explicit about the role of the different types in the codata interpreter.
+Following Section [@sec::interpreters:structure], remember there are three different kinds of methods in an interpreter:
+
+* constructors, with type `A => Program`,
+* combinators, with type `Program => Program`, and
+* interpreters, with type `Program => A`.
+
+In the terminal DSL we explicitly define the `Program` type as
 
 ```scala
-State[Terminal, A]
+type Program[A] = State[Terminal, A]
 ```
 
-which is equivalent to
+There is a single constructor, `print`, with type `String => Program[Unit]`.
+All of the methods that change the output style, such as `bold`, `red`, and `blue`, are combinators. They all have the type `Program[A] => Program[A]`.
+Finally there is a single interpreter, which is function application, with type `Program[A] => A`.
 
-```scala
-Terminal => (Terminal, A)
+In a codata interpreter, the available interpretations are limited to the methods available on the `Program` type.
+The terminal DSL represents programs as functions, as therefore only has a single interpretation available.
+The key idea in tagless final, to get around this restriction, is to parameterize the `Program` type by the program operations.
+It's not entirely clear what this means, so let's see a simple example of tagless final which will make it clearer.
+
+Our example will be simple arithmetic expressions, which is not very exciting but is familiar.
+We'll start with a data interpreter, convert it to a codata interpreter, and then apply tagless final.
+Here's our starting point.
+
+```scala mdoc:silent
+enum Expr {
+  case Add(l: Expr, r: Expr)
+  case Sub(l: Expr, r: Expr)
+  case Mul(l: Expr, r: Expr)
+  case Div(l: Expr, r: Expr)
+  
+  case Literal(value: Double)
+}
+
+object EvalInterpreter {
+  import Expr.*
+
+  def eval(expr: Expr): Double =
+    expr match {
+      case Add(l, r) => eval(l) + eval(r)
+      case Sub(l, r) => eval(l) - eval(r)
+      case Mul(l, r) => eval(l) * eval(r)
+      case Div(l, r) => eval(l) / eval(r)
+      case Literal(value) => value
+    }
+}
+object PrintInterpreter {
+  import Expr.*
+
+  def print(expr: Expr): String =
+    expr match {
+      case Add(l, r) => s"(${print(l)} + ${print(r)})"
+      case Sub(l, r) => s"(${print(l)} - ${print(r)})"
+      case Mul(l, r) => s"(${print(l)} * ${print(r)})"
+      case Div(l, r) => s"(${print(l)} / ${print(r)})"
+      case Literal(value) => value.toString
+    }
+}
 ```
 
-In words, a program accepts a `Terminal` and returns a possibly updated `Terminal` and a value of type `A`. 
-Note that the output type `A` is fixed by each particular operation. 
-For example, when we write to the terminal the type `A` is fixed to `Unit`.
+This defines programs with the type `Expr`. There are two interpreters, one that evaluates `Expr` to a `Double` and one that prints them to `String`. Here's a quick example. 
+We start by defining an expression, in this case representing `1 + 2`.
 
-We saw that we had limited extensibility.
-We could extend the `Terminal` type to add new operations, such as additional colors.
-However we couldn't add new interpretations.
-The root cause is that the output types are fixed.
-For example, if we wanted to send output to a `String` buffer we would want `print` to return `String` instead of `Unit`.
+```scala mdoc:silent
+val onePlusTwo = Expr.Add(Expr.Literal(1), Expr.Literal(2))
+```
 
-The core of tagless final, relative to a basic codata interpreter, is to allow output types to vary.
-We do this by making them type parameters.
-So instead of `print` having type `State[Terminal, Unit]` it would have type `State[Terminal, A]`. Where does `A` comes from? We'll get to that in a moment. 
-First I want to introduce a more motivating example we will use for tagless final. 
+Now we can interpret this expression in two different ways.
 
-Changing the interpretation of our terminal programs is more a theoretical than a practical problem. While it is true that different interpretations, such as saving to a text buffer, or tracing the state changes, will have niche uses, the vast majority of the time we'll use the default interpretation. A much more motivating example is a cross-platform user interface library. User interfaces targeting the web and mobile platforms is a great source of the value provided by frameworks such as [Flutter](https://flutter.dev/), [React Native](https://reactnative.dev/), and [Capacitor](https://capacitorjs.com/). We'll be a bit less ambitious here, targeting the terminal and the web browser.
+```scala mdoc
+EvalInterpreter.eval(onePlusTwo)
+PrintInterpreter.print(onePlusTwo)
+```
+
+We have the usual trade-off for data: we can easily add more interpreters, but we cannot extend the program type with new operations.
+
+Let's now convert this to codata.
+The interpreters become methods on the `Expr` type.
+
+```scala mdoc:reset:silent
+trait Expr {
+  def eval: Double
+  def print: String
+}
+```
+
+The constructors and combinators create instances of `Expr`. 
+We could define explicit subtypes of `Expr` but here I've used anonymous subtypes to keep the code more compact and thus easier to read.
+
+```scala mdoc:reset:silent
+trait Expr {
+  def +(that: Expr): Expr = {
+    val self = this
+    new Expr {
+      def eval: Double = 
+        self.eval + that.eval
+        
+      def print: String =
+        s"(${self.print} + ${that.print})"
+    }
+  }
+
+  def -(that: Expr): Expr = {
+    val self = this
+    new Expr {
+      def eval: Double = 
+        self.eval - that.eval
+        
+      def print: String =
+        s"(${self.print} - ${that.print})"
+    }
+  }
+
+  def *(that: Expr): Expr = {
+    val self = this
+    new Expr {
+      def eval: Double = 
+        self.eval * that.eval
+        
+      def print: String =
+        s"(${self.print} * ${that.print})"
+    }
+  }
+
+  def /(that: Expr): Expr = {
+    val self = this
+    new Expr {
+      def eval: Double = 
+        self.eval / that.eval
+        
+      def print: String =
+        s"(${self.print} / ${that.print})"
+    }
+  }
+    
+  def eval: Double
+  def print: String
+}
+object Expr {
+  def literal(value: Double): Expr =
+    new Expr {
+      def eval: Double = value
+      def print: String = value.toString
+    }
+}
+```
+
+Now we can create the same example as before
+
+```scala mdoc:silent
+val onePlusTwo = Expr.literal(1) + Expr.literal(2)
+```
+
+and interpret it as before
+
+```scala mdoc
+onePlusTwo.eval
+onePlusTwo.print
+```
+
+As expected we have the opposite extensibility. We can add new program operations such as `sin`.
+
+```scala mdoc:silent
+def sin(expr: Expr): Expr = {
+  new Expr {
+    def eval: Double = Math.sin(expr.eval)
+    def print: String = s"sin(${expr.print})"
+  }
+}
+```
+
+However we are restricted to the two interpretations we have defined on `Expr`.
+
+Now, let's look more closely at how we define a program such as `Expr.literal(1) + Expr.literal(2)`.
+It is created by calling constructor and combinator methods. We will refer to these as **program algebras**.
+The core of tagless final is
+
+1. to define program algebras parameterized by their program type, and
+2. to parameterize programs by the program algebras they depend on.
+
+For the example we have just seen we could define a program algebra as follows:
+
+```scala mdoc:silent:reset
+trait Arithmetic[Expr] {
+  def +(l: Expr, r: Expr): Expr
+  def -(l: Expr, r: Expr): Expr
+  def *(l: Expr, r: Expr): Expr
+  def /(l: Expr, r: Expr): Expr
+  
+  def literal(value: Double): Expr
+}
+```
+
+Notice how it is parameterized by a type `Expr`. This is the program type.
+Now we can create a program.
+Here's the same example written in tagless final style.
+
+```scala mdoc:silent
+def onePlusTwo[Expr](arithmetic: Arithmetic[Expr]): Expr =
+  arithmetic.+(arithmetic.literal(1.0), arithmetic.literal(2.0))
+```
+
+Notice the subtle distinction between a program and the program type.
+A program creates a value of the program type.
+
+Let's now create an instance of `Arithmetic` to finish our example.
+
+```scala mdoc:silent
+object DoubleArithmetic extends Arithmetic[Double] {
+  def +(l: Double, r: Double): Double =
+    l + r
+  def -(l: Double, r: Double): Double =
+    l - r
+  def *(l: Double, r: Double): Double = 
+    l * r
+  def /(l: Double, r: Double): Double = 
+    l / r
+  
+  def literal(value: Double): Double =
+    value
+}
+```
+
+Now we can run our example.
+
+```scala mdoc
+onePlusTwo(DoubleArithmetic)
+```
+
+Let's now see that tagless final gives us both forms of extensibility. 
+We can add a new interpreter.
+
+```scala mdoc:silent
+object PrintArithmetic extends Arithmetic[String] {
+  def +(l: String, r: String): String =
+    s"($l + $r)"
+  def -(l: String, r: String): String =
+    s"($l - $r)"
+  def *(l: String, r: String): String = 
+    s"($l * $r)"
+  def /(l: String, r: String): String = 
+    s"($l / $r)"
+  
+  def literal(value: Double): String =
+    value.toString
+}
+```
+
+This works in the same way.
+
+```scala mdoc
+onePlusTwo(PrintArithmetic)
+```
+
+We can also define new operations.
+
+```scala mdoc:silent
+trait Trigonometry[Expr] {
+  def sin(expr: Expr): Expr
+}
+```
+
+and use them in a program.
+
+```scala mdoc:silent
+def sinOnePlusTwo[Expr](
+    arithmetic: Arithmetic[Expr],
+    trigonometry: Trigonometry[Expr]
+  ): Expr =
+  trigonometry.sin(onePlusTwo(arithmetic))
+```
+
+Notice that we are using composition here, calling `onePlusTwo`.
+
+A few notes before we move on.
+
+In this example the program type is the same as the type we interpret to. We can use `Double` as the program type when we want to interpret to `Double`, and likewise with `String`. This is usually *not* the case. It's just a coincidence of using arithmetic as the example that we don't need any additional information to calculate the final result, and hence the program type and interpreter result type are the same. 
+
+There is quite a high notational overhead of tagless final, compared to the data and codata interpreters. We'll address this later, and end up with an encoding of tagless final in Scala that looks like ordinary code. First, however, we'll look at a more compelling example: cross-platform user interfaces.
 
 
 ### Algebraic User Interfaces
 
+Changing the interpretation of our terminal programs is more a theoretical than a practical problem. While it is true that different interpretations, such as saving to a text buffer, or tracing the state changes, will have niche uses, the vast majority of the time we'll use the default interpretation. A much more motivating example is a cross-platform user interface library. User interfaces targeting the web and mobile platforms is a great source of the value provided by frameworks such as [Flutter](https://flutter.dev/), [React Native](https://reactnative.dev/), and [Capacitor](https://capacitorjs.com/). We'll be a bit less ambitious here, targeting the terminal and the web browser.
+
 Broadly speaking, there are two kinds of user interfaces. When operating, say, a digital musical instrument, we require a continuous stream of values from the user interface. In contrast, when working with a form we only require the values once, when the form is submitted. Modeling a continuous stream of values is certainly doable (see functional reactive programming) but it adds inessential complexity. Therefore we will stick with the simpler kind of interface where the user submits values once.
 
-In the previous example we used an ad-hoc process to produce the terminal interaction library, fixing problems as we uncovered them. Here we will take a more systematic approach, to illustrate how we can apply strategies to derive code.
 
 We'll start by defining the algebra we are working with. Remember that algebras consist of constructors, combinators, and interpreters. Let's consider each in turn. 
 
