@@ -10,7 +10,7 @@ type Validation[A] = A => Either[String, A]
 def succeed[A](value: A): Either[String, A] = Right(value)
 
 trait Controls[Ui[_]] {
-  def text(
+  def textInput(
       label: String,
       placeholder: String,
       validation: Validation[String] = succeed
@@ -29,7 +29,7 @@ object Simple extends Controls[Program], Layout[Program] {
   def and[A, B](first: Program[A], second: Program[B]): Program[(A, B)] =
     (first, second).tupled
 
-  def text(
+  def textInput(
       label: String,
       placeholder: String,
       validation: Validation[String] = succeed
@@ -84,14 +84,32 @@ object Simple extends Controls[Program], Layout[Program] {
       layout: Layout[Ui]
   ): Ui[(String, Int)] =
     layout.and(
-      controls.text("What is your name?", "John Doe"),
+      controls.textInput("What is your name?", "John Doe"),
       controls.choice(
         "How many years have you been using Scala?",
         Seq("0-2" -> 0, "3-5" -> 3, "5-7" -> 5, "8+" -> 8)
       )
     )
 
-  val (name, exp) = bio(Simple, Simple)()
+  def quiz[Ui[_]](
+      controls: Controls[Ui],
+      layout: Layout[Ui]
+  ): Ui[(String, Int)] =
+    layout.and(
+      controls.textInput("What is your name?", "John Doe"),
+      controls.choice(
+        "Tagless final is the greatest thing ever",
+        Seq(
+          "Strongly disagree" -> 1,
+          "Disagree" -> 2,
+          "Neutral" -> 3,
+          "Agree" -> 4,
+          "Strongly agree" -> 5
+        )
+      )
+    )
+
+  val (name, rating) = quiz(Simple, Simple)()
   println(s"Hello $name!")
-  println(s"You've been using Scala for $exp or more years.")
+  println(s"You gave tagless final a rating of $rating.")
 }
