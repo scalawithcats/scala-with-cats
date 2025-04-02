@@ -1,12 +1,12 @@
 ## Tagless Final Interpreters
 
-We have just implemented a DSL for terminal interaction using a codata interpreter.
-In that case study we used an ad-hoc process to produce the terminal interaction library, fixing problems as we uncovered them. 
+We'll now explore tagless final, an extension to the basic codata interpreter.
+In the terminal DSL case study we used an ad-hoc process to produce the DSL, fixing problems as we uncovered them. 
 Now we want to be more systematic, illustrating how we can apply strategies to derive code.
 This will in turn make it clearer how we can derive tagless final for the basic codata interpreter.
 
 We'll start by being very explicit about the role of the different types in the codata interpreter.
-Following Section [@sec::interpreters:structure], remember there are three different kinds of methods in an interpreter:
+Following Section [@sec:interpreters:structure], remember there are three different kinds of methods in an algebra:
 
 * constructors, with type `A => Program`,
 * combinators, with type `Program => Program`, and
@@ -19,13 +19,13 @@ type Program[A] = State[Terminal, A]
 ```
 
 There is a single constructor, `print`, with type `String => Program[Unit]`.
-All of the methods that change the output style, such as `bold`, `red`, and `blue`, are combinators. They all have the type `Program[A] => Program[A]`.
-Finally there is a single interpreter, which is function application, with type `Program[A] => A`.
+All of the methods that change the output style, such as `bold`, `red`, and `blue`, are combinators with the type `Program[A] => Program[A]`.
+Finally, there is a single interpreter, function application, with type `Program[A] => A`.
 
-In a codata interpreter, the available interpretations are limited to the methods available on the `Program` type.
-The terminal DSL represents programs as functions, as therefore only has a single interpretation available.
+In a codata interpreter the available interpretations are limited to the methods available on the `Program` type.
+The terminal DSL represents programs as functions, and therefore only has a single interpretation available.
 The key idea in tagless final, to get around this restriction, is to parameterize the `Program` type by the program operations.
-It's not entirely clear what this means, so let's see a simple example of tagless final which will make it clearer.
+It's not entirely clear what this means, so let's see a simple example of tagless final which will illustrate it.
 
 Our example will be simple arithmetic expressions, which is not very exciting but is familiar.
 We'll start with a data interpreter, convert it to a codata interpreter, and then apply tagless final.
@@ -67,8 +67,9 @@ object PrintInterpreter {
 }
 ```
 
-This defines programs with the type `Expr`. There are two interpreters, one that evaluates `Expr` to a `Double` and one that prints them to `String`. Here's a quick example. 
-We start by defining an expression, in this case representing `1 + 2`.
+This defines programs with the algebraic data type `Expr`. Two interpreters, one that evaluates `Expr` to a `Double` and one that prints them to `String`, are implemented using structural recursion.
+
+Here's a quick example. We start by defining an expression, in this case representing `1 + 2`.
 
 ```scala mdoc:silent
 val onePlusTwo = Expr.Add(Expr.Literal(1), Expr.Literal(2))
@@ -94,7 +95,8 @@ trait Expr {
 ```
 
 The constructors and combinators create instances of `Expr`. 
-We could define explicit subtypes of `Expr` but here I've used anonymous subtypes to keep the code more compact and thus easier to read.
+We could define explicit subtypes of `Expr` but here I've used anonymous subtypes to keep the code more compact.
+It is implemented using structural corecursion.
 
 ```scala mdoc:reset:silent
 trait Expr {
@@ -180,9 +182,8 @@ def sin(expr: Expr): Expr = {
 
 However we are restricted to the two interpretations we have defined on `Expr`.
 
-Now, let's look more closely at how we define a program such as `Expr.literal(1) + Expr.literal(2)`.
-It is created by calling constructor and combinator methods. We will refer to these as **program algebras**.
-The core of tagless final is
+Now, let's consider a program such as `Expr.literal(1) + Expr.literal(2)`.
+It is created by calling constructor and combinator methods. We will refer to these as **program algebras**, as they are the portion of the algebra that is used to create programs. The core of tagless final is
 
 1. to define program algebras parameterized by their program type, and
 2. to parameterize programs by the program algebras they depend on.
@@ -200,19 +201,19 @@ trait Arithmetic[Expr] {
 }
 ```
 
-Notice how it is parameterized by a type `Expr`. This is the program type.
+Notice how it is parameterized by a type `Expr`. This is the **program type**.
+
 Now we can create a program.
-Here's the same example written in tagless final style.
+Here's the same example we saw above, but written in tagless final style.
 
 ```scala mdoc:silent
 def onePlusTwo[Expr](arithmetic: Arithmetic[Expr]): Expr =
   arithmetic.+(arithmetic.literal(1.0), arithmetic.literal(2.0))
 ```
 
-Notice the subtle distinction between a program and the program type.
-A program creates a value of the program type.
+Notice the distinction between a program and the program type: a program creates a value of the program type, but a program is not itself of the program type. In tagless final a program is a function from program algebras to the program type.
 
-Let's now create an instance of `Arithmetic` to finish our example.
+We can finish our example by creating an instance of `Arithmetic`.
 
 ```scala mdoc:silent
 object DoubleArithmetic extends Arithmetic[Double] {
@@ -236,7 +237,7 @@ Now we can run our example.
 onePlusTwo(DoubleArithmetic)
 ```
 
-Let's now see that tagless final gives us both forms of extensibility. 
+Tagless final gives us both forms of extensibility. 
 We can add a new interpreter.
 
 ```scala mdoc:silent
@@ -279,13 +280,13 @@ def sinOnePlusTwo[Expr](
   trigonometry.sin(onePlusTwo(arithmetic))
 ```
 
-Notice that we are using composition here, calling `onePlusTwo`.
+Notice that we are using composition here; the program `sinOnePlusTwo` reuses `onePlusTwo`.
 
 A few notes before we move on.
 
 In this example the program type is the same as the type we interpret to. We can use `Double` as the program type when we want to interpret to `Double`, and likewise with `String`. This is usually *not* the case. It's just a coincidence of using arithmetic as the example that we don't need any additional information to calculate the final result, and hence the program type and interpreter result type are the same. 
 
-There is quite a high notational overhead of tagless final, compared to the data and codata interpreters. We'll address this later, and end up with an encoding of tagless final in Scala that looks like ordinary code. First, however, we'll look at a more compelling example: cross-platform user interfaces.
+There is quite a high notational overhead of tagless final, compared to the data and codata interpreters. We'll address this later, and end up with an encoding of tagless final in Scala that looks like ordinary code. First, however, we'll introduce a more compelling example: cross-platform user interfaces.
 
 
 ### Algebraic User Interfaces
