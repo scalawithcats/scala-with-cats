@@ -139,6 +139,7 @@ lazy val pages = List(
   "tagless-final/tagless-final.md",
   "tagless-final/aui.md",
   "tagless-final/tagless-final-dx.md",
+  "tagless-final/conclusions.md",
   // Interpreter optimization
   "adt-optimization/index.md",
   "adt-optimization/algebra.md",

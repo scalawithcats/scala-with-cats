@@ -162,8 +162,5 @@ You gave tagless final a rating of 5.
 Let's recap what we have seen so far:
 
 * We define constructors and combinators as pure interfaces, called program algebras. They are parameterized by the program type.
-* Interpreters implement the program algebras with a concrete type for the output type. The output type is whatever makes sense for this particular interpretation.
+* Interpreters implement the program algebras with a concrete type for the program type. The program type is whatever makes sense for this particular interpretation.
 * Programs are methods parameterized by the program type and the program algebras they need.
-
-
-
