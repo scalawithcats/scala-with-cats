@@ -407,15 +407,21 @@ object Simple extends Controls[Program], Layout[Program] {
 Now we can implement a simple example.
 
 ```scala mdoc:silent
-def bio[Ui[_]](
+def quiz[Ui[_]](
     controls: Controls[Ui],
     layout: Layout[Ui]
 ): Ui[(String, Int)] =
   layout.and(
     controls.text("What is your name?", "John Doe"),
     controls.choice(
-      "How many years have you been using Scala?",
-      Seq("0-2" -> 0, "3-5" -> 3, "5-7" -> 5, "8+" -> 8)
+      "Tagless final is the greatest thing ever",
+      Seq(
+        "Strongly disagree" -> 1,
+        "Disagree" -> 2,
+        "Neutral" -> 3,
+        "Agree" -> 4,
+        "Strongly agree" -> 5
+      )
     )
   )
 ```
@@ -423,9 +429,9 @@ def bio[Ui[_]](
 We can run this example with code like the following.
 
 ```scala
-val (name, exp) = bio(Simple, Simple)()
+val (name, rating) = quiz(Simple, Simple)()
 println(s"Hello $name!")
-println(s"You've been using Scala for $exp or more years.")
+println(s"Your rating for tagless final is $rating.")
 ```
 
 Let's recap what we have seen so far:
@@ -435,5 +441,3 @@ Let's recap what we have seen so far:
 * Programs are methods that are parameterized by the output type and the interfaces they need.
 
 The key change, compared to the basic codata interpreter, is the parameterization of the output type. This gives interpreters the flexibility to produce different outputs for different interpretations.
-
-

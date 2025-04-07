@@ -46,9 +46,9 @@ def quiz[Ui[_]](
   layout.and(name(controls), rating(controls))
 ```
 
-This style of code quickly becomes tedious to write. The method signatures are quite involved, and passing the interfaces from method to method is annoying busy work.
+This style of code quickly becomes tedious to write. The method signatures are quite involved, and passing the program algebras from method to method is annoying busy work.
 
-The usual solution is to make the interfaces `given` instances. If we define accessors
+An improvement is to make the program algebras `given` instances. If we define accessors
 
 ```scala mdoc:silent
 object Controls {
@@ -84,7 +84,8 @@ def quiz[Ui[_]: Controls: Layout]: Ui[(String, Int)] =
   Layout[Ui].and(name, rating)
 ```
 
-This is better, but there is still a lot of notational overhead for the developer who has to write this code.
+This is the usual encoding of tagless final that is found in Scala code.
+, but there is still a lot of notational overhead for the developer who has to write this code.
 We can use Scala language features to reduce the overhead of writing code using a tagless final style to the point where is a simple as standard code.
 
 We'll use a combination of five techniques:
