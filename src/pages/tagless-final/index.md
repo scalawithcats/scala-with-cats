@@ -10,6 +10,6 @@ In particular we'll see that extensibility is limited, a problem we first encoun
 
 Solving the problem of extensibility, otherwise known as the **expression problem**, will lead us to tagless final. 
 In the context of interpreters, solving the expression problem means allowing extensibility of both the programs we write and the interpreters that run them.
-The standard encoding of tagless final in Scala is a bit painful to use in practice, so we'll develop a different encoding that is easier to use. 
-Solving the expression problem allows for very expressive code, as the name suggests, but it adds complexity. 
-We'll finish by talking about when tagless final is appropriate and when it's best to use a different strategy.
+We'll start with the standard encoding of tagless final in Scala, and see that it is a bit painful to use in practice.
+We'll then develop an alternative encoding that is easier to use. 
+Solving the expression problem allows for very expressive code but it adds complexity, so we'll finish by talking about when tagless final is appropriate and when it's best to use a different strategy.

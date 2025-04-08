@@ -1,4 +1,4 @@
-## Improved Developer Experience
+## A Better Encoding
 
 ```scala mdoc:invisible
 type Validation[A] = A => Either[String, A]
@@ -21,7 +21,7 @@ trait Layout[Ui[_]] {
 }
 ```
 
-This basic implementation of tagless final has quite a poor developer experience. Consider the refactoring of our example below.
+The basic implementation of tagless final has quite a poor developer experience. Consider the refactoring of our example below.
 
 ```scala mdoc:silent:nest
 def name[Ui[_]](controls: Controls[Ui]): Ui[String] =
@@ -84,8 +84,7 @@ def quiz[Ui[_]: Controls: Layout]: Ui[(String, Int)] =
   Layout[Ui].and(name, rating)
 ```
 
-This is the usual encoding of tagless final that is found in Scala code.
-, but there is still a lot of notational overhead for the developer who has to write this code.
+This is the encoding of tagless final that is common in the Scala community, but there is still a lot of notational overhead for the developer who has to write this code.
 We can use Scala language features to reduce the overhead of writing code using a tagless final style to the point where is a simple as standard code.
 
 We'll use a combination of five techniques:
@@ -104,7 +103,7 @@ Our first step is to create a base type for algebras. This is just a trait like
 trait Algebra[Ui[_]]
 ```
 
-which we then make our program algebras extend.
+Our program algebras extend this trait.
 
 ```scala mdoc:silent
 trait Controls[Ui[_]] extends Algebra[Ui[_]]{
@@ -200,6 +199,7 @@ trait Program[-Alg <: Algebra, A] {
 }
 ```
 
+Pay particular attention to the result type, `alg.Ui[A]`. As `Program` requires a dependent method type it cannot be a standard function.
 
 The example now becomes
 
@@ -223,7 +223,9 @@ val quiz =
   }
 ```
 
-Notice that it is now a value instead of a method. It's still quite involved to write, though we can simplify it a bit by using the *single abstract method* technique, which means a `trait` with a single abstract method (like `Program`) can be implemented with a function.
+Programs are now values instead of methods. 
+Notice that first type parameter of `Program` declares all the program algebras the program requires. 
+It's still quite involved to write this code, though we can simplify it a bit by using the *single abstract method* technique, which means a `trait` with a single abstract method (like `Program`) can be implemented with a function.
 
 ```scala mdoc:silent:nest
 val quiz: Program[Controls & Layout, (String, Int)] =
@@ -243,7 +245,7 @@ val quiz: Program[Controls & Layout, (String, Int)] =
     )
 ```
 
-Notice that we can now define programs as values, and the first type parameter of `Program` declares all the program algebras the program requires. Programs-as-values is the key that unlocks the next two improvements. The first is to define constructors as methods on companion objects. 
+Programs-as-values is the key that unlocks the next two improvements. The first is to define constructors as methods on companion objects. 
 
 ```scala mdoc:silent
 object Controls {
@@ -261,6 +263,8 @@ object Controls {
     alg => alg.choice(label, options)
 }
 ```
+
+This works because methods can now return programs.
 
 The second and final improvement is to define extension methods for combinators.
 
@@ -300,3 +304,5 @@ which looks just like normal code. The type of `quiz` shows that type inference 
 ```scala mdoc
 quiz
 ```
+
+This encoding requires more work from the library developer. However this is a one off cost, and result is that library users write much simpler code. For most applications of tagless final I think this is an appropriate trade off.
