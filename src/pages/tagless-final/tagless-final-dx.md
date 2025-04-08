@@ -266,7 +266,7 @@ object Controls {
 
 This works because methods can now return programs.
 
-The second and final improvement is to define extension methods for combinators.
+The second and final improvement is to define extension methods for combinators. Since we only have one combinator, `and`, that means a single extension method.
 
 ```scala mdoc:silent
 extension [Alg <: Algebra, A](p: Program[Alg, A]) {
