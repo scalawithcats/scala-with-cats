@@ -57,7 +57,7 @@ Let's now look at covariance, contravariance, and invariance in detail.
 
 Covariance means that the type `F[B]`
 is a subtype of the type `F[A]` if `B` is a subtype of `A`.
-This is useful for modeling many types,
+This is useful for modelling many types,
 including collections like `List` and `Option`:
 
 ```scala
@@ -103,7 +103,7 @@ trait F[-A]
 
 Perhaps confusingly, contravariance means that the type `F[B]`
 is a subtype of `F[A]` if `A` is a subtype of `B`.
-This is useful for modeling types that represent inputs,
+This is useful for modelling types that represent inputs,
 like our `JsonWriter` type class above:
 
 ```scala mdoc:invisible
