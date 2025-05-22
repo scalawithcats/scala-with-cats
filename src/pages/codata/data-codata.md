@@ -1,6 +1,6 @@
 ## Relating Data and Codata
 
-In this section we'll explore the relationship between data and codata, and in paritcular converting one to the other. We'll look at it in two ways: firstly a very surface-level relationship between the two, and then a deep connection via `fold`.
+In this section we'll explore the relationship between data and codata, and in particular converting one to the other. We'll look at it in two ways: firstly a very surface-level relationship between the two, and then a deep connection via `fold`.
 
 Remember that data is a sum of products, where the products are constructors and we can view constructors as functions. So we can view data as a sum of functions. Meanwhile, codata is a product of functions. We can easily make a direct correspondence between the functions-as-constructors and the functions in codata. What about the difference between the sum and the product that remains.
 Well, when we have a product of functions we only call one at any point in our code. So the logical or is in the choice of function to call.
