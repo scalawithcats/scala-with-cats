@@ -1,5 +1,5 @@
 \partimage[width=.5\linewidth]{src/pages/parts/part2.png}
-\part{Type Classes} {#sec:part:two}
+\part{Type Classes}{#sec:part:two}
 
 In this part of the book we move on to type classes.
 We looked at the implementation of type classes in Chapter [@sec:type-classes].

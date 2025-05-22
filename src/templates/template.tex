@@ -365,7 +365,8 @@ $endif$
 % Needed for recent update to Pandoc ------------
 
 \providecommand{\tightlist}{%
-	\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+}
 
 % Workaround for https://github.com/jgm/pandoc/issues/5801
 
@@ -378,6 +379,18 @@ $endif$
 % The command below temporarily disables the images instead:
 
 \newcommand{\partimage}[2][]{}
+
+% Command introduced in Pandoc 3.2
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
 
 % TODO: This command implements \partimage with a regular \includegraphics
 % (which appears on the first page of the part rather than on the title page):

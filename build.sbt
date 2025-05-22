@@ -207,6 +207,7 @@ The code to build the Pandoc command-line is in `project/Pandoc.scala`.
 lazy val pdfSetup = taskKey[Unit]("Pre-mdoc component of the PDF build")
 lazy val htmlSetup = taskKey[Unit]("Pre-mdoc component of the HTML build")
 lazy val epubSetup = taskKey[Unit]("Pre-mdoc component of the ePub build")
+lazy val typstSetup = taskKey[Unit]("Pre-mdoc component of the Typst build")
 
 lazy val texSetup = taskKey[Unit]("Pre-mdoc component of the TeX debug build")
 lazy val jsonSetup =
@@ -237,9 +238,15 @@ jsonSetup := {
   "mkdir -p dist".!
 }
 
+typstSetup := {
+  "mkdir -p dist".!
+}
+
 lazy val pdfPandoc = taskKey[String]("Pandoc command-line for the PDF build")
 lazy val htmlPandoc = taskKey[String]("Pandoc command-line for the HTML build")
 lazy val epubPandoc = taskKey[String]("Pandoc command-line for the ePub build")
+lazy val typstPandoc =
+  taskKey[String]("Pandoc command-line for the Typst build")
 
 lazy val texPandoc =
   taskKey[String]("Pandoc command-line for the TeX debug build")
@@ -249,6 +256,7 @@ lazy val jsonPandoc =
 pdfPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Pdf) }
 htmlPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Html) }
 epubPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Epub) }
+typstPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Typst) }
 
 texPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Tex) }
 jsonPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Json) }
@@ -256,6 +264,7 @@ jsonPandoc := { Pandoc.commandLineOptions(pages, PandocTarget.Json) }
 lazy val pdf = taskKey[Unit]("Build the PDF version of the book")
 lazy val html = taskKey[Unit]("Build the HTML version of the book")
 lazy val epub = taskKey[Unit]("Build the ePub version of the book")
+lazy val typst = taskKey[Unit]("Build the Typst version of the book")
 
 lazy val tex = taskKey[Unit]("Build the TeX debug build of the book")
 lazy val json = taskKey[Unit]("Build the JSON AST debug build of the book")
@@ -265,6 +274,9 @@ lazy val pdfCmd = taskKey[Unit](
 )
 lazy val htmlCmd = taskKey[Unit](
   "Run pandoc command to create the HTML version of the book without running mdoc"
+)
+lazy val typstCmd = taskKey[Unit](
+  "Run pandoc command to create the Typst version of the book without running mdoc"
 )
 
 pdfCmd := {
@@ -283,12 +295,24 @@ htmlCmd := {
   cmd.!
 }
 
+typstCmd := {
+  val cmdLineOptions = typstPandoc.value
+  val cmd = s"pandoc $cmdLineOptions"
+  println(cmd)
+  streams.value.log.info(cmd)
+  cmd.!
+}
+
 pdf := {
   Def.sequential(pdfSetup, mdoc.toTask(""), pdfCmd).value
 }
 
 html := {
   Def.sequential(htmlSetup, mdoc.toTask(""), htmlCmd).value
+}
+
+typst := {
+  Def.sequential(typstSetup, mdoc.toTask(""), typstCmd).value
 }
 
 epub := {

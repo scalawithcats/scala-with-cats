@@ -6,6 +6,7 @@ object PandocTarget {
   case object Html extends PandocTarget
   case object Epub extends PandocTarget
   case object Json extends PandocTarget
+  case object Typst extends PandocTarget
 }
 
 object Pandoc {
@@ -16,7 +17,7 @@ object Pandoc {
       target: PandocTarget,
       usePandocCrossref: Boolean = true,
       usePandocInclude: Boolean = true,
-      filenameStem: String = "scala-with-cats",
+      filenameStem: String = "functional-programming-strategies",
       pagesDir: String = "target/pages",
       srcDir: String = "src",
       distDir: String = "dist",
@@ -27,18 +28,20 @@ object Pandoc {
     val relPages = pages.map(page => s"${pagesDir}/${page}")
 
     val output = target match {
-      case Tex  => s"--output=${distDir}/${filenameStem}.tex"
-      case Pdf  => s"--output=${distDir}/${filenameStem}.pdf"
-      case Html => s"--output=${distDir}/${filenameStem}.html"
-      case Epub => s"--output=${distDir}/${filenameStem}.epub"
-      case Json => s"--output=${distDir}/${filenameStem}.json"
+      case Tex   => s"--output=${distDir}/${filenameStem}.tex"
+      case Pdf   => s"--output=${distDir}/${filenameStem}.pdf"
+      case Html  => s"--output=${distDir}/${filenameStem}.html"
+      case Epub  => s"--output=${distDir}/${filenameStem}.epub"
+      case Json  => s"--output=${distDir}/${filenameStem}.json"
+      case Typst => s"--output=${distDir}/${filenameStem}.pdf"
     }
 
     val template = target match {
       case Pdf | Tex => Some(s"--template=${srcDir}/templates/template.tex")
       case Html      => Some(s"--template=${srcDir}/templates/template.html")
-      case Epub => Some(s"--template=${srcDir}/templates/template.epub.html")
-      case Json => None
+      case Epub  => Some(s"--template=${srcDir}/templates/template.epub.html")
+      case Typst => Some(s"--template=${srcDir}/templates/template.typst")
+      case Json  => None
     }
 
     val filters = target match {
@@ -51,6 +54,17 @@ object Pandoc {
           s"--filter=${srcDir}/filters/pdf/columns.js",
           s"--filter=${srcDir}/filters/pdf/solutions.js",
           s"--lua-filter=${srcDir}/filters/pdf/vector-images.lua",
+          s"--filter=${srcDir}/filters/pdf/listings.js"
+        )
+      case Typst =>
+        List(
+          s"--filter=pandoc-crossref",
+          s"--filter=${srcDir}/filters/pdf/unwrap-code.js",
+          // s"--filter=${srcDir}/filters/pdf/merge-code.js",
+          s"--filter=${srcDir}/filters/pdf/callout.js",
+          s"--filter=${srcDir}/filters/pdf/columns.js",
+          s"--filter=${srcDir}/filters/pdf/solutions.js",
+          s"--lua-filter=${srcDir}/filters/html/vector-images.lua",
           s"--filter=${srcDir}/filters/pdf/listings.js"
         )
       case Html =>
@@ -78,7 +92,13 @@ object Pandoc {
           s"--toc-depth=${tocDepth}",
           s"--listings",
           s"--include-before-body=${srcDir}/templates/cover-notes.tex",
-          s"--pdf-engine=xelatex"
+          s"--pdf-engine=typst"
+        )
+      case Typst =>
+        List(
+          s"--toc-depth=${tocDepth}",
+          s"--listings",
+          s"--pdf-engine=typst"
         )
       case Html =>
         List(
@@ -103,7 +123,7 @@ object Pandoc {
         List(s"${srcDir}/meta/metadata.yaml", s"${srcDir}/meta/html.yaml")
       case Epub =>
         List(s"${srcDir}/meta/metadata.yaml", s"${srcDir}/meta/epub.yaml")
-      case Json => List(s"${srcDir}/meta/metadata.yaml")
+      case Json | Typst => List(s"${srcDir}/meta/metadata.yaml")
     }
 
     val options =
@@ -137,7 +157,7 @@ object Pandoc {
       target: PandocTarget,
       usePandocCrossref: Boolean = true,
       usePandocInclude: Boolean = true,
-      filenameStem: String = "scala-with-cats",
+      filenameStem: String = "functional-programming-strategies",
       pagesDir: String = "target/pages",
       srcDir: String = "src",
       distDir: String = "dist",

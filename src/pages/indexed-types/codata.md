@@ -144,7 +144,7 @@ final case class Force[Unit](value: Double) {
 
 An API protocol defines the order in which methods must be called. The protocol in the case of `Switch` is that we can only call `off` after calling `on` and vice versa. This protocol is a simple finite state machine, and illustrated in Figure [@fig:indexed-types:switch]. Many common types have similar protocols. For example, files can only be read once they are opened and cannot be read once they have been closed.
 
-![The switch API protocol](src/pages/indexed-types/switch.pdf){#fig:indexed-types:switch}
+![The switch API protocol](src/pages/indexed-types/switch.pdf+svg){#fig:indexed-types:switch}
 
 Indexed codata allows us to enforce API protocols at compile-time. Often these protocols are finite-state machines. We can represent these protocols with a single type parameter that represents the state, as we did with `Switch`. We can also use multiple type parameters if that makes for a more convenient representation. 
 
@@ -178,7 +178,7 @@ $$
 \text{head}\ \text{link}^*\ \text{title}\ \text{link}^*\ \text{body}\ (\text{h1}\, |\, \text{p})^*
 $$
 
-![The HTML API protocol](src/pages/indexed-types/html.pdf){#fig:indexed-types:html}
+![The HTML API protocol](src/pages/indexed-types/html.pdf+svg){#fig:indexed-types:html}
 
 As the code is fairly repetitive I will just present all the code and then discuss the important parts.
 Here's the implementation.
