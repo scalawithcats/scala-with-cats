@@ -1,0 +1,129 @@
+#import "../stdlib.typ": info, warning, solution
+== Conclusions 
+<sec:indexed-types:conclusions>
+
+
+In this chapter we looked at indexed data and indexed codata. The key idea of indexed types is to encode equality constraints that a type parameter equals some type. With indexed data these constraints are encoded in the data and we discover them when we destructure the data. In this way indexed data is a producer of equalities. With indexed codata these constraints must be shown to hold when methods are called. Hence indexed codata is a consumer of equalities. We also saw that we can go beyond equalities constraints with contextual abstraction, by encoding other types of constraints in given instances. 
+
+Indexed types build on phantom types. The earliest reference I've found to phantom types is #cite(<leijen00:dsec>, form: "prose"). Type equalities were added soon afterwards, creating what we now know as generalized algebraic data types or indexed data @cheney03:first-class @hongwei03:grdc @sheard08:type-equality. Most work on generalized algebraic data types is concerned with type inference algorithms (e.g. @peyton-jones06:gadts), which is not so relevant to the working programmer. #cite(<lin10:pointwise>, form: "prose") is not different in this respect, but it does have a particularly clear breakdown of how GADTs are used in the most common case.
+
+Interest in indexed codata is much more recent @thibodeau16:indexed-codata, reflecting the general lack of attention that codata has received in programming language research (or at least the parts that I read.) Scala has excellent support for indexed codata but, even so, we can see in Scala a lack of symmetry in the support for indexed data and codata. While indexed data is built into the language, indexed codata is something we must built ourselves from contextual abstractions. This is not necessarily a bad thing, as contextual abstraction allows us to go beyond the simple type equalities of indexed data and codata. Recent research has looked to address this asymmetry. For example, #cite(<ostermann18:matrix>, form: "prose") considers indexed data and indexed codata as related by transposition of a matrix defining the API and #cite(<zhang22:decomposition>, form: "prose") develops a system, implemented in Scala, that translates between data and codata.
+
+In a case study we used indexed codata to implement an API protocol: a restriction on the order in which methods can be called. We can view this as an elaboration on the basic algebra or combinator library strategy we have seen in some many different case studies. We can also relate it to work in the object-oriented programming (OOP) community. It is worth doing so to show that these problems bridge programming communities and sometimes disparate communities discover very similar solutions.
+
+In the OOP world a combinator library is called a fluent interface. The same article that introduces the term fluent interface also mentions the need for API protocols: "choose your return type based on what you need to continue fluent action" @fowler05:fluent. Many case studies have explored fluent interfaces (e.g. @freeman06:jmock; @hawick13:fluent; @dethlefs17:define; @shrestha21:unravel) and this style of code is increasing in popularity @nakamaru20:empirical. Encoding an API protocol can be quite involved, so another research direction is the creation of tools to generate code from a protocol definition @levy16:fluent; @nakamaru17:silverchain; @gil19:fling; @vukovic23:dsl. @roth23:fluent translates API protocols back to the functional world, showing a variety of encodings in Standard ML.
+
+The probability monad we developed, which is specialized to sampling data, is only one of many possibilities. 
+Sampling gives us an approximate representation of a distribution. Small discrete distributions can be represented exactly.
+@erwig06:pfp show how this can be done, in addition to the sampling approach we used. @kidd07:prob shows how the exact and sampling approaches can be factored into monad transformer stacks. 
+@scibior15:monads uses probability monad as the underlying abstraction on which a variety of different statistical inference algorithms are defined. This is application of the idea of multiple interpretations that we have stressed throughout this book. @scibor18:modular expands on this idea, breaking down inference algorithms into reusable components.
+
+We introduced the probability monad in the context of property based testing @claessen00:quickcheck.
+Randomly generating test data is not the only approach. 
+@runciman09:smallcheck describes an elegant way of enumerating data.
+Also see @duregard12:feat for an approach specialized to enumerating algebraic data types.
+More recently machine learning techniques are being explored. See, for example, @reddy20:rlcheck and @lemieux23:codamosa.
+@goldstein24:practice studies how property based testing is used in practice.
+
+I mentioned that the probability monad can be used in generative art. Generative art is, broadly, art that is generated by some algorithmic process. This can include an element of randomness. While there are papers on generative art (e.g. @boden09:generative; @dorin12:generative), and many other resources that discuss it, it's much more fun to create some yourself. @fig:indexed-types:cycloid shows an example of generative art. The code is below, and it has many knobs that you can play with to create your own example. Just add the `@main` annotation to the `cycloid` method and you can run the code from the Scala CLI. Have fun!
+
+#figure(image("cycloid.png"), caption: [A set of cycloids showing five-fold symmetry])
+<fig:indexed-types:cycloid>
+
+```scala mdoc:silent
+//> using dep org.creativescala::doodle:0.30.0
+
+import cats.Monoid
+import cats.syntax.all.*
+import cats.effect.unsafe.implicits.global
+import doodle.core.*
+import doodle.core.format.{Pdf, Png}
+import doodle.interact.syntax.interpolation.*
+import doodle.random.{*, given}
+import doodle.syntax.all.*
+import doodle.java2d.*
+
+def cycloid(): Unit = {
+  given Monoid[Angle => Vec] with {
+    def combine(a: Angle => Vec, b: Angle => Vec): Angle => Vec =
+      angle => a(angle) + b(angle)
+
+    val empty: Angle => Vec = angle => Vec.zero
+  }
+
+  /** Reverse the rolling direction of the cycloid. */
+  val reverse: Angle => Angle = angle => -angle
+
+  /** Multiply the angle by the given speed, which determines how rapidly the
+    * cycloid rotates.
+    */
+  def speed(speed: Double): Angle => Angle =
+    angle => angle * speed
+
+  /** Increment the angle by the given amount. In other words move it out of
+    * phase.
+    */
+  def phase(p: Angle): Angle => Angle =
+    angle => p - angle
+
+  /** Set the radius of the cycloid */
+  def radius(r: Double): Angle => Vec =
+    angle => Vec(r, angle)
+
+  /** Cycloid is speed of rotation and radius (+ve or -ve) */
+  def cycloid(v: Double, r: Double): Angle => Vec =
+    speed(v).andThen(radius(r))
+
+  /** Inspired by "Creating Symmetry" by Frank Farris. */
+  def c1(amplitude: Double) =
+    cycloid(1.0, amplitude) |+| cycloid(6.0, 0.5 * amplitude) |+| (speed(14.0)
+      .andThen(phase(90.degrees))
+      .andThen(radius(0.33 * amplitude)))
+
+  val randomCycloid: Random[Double => Angle => Vec] =
+    for {
+      d <- Random.int(3, 25) // Degree of symmetry
+      n <- Random.natural(d) // Offset from d
+      m1 <- Random.int(1, 5)
+      m2 <- Random.int(m1, m1 + 5)
+    } yield amplitude =>
+      cycloid(n, amplitude) |+| cycloid(
+        m1 * d + n,
+        0.5 * amplitude
+      ) |+| phase(90.degrees).andThen(cycloid(m2 * d + n, 0.33 * amplitude))
+
+  def drawCycloid(
+      cycloid: Angle => Vec,
+      start: Angle = 0.degrees,
+      stop: Angle = 720.degrees,
+      steps: Int = 1000
+  ): Picture[Unit] =
+    interpolatingSpline[Algebra](
+      (start)
+        .upTo(stop)
+        .forSteps(steps)
+        .map(angle => cycloid(angle).toPoint)
+        .toList
+    )
+
+  /** Repeatedly draw a cycloid with increasing size and a slow turn */
+  def drawCycloids(cycloid: Double => Angle => Vec): Picture[Unit] =
+    (0.0)
+      .upTo(1.0)
+      .forSteps(30)
+      .map { m =>
+        drawCycloid(cycloid(350 * m + 100)).rotate(30.degrees * m)
+      }
+      .toList
+      .allOn
+
+  // val picture = drawCycloids(c1)
+  val picture = randomCycloid.map(drawCycloids).run
+
+  val frame = Frame.default
+
+  picture.drawWithFrame(frame)
+  picture.write[Png]("cycloid.png", frame)
+  picture.write[Pdf]("cycloid.pdf", frame)
+}
+```
