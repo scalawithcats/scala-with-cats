@@ -1,4 +1,9 @@
-#import "stdlib.typ": title, subtitle, authors, edition
+#import "stdlib.typ": title, authors, title-page
+
+#set document(
+    title: title,
+    author: authors
+)
 
 // Default styling
 
@@ -11,44 +16,48 @@
     size: 12pt
 )
 
-// Headings start at level 2 so that parts can be level 1, and
-// #set heading(offset: 2)
 #set heading(numbering: "1.")
 
-// #show heading.where(level: 3): it => [
-//     #colbreak()
-//     #counter(heading).display(it.numbering) #strong(it.body)
-//     #v(36pt)
-// ]
-
-
+// Heading styles
+#let heading-multiplier = 1.2
+#let heading-base = 1.73em
+#let heading-space-base = 1.16em
+// Chapter heading is 2 levels above level 2 heading
+#show heading.where(level: 1): it => {
+    // Chapter heading starts on an odd page. Don't create a page break if the
+    // page is already empty.
+    pagebreak(weak: true, to: "odd")
+    set text(size: 1.73em * 1.2 * 1.2)
+    it
+    v(1.16em * 1.2 * 1.2)
+}
+#show heading.where(level: 2): it => {
+    v(heading-space-base)
+    set text(size: heading-base)
+    it
+    v(0.5em)
+}
+#show heading.where(level: 3): it => {
+    v(1.16em / 1.2)
+    set text(size: 1.73em / 1.2)
+    it
+    v(0.5em)
+}
+#show heading.where(level: 4): it => {
+    v(1.16em / 1.2 / 1.2)
+    set text(size: 1.73em / 1.2 / 1.2)
+    it
+    v(0.5em)
+}
 // Front Matter
 
-#let makeTitle = text(size: 24pt)[#title]
-#let makeSubtitle = text(size: 18pt)[#subtitle]
-
 // Half Title page
-#makeTitle
+#title-page(half: true)
 
 // Full Title page
 #pagebreak(to: "odd")
-#makeTitle
-#makeSubtitle
-#v(18pt)
-#authors
+#title-page(half: false)
 
-#edition
-#v(36pt)
-
-Copyright 2022--2025 Noel Welsh. Licensed under CC BY-SA 4.0
-
-Portions of this work are based on Scala with Cats, by Dave Pereira-Gurnell and Noel Welsh. Scala with Cats is licensed under CC BY-SA 3.0.
-
-Artwork by Jenny Clements.
-
-#v(18pt)
-
-Published by Inner Product Consulting Ltd, UK.
 
 // Dedication
 #pagebreak(to: "odd")
@@ -68,6 +77,7 @@ This book is dedicated to those who laid the path that I have followed, to those
 #include  "preface/license.typ"
 
 // Main matter
+#pagebreak(to: "odd")
 #set page(numbering: "1")
 #set heading(numbering: "1.")
 #counter(page).update(1)

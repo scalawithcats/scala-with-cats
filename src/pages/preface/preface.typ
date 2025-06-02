@@ -1,5 +1,4 @@
 #import "../stdlib.typ": info, warning, solution
-#pagebreak(to: "even")
 = Preface
 
 

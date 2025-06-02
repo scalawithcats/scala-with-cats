@@ -36,4 +36,37 @@
 #let title = "Functional Programming Strategies"
 #let subtitle = "In Scala with Cats"
 #let authors = "Noel Welsh"
-#let edition = "May 2025"
+
+#let title-page(half: true) = {
+  page(
+    align(
+      left + horizon,
+      block(width: 90%)[
+        #let v-space = v(2em, weak: true)
+        #text(3em)[*#title*]
+
+        #v-space
+        #text(1.6em, authors)
+
+        #if not half [
+            #v-space
+            #text([Draft built on #datetime.today().display()])
+            #v-space
+
+            Copyright 2022--#datetime.today().display("[year]") Noel Welsh.
+            Licensed under CC BY-SA 4.0
+
+            Portions of this work are based on Scala with Cats, by Dave
+            Pereira-Gurnell and Noel Welsh. Scala with Cats is licensed under
+            CC BY-SA 3.0.
+
+            Artwork by Jenny Clements.
+
+            #v-space
+
+            Published by Inner Product Consulting Ltd, UK.
+        ]
+      ],
+    ),
+  )
+}
