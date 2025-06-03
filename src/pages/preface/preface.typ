@@ -1,10 +1,10 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href
 = Preface
 
 
 Some twenty years ago I started my first job in the UK.
 This job involved a commute by train, giving me about an hour a day to read without distraction.
-Around about the same time I first heard about _Structure and Interpretation of Computer Programs_, referred to as the "wizard book" and spoken of in reverential terms.
+Around about the same time I first heard about _Structure and Interpretation of Computer Programs_ @sicp:96, referred to as the "wizard book" and spoken of in reverential terms.
 It sounded like the just the thing for a recent graduate looking to become a better developer.
 I purchased a copy and spent the journey reading it, doing most of the exercises in my head.
 _Structure and Interpretation of Computer Programs_ was already an old book at this time, and it's programming style was archaic.
@@ -32,7 +32,7 @@ I hope you find it useful, and I hope that just maybe some young developer will 
 The aims of this book are two-fold:
 to introduce monads, functors, and other functional programming patterns
 as a way to structure program design,
-and to explain how these concepts are implemented in [Cats][link-cats].
+and to explain how these concepts are implemented in #href("https://typelevel.org/cats")[Cats].
 
 Monads, and related concepts, are the functional programming equivalent
 of object-oriented design patterns---architectural building blocks
@@ -43,7 +43,7 @@ They differ from object-oriented patterns in two main ways:
 - they are extremely (extremely) general.
 
 This generality means they can be difficult to understand.
-*Everyone* finds abstraction difficult.
+_Everyone_ finds abstraction difficult.
 However, it is generality that allows concepts like monads
 to be applied in such a wide variety of situations.
 

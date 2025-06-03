@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href
 == Conventions Used in This Book
 
 
@@ -17,10 +17,10 @@ are written in `monospace font`.
 Note that we do not distinguish between singular and plural forms.
 For example, we might write `String` or `Strings` to refer to `java.lang.String`.
 
-References to external resources are written as [hyperlinks][link-underscore].
+References to external resources are written as #href("https://scalawithcats.com")[hyperlinks].
 References to API documentation are written
 using a combination of hyperlinks and monospace font,
-for example: [`scala.Option`][scala.Option].
+for example: #href("http://www.scala-lang.org/api/current/scala/Option.html")[`scala.Option`].
 
 === Source Code
 
@@ -34,7 +34,7 @@ object MyApp extends App {
 }
 ```
 
-Most code passes through [mdoc][link-mdoc] to ensure it compiles.
+Most code passes through #href("https://scalameta.org/mdoc/")[mdoc] to ensure it compiles.
 mdoc uses the Scala console behind the scenes,
 so we sometimes show console-style output as comments:
 

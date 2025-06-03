@@ -20,16 +20,16 @@
 
 // Heading styles
 #let heading-multiplier = 1.2
-#let heading-base = 1.73em
-#let heading-space-base = 1.16em
+#let heading-base = 1.44em
+#let heading-space-base = 0.97em
 // Chapter heading is 2 levels above level 2 heading
 #show heading.where(level: 1): it => {
     // Chapter heading starts on an odd page. Don't create a page break if the
     // page is already empty.
     pagebreak(weak: true, to: "odd")
-    set text(size: 1.73em * 1.2 * 1.2)
+    set text(size: 1.44em * 1.2 * 1.2)
     it
-    v(1.16em * 1.2 * 1.2)
+    v(0.97em * 1.2 * 1.2)
 }
 #show heading.where(level: 2): it => {
     v(heading-space-base)
@@ -38,17 +38,19 @@
     v(0.5em)
 }
 #show heading.where(level: 3): it => {
-    v(1.16em / 1.2)
-    set text(size: 1.73em / 1.2)
+    v(0.97em / 1.2)
+    set text(size: 1.44em / 1.2)
     it
     v(0.5em)
 }
 #show heading.where(level: 4): it => {
-    v(1.16em / 1.2 / 1.2)
-    set text(size: 1.73em / 1.2 / 1.2)
+    v(0.97em / 1.2 / 1.2)
+    set text(size: 1.44em / 1.2 / 1.2)
     it
     v(0.5em)
 }
+#show raw.where(block: true) :set block(fill: rgb("F7F7F7"), inset: 8pt, width: 100%)
+
 // Front Matter
 
 // Half Title page

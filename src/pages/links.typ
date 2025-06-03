@@ -103,7 +103,6 @@
 [link-applicative-programming]: http://www.staff.city.ac.uk/~ross/papers/Applicative.html
 [link-bloom-filter]: http://en.wikipedia.org/wiki/Bloom_filter
 [link-bnf]: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_Form
-[link-catalysts]: https://github.com/typelevel/catalysts
 [link-cats]: http://typelevel.org/cats
 [link-cats-infographic]: https://github.com/tpolecat/cats-infographic
 [link-circe-codec]: https://github.com/circe/circe/blob/series/0.14.x/modules/core/shared/src/main/scala/io/circe/Codec.scala
@@ -127,7 +126,6 @@
 [link-phil-freeman-tailrecm]: http://functorial.com/stack-safety-for-free/index.pdf
 [link-play-json-format]: https://www.playframework.com/documentation/2.6.x/ScalaJsonCombinators#Format
 [link-sbt]: http://www.scala-sbt.org/
-[link-sbt-catalysts]: https://github.com/typelevel/sbt-catalysts
 [link-scalactic]: http://scalactic.org
 [link-scalaz-contrib]: https://github.com/typelevel/scalaz-contrib
 [link-scodec-codec]: http://scodec.org/guide/Core+Algebra.html#Codec

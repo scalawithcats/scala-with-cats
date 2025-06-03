@@ -94,7 +94,7 @@ val copyNonTypstFiles =
 copyNonTypstFiles := {
   streams.value.log.info("Copying non-md files to typst")
   val sources = FileTreeView.default
-    .list(pagesDirectory.value.toGlob / ** / "*.{svg,png,bib}")
+    .list(pagesDirectory.value.toGlob / ** / "*.{svg,png,bib,csl}")
     .collect { case (file, _) => file.toFile }
     .pair(Path.rebase(pagesDirectory.value, typstDirectory.value))
   IO.copy(sources).toSeq

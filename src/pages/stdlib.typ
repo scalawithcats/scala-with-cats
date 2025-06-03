@@ -1,31 +1,40 @@
-#let callout(body, title: "", category: "Callout", fill: blue, title-color: white, body-color: black, icon: none) = {
-  block(fill: fill,
-       width: 100%,
-       inset: 8pt)[
-           #text(title-color)[#icon #category #title]
-           #text(body-color)[#body]
-       ]
+#let callout(body, title: "", fill: blue, title-color: white, body-color: black) = {
+    block(
+        stroke: (left: 8pt + fill),
+        fill: color.mix((white, 70%), (fill, 30%)),
+        width: 100%,
+        inset: 16pt
+    )[
+        #if title.len() == 0 {
+            text(body-color)[#body]
+        } else {
+            [
+                #heading(level: 4, outlined: false, title)
+                #text(body-color)[#body]
+            ]
+        }
+    ]
 }
 
 // Presets
 
-#let note = callout.with(category: "Note",
+#let info-color = rgb("#5BC0DE")
+#let warning-color = rgb("#F0AD4E")
+
+#let note = callout.with(
     fill: rgb(21, 30, 44),
-    icon: "✎",
     title-color: rgb(21, 122, 255),
     body-color: white)
 
-#let info = callout.with(category: "Info",
-    fill: rgb("#5BC0DE"),
-    icon: "🛈",
+#let info = callout.with(
+    fill: info-color,
     title-color: rgb(21, 122, 255),
-    body-color: rgb(8, 109, 221))
+    body-color: black)
 
-#let warning = callout.with(category: "Warning",
-    fill: rgb("#F0AD4E"),
-    icon: "⚠",
+#let warning = callout.with(
+    fill: warning-color,
     title-color: rgb(233, 151, 63),
-    body-color: white)
+    body-color: black)
 
 #let solutions = state("solutions", ())
 #let solution(body) = {
@@ -69,4 +78,9 @@
       ],
     ),
   )
+}
+
+// A link to an external site
+#let href(destination, body) = {
+  link(destination)[#text(rgb("#996666"))[#body#sym.wj#super(sym.arrow.tr)]]
 }
