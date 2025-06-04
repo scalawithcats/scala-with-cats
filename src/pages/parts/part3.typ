@@ -1,3 +1,3 @@
-#import "../stdlib.typ": info, warning, solution
-\partimage[width=.5\linewidth]{src/pages/parts/part3.png}
-\part{Interpreters}
+#import "../stdlib.typ": part
+
+#part("parts/part3.png", "Interpreters", "sec:part:interpreters")[]

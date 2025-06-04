@@ -82,5 +82,28 @@
 
 // A link to an external site
 #let href(destination, body) = {
-  link(destination)[#text(rgb("#996666"))[#body#sym.wj#super(sym.arrow.tr)]]
+    link(destination)[#body #footnote(destination)]
 }
+
+// A part heading page
+//
+// image-path: path to the hero image for this part
+// name: the name of part as printed in the book
+// tag: a tag for references to this part (e.g. "sec:part:one")
+// content: content in the part
+#let part(image-path, name, tag, content) = [
+    #align(center)[
+        #image(image-path, width: 50%)
+        #heading(level: 1)[
+            #name
+        ]
+        #label(tag)
+    ]
+    <part>
+
+    #content
+]
+
+#let heading-multiplier = 1.2
+#let heading-base = 24pt
+#let heading-space-base = 12pt

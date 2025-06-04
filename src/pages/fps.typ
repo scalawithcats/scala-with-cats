@@ -1,4 +1,4 @@
-#import "stdlib.typ": title, authors, title-page
+#import "stdlib.typ": title, authors, heading-multiplier, heading-space-base, heading-base
 
 #set document(
     title: title,
@@ -18,65 +18,11 @@
 
 #set heading(numbering: "1.")
 
-// Heading styles
-#let heading-multiplier = 1.2
-#let heading-base = 1.44em
-#let heading-space-base = 0.97em
-// Chapter heading is 2 levels above level 2 heading
-#show heading.where(level: 1): it => {
-    // Chapter heading starts on an odd page. Don't create a page break if the
-    // page is already empty.
-    pagebreak(weak: true, to: "odd")
-    set text(size: 1.44em * 1.2 * 1.2)
-    it
-    v(0.97em * 1.2 * 1.2)
-}
-#show heading.where(level: 2): it => {
-    v(heading-space-base)
-    set text(size: heading-base)
-    it
-    v(0.5em)
-}
-#show heading.where(level: 3): it => {
-    v(0.97em / 1.2)
-    set text(size: 1.44em / 1.2)
-    it
-    v(0.5em)
-}
-#show heading.where(level: 4): it => {
-    v(0.97em / 1.2 / 1.2)
-    set text(size: 1.44em / 1.2 / 1.2)
-    it
-    v(0.5em)
-}
 #show raw.where(block: true) :set block(fill: rgb("F7F7F7"), inset: 8pt, width: 100%)
+#show link :set text(rgb("#996666"))
 
-// Front Matter
-
-// Half Title page
-#title-page(half: true)
-
-// Full Title page
-#pagebreak(to: "odd")
-#title-page(half: false)
-
-
-// Dedication
-#pagebreak(to: "odd")
-This book is dedicated to those who laid the path that I have followed, to those who will take up where I have left off, and to those who have joined me along the way.
-
-// Table of contents
-#pagebreak(to: "odd")
-#outline(depth: 2)
-
-// Preface
-#pagebreak(to: "odd")
-#set page(numbering: "i")
-#set heading(numbering: none)
-#include  "preface/preface.typ"
-#include  "preface/versions.typ"
-#include  "preface/conventions.typ"
-#include  "preface/license.typ"
+// Front matter
+#include "parts/frontmatter.typ"
 
 // Main matter
 #pagebreak(to: "odd")
@@ -89,6 +35,49 @@ This book is dedicated to those who laid the path that I have followed, to those
 #include  "intro/index.typ"
 #include  "intro/three-levels.typ"
 #include  "intro/what-is-fp.typ"
+
+// The remainder of the main matter is organized into parts
+// Offset headings by 1, so that part headings can be level 1 and chapter
+// headings are level 2
+#set heading(offset: 1)
+// Start parts on an odd page
+#show <part>: it => {
+    pagebreak(weak: true, to: "odd")
+    it
+}
+#show heading.where(level: 1): it => {
+    // Part heading starts on an odd page but we insert them based on the label
+    set text(size: 24pt * 1.2 * 1.2)
+    it
+    v(12pt * 1.2 * 1.2)
+}
+#show heading.where(level: 2): it => {
+    // Chapter heading starts on an odd page. Don't create a page break if the
+    // page is already empty.
+    pagebreak(weak: true, to: "odd")
+    set text(size: 24pt * 1.2 * 1.2)
+    it
+    v(12pt * 1.2 * 1.2)
+}
+#show heading.where(level: 3): it => {
+    v(heading-space-base)
+    set text(size: heading-base)
+    it
+    v(12pt)
+}
+#show heading.where(level: 4): it => {
+    v(12pt / 1.2)
+    set text(size: 1.44em / 1.2)
+    it
+    v(12pt)
+}
+#show heading.where(level: 5): it => {
+    v(12pt / 1.2 / 1.2)
+    set text(size: 1.44em / 1.2 / 1.2)
+    it
+    v(12pt)
+}
+
 // Part 1: Foundations
 #include  "parts/part1.typ"
 // ADTs

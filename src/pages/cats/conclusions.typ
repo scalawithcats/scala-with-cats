@@ -15,7 +15,7 @@ We have also seen the general patterns in Cats type classes:
  - Many type classes have _syntax_
    provided via the [`cats.syntax`][cats.syntax] package.
 
-In the remaining chapters of Part {#sec:part:two}
+In the remaining chapters of Part {#sec:part:type-classes}
 we will look at several broad and powerful type classes---`Semigroup`,
 `Monoid`, `Functor`, `Monad`, `Semigroupal`, `Applicative`, `Traverse`, and more.
 In each case we will learn what functionality the type class provides,

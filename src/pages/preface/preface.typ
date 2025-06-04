@@ -1,5 +1,5 @@
 #import "../stdlib.typ": info, warning, solution, href
-= Preface
+#heading(level: 1, "Preface")
 
 
 Some twenty years ago I started my first job in the UK.

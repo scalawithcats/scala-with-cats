@@ -6,8 +6,8 @@ This book contains a lot of technical information and program code.
 We use the following typographical conventions
 to reduce ambiguity and highlight important concepts:
 
-=== Typographical Conventions
 
+=== Typographical Conventions
 
 New terms and phrases are introduced in _italics_.
 After their initial introduction they are written in normal roman font.
@@ -17,20 +17,21 @@ are written in `monospace font`.
 Note that we do not distinguish between singular and plural forms.
 For example, we might write `String` or `Strings` to refer to `java.lang.String`.
 
-References to external resources are written as #href("https://scalawithcats.com")[hyperlinks].
+References to external resources are written as #href("https://scalawithcats.com")[hyperlinks], which also render as footnotes for situations when you cannot conveniently follow links.
 References to API documentation are written
 using a combination of hyperlinks and monospace font,
 for example: #href("http://www.scala-lang.org/api/current/scala/Option.html")[`scala.Option`].
 
-=== Source Code
 
+=== Source Code
 
 Source code blocks are written as follows.
 Syntax is highlighted appropriately where applicable:
 
 ```scala mdoc:silent
 object MyApp extends App {
-  println("Hello world!") // Print a fine message to the user!
+  // Print a fine message to the user!
+  println("Hello world!")
 }
 ```
 
