@@ -1,3 +1,3 @@
 #import "stdlib.typ": info, warning, solution
 
-#bibliography("scala-with-cats.bib", style: "acm-sigproceedings-long-author-list.csl")
+#bibliography("scala-with-cats.bib", style: "acm-sigchi-proceedings.csl")

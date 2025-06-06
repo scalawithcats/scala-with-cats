@@ -1,3 +1,3 @@
 #import "../stdlib.typ": part
 
-#part("parts/part4.png", "Case Studies", "sec:part:case-study")[]
+#part[Case Studies] <sec:part:case-study>

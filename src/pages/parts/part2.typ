@@ -1,6 +1,6 @@
 #import "../stdlib.typ": part
 
-#part("parts/part2.png", "Type Classes", "sec:part:type-classes")[
+#part[Type Classes] <sec:part:type-classes>
 
 In this part of the book we move on to type classes.
 We looked at the implementation of type classes in @sec:type-classes.
@@ -13,4 +13,3 @@ while the case studies will focus on their role in design.
 In @sec:cats we introduce the #link("https://typelevel.org/cats")[Cats] library.
 Cats provides implementation of the type classes we're interested in,
 and so it saves a lot of time and typing to use it.
-]

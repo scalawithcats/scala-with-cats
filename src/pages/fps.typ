@@ -16,46 +16,39 @@
     size: 12pt
 )
 
-#set heading(numbering: "1.")
-
-#show raw.where(block: true) :set block(fill: rgb("F7F7F7"), inset: 8pt, width: 100%)
-#show link :set text(rgb("#996666"))
 
 // Front matter
 #include "parts/frontmatter.typ"
 
 // Main matter
+#show raw.where(block: true) :set block(fill: rgb("F7F7F7"), inset: 8pt, width: 100%)
+#show link :set text(rgb("#996666"))
+
 #pagebreak(to: "odd")
 #set page(numbering: "1")
 #set heading(numbering: "1.")
 #counter(page).update(1)
 #counter(heading).update(0)
 
-// Intro
-#include  "intro/index.typ"
-#include  "intro/three-levels.typ"
-#include  "intro/what-is-fp.typ"
-
-// The remainder of the main matter is organized into parts
-// Offset headings by 1, so that part headings can be level 1 and chapter
-// headings are level 2
-#set heading(offset: 1)
+// The main matter is organized into parts
 // Start parts on an odd page
-#show <part>: it => {
+#show figure.where(kind: "part"): it => {
     pagebreak(weak: true, to: "odd")
-    it
+    set text(size: 24pt * 1.2 * 1.2)
+    align(left)[
+        #strong[#it.supplement #it.counter.display(it.numbering): #it.body]
+    ]
 }
 #show heading.where(level: 1): it => {
-    // Part heading starts on an odd page but we insert them based on the label
+    // Chapter heading starts on an odd page. Don't create a page break if the
+    // page is already empty.
+    pagebreak(weak: true, to: "odd")
     set text(size: 24pt * 1.2 * 1.2)
     it
     v(12pt * 1.2 * 1.2)
 }
 #show heading.where(level: 2): it => {
-    // Chapter heading starts on an odd page. Don't create a page break if the
-    // page is already empty.
-    pagebreak(weak: true, to: "odd")
-    set text(size: 24pt * 1.2 * 1.2)
+    set text(size: 24pt * 1.2)
     it
     v(12pt * 1.2 * 1.2)
 }
@@ -77,6 +70,10 @@
     it
     v(12pt)
 }
+// Intro
+#include  "intro/index.typ"
+#include  "intro/three-levels.typ"
+#include  "intro/what-is-fp.typ"
 
 // Part 1: Foundations
 #include  "parts/part1.typ"

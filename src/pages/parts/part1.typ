@@ -1,6 +1,6 @@
 #import "../stdlib.typ": part
 
-#part("parts/part1.png", "Foundations", "sec:part:foundations")[
+#part[Foundations] <sec:part:foundations>
 
 In this first part of the book we're building the foundational strategies on
 which the rest of the book will build and elaborate. In @sec:adt we look at
@@ -12,4 +12,3 @@ artifacts. For example, we can label part of code as an algebraic data type or a
 type class. We'll also see strategies that help us write code but don't
 necessarily end up directly reflected in it, such as following the types.
 
-]
