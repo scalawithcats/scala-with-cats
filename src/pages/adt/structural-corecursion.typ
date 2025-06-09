@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, exercise
 == Structural Corecursion
 
 
@@ -9,10 +9,7 @@ Whereas we can use structural recursion whenever the input of a method or functi
 we can use structural corecursion whenever the output of a method or function is an algebraic data type.
 
 
-#info[
-==== Duality in Functional Programming {-}
-
-
+#info(title: [Duality in Functional Programming])[
 Two concepts or structures are duals if one can be translated in a one-to-one fashion to the other.
 Duality is one of the main themes of this book.
 By relating concepts as duals we can transfer knowledge from one domain to another.
@@ -363,7 +360,7 @@ MyList.fill(5)(getAndInc())
 ```
 
 
-==== Exercise: Iterate {-}
+#exercise[Iterate]
 
 
 Implement `iterate` using the same reasoning as we did for `fill`.
@@ -397,7 +394,7 @@ MyList.iterate(0, 5)(x => x - 1)
 ]
 
 
-==== Exercise: Map {-}
+#exercise[Map]
 
 
 Once you've completed `iterate`, try to implement `map` in terms of `unfold`. You'll need to use the destructors to implement it.

@@ -1,15 +1,15 @@
-#let callout(body, title: "", fill: blue, title-color: white, body-color: black) = {
+#let callout(body, title: none, fill: blue, title-color: white, body-color: black) = {
     block(
         stroke: (left: 8pt + fill),
         fill: color.mix((white, 70%), (fill, 30%)),
         width: 100%,
         inset: 16pt
     )[
-        #if title.len() == 0 {
+        #if title == none {
             text(body-color)[#body]
         } else {
             [
-                #heading(level: 4, outlined: false, title)
+                #heading(depth: 4, numbering: none, outlined: false, title)
                 #text(body-color)[#body]
             ]
         }
@@ -84,6 +84,7 @@
     caption: []
 )
 
-#let heading-multiplier = 1.2
-#let heading-base = 24pt
-#let heading-space-base = 12pt
+
+#let exercise(title) = {
+    heading(depth: 4, numbering: none, outlined: false, "Exercise: " + title)
+}

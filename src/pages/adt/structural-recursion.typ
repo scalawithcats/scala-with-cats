@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, exercise
 == Structural Recursion
 
 
@@ -315,7 +315,7 @@ In these situations we can use dynamic dispatch instead.
 We'll learn more about this when we look at generalized algebraic data types.
 
 
-==== Exercise: Methods for Tree {-}
+#exercise[Methods for Tree]
 
 
 In a previous exercise we created a `Tree` algebraic data type:
@@ -572,7 +572,7 @@ Returning to `MyList`, it has:
 - `Pair` is a constructor with one parameter of type `A` and one recursive parameter, and hence the corresponding function has type `(A, B) => B`.
 
 
-==== Exercise: Tree Fold {-}
+#exercise[Tree Fold]
 
 
 Implement a fold for `Tree` defined earlier.
@@ -640,7 +640,7 @@ enum Tree[A] {
 ]
 
 
-==== Exercise: Using Fold {-}
+#exercise[Using Fold]
 
 
 Prove to yourself that you can replace structural recursion with calls to fold, by redefining `size`, `contains`, and `map` for `Tree` using only fold.

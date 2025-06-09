@@ -1,4 +1,4 @@
-#import "stdlib.typ": title, authors, heading-multiplier, heading-space-base, heading-base
+#import "stdlib.typ": title, authors
 
 #set document(
     title: title,
@@ -34,7 +34,10 @@
 // Start parts on an odd page
 #show figure.where(kind: "part"): it => {
     pagebreak(weak: true, to: "odd")
-    set text(size: 24pt * 1.2 * 1.2)
+    set text(
+        font: "Lato",
+        size: 12pt * 1.333 * 1.333 * 1.333
+    )
     align(left)[
         #strong[#it.supplement #it.counter.display(it.numbering): #it.body]
     ]
@@ -43,30 +46,33 @@
     // Chapter heading starts on an odd page. Don't create a page break if the
     // page is already empty.
     pagebreak(weak: true, to: "odd")
-    set text(size: 24pt * 1.2 * 1.2)
+    set text(
+        font: "Lato",
+        size: 12pt * 1.333 * 1.333 * 1.333)
     it
-    v(12pt * 1.2 * 1.2)
+    v(12pt * 1.333)
 }
 #show heading.where(level: 2): it => {
-    set text(size: 24pt * 1.2)
+    v(12pt)
+    set text(
+        font: "Lato",
+        size: 12pt * 1.333 * 1.333)
     it
-    v(12pt * 1.2 * 1.2)
+    v(12pt * 1.333)
 }
 #show heading.where(level: 3): it => {
-    v(heading-space-base)
-    set text(size: heading-base)
+    v(12pt / 1.2)
+    set text(
+        font: "Lato",
+        size: 12pt * 1.333)
     it
     v(12pt)
 }
 #show heading.where(level: 4): it => {
-    v(12pt / 1.2)
-    set text(size: 1.44em / 1.2)
-    it
-    v(12pt)
-}
-#show heading.where(level: 5): it => {
     v(12pt / 1.2 / 1.2)
-    set text(size: 1.44em / 1.2 / 1.2)
+    set text(
+        font: "Lato",
+        size: 12pt)
     it
     v(12pt)
 }

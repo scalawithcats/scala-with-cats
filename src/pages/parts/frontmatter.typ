@@ -1,4 +1,4 @@
-#import "../stdlib.typ": title-page, heading-multiplier, heading-space-base, heading-base
+#import "../stdlib.typ": title-page
 
 #let parts-and-headings = figure.where(kind: "part", outlined: true).or(heading.where(outlined: true))
 
@@ -7,25 +7,33 @@
     // Chapter heading starts on an odd page. Don't create a page break if the
     // page is already empty.
     pagebreak(weak: true, to: "odd")
-    set text(size: 24pt * 1.2 * 1.2)
+    set text(
+        font: "Lato",
+        size: 12pt * 1.333 * 1.333 * 1.333)
     it
-    v(12pt * 1.2 * 1.2)
+    v(12pt * 1.333)
 }
 #show heading.where(level: 2): it => {
-    v(heading-space-base)
-    set text(size: heading-base)
-    it
     v(12pt)
+    set text(
+        font: "Lato",
+        size: 12pt * 1.333 * 1.333)
+    it
+    v(12pt * 1.333)
 }
 #show heading.where(level: 3): it => {
     v(12pt / 1.2)
-    set text(size: 24pt / 1.2)
+    set text(
+        font: "Lato",
+        size: 12pt * 1.333)
     it
     v(12pt)
 }
 #show heading.where(level: 4): it => {
     v(12pt / 1.2 / 1.2)
-    set text(size: 24pt / 1.2 / 1.2)
+    set text(
+        font: "Lato",
+        size: 12pt)
     it
     v(12pt)
 }
@@ -91,6 +99,8 @@ This book is dedicated to those who laid the path that I have followed, to those
 #pagebreak(to: "odd")
 #set page(numbering: "i")
 #set heading(numbering: none)
+#show link :set text(rgb("#996666"))
+
 #include  "../preface/preface.typ"
 #include  "../preface/versions.typ"
 #include  "../preface/conventions.typ"

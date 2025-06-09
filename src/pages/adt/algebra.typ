@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, exercise
 == The Algebra of Algebraic Data Types
 
 
@@ -56,7 +56,7 @@ type IntOrString = Either[Int, String]
 ```
 
 
-==== Exercise: Identities {-}
+#exercise[Identities]
 
 
 Can you work out which Scala type corresponds to the identity $1$ for product types?
@@ -87,8 +87,8 @@ enum Permissions {
 Written in mathematical notation, this is
 
 $
-"Person" = "String" times "Permissions"
-"Permissions" = "User" + "Moderator"
+    "Person" &= "String" times "Permissions" \
+    "Permissions" &= "User" + "Moderator"
 $
 
 Performing substitution gets us

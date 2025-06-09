@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": exercise, solution
 == Algebraic Data Types in Scala 
 
 
@@ -47,7 +47,7 @@ enum A {
 }
 ```
 
-In other words we don't write `final case class` inside an `enum`. You also can't nest `enum` inside `enum`. Nested logical ors  can be rewritten into a single logical or containing only logical ands (known as disjunctive normal form) so this is not a limitation in practice. However the Scala 2 representation is still available in Scala 3 should you want more expressivity.
+In other words we don't write `final case class` inside an `enum`. You also can't nest an `enum` inside an `enum`. Nested logical ors  can be rewritten into a single logical or containing only logical ands (known as disjunctive normal form) so this is not a limitation in practice. However the Scala 2 representation is still available in Scala 3 should you want more expressivity.
 
 
 === Algebraic Data Types in Scala 2
@@ -212,8 +212,7 @@ We've seen that the Scala 3 representation of algebraic data types, using `enum`
 - Scala 2's representation can express things that are almost, but not quite, algebraic data types. For example, if you define a method on an `enum` you must be able to define it for all the members of the `enum`. Sometimes you want a case of an `enum` to have methods that are only defined for that case. To implement this you'll need to use the Scala 2 representation instead. 
 
 
-==== Exercise: Tree {-}
-
+#exercise[Tree]
 
 To gain a bit of practice defining algebraic data types, code the following description in Scala (your choice of version, or do both.)
 
