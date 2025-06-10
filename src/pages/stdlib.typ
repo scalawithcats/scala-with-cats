@@ -88,3 +88,13 @@
 #let exercise(title) = {
     heading(depth: 4, numbering: none, outlined: false, "Exercise: " + title)
 }
+
+#let narrative-cite(label) = {
+    show cite.where(form: "prose"): it => {
+        show "{": ""
+        show "~": " ["
+        show "}": "]"
+        cite(it.key, style: it.style)
+    }
+    cite(label, form: "prose", style: "/fps-title.csl")
+}

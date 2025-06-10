@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, exercise
 == Structural Recursion and Corecursion for Codata
 
 
@@ -8,9 +8,9 @@ Let's start by reviewing structural recursion and corecursion. The key idea is t
 
 + recognize the output of the method or function is codata;
 + write down the skeleton to construct an instance of the codata type, usually using an anonymous subclass; and
-+ fill in the methods, using strategies such as structural recursion or following the types to help.
++ fill in the methods, where strategies such as structural recursion or following the types can help.
 
-It's important that any computation takes places within the methods, and so only runs when the methods are called. Once we start creating streams the importance of this will become clear.
+It's important that all computations are defined within the methods, and so only run when the methods are called. Once we start creating streams the importance of this will become clear.
 
 For structural recursion the steps are:
 
@@ -18,12 +18,12 @@ For structural recursion the steps are:
 + note the codata's destructors as possible sources of values in writing the method; and
 + complete the method, using strategies such as following the types or structural corecursion and the methods identified above.
 
-Our first step is to define our stream type. As this is codata, it is defined in terms of its destructors. The destructors that define a `Stream` of elements of type `A` are:
+Now on to creating streams. Our first step is to define our stream type. As this is codata, it is defined in terms of its destructors. The destructors that define a `Stream` of elements of type `A` are:
 
 - a `head` of type `A`; and
 - a `tail` of type `Stream[A]`.
 
-Note these are almost the destructors of `List`. We haven't defined `isEmpty` as a destructor because our streams never end and thus this method would always return `false`. (A lot of real implementations, such as the `LazyList` in the Scala standard library, do define such a method which allows them to represent finite and infinite lists in the same structure. We're not doing this for simplicity and because we want to work with codata in its purest form.)
+Note these are almost the destructors of `List`. We haven't defined `isEmpty` as a destructor because our streams never end and thus this method would always return `false`#footnote[A lot of real implementations, such as the `LazyList` in the Scala standard library, do define such a method which allows them to represent finite and infinite lists in the same structure. We're not doing this for simplicity and because we want to work with codata in its purest form.].
 
 We can translate this to Scala, as we've previously seen, giving us
 
@@ -193,7 +193,7 @@ trait Stream[A] {
 }
 ```
 
-There are two important points. Firstly, notice how I gave the name `self` to `this`. This is so I can access the value inside the new `Stream` we are creating, where `this` would be bound to this new `Stream`. Next, notice that we access `self.head` and `self.tail` inside the methods on the new `Stream`. This maintains the correct semantics of only performing computation when it has been asked for. If we performed the computation outside of the methods that we would do it too early, which is some cases can lead to an infinite loop.
+There are two important points. Firstly, notice how I gave the name `self` to `this`. This is so I can access the value inside the new `Stream` we are creating, where `this` would be bound to this new `Stream`. Next, notice that we access `self.head` and `self.tail` inside the methods on the new `Stream`. This maintains the correct semantics of only performing computation when it has been asked for. If we perform computation outside of the methods we create the possibility of infinite loops.
 
 As our final example, let's return to constructing `Stream`, and implement the universal constructor `unfold`. We start with the skeleton for `unfold`, remembering the `seed` parameter.
 
@@ -281,7 +281,7 @@ alternating.take(5)
 ```
 
 
-==== Exercise: Stream Combinators {-}
+#exercise[Stream Combinators]
 
 
 It's time for you to get some practice with structural recursion and structural corecursion using codata.
@@ -561,7 +561,7 @@ def filter(pred: A => Boolean): Stream[A] = {
 
 We know that delaying the computation until the method is called is important, because that is how we can handle infinite and self-referential data. However we don't need to redo this computation on successive calls. We can instead cache the result from the first call and use that next time.
 Scala makes this easy with `lazy val`, which is a `val` that is not computed until its first call.
-Additionally, Scala's use of the _uniform access principle_ means we can implement a method with no parameters using a `lazy val`.
+Additionally, Scala's use of the *uniform access principle* means we can implement a method with no parameters using a `lazy val`.
 Here's a quick example demonstrating it in use.
 
 ```scala mdoc:silent
@@ -582,7 +582,7 @@ twos.take(5)
 
 We get the same result whether we use a method or a `lazy val`, because we are assuming that we are only dealing with pure computations that have no dependency on state that might change. In this case a `lazy val` simply consumes additional space to save on time.
 
-Recomputing a result every time it is needed is known as *call by name*, while caching the result the first time it is computed is known as *call by need*. These two different *evaluation strategies* can be applied to individual values, as we've done here, or across an entire programming. Haskell, for example, uses call by need. All values in Haskell are only computed the first time they are need. This is approach is sometimes known as *lazy evaluation*. Another alternative, called *call by value*, computes results when they are defined instead of waiting until they are needed. This is the default in Scala.
+Recomputing a result every time it is needed is known as *call by name*, while caching the result the first time it is computed is known as *call by need*. These two different *evaluation strategies* can be applied to individual values, as we've done here, or across an entire programming. Haskell, for example, uses call by need; all values in Haskell are only computed the first time they are needed. Call by need is also commonly known as *lazy evaluation*. Another alternative, called *call by value*, computes results when they are defined instead of waiting until they are needed. This is the default in Scala.
 
 We can illustrate the difference between call by name and call by need if we use an impure computation. 
 For example, we can define a stream of random numbers.

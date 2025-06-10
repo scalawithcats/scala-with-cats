@@ -1,5 +1,6 @@
 #import "../stdlib.typ": info, warning, solution
 = Tagless Final Interpreters
+<sec:tagless-final>
 
 
 In this chapter we'll explore the codata approach to interpreters, building up to a strategy known as *tagless final*.

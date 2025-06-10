@@ -99,14 +99,16 @@ So in summary we can add new elements to codata, but not new functions.
 
 If we tabulate this we clearly see that data and codata have orthogonal extensibility.
 
-+---------------+------+--------+
-| Extension     | Data | Codata |
-+===============+======+========+
-| Add elements  | No   | Yes    |
-+---------------+------+--------+
-| Add functions | Yes  | No     |
-+---------------+------+--------+
+#align(center)[
+  #table(
+    columns: (auto, auto, auto),
+    align: left,
+    table.header([Extension], [Data], [Codata]),
+    [Add elements], [No], [Yes],
+    [Add functions], [Yes], [No]
+  )
+]
 
 This difference in extensibility gives us another rule for choosing between data and codata as an implementation strategy, in addition to the finite vs infinite distinction we saw earlier. If we want extensibilty of functions but not elements we should use data. If we have a fixed interface but an unknown number of possible implementations we should use codata.
 
-You might wonder if we can have both forms of extensibility. Achieving this is called the *expression problem*. There are various ways to solve the expression problem, and we'll see one that works particularly well in Scala in a later chapter.
+You might wonder if we can have both forms of extensibility. Achieving this is called the *expression problem*. There are various ways to solve the expression problem, and we'll see one that works particularly well in Scala in @sec:tagless-final.

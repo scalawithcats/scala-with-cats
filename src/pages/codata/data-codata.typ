@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, exercise
 == Relating Data and Codata
 
 
@@ -52,7 +52,7 @@ enum Bool {
 }
 ```
 
-We know that `fold` is universal: we can write any other method in terms of it. It therefore provides a universal destructor and is the key to treating data as codata. In this case the `fold` is something we use all the time, except we usually call it `if`.
+We know that `fold` is universal: we can write any other method in terms of it. It therefore provides a universal destructor and is the key to treating data as codata. This example of `fold` is something we use all the time, except we usually call it `if`.
 
 Here's the codata version of `Bool`, with `fold` renamed to `if`. (Note that Scala allows us to define methods with the same name as key words, in this case `if`, but we have to surround them in backticks to use them.)
 
@@ -94,7 +94,7 @@ and(False, True).`if`("yes")("no")
 and(False, False).`if`("yes")("no")
 ```
 
-==== Exercise: Or and Not {-}
+#exercise[Or and Not]
 
 
 Test your understanding of `Bool` by implementing `or` and `not` in the same way we implemented `and` above.

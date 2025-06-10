@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" demote-non-dropping-particle="sort-only" default-locale="en-US">
+  <info>
+    <title>Modified from ACM SIGCHI Proceedings (2016)</title>
+    <id>http://www.zotero.org/styles/acm-sigchi-proceedings</id>
+    <link href="http://www.zotero.org/styles/acm-sigchi-proceedings" rel="self"/>
+    <link href="http://cscw.acm.org/2016/submit/sigchi-word-proceedings.zip" rel="documentation"/>
+    <author>
+      <name>Noel Welsh</name>
+      <email>noel@noelwelsh.com</email>
+    </author>
+    <category citation-format="numeric"/>
+    <category field="engineering"/>
+    <updated>2016-10-30T03:15:40+00:00</updated>
+    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
+  </info>
+  <macro name="author">
+    <group suffix=".">
+      <names variable="author">
+        <name delimiter=", " and="text" sort-separator=", "/>
+        <label form="short" prefix=" (" suffix=")"/>
+        <substitute>
+          <names variable="editor"/>
+        </substitute>
+      </names>
+    </group>
+  </macro>
+  <macro name="editor">
+    <names variable="editor">
+      <name delimiter=", " and="text" delimiter-precedes-last="never"/>
+      <label form="short" prefix=" (" suffix=")"/>
+    </names>
+  </macro>
+  <macro name="title">
+    <text variable="title" font-style="italic"/>
+  </macro>
+  <macro name="year">
+    <date variable="issued">
+      <date-part name="year"/>
+    </date>
+  </macro>
+  <macro name="journal">
+    <group delimiter=", ">
+      <group delimiter=" ">
+        <text variable="container-title" font-style="italic"/>
+        <text variable="volume"/>
+      </group>
+      <text variable="issue"/>
+    </group>
+  </macro>
+  <macro name="edition">
+    <choose>
+      <if is-numeric="edition">
+        <group delimiter=" ">
+          <number variable="edition" form="ordinal"/>
+          <text term="edition" form="short"/>
+        </group>
+      </if>
+      <else>
+        <text variable="edition"/>
+      </else>
+    </choose>
+  </macro>
+  <macro name="book-publisher">
+    <group delimiter=", ">
+      <text variable="publisher"/>
+      <text variable="publisher-place"/>
+    </group>
+  </macro>
+  <macro name="access">
+    <choose>
+      <if variable="DOI">
+        <text variable="DOI" prefix="https://doi.org/"/>
+      </if>
+      <else-if variable="URL">
+        <group delimiter=" ">
+          <text term="retrieved" text-case="capitalize-first"/>
+          <date variable="accessed" form="text"/>
+          <text term="from"/>
+          <text variable="URL"/>
+        </group>
+      </else-if>
+    </choose>
+  </macro>
+  <citation collapse="citation-number">
+    <sort>
+      <key variable="citation-number"/>
+    </sort>
+    <layout prefix="{" suffix="}" delimiter=",">
+      <group delimiter="~">
+        <text macro="title"/>
+        <text variable="citation-number"/>
+        <text variable="locator"/>
+      </group>
+    </layout>
+  </citation>
+</style>

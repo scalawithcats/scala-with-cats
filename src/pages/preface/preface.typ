@@ -1,10 +1,10 @@
-#import "../stdlib.typ": info, warning, solution, href
+#import "../stdlib.typ": info, warning, solution, href, narrative-cite
 #heading(level: 1, "Preface")
 
 
 Some twenty years ago I started my first job in the UK.
 This job involved a commute by train, giving me about an hour a day to read without distraction.
-Around about the same time I first heard about _Structure and Interpretation of Computer Programs_ @sicp:96, referred to as the "wizard book" and spoken of in reverential terms.
+Around about the same time I first heard about #narrative-cite(<sicp:96>), referred to as the "wizard book" and spoken of in reverential terms.
 It sounded like the just the thing for a recent graduate looking to become a better developer.
 I purchased a copy and spent the journey reading it, doing most of the exercises in my head.
 _Structure and Interpretation of Computer Programs_ was already an old book at this time, and it's programming style was archaic.

@@ -16,6 +16,15 @@
     size: 12pt
 )
 
+#show table.cell.where(y: 0): strong
+#set table(
+    stroke: (x, y) => if y == 0 {
+        (bottom: 0.5pt + black)
+    } else {
+        (bottom: 0.25pt + black)
+    },
+)
+
 
 // Front matter
 #include "parts/frontmatter.typ"
