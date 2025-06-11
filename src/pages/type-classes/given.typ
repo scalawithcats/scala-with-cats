@@ -6,13 +6,15 @@ In section we'll go through the main Scala language features for contextual abst
 
 The language features for contextual abstraction have changed name from Scala 2 to Scala 3, but they work in largely the same way. In the table below I show the Scala 3 features, and their Scala 2 equivalents. If you use Scala 2 you'll find that most of the code works simply by replacing `given` with `implicit val` and `using` with `implicit`.
 
-+------------------+---------------------+
-| Scala 3          | Scala 2             |
-+==================+=====================+
-| given instance   | implicit value      |
-+------------------+---------------------+
-| using clause     | implicit parameter  |
-+------------------+---------------------+
+#align(center)[
+  #table(
+      columns: (auto, auto),
+      align: left,
+      table.header([Scala 3], [Scala 2]),
+      [given instance], [implicit value],
+      [using clause], [implicit parameter]
+  )
+]
 
 Let's now explain how these language features work.
 
@@ -47,7 +49,7 @@ add(using 1, 2)
 addAll(1)(using 2)(using 3)
 ```
 
-However this is not the typical way to pass parameters. In fact we don't usually explicit pass parameters to using clause at all. We usually use given instances instead, so let's turn to them.
+However this is not the typical way to pass parameters. In fact we don't usually explicitly pass parameters to using clause at all. We usually use given instances instead, so let's turn to them.
 
 
 === Given Instances
@@ -61,7 +63,7 @@ given theMagicNumber: Int = 3
 
 We can use a given instance like a normal value.
 
-```scala mdoc:silent
+```scala mdoc
 theMagicNumber * 2
 ```
 
@@ -73,7 +75,7 @@ For example, we defined `double` above with a single `Int` context parameter. Th
 double
 ```
 
-The same given instance will be used for multiple parameters in a using clause with the same type, as in `add` defined above.
+The same given instance will be used for multiple parameters with the same type in a using clause, as in `add` defined above.
 
 ```scala mdoc
 add
@@ -109,13 +111,13 @@ This means the following code works, as `a` is defined in a scope that includes 
 ```scala mdoc:silent
 object A {
   given a: Int = 1
-  
+
   object B {
-    C.whichInt 
-  }
-  
-  object C {
     def whichInt(using int: Int): Int = int
+  }
+
+  object C {
+    B.whichInt
   }
 }
 ```
@@ -228,7 +230,8 @@ def whichInt(using int: Int): Int = int
 whichInt(using 2)
 ```
    
-The second rule is that instances in the lexical scope take priority over instances in a companion object
+The second rule is that instances in the lexical scope take priority over instances in a companion object.
+Here we define an instance on the `Cat` companion object.
 
 ```scala mdoc:reset:silent
 trait Sound[A] {
@@ -245,6 +248,9 @@ object Cat {
 def soundOf[A](using s: Sound[A]): String =
   s.sound
 ```
+
+Now we define an instance in the lexical scope, and we see it is chosen in preference to the instance on the companion object.
+
 ```scala mdoc
 given purr: Sound[Cat]  =
   new Sound[Cat]{
@@ -274,4 +280,4 @@ The final rule is that instances in a closer lexical scope take preference over 
 }
 ```
    
-We're now seen most of the details of how given instances and using clauses work. This is a craft level explanation, and it naturally leads to the question: where would use these tools? This is what we'll address next, where we look at type classes and their implementation in Scala.
+We're now seen most of the details of the workings of given instances and using clauses. This is a craft level explanation, and it naturally leads to the question: where would use these tools? This is what we'll address next, where we look at type classes and their implementation in Scala.

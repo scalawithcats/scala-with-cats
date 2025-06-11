@@ -71,6 +71,12 @@
     link(destination)[#body #footnote(destination)]
 }
 
+// A chapter heading
+//
+// Typical use is
+// #chapter[Name] <sec:name>
+#let chapter(name) = heading(depth: 1, supplement: "Chapter")[#name]
+
 // A part heading
 //
 // Typical use is

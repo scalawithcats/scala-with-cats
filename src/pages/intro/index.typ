@@ -1,5 +1,5 @@
-#import "../stdlib.typ": info, warning, solution, narrative-cite
-#heading(level: 1, "Functional Programming Strategies")
+#import "../stdlib.typ": chapter, narrative-cite
+#chapter[Functional Programming Strategies] <sec:fps>
 
 
 This is a book on strategies for creating code in a functional programming (FP) style, seen through a Scala lens. 

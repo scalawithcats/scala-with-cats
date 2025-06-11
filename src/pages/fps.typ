@@ -11,11 +11,6 @@
     paper: "us-trade"
 )
 
-#set text(
-    font: "EB Garamond 12",
-    size: 12pt
-)
-
 #show table.cell.where(y: 0): strong
 #set table(
     stroke: (x, y) => if y == 0 {
@@ -25,13 +20,17 @@
     },
 )
 
+#set text(font: "EB Garamond 12", size: 12pt)
+
+#show raw.where(block: true): set block(fill: rgb("F7F7F7"), inset: 8pt, width: 100%)
+#show raw.where(block: true): set text(size: 8pt)
+
 
 // Front matter
 #include "parts/frontmatter.typ"
 
 // Main matter
-#show raw.where(block: true) :set block(fill: rgb("F7F7F7"), inset: 8pt, width: 100%)
-#show link :set text(rgb("#996666"))
+#show link: set text(rgb("#996666"))
 
 #pagebreak(to: "odd")
 #set page(numbering: "1")

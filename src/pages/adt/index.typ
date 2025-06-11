@@ -1,6 +1,5 @@
-#import "../stdlib.typ": info, warning, solution
-= Algebraic Data Types 
-<sec:adt>
+#import "../stdlib.typ": chapter
+#chapter[Algebraic Data Types] <sec:adt>
 
 
 This chapter has our first example of a programming strategy: *algebraic data types*. Any data we can describe using logical ands and logical ors is an algebraic data type. Once we recognize an algebraic data type we get three things for free:

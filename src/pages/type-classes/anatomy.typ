@@ -4,20 +4,21 @@
 
 Let's now look at how type classes are implemented.
 There are three important components to a type class:
-the type class itself, which defines an interface,
-type class instances, which implement the type class for particular types,
+the type class itself, which defines an interface;
+type class instances, which implement the type class for particular types;
 and the methods that use type classes.
 The table below shows the language features that correspond to each component.
 
-+---------------------+------------------+
-| Type Class Concept  | Language Feature |
-+=====================+==================+
-| Type class          | trait            |
-+---------------------+------------------+
-| Type class instance | given instance   |
-+---------------------+------------------+
-| Type class use      | using clause     |
-+---------------------+------------------+
+#align(center)[
+  #table(
+      columns: (auto, auto),
+      align: left,
+      table.header([Type Class Concept], [Language Feature]),
+      [Type class], [trait],
+      [Type class instance], [given instance],
+      [Type class use], [using clause]
+  )
+]
 
 Let's see how this works in detail.
 
@@ -33,11 +34,12 @@ as follows:
 
 ```scala mdoc:silent:reset-object
 // Define a very simple JSON AST
-sealed trait Json
-final case class JsObject(get: Map[String, Json]) extends Json
-final case class JsString(get: String) extends Json
-final case class JsNumber(get: Double) extends Json
-case object JsNull extends Json
+enum Json {
+  case JsObject(get: Map[String, Json])
+  case JsString(get: String)
+  case JsNumber(get: Double)
+  case JsNull
+}
 
 // The "serialize to JSON" behaviour is encoded in this trait
 trait JsonWriter[A] {
@@ -46,7 +48,7 @@ trait JsonWriter[A] {
 ```
 
 `JsonWriter` is our type class in this example,
-with `Json` and its subtypes providing supporting code.
+with the `Json` algebraic data type providing supporting code.
 When we come to implement instances of `JsonWriter`,
 the type parameter `A` will be the concrete type of data we are writing.
 
@@ -67,16 +69,16 @@ object JsonWriterInstances {
   given stringWriter: JsonWriter[String] =
     new JsonWriter[String] {
       def write(value: String): Json =
-        JsString(value)
+        Json.JsString(value)
     }
   
   final case class Person(name: String, email: String)
   
   given JsonWriter[Person] with
     def write(value: Person): Json =
-      JsObject(Map(
-        "name" -> JsString(value.name),
-        "email" -> JsString(value.email)
+      Json.JsObject(Map(
+        "name" -> Json.JsString(value.name),
+        "email" -> Json.JsString(value.email)
       ))
   
   // etc...
@@ -94,14 +96,13 @@ write out `new JsonWriter[Person]` and so on.
 
 
 In a real implementation we'd usually want to define the instances on a companion object: the instance for `String` on the `JsonWriter` companion object (because we cannot define it on the `String` companion object) and the instance for `Person` on the `Person` companion object. 
-I haven't done this here because I would need to redeclare `JsonWriter`, as a type and it's companion object must be declared at the same time.
+I haven't done this here because I would need to redeclare `JsonWriter`, as a type and its companion object must be declared at the same time.
 
 
 
 === Type Class Use
 
-
-A type class use is any functionality 
+A type class use is any functionality
 that requires a type class instance to work.
 In Scala this means any method 
 that accepts instances of the type class as part of a using clause.
@@ -110,11 +111,11 @@ We're going to look at two patterns of type class usage,
 which we call *interface objects* and *interface syntax*.
 You'll find these in Cats and other libraries.
 
+
 ==== Interface Objects
 
-
 The simplest way of creating an interface that uses a type class
-is to place methods in a singleton object:
+is to place methods in an object.
 
 ```scala mdoc:silent
 object Json {
@@ -142,16 +143,11 @@ of the relevant types and inserting them at the call site.
 
 ==== Interface Syntax
 
-
-We can alternatively use *extension methods* to
-extend existing types with interface methods[^pimping].
-This is sometimes referred to as as *syntax* for the type class, 
-which is the term used by Cats.
+We can alternatively use *extension methods* to extend existing types with
+interface methods#footnote[You may occasionally see extension methods referred
+to as "type enrichment" or "pimping". These are older terms that we don't use
+anymore.]. This is sometimes called *syntax* for the type class, which is the term used by Cats.
 Scala 2 has an equivalent to extension methods known as *implicit classes*.
-
-[^pimping]: You may occasionally see extension methods
-referred to as "type enrichment" or "pimping".
-These are older terms that we don't use anymore.
 
 Here's an example defining an extension method to add a `toJson` method to
 any type for which we have a `JsonWriter` instance.
@@ -177,21 +173,19 @@ import JsonSyntax.*
 Person("Dave", "dave@example.com").toJson
 ```
 
-#info[
-==== Extension Methods on Traits {-}
-
-
+#info(title: [Extension Methods on Traits])[
 In Scala 3 we can define extension methods directly on a type class trait.
 Since we're defining `toJson` as just calling `write` on `JsonWriter`,
 we could instead define `toJson` directly on `JsonWriter` and avoid creating an separate extension method.
 
 ```scala mdoc:invisible:reset-object
 // Define a very simple JSON AST
-sealed trait Json
-final case class JsObject(get: Map[String, Json]) extends Json
-final case class JsString(get: String) extends Json
-final case class JsNumber(get: Double) extends Json
-case object JsNull extends Json
+enum Json {
+  case JsObject(get: Map[String, Json])
+  case JsString(get: String)
+  case JsNumber(get: Double)
+  case JsNull
+}
 ```
 
 ```scala mdoc:silent
@@ -203,7 +197,7 @@ object JsonWriter {
   given stringWriter: JsonWriter[String] =
     new JsonWriter[String] {
       extension (value: String) 
-        def toJson: Json = JsString(value)
+        def toJson: Json = Json.JsString(value)
     }
   
   // etc...
@@ -230,8 +224,8 @@ For consistency we recommend separating the syntax from the type class instances
 rather than requiring explicit imports for only some extension methods.
 ]
 
-==== The `summon` Method
 
+==== The `summon` Method
 
 The Scala standard library provides
 a generic type class interface called `summon`.

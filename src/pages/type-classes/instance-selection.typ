@@ -2,7 +2,7 @@
 == Type Classes and Variance
 
 
-In this section we'll discuss how variance interacts
+In this section we'll discuss how *variance* interacts
 with type class instance selection.
 Variance is one of the darker corners of Scala's type system,
 so we start by reviewing it
@@ -29,7 +29,7 @@ A type constructor must have at least one type parameter,
 and may have more.
 So `Either`, with two type parameters, is also a type constructor.
 
-Subtyping is a relationship between types.
+*Subtyping* is a relationship between types.
 We say that `B` is a subtype of `A`
 if we can use a value of type `B`
 anywhere we expect a value of type `A`.
@@ -53,6 +53,7 @@ For example, we denote covariance with a `+` symbol:
 trait F[+A] // the "+" means "covariant"
 ```
 
+Similarly, the `-` variance annotation indicate contravariance.
 If we don't add a variance annotation, the type parameter is invariant.
 Let's now look at covariance, contravariance, and invariance in detail.
 
@@ -77,23 +78,18 @@ anywhere we expect a `List[Shape]` because
 `Circle` is a subtype of `Shape`:
 
 ```scala mdoc:silent
-sealed trait Shape
+trait Shape
 final case class Circle(radius: Double) extends Shape
 ```
 
-```scala
-val circles: List[Circle] = ???
-val shapes: List[Shape] = circles
-```
-
-```scala mdoc:invisible
-val circles: List[Circle] = null
+```scala mdoc:silent
+val circles: List[Circle] = List(Circle(5.0))
 val shapes: List[Shape] = circles
 ```
 
 Generally speaking, covariance is used for outputs:
 data that we can later get out of a container type such as `List`,
-or otherwise returned by some method.
+or is otherwise returned by some method.
 
 
 === Contravariance
@@ -145,6 +141,8 @@ val shapeWriter: JsonWriter[Shape] = null
 val circleWriter: JsonWriter[Circle] = null
 ```
 
+We also have a method `format` that expects a `JsonWriter` instance.
+
 ```scala mdoc:silent
 def format[A](value: A, writer: JsonWriter[A]): Json =
   writer.write(value)
@@ -165,7 +163,6 @@ anywhere we expect to see a `JsonWriter[Circle]`.
 
 
 === Invariance
-
 
 Invariance is the easiest situation to describe.
 It's what we get when we don't write a `+` or `-`
@@ -215,13 +212,15 @@ The issues are:
 It turns out we can't have both at once.
 The three choices give us behaviour as follows:
 
------------------------------------------------------------------------
-Type Class Variance             Invariant   Covariant   Contravariant
-------------------------------- ----------- ----------- ---------------
-Supertype instance used?        No          No          Yes
-
-More specific type preferred?   No          Yes         No
------------------------------------------------------------------------
+#align(center)[
+  #table(
+      columns: (auto, auto, auto, auto),
+      align: left,
+      table.header([Type Class Variance], [Invariant], [Covariant], [Contravariant]),
+      [Supertype instance used?], [No], [No], [Yes],
+      [More specific type preferred?], [No], [Yes], [No]
+  )
+]
 
 Let's see some examples, using the following types
 to show the subtyping relationship.
@@ -233,7 +232,7 @@ trait DomesticShorthair extends Cat
 ```
 
 Now we'll define three different type classes for the three types of variance, 
-and define an instance of each for the `Cat` type.
+and define an instance of each for the `Cat` types.
 
 ```scala mdoc:silent
 trait Inv[A] {
@@ -310,7 +309,7 @@ Contra[Animal]
 ```
 
 It's clear there is no perfect system.
-The most choice is to use invariant type classes.
+The most common choice is to use invariant type classes.
 This allows us to specify
 more specific instances for subtypes if we want.
 It does mean that if we have, for example,
@@ -319,5 +318,5 @@ our type class instance for `Option` will not be used.
 We can solve this problem with
 a type annotation like `Some(1) : Option[Int]`
 or by using "smart constructors"
-like the `Option.apply`, `Option.empty`, `some`, and `none` methods
-we saw in @sec:type-classes:comparing-options.
+like `Option.apply` and `Option.empty`
+which always return a result of type `Option`.

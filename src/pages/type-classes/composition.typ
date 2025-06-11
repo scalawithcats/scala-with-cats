@@ -5,11 +5,12 @@
 
 ```scala mdoc:invisible:reset-object
 // Define a very simple JSON AST
-sealed trait Json
-final case class JsObject(get: Map[String, Json]) extends Json
-final case class JsString(get: String) extends Json
-final case class JsNumber(get: Double) extends Json
-case object JsNull extends Json
+enum Json {
+  case JsObject(get: Map[String, Json])
+  case JsString(get: String)
+  case JsNumber(get: Double)
+  case JsNull
+}
 object Json {
   def toJson[A](value: A)(using w: JsonWriter[A]): Json =
     w.write(value)
@@ -49,7 +50,7 @@ given optionPersonWriter: JsonWriter[Option[Person]] =
 // and so on...
 ```
 
-However, this approach clearly doesn't scale.
+This approach clearly doesn't scale.
 We end up requiring two given instances
 for every type `A` in our application:
 one for `A` and one for `Option[A]`.
@@ -70,7 +71,7 @@ given optionWriter[A](using writer: JsonWriter[A]): JsonWriter[Option[A]] =
     def write(option: Option[A]): Json =
       option match {
         case Some(aValue) => writer.write(aValue)
-        case None         => JsNull
+        case None         => Json.JsNull
       }
   }
 ```
@@ -83,7 +84,7 @@ When the compiler sees an expression like this:
 ```scala mdoc:invisible
 given stringWriter: JsonWriter[String] =
   new JsonWriter[String] {
-    def write(value: String): Json = JsString(value)
+    def write(value: String): Json = Json.JsString(value)
   }
 ```
 ```scala mdoc:silent

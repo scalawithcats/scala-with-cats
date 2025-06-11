@@ -8,29 +8,29 @@ to let us convert any value to a `String`.
 This method comes with a few disadvantages:
 
 + It is implemented for _every_ type in the language.
-   There are situations where we don't want to be able to view data.
-   For example, we may want to ensure we don't log sensitive information,
-   such as passwords,
-   in plain text.
+  There are situations where we don't want to be able to view data.
+  For example, we may want to ensure we don't log sensitive information,
+  such as passwords,
+  in plain text.
 
 + We can't customize `toString` for types we don't control.
 
 Let's define a `Display` type class to work around these problems:
 
  + Define a type class `Display[A]` containing a single method `display`.
-    `display` should accept a value of type `A` and return a `String`.
+   `display` should accept a value of type `A` and return a `String`.
 
  + Create instances of `Display` for `String` and `Int` 
-    on the `Display` companion object.
+   on the `Display` companion object.
 
  + On the `Display` companion object create two generic interface methods:
 
     - `display` accepts a value of type `A`
-    and a `Display` of the corresponding type.
-    It uses the relevant `Display` to convert the `A` to a `String`.
+      and a `Display` of the corresponding type.
+      It uses the relevant `Display` to convert the `A` to a `String`.
 
     - `print` accepts the same parameters as `display` and returns `Unit`.
-    It prints the displayed `A` value to the console using `println`.
+      It prints the displayed `A` value to the console using `println`.
 
 #solution[
 These steps define the three main components of our type class.
@@ -157,7 +157,6 @@ Display.print(cat)
 
 
 === Better Syntax
-
 
 Let's make our printing library easier to use
 by adding extension methods for its functionality:

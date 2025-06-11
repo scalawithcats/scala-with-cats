@@ -1,6 +1,5 @@
-#import "../stdlib.typ": info, warning, solution
-= Objects as Codata 
-<sec:codata>
+#import "../stdlib.typ": chapter
+#chapter[Objects as Codata] <sec:codata>
 
 
 In this chapter we will look at *codata*, the dual of algebraic data types.
