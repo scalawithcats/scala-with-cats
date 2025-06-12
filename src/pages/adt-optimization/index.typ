@@ -1,5 +1,5 @@
-#import "../stdlib.typ": info, warning, solution
-= Optimizing Interpreters and Compilers
+#import "../stdlib.typ": info, warning, solution, chapter
+#chapter[Optimizing Interpreters and Compilers] <sec:adt-optimization>
 
 
 In a previous chapter we introduced interpreters as a key strategy in functional programming.

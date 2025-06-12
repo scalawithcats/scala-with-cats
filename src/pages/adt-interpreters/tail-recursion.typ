@@ -1,13 +1,9 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href, exercise
 == Tail Recursive Interpreters
-
 
 Structural recursion, as we have written it, uses the stack. This is not often a problem, but particularly deep recursions can lead to the stack running out of space. A solution is to write a *tail recursive* program. A tail recursive program does not need to use any stack space, and so is sometimes known as *stack safe*. Any program can be turned into a tail recursive version, which does not use the stack and therefore cannot run out of stack space.
 
-#info[
-==== The Call Stack {-}
-
-
+#info(title: [The Call Stack])[
 Method and function calls are usually implemented using an area of memory known as the call stack, or just the stack for short.
 Every method or function call uses a small amount of memory on the stack, called a stack frame.
 When the method or function returns, this memory is freed and becomes available for future calls to use.
@@ -153,13 +149,10 @@ loop(count, 0)
 is not converted to a tail call, because the call is from `isTailRecursive` to `loop`. 
 This will not cause issues with stack consumption, however, because this call only happens once.
 
-#info[
-==== Runtimes and Tail Calls {-}
-
-
+#info(title: [Runtimes and Tail Calls])[
 Scala supports three different platforms: the JVM, Javascript via Scala.js, and native code via Scala Native. Each platform provides what is known as a runtime, which is code that supports our Scala code when it is running. The garbage collector, for example, is part of the runtime.
 
-At the time of writing none of Scala's runtimes support full tail calls. However, there is reason to think this may change in the future. #link("https://wiki.openjdk.org/display/loom/Main")[Project Loom] should eventually add support for tail calls to the JVM. Scala Native is likely to support tail calls soon, as part of other work to implement continuations. Tail calls have been part of the Javascript specification for a long time, but remain unimplemented by the majority of Javascript runtimes. However, WebAssembly does support tail calls and will probably replace compiling Scala to Javascript in the medium term.
+At the time of writing none of Scala's runtimes support full tail calls. However, there is reason to think this may change in the future. #href("https://wiki.openjdk.org/display/loom/Main")[Project Loom] should eventually add support for tail calls to the JVM. Scala Native is likely to support tail calls soon, as part of other work to implement continuations. Tail calls have been part of the Javascript specification for a long time, but remain unimplemented by the majority of Javascript runtimes. However, WebAssembly does support tail calls and will probably replace compiling Scala to Javascript in the medium term.
 ]
 
 We can ask the Scala compiler to check that all self calls are in tail position by adding the `@tailrec` annotation to a method.
@@ -210,7 +203,6 @@ isTailRecursive(100000)
 
 
 === Continuation-Passing Style
-
 
 Now that we know about tail calls, how do we convert the regular expression interpreter to use them? Any program can be converted to an equivalent program with all calls in tail position. This conversion is known as *continuation-passing style* or CPS for short. Our first step to understanding CPS is to understand *continuations*.
 
@@ -387,8 +379,7 @@ def matches(input: String): Boolean = {
 Every call in this interpreter loop is in tail position. However Scala cannot convert these to tail calls because the calls go from `loop` to a continuation and vice versa. To make the interpreter fully stack safe we need to add *trampolining*. 
 
 
-==== Exercise: CPS Arithmetic {-}
-
+#exercise[CPS Arithmetic]
 
 In a previous exercise we wrote an interpreter for arithmetic expressions. Your task now is to CPS this interpreter.
 For reference, the definition of an arithmetic expression is:
@@ -454,7 +445,6 @@ object Expression {
 
 
 === Trampolining
-
 
 Earlier we said that CPS utilizes the duality between function calls and returns: instead of returning a value we call a function with a value. This allows us to transform our code so it only has calls in tail positions. However, we still have a problem with stack safety. Scala's runtimes don't support full tail calls, so calls from a continuation to `loop` or from `loop` to a continuation will use a stack frame. We can use this same duality to avoid using the stack by, instead of making a call, returning a value that reifies the call we want to make. This idea is the core of trampolining. Let's see it in action, which will help clear up what exactly this all means.
 
@@ -616,8 +606,7 @@ object Regexp {
 ```
 
 
-==== Exericse: Trampolined Arithmetic {-}
-
+#exercise[Trampolined Arithmetic]
 
 Convert the CPSed arithmetic interpreter we wrote earlier to a trampolined version.
 
@@ -699,8 +688,7 @@ object Expression {
 
 === When Tail Recursion is Easy
 
-
-Doing a full CPS conversion and trampoline can be quite involved. Some methods can made tail recursive without so large a change.
+Doing a full CPS conversion and trampoline can be quite involved. Some methods can be made tail recursive without so large a change.
 Remember these examples we looked at earlier?
 
 ```scala mdoc:reset-object:silent

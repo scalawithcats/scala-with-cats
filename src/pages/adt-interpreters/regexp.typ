@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href
 == Regular Expressions
 
 
@@ -58,7 +58,7 @@ regexp.matches("Scalal")
 regexp.matches("Scalaland")
 ```
 
-That's all I'm going to say about Scala's built-in regular expressions. If you'd like to learn more there are many resources online. The #link("https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html")[JDK documentation] is one example, which describes all the features available in the JVM implementation of regular expressions.
+That's all I'm going to say about Scala's built-in regular expressions. If you'd like to learn more there are many resources online. The #href("https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html")[JDK documentation] is one example, which describes all the features available in the JVM implementation of regular expressions.
 
 Let's turn to the theoretical description, such as we might find in a textbook. A regular expression is:
 
@@ -113,7 +113,7 @@ trait Regexp {
 }
 ```
 
-Repetition we'll call `repeat`, and define an alias `*` that matches how this operation is written in conventional regular expressions.
+Repetition we'll call `repeat`, and define an alias `*` that matches how this operation is written in conventional regular expression notation.
 
 ```scala
 trait Regexp {
@@ -182,11 +182,14 @@ Notice that we haven't implemented `matches`. It doesn't return a `Regexp` so we
 ```scala
 def matches(input: String): Boolean =
   this match {
-    case Append(left, right)   => left.matches(???) ??? right.matches(???)
-    case OrElse(first, second) => first.matches(???) ??? second.matches(???)
-    case Repeat(source)        => source.matches(???) ???
-    case Apply(string)         => ???
-    case Empty                 => ???
+    case Append(left, right) =>
+      left.matches(???) ??? right.matches(???)
+    case OrElse(first, second) =>
+      first.matches(???) ??? second.matches(???)
+    case Repeat(source) =>
+      source.matches(???) ???
+    case Apply(string) => ???
+    case Empty => ???
   }
 ```
 
@@ -336,10 +339,7 @@ regexp.matches("Scalaland")
 
 Success! At this point we could add many extensions to our library. For example, regular expressions usually have a method (by convention denoted `+`) that matches one or more times, and one that matches zero or once (usually denoted `?`). These are both conveniences we can build on our existing API. However, our goal at the moment is to fully understand interpreters and the implementation technique we've used here. So in the next section we'll discuss these in detail.
 
-#info[
-==== Regular Expression Semantics {-}
-
-
+#info(title: [Regular Expression Semantics])[
 Our regular expression implementation handles union differently to Scala's built-in regular expressions. Look at the following example comparing the two.
 
 ```scala mdoc:silent
@@ -351,5 +351,5 @@ r1.matches("zxyab")
 r2.matches("zxyab")
 ```
 
-The reason for this difference is that our implementation commits to the first branch in a union that successfully matches some of the input, regardless of how that affects later matching. We should instead try both branches, but doing so makes the implementation more complex. The semantics of regular expressions are not essential to what we're trying to do here; we're just using them as an example to motivate the programming strategies we're learning. I decided the extra complexity of implementing union in the usual way outweighed the benefits, and so kept the simpler implementation. Don't worry, we'll see how to do it properly in the next chapter!
+The reason for this difference is that our implementation commits to the first branch in a union that successfully matches some of the input, regardless of how that affects later matching. We should instead try both branches, but doing so makes the implementation more complex. The semantics of regular expressions are not essential to what we're trying to do here; we're just using them as an example to motivate the programming strategies we're learning. I decided the extra complexity of implementing union in the usual way outweighed the benefits, and so kept the simpler implementation. Don't worry, we'll see how to do it properly in @sec:adt-optimization!
 ]

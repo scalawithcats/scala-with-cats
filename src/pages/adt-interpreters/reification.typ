@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, exercise
 == Interpreters and Reification 
 <sec:interpreters:reification>
 
@@ -48,8 +48,7 @@ Here are the rules for reification:
 Once we've defined the `Program` algebraic data type, the interpreter becomes a structural recursion on `Program`.
 
 
-==== Exercise: Arithmetic {-}
-
+#exercise[Arithmetic]
 
 Now it's your turn to practice using reification. Your task is to implement an interpreter for arithmetic expressions. An expression is:
 

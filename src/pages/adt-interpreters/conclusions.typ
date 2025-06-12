@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": narrative-cite, href
 == Conclusions
 
 
@@ -26,6 +26,6 @@ For example, if we know the library will only used in situations where inputs we
 As always, only use coding techniques where they make sense.
 
 These ideas are classics in programming language theory.
-#cite(<reynolds72:definitional>, form: "prose") details defunctionalization, a limited form of reification and continuation passing style. (If you want to read this paper, I suggest the #link("https://homepages.inf.ed.ac.uk/wadler/papers/papers-we-love/reynolds-definitional-interpreters-1998.pdf")[re-typeset version from 1998], which is much more readable than the original typewriter version.)
-These ideas are expanded on in #cite(<danvy01:defunctionalization>, form: "prose")
-#cite(<gibbons22:cps>, form: "prose") is a very readable and elegant paper that highlights the importance of associativity in these transformations.
+#narrative-cite(<reynolds72:definitional>) details defunctionalization, a limited form of reification and continuation passing style. (If you want to read this paper, I suggest the #href("https://homepages.inf.ed.ac.uk/wadler/papers/papers-we-love/reynolds-definitional-interpreters-1998.pdf")[re-typeset version from 1998], which is much more readable than the original typewriter version.)
+These ideas are expanded on in #narrative-cite(<danvy01:defunctionalization>).
+#narrative-cite(<gibbons22:cps>) is a very readable and elegant paper that highlights the importance of associativity in these transformations.
