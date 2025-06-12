@@ -129,6 +129,7 @@
 // Cats
 #include  "cats/index.typ"
 #include  "cats/equal.typ"
+#include  "cats/conclusions.typ"
 // Monoid
 #include  "monoids/index.typ"
 #include  "monoids/cats.typ"

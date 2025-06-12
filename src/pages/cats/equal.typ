@@ -1,19 +1,16 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href
 == Example: Eq
 
 
 We will finish off this chapter by looking at another useful type class:
-[`cats.Eq`][cats.kernel.Eq].
+#href("http://typelevel.org/cats/api/cats/kernel/Eq.html")[`cats.Eq`].
 `Eq` is designed to support _type-safe equality_
 and address annoyances using Scala's built-in `==` operator.
 
 Almost every Scala developer has written code like this before:
 
-```scala
+```scala mdoc:fail
 List(1, 2, 3).map(Option(_)).filter(item => item == 1)
-// warning: Option[Int] and Int are unrelated: they will most likely never compare equal
-// res: List[Option[Int]] = List()
-
 ```
 
 Ok, many of you won't have made such a simple mistake as this,
@@ -26,11 +23,10 @@ should have compared `item` to `Some(1)` instead of `1`.
 However, it's not technically a type error because
 `==` works for any pair of objects, no matter what types we compare.
 `Eq` is designed to add some type safety to equality checks
-and work around this problem.
+and work around this problem.#footnote[Scala 3 has it's own solution to this problem, called #href("https://docs.scala-lang.org/scala3/reference/contextual/multiversal-equality.html")[multiversal equality]. It also uses a type class, in this case called `CanEqual`. With the correct imports or compiler flags we can get the compiler to complain if we try to perform an equality check that doesn't make sense. So in practice we don't need `Eq` any more. However it's a simple type class to work with and makes a good introduction to using Cats.]
 
 
 === Equality, Liberty, and Fraternity
-
 
 We can use `Eq` to define type-safe equality
 between instances of any given type:
@@ -44,7 +40,7 @@ trait Eq[A] {
 }
 ```
 
-The interface syntax, defined in [`cats.syntax.eq`][cats.syntax.eq],
+The interface syntax, defined in #href("https://www.javadoc.io/doc/org.typelevel/cats-docs_3/latest/cats/syntax/EqSyntax.html")[`cats.syntax.eq`],
 provides two methods for performing equality checks
 provided there is an instance `Eq[A]` in scope:
 
@@ -82,12 +78,14 @@ we get a compile error:
 eqInt.eqv(123, "234")
 ```
 
-We can also import the interface syntax in [`cats.syntax.eq`][cats.syntax.eq]
+We can also import the interface syntax
 to use the `===` and `=!=` methods:
 
 ```scala mdoc:silent
 import cats.syntax.all.* // for === and =!=
 ```
+
+Now the syntax methods are available.
 
 ```scala mdoc
 123 === 123
@@ -126,7 +124,7 @@ the `Option.apply` and `Option.empty` methods from the standard library:
 Option(1) === Option.empty[Int]
 ```
 
-or using special syntax from [`cats.syntax.option`][cats.syntax.option]:
+or using special syntax from #href("https://www.javadoc.io/doc/org.typelevel/cats-docs_3/latest/cats/syntax/OptionSyntax.html")[`cats.syntax.option`]:
 
 ```scala mdoc
 1.some === none[Int]

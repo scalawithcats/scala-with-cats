@@ -1,15 +1,12 @@
-#import "../stdlib.typ": info, warning, solution
-= Using Cats 
-<sec:cats>
+#import "../stdlib.typ": info, warning, solution, chapter, href, exercise
+#chapter[Using Cats] <sec:cats>
 
-
-In this Chapter we'll learn how to use the #link("https://typelevel.org/cats")[Cats] library.
+In this Chapter we'll learn how to use the #href("https://typelevel.org/cats")[Cats] library.
 Cats provides two main things: type classes and their instances, and some useful data structures.
 Our focus will mostly be on the type classes, though we will touch on the data structures where appropriate.
 
 
 == Quick Start
-
 
 The easiest, and recommended, way to use Cats is to add the following imports:
 
@@ -35,7 +32,7 @@ import cats.data.*
 
 
 Let's now see how we work with Cats, 
-using [`cats.Show`][cats.Show] as an example.
+using #href("http://typelevel.org/cats/api/cats/Show.html")[`cats.Show`] as an example.
 
 `Show` is Cats' equivalent of
 the `Display` type class we defined in @sec:type-classes:display.
@@ -52,7 +49,7 @@ trait Show[A] {
 ```
 
 The easiest way to use `Show` is with the wildcard import above.
-However, we can also import `Show` directly from the [cats][cats.package] package:
+However, we can also import `Show` directly from the `cats` package if we want:
 
 ```scala mdoc:silent
 import cats.Show
@@ -80,7 +77,7 @@ In the case of `Show`, an extension method `show` is defined.
 ```
 
 If, for some reason, we wanted just the syntax for `show`,
-we could import [`cats.syntax.show`][cats.syntax.show].
+we could import `cats.syntax.show`.
 
 ```scala mdoc:silent
 import cats.syntax.show.* // for show
@@ -88,11 +85,13 @@ import cats.syntax.show.* // for show
 
 
 === Defining Custom Instances 
-<defining-custom-instances>
+<sec:cats:defining-custom-instances>
 
-
-We can define an instance of `Show`
-simply by implementing the trait for a given type:
+As we learned in @sec:type-classes,
+we can define an instance of `Show`
+by implementing a given instance of the trait
+for a specific type.
+Let's implement `Show` for `java.util.Date`.
 
 ```scala mdoc:silent
 import java.util.Date
@@ -101,6 +100,9 @@ given dateShow: Show[Date] with
   def show(date: Date): String =
     s"${date.getTime}ms since the epoch."
 ```
+
+It works as expected.
+
 ```scala mdoc
 new Date().show
 ```
@@ -141,10 +143,9 @@ for constructing instances, either from scratch
 or by transforming existing instances for other types.
 
 
-==== Exercise: Cat Show
+#exercise[Cat Show]
 
-
-Re-implement the `Cat` application from @sec:type-classes:cat
+In this exercise we'll re-implement the `Cat` application from @sec:type-classes:cat
 using `Show` instead of `Display`.
 
 Using this data type to represent a well-known type of furry animal:

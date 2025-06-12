@@ -1,4 +1,4 @@
-#import "../stdlib.typ": part
+#import "../stdlib.typ": part, href
 
 #part[Type Classes] <sec:part:type-classes>
 
@@ -10,6 +10,6 @@ and as conceptual models that can drive program design.
 In this part we'll be looking more at their use for day-to-day programming,
 while the case studies will focus on their role in design.
 
-In @sec:cats we introduce the #link("https://typelevel.org/cats")[Cats] library.
+In @sec:cats we introduce the #href("https://typelevel.org/cats")[Cats] library.
 Cats provides implementation of the type classes we're interested in,
 and so it saves a lot of time and typing to use it.

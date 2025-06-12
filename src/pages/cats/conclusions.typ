@@ -1,21 +1,20 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": href
 == Conclusions
-
 
 We have also seen the general patterns in Cats type classes:
 
  - The type classes themselves are generic traits
-   in the [`cats`][cats.package] package.
+   in the `cats` package.
 
  - Each type class has a companion object with,
    an `apply` method for materializing instances,
-   one or more _construction_ methods for creating instances,
+   one or more construction methods for creating instances,
    and a collection of other relevant helper methods.
 
- - Many type classes have _syntax_
-   provided via the [`cats.syntax`][cats.syntax] package.
+ - Many type classes have extension methods
+   provided via the `cats.syntax` package.
 
-In the remaining chapters of Part {#sec:part:type-classes}
+In the remaining chapters of @sec:part:type-classes
 we will look at several broad and powerful type classes---`Semigroup`,
 `Monoid`, `Functor`, `Monad`, `Semigroupal`, `Applicative`, `Traverse`, and more.
 In each case we will learn what functionality the type class provides,
