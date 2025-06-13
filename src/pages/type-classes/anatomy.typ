@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, styled-table
 == Anatomy of a Type Class
 
 
@@ -9,16 +9,14 @@ type class instances, which implement the type class for particular types;
 and the methods that use type classes.
 The table below shows the language features that correspond to each component.
 
-#align(center)[
-  #table(
-      columns: (auto, auto),
-      align: left,
-      table.header([Type Class Concept], [Language Feature]),
-      [Type class], [trait],
-      [Type class instance], [given instance],
-      [Type class use], [using clause]
-  )
-]
+#styled-table(
+    columns: (auto, auto),
+    alignment: left,
+    table.header([Type Class Concept], [Language Feature]),
+    [Type class], [trait],
+    [Type class instance], [given instance],
+    [Type class use], [using clause]
+)
 
 Let's see how this works in detail.
 

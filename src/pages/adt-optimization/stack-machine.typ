@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, styled-table
 == Compilers and Virtual Machines
 
 
@@ -271,25 +271,19 @@ We'll look at four different optimizations, which all use the optimized stack ma
 
 Below are the benchmarks results obtained on an AMD Ryzen 5 3600 and an Apple M1, both running JDK 21. Results are shown in operations per second. The Baseline interpreter is the one using structural recursion. The Stack interpreter uses a `List` to represent the stack and program. The Optimized Stack represents the stack and program as arrays. The other interpreters build on the Optimized Stack interpreter and add the optimizations described above. The All interpreter has all the optimizations.
 
-+--------------------------+---------+---------+---------+---------+
-| Interpreter              | Ryzen 5 | Speedup | M1      | Speedup |
-+==========================+=========+=========+=========+=========+
-| Baseline                 | 2754.43 | 1       | 3932.93 | 1       |
-+--------------------------+---------+---------+---------+---------+
-| Stack                    | 676.43  | 0.25    | 1004.16 | 0.26    |
-+--------------------------+---------+---------+---------+---------+
-| Optimized Stack          | 3631.19 | 1.32    | 2953.21 | 0.75    |
-+--------------------------+---------+---------+---------+---------+
-| Algebraic Simplification | 1630.93 | 0.59    | 4818.45 | 1.23    |
-+--------------------------+---------+---------+---------+---------+
-| Byte Code                | 4057.11 | 1.47    | 3355.75 | 0.85    |
-+--------------------------+---------+---------+---------+---------+
-| Stack Caching            | 3698.10 | 1.34    | 3237.17 | 0.82    |
-+--------------------------+---------+---------+---------+---------+
-| Superinstructions        | 3706.10 | 1.35    | 4689.02 | 1.19    |
-+--------------------------+---------+---------+---------+---------+
-| All                      | 7612.45 | 2.76    | 7098.06 | 1.80    |
-+--------------------------+---------+---------+---------+---------+
+#styled-table(
+    columns: (auto, auto, auto, auto, auto),
+    alignment: (left, right, right, right, right),
+    table.header([Interpreter], [Ryzen 5], [Speedup], [M1], [Speedup]),
+    [ Baseline                 ], [ 2754.43 ], [ 1.00 ], [ 3932.93 ], [ 1.00 ],
+    [ Stack                    ], [ 676.43  ], [ 0.25 ], [ 1004.16 ], [ 0.26 ],
+    [ Optimized Stack          ], [ 3631.19 ], [ 1.32 ], [ 2953.21 ], [ 0.75 ],
+    [ Algebraic Simplification ], [ 1630.93 ], [ 0.59 ], [ 4818.45 ], [ 1.23 ],
+    [ Byte Code                ], [ 4057.11 ], [ 1.47 ], [ 3355.75 ], [ 0.85 ],
+    [ Stack Caching            ], [ 3698.10 ], [ 1.34 ], [ 3237.17 ], [ 0.82 ],
+    [ Superinstructions        ], [ 3706.10 ], [ 1.35 ], [ 4689.02 ], [ 1.19 ],
+    [ All                      ], [ 7612.45 ], [ 2.76 ], [ 7098.06 ], [ 1.80 ]
+)
 
 There are a few lessons to take from this. The most important, in my opinion, is that _performance is not compositional_. The results of applying two optimizations is not simply the sum of applying the optimizations individually. You can see that most of the optimizations on their own make little or no change to performance relative to the Optimized Stack interpreter. Taken together, however, they make a significant improvement.
 

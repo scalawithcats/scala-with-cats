@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, styled-table
 == Data and Codata Extensibility 
 <sec:codata:extensibility>
 
@@ -99,15 +99,13 @@ So in summary we can add new elements to codata, but not new functions.
 
 If we tabulate this we clearly see that data and codata have orthogonal extensibility.
 
-#align(center)[
-  #table(
+#styled-table(
     columns: (auto, auto, auto),
-    align: left,
+    alignment: left,
     table.header([Extension], [Data], [Codata]),
     [Add elements], [No], [Yes],
     [Add functions], [Yes], [No]
   )
-]
 
 This difference in extensibility gives us another rule for choosing between data and codata as an implementation strategy, in addition to the finite vs infinite distinction we saw earlier. If we want extensibilty of functions but not elements we should use data. If we have a fixed interface but an unknown number of possible implementations we should use codata.
 

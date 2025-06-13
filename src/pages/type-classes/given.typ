@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, styled-table
 == The Mechanics of Contextual Abstraction
 
 
@@ -6,15 +6,13 @@ In section we'll go through the main Scala language features for contextual abst
 
 The language features for contextual abstraction have changed name from Scala 2 to Scala 3, but they work in largely the same way. In the table below I show the Scala 3 features, and their Scala 2 equivalents. If you use Scala 2 you'll find that most of the code works simply by replacing `given` with `implicit val` and `using` with `implicit`.
 
-#align(center)[
-  #table(
-      columns: (auto, auto),
-      align: left,
-      table.header([Scala 3], [Scala 2]),
-      [given instance], [implicit value],
-      [using clause], [implicit parameter]
-  )
-]
+#styled-table(
+    columns: (auto, auto),
+    alignment: left,
+    table.header([Scala 3], [Scala 2]),
+    [given instance], [implicit value],
+    [using clause], [implicit parameter]
+)
 
 Let's now explain how these language features work.
 

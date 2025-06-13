@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, styled-table
 == Type Classes and Variance
 
 
@@ -212,15 +212,13 @@ The issues are:
 It turns out we can't have both at once.
 The three choices give us behaviour as follows:
 
-#align(center)[
-  #table(
-      columns: (auto, auto, auto, auto),
-      align: left,
-      table.header([Type Class Variance], [Invariant], [Covariant], [Contravariant]),
-      [Supertype instance used?], [No], [No], [Yes],
-      [More specific type preferred?], [No], [Yes], [No]
-  )
-]
+#styled-table(
+    columns: (auto, auto, auto, auto),
+    alignment: left,
+    table.header([Type Class Variance], [Invariant], [Covariant], [Contravariant]),
+    [Supertype instance used?], [No], [No], [Yes],
+    [More specific type preferred?], [No], [Yes], [No]
+)
 
 Let's see some examples, using the following types
 to show the subtyping relationship.

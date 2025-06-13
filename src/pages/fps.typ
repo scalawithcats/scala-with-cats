@@ -11,15 +11,6 @@
     paper: "us-trade"
 )
 
-#show table.cell.where(y: 0): strong
-#set table(
-    stroke: (x, y) => if y == 0 {
-        (bottom: 0.5pt + black)
-    } else {
-        (bottom: 0.25pt + black)
-    },
-)
-
 #set text(font: "EB Garamond 12", size: 12pt)
 
 #show raw.where(block: true): set block(fill: rgb("F7F7F7"), inset: 8pt, width: 100%)

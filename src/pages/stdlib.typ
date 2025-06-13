@@ -104,3 +104,33 @@
     }
     cite(label, form: "prose", style: "/fps-title.csl")
 }
+
+
+// A table that is styled with a line above and below the heading, and line
+// below the final row in the table.
+#let styled-table(columns: auto, alignment: auto, ..children) = {
+    let content = children.pos()
+    let num-rows = calc.ceil(content.len() / columns.len())
+    let last-row = num-rows - 1
+
+    show table.cell.where(y: 0): strong
+    align(center,
+        table(
+            columns: columns,
+            align: alignment,
+            stroke: (x, y) => {
+                if y == 0 {
+                    // Header: line above and below
+                    (top: 0.5pt + black, bottom: 0.5pt + black, left: none, right: none)
+                } else if y == last-row {
+                    // Last row: line below only
+                    (bottom: 0.5pt + black, top: none, left: none, right: none)
+                } else {
+                    // Data rows: no lines
+                    (top: none, bottom: none, left: none, right: none)
+                }
+            },
+            ..content
+        )
+    )
+}
