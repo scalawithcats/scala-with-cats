@@ -1,6 +1,5 @@
-#import "../../stdlib.typ": info, warning, solution
-= Case Study: Testing Asynchronous Code 
-<sec:case-studies:testing>
+#import "../../stdlib.typ": info, warning, solution, chapter
+#chapter[Case Study: Testing Asynchronous Code] <sec:case-studies:testing>
 
 
 We'll start with a straightforward case study:

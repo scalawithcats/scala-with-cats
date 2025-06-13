@@ -1,6 +1,5 @@
-#import "../stdlib.typ": info, warning, solution
-= Creating Usable Code 
-<sec:usability>
+#import "../stdlib.typ": info, warning, solution, chapter
+#chapter[Creating Usable Code] <sec:usability>
 
 
 APIs are interfaces and should be designed as such.

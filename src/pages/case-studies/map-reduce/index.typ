@@ -1,6 +1,5 @@
-#import "../../stdlib.typ": info, warning, solution
-= Case Study: Map-Reduce 
-<sec:map-reduce>
+#import "../../stdlib.typ": info, warning, solution, chapter
+#chapter[Case Study: Map-Reduce] <sec:map-reduce>
 
 
 <!--

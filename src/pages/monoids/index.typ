@@ -1,6 +1,5 @@
-#import "../stdlib.typ": info, warning, solution
-= Monoids and Semigroups 
-<sec:monoids>
+#import "../stdlib.typ": info, warning, solution, chapter
+#chapter[Monoids and Semigroups] <sec:monoids>
 
 
 In this section we explore our first type classes, *monoid* and *semigroup*.

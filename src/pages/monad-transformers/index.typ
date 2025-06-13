@@ -1,6 +1,5 @@
-#import "../stdlib.typ": info, warning, solution
-= Monad Transformers 
-<sec:monad-transformers>
+#import "../stdlib.typ": info, warning, solution, chapter
+#chapter[Monad Transformers] <sec:monad-transformers>
 
 
 Monads are [like burritos][link-monads-burritos],

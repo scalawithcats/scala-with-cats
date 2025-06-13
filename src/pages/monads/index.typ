@@ -1,6 +1,5 @@
-#import "../stdlib.typ": info, warning, solution
-= Monads 
-<sec:monads>
+#import "../stdlib.typ": info, warning, solution, chapter
+#chapter[Monads] <sec:monads>
 
 
 *Monads* are one of the most common abstractions in Scala.

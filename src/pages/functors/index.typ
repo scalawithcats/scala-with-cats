@@ -1,5 +1,5 @@
-#import "../stdlib.typ": info, warning, solution
-= Functors
+#import "../stdlib.typ": info, warning, solution, chapter
+#chapter[Functors]
 
 
 In this chapter we will investigate *functors*,

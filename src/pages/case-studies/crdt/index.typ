@@ -1,5 +1,5 @@
-#import "../../stdlib.typ": info, warning, solution
-= Case Study: CRDTs
+#import "../../stdlib.typ": info, warning, solution, chapter
+#chapter[Case Study: CRDTs]
 
 
 In this case study we will explore

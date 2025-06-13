@@ -1,6 +1,5 @@
-#import "../stdlib.typ": info, warning, solution
-= Semigroupal and Applicative 
-<sec:applicatives>
+#import "../stdlib.typ": info, warning, solution, chapter
+#chapter[Semigroupal and Applicative] <sec:applicatives>
 
 
 In previous chapters we saw

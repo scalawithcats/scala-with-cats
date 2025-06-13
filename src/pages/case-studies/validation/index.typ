@@ -1,5 +1,5 @@
-#import "../../stdlib.typ": info, warning, solution
-= Case Study: Data Validation
+#import "../../stdlib.typ": info, warning, solution, chapter
+#chapter[Case Study: Data Validation]
 
 
 In this case study we will build a library for validation.

@@ -1,6 +1,5 @@
-#import "../stdlib.typ": info, warning, solution
-= Foldable and Traverse 
-<sec:foldable-traverse>
+#import "../stdlib.typ": info, warning, solution, chapter
+#chapter[Foldable and Traverse] <sec:foldable-traverse>
 
 
 In this chapter we'll look at two type classes

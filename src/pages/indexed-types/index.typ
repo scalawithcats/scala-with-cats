@@ -1,5 +1,5 @@
-#import "../stdlib.typ": info, warning, solution
-= Indexed Types
+#import "../stdlib.typ": info, warning, solution, chapter
+#chapter[Indexed Types]
 
 
 In this chapter we look at *indexed types*. An indexed type is a type constructor, so a type like `F[_]`, along with a set of types that can fill in the constructor's type parameters. Let's say this set of types is `Int`, `String`, and `Option[Double]`. Then, for a type constructor `F` we can construct an indexed type from the set `F[Int]`, `F[String]`, and `F[Option[Double]]`. 
