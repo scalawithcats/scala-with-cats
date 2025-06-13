@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution, chapter
+#import "../stdlib.typ": info, warning, solution, chapter, href
 #chapter[Monoids and Semigroups] <sec:monoids>
 
 
@@ -165,11 +165,11 @@ sequence concatenation and integer addition are monoids.
 However, if we restrict ourselves
 to non-empty sequences and positive integers,
 we are no longer able to define a sensible `empty` element.
-Cats has a [`NonEmptyList`][cats.data.NonEmptyList] data type
+Cats has a #href("http://typelevel.org/cats/api/cats/data/NonEmptyList.html")[`NonEmptyList`] data type
 that has an implementation of `Semigroup` but no implementation of `Monoid`.
 
 A more accurate (though still simplified)
-definition of Cats' [`Monoid`][cats.Monoid] is:
+definition of Cats' #href("http://typelevel.org/cats/api/cats/Monoid.html")[`Monoid`] is:
 
 ```scala mdoc:silent:reset-object
 trait Semigroup[A] {

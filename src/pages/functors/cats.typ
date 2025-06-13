@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href
 == Functors in Cats
 
 
@@ -9,7 +9,7 @@ the _type class_, the _instances_, and the _syntax_.
 === The Functor Type Class and Instances
 
 
-The functor type class is [`cats.Functor`][cats.Functor].
+The functor type class is #href("http://typelevel.org/cats/api/cats/Functor.html")[`cats.Functor`].
 We obtain instances using the standard `Functor.apply`
 method on the companion object.
 As usual, default instances are found on companion objects
@@ -145,7 +145,7 @@ List(1, 2, 3).as("As")
 
 We can define a functor simply by defining its map method.
 Here's an example of a `Functor` for `Option`,
-even though such a thing already exists in [`cats.instances`][cats.instances].
+even though such a thing already exists in #href("http://typelevel.org/cats/api/cats/instances/")[`cats.instances`].
 The implementation is trivial---we simply call `Option's` `map` method:
 
 ```scala

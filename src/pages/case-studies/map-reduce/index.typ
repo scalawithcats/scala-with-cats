@@ -1,4 +1,4 @@
-#import "../../stdlib.typ": info, warning, solution, chapter
+#import "../../stdlib.typ": info, warning, solution, chapter, href
 #chapter[Case Study: Map-Reduce] <sec:map-reduce>
 
 
@@ -36,7 +36,7 @@ a simple-but-powerful parallel processing framework
 using `Monoids`, `Functors`, and a host of other goodies.
 
 If you have used Hadoop or otherwise worked in "big data"
-you will have heard of [MapReduce][link-map-reduce],
+you will have heard of #href("http://research.google.com/archive/map-reduce.html")[MapReduce],
 which is a programming model for doing parallel data processing
 across clusters of machines (aka "nodes").
 As the name suggests, the model is built around a _map_ phase,
@@ -112,9 +112,9 @@ What does this pattern sound like?
 That's right, we've come full circle back to `Monoid`,
 the first type class we discussed in this book.
 We are not the first to recognise the importance of monoids.
-The [monoid design pattern for map-reduce jobs][link-map-reduce-monoid]
+The #href("http://arxiv.org/abs/1304.7544")[monoid design pattern for map-reduce jobs]
 is at the core of recent big data systems
-such as Twitter's [Summingbird][link-summingbird].
+such as Twitter's #href("https://github.com/twitter/summingbird")[Summingbird].
 
 In this project we're going to implement
 a very simple single-machine map-reduce.
@@ -242,7 +242,7 @@ in a map-reduce cluster as shown in @fig:map-reduce:parallel-fold-map:
 
 Scala provides some simple tools
 to distribute work amongst threads.
-We could use the [parallel collections library][link-parallel-collections]
+We could use the #href("http://docs.scala-lang.org/overviews/parallel-collections/overview.html")[parallel collections library]
 to implement a solution,
 but let's challenge ourselves by diving a bit deeper
 and implementing the algorithm ourselves using `Futures`.

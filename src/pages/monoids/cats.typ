@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href
 == Monoids in Cats
 
 
@@ -11,11 +11,11 @@ the _type class_, the _instances_, and the _interface_.
 
 
 The monoid type class is `cats.kernel.Monoid`,
-which is aliased as [`cats.Monoid`][cats.kernel.Monoid].
+which is aliased as #href("http://typelevel.org/cats/api/cats/kernel/Monoid.html")[`cats.Monoid`].
 `Monoid` extends `cats.kernel.Semigroup`,
-which is aliased as [`cats.Semigroup`][cats.kernel.Semigroup].
+which is aliased as #href("http://typelevel.org/cats/api/cats/kernel/Semigroup.html")[`cats.Semigroup`].
 When using Cats we normally import type classes
-from the [`cats`][cats.package] package:
+from the #href("http://typelevel.org/cats/api/cats/")[`cats`] package:
 
 ```scala mdoc:silent
 import cats.Monoid
@@ -36,17 +36,17 @@ Cats Kernel is a subproject of Cats
 providing a small set of typeclasses
 for libraries that don't require the full Cats toolbox.
 While these core type classes are technically
-defined in the [`cats.kernel`][cats.kernel.package] package,
-they are all aliased to the [`cats`][cats.package] package
+defined in the #href("http://typelevel.org/cats/api/cats/kernel/")[`cats.kernel`] package,
+they are all aliased to the #href("http://typelevel.org/cats/api/cats/")[`cats`] package
 so we rarely need to be aware of the distinction.
 
 The Cats Kernel type classes covered in this book are
-[`Eq`][cats.kernel.Eq],
-[`Semigroup`][cats.kernel.Semigroup],
-and [`Monoid`][cats.kernel.Monoid].
+#href("http://typelevel.org/cats/api/cats/kernel/Eq.html")[`Eq`],
+#href("http://typelevel.org/cats/api/cats/kernel/Semigroup.html")[`Semigroup`],
+and #href("http://typelevel.org/cats/api/cats/kernel/Monoid.html")[`Monoid`].
 All the other type classes we cover
 are part of the main Cats project and
-are defined directly in the [`cats`][cats.package] package.
+are defined directly in the #href("http://typelevel.org/cats/api/cats/")[`cats`] package.
 ]
 
 
@@ -100,7 +100,7 @@ and so are automatically in the given scope with no further imports required.
 Cats provides syntax for the `combine` method
 in the form of the `|+|` operator.
 Because `combine` technically comes from `Semigroup`,
-we access the syntax by importing from [`cats.syntax.semigroup`][cats.syntax.semigroup]:
+we access the syntax by importing from #href("http://typelevel.org/cats/api/cats/syntax/package$$semigroup$")[`cats.syntax.semigroup`]:
 
 ```scala mdoc:silent
 import cats.syntax.semigroup.* // for |+|

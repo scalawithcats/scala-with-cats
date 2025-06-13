@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href
 === Foldable in Cats
 
 
@@ -175,7 +175,7 @@ val ints = List(Vector(1, 2, 3), Vector(4, 5, 6))
 
 
 Every method in `Foldable` is available in syntax form
-via [`cats.syntax.foldable`][cats.syntax.foldable].
+via #href("http://typelevel.org/cats/api/cats/syntax/package$$foldable$")[`cats.syntax.foldable`].
 In each case, the first argument to the method on `Foldable`
 becomes the receiver of the method call:
 

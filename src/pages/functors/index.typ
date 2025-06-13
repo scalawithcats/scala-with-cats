@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution, chapter
+#import "../stdlib.typ": info, warning, solution, chapter, href
 #chapter[Functors]
 
 
@@ -186,7 +186,7 @@ There also are other problematic aspects of `Future's` behaviour,
 such as the way it always starts computations immediately
 rather than allowing the user to dictate when the program should run.
 For more information
-see [this excellent Reddit answer][link-so-future]
+see #href("https://www.reddit.com/r/scala/comments/3zofjl/why_is_future_totally_unusable/")[this excellent Reddit answer]
 by Rob Norris.
 
 When we look at Cats Effect 
@@ -307,7 +307,7 @@ The general type chart is shown in
 )<fig:functors:functor-type-chart>
 
 Cats encodes `Functor` as a type class,
-[`cats.Functor`][cats.Functor],
+#href("http://typelevel.org/cats/api/cats/Functor.html")[`cats.Functor`],
 so the method looks a little different.
 It accepts the initial `F[A]` as a parameter
 alongside the transformation function.

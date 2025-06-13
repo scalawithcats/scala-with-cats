@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href
 === Traverse in Cats
 
 
@@ -69,7 +69,7 @@ Await.result(numbers2, 1.second)
 ```
 
 There are also syntax versions of the methods,
-imported via [`cats.syntax.traverse`][cats.syntax.traverse]:
+imported via #href("http://typelevel.org/cats/api/cats/syntax/package$$traverse$")[`cats.syntax.traverse`]:
 
 ```scala mdoc:silent
 import cats.syntax.traverse._ // for sequence and traverse

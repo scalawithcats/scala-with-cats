@@ -1,8 +1,8 @@
-#import "../stdlib.typ": info, warning, solution, chapter
+#import "../stdlib.typ": info, warning, solution, chapter, href
 #chapter[Monad Transformers] <sec:monad-transformers>
 
 
-Monads are [like burritos][link-monads-burritos],
+Monads are #href("http://blog.plover.com/prog/burritos.html")[like burritos],
 which means that once you acquire a taste,
 you'll find yourself returning to them again and again.
 This is not without issues.
@@ -159,7 +159,7 @@ Now let's look at the API in more depth.
 The imports in the code samples above
 hint at how everything bolts together.
 
-We import [`cats.syntax.applicative`][cats.syntax.applicative]
+We import #href("http://typelevel.org/cats/api/cats/syntax/package$$applicative$")[`cats.syntax.applicative`]
 to get the `pure` syntax.
 `pure` requires an implicit parameter of type `Applicative[ListOption]`.
 We haven't met `Applicatives` yet,
@@ -171,11 +171,11 @@ we need instances of `Applicative` for `List` and `OptionT`.
 `OptionT` is a Cats data type so its instance
 is provided by its companion object.
 The instance for `List` comes from
-[`cats.instances.list`][cats.instances.list].
+#href("http://typelevel.org/cats/api/cats/instances/package$$list$")[`cats.instances.list`].
 
 Notice we're not importing
-[`cats.syntax.functor`][cats.syntax.functor] or
-[`cats.syntax.flatMap`][cats.syntax.flatMap].
+#href("http://typelevel.org/cats/api/cats/syntax/package$$functor$")[`cats.syntax.functor`] or
+#href("http://typelevel.org/cats/api/cats/syntax/package$$flatMap$")[`cats.syntax.flatMap`].
 This is because `OptionT` is a concrete data type
 with its own explicit `map` and `flatMap` methods.
 It wouldn't cause problems if we imported the syntax---the
@@ -183,7 +183,7 @@ compiler would ignore it in favour of the explicit methods.
 
 Remember that we're subjecting ourselves to these shenanigans
 because we're stubbornly refusing to use the universal Cats import,
-[`cats.implicits`][cats.implicits].
+#href("http://typelevel.org/cats/api/cats/implicits$.html")[`cats.implicits`].
 If we did use that import,
 all of the instances and syntax we needed would be in scope
 and everything would just work.
@@ -193,7 +193,7 @@ and everything would just work.
 
 
 Each monad transformer is a data type,
-defined in [`cats.data`][cats.data],
+defined in #href("http://typelevel.org/cats/api/cats/data/")[`cats.data`],
 that allows us to _wrap_ stacks of monads
 to produce new monads.
 We use the monads we've built via the `Monad` type class.
@@ -214,12 +214,12 @@ In fact, many monads in Cats are defined
 by combining a monad transformer with the `Id` monad.
 Concretely, some of the available instances are:
 
-- [`cats.data.OptionT`][cats.data.OptionT] for `Option`;
-- [`cats.data.EitherT`][cats.data.EitherT] for `Either`;
-- [`cats.data.ReaderT`][cats.data.ReaderT] for `Reader`;
-- [`cats.data.WriterT`][cats.data.WriterT] for `Writer`;
-- [`cats.data.StateT`][cats.data.StateT] for `State`;
-- [`cats.data.IdT`][cats.data.IdT] for the [`Id`][cats.Id] monad.
+- #href("http://typelevel.org/cats/api/cats/data/OptionT.html")[`cats.data.OptionT`] for `Option`;
+- #href("http://typelevel.org/cats/api/cats/data/EitherT.html")[`cats.data.EitherT`] for `Either`;
+- #href("http://typelevel.org/cats/api/cats/data/?search=reader#ReaderT[F[_],A,B]=cats.data.Kleisli[F,A,B]")[`cats.data.ReaderT`] for `Reader`;
+- #href("http://typelevel.org/cats/api/cats/data/WriterT.html")[`cats.data.WriterT`] for `Writer`;
+- #href("http://typelevel.org/cats/api/cats/data/StateT.html")[`cats.data.StateT`] for `State`;
+- #href("http://typelevel.org/cats/api/cats/data/IdT.html")[`cats.data.IdT`] for the #href("http://typelevel.org/cats/api/cats/Id.html")[`Id`] monad.
 
 #info[
 *Kleisli Arrows*
@@ -228,7 +228,7 @@ In @sec:monads:reader
 we mentioned that the `Reader` monad was a specialisation
 of a more general concept called a "kleisli arrow",
 represented in Cats as
-[`cats.data.Kleisli`][cats.data.Kleisli].
+#href("http://typelevel.org/cats/api/cats/data/Kleisli.html")[`cats.data.Kleisli`].
 
 We can now reveal that `Kleisli` and `ReaderT`
 are, in fact, the same thing!
@@ -347,7 +347,7 @@ val futureEitherOr: FutureEitherOption[Int] =
 If you frequently find yourself
 defining multiple type aliases when building monad stacks,
 you may want to try
-the [Kind Projector][link-kind-projector] compiler plugin.
+the #href("https://github.com/typelevel/kind-projector")[Kind Projector] compiler plugin.
 Kind Projector enhances Scala's type syntax
 to make it easier to define partially applied type constructors.
 For example:

@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href
 == Meet Cats
 
 
@@ -8,7 +8,7 @@ In this section we will look at how type classes are implemented in Cats.
 Cats is written using a modular structure
 that allows us to choose which type classes, instances,
 and interface methods we want to use.
-Let's take a first look using [`cats.Show`][cats.Show] as an example.
+Let's take a first look using #href("http://typelevel.org/cats/api/cats/Show.html")[`cats.Show`] as an example.
 
 `Show` is Cats' equivalent of
 the `Printable` type class we defined in the last section.
@@ -27,7 +27,7 @@ trait Show[A] {
 === Importing Type Classes
 
 
-The type classes in Cats are defined in the [`cats`][cats.package] package.
+The type classes in Cats are defined in the #href("http://typelevel.org/cats/api/cats/")[`cats`] package.
 We can import `Show` directly from this package:
 
 ```scala mdoc:silent
@@ -49,7 +49,7 @@ so we'll have to bring some instances into scope.
 <sec:importing-default-instances>
 
 
-The [`cats.instances`][cats.instances] package
+The #href("http://typelevel.org/cats/api/cats/instances/")[`cats.instances`] package
 provides default instances for a wide variety of types.
 We can import these as shown in the table below.
 Each import provides instances of all Cats' type classes

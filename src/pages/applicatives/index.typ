@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution, chapter
+#import "../stdlib.typ": info, warning, solution, chapter, href
 #chapter[Semigroupal and Applicative] <sec:applicatives>
 
 
@@ -62,7 +62,7 @@ that support this pattern:
 
   - `Semigroupal` encompasses
     the notion of composing pairs of contexts.
-    Cats provides a [`cats.syntax.apply`][cats.syntax.apply] module
+    Cats provides a #href("http://typelevel.org/cats/api/cats/syntax/package$$semigroupal$")[`cats.syntax.apply`] module
     that makes use of `Semigroupal` and `Functor`
     to allow users to sequence functions with multiple arguments.
     

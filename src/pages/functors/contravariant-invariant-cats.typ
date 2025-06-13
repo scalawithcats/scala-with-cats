@@ -1,11 +1,11 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href
 == Contravariant and Invariant in Cats
 
 
 Let's look at the implementation of
 contravariant and invariant functors in Cats,
-provided by the [`cats.Contravariant`][cats.Contravariant]
-and [`cats.Invariant`][cats.Invariant] type classes respectively.
+provided by the #href("http://typelevel.org/cats/api/cats/Contravariant.html")[`cats.Contravariant`]
+and #href("http://typelevel.org/cats/api/cats/Invariant.html")[`cats.Invariant`] type classes respectively.
 Here's a simplified version of the code:
 
 ```scala mdoc:invisible
@@ -44,7 +44,7 @@ showSymbol.show(Symbol("dave"))
 ```
 
 More conveniently, we can use
-[`cats.syntax.contravariant`][cats.syntax.contravariant],
+#href("http://typelevel.org/cats/api/cats/syntax/package$$contravariant$")[`cats.syntax.contravariant`],
 which provides a `contramap` extension method:
 
 ```scala mdoc:silent
@@ -76,7 +76,7 @@ trait Monoid[A] {
 ```
 
 Imagine we want to produce a `Monoid`
-for Scala's [`Symbol`][link-symbol] type.
+for Scala's #href("https://www.scala-lang.org/api/3.3.3/scala/Symbol.html#")[`Symbol`] type.
 Cats doesn't provide a `Monoid` for `Symbol`
 but it does provide a `Monoid` for a similar type: `String`.
 We can write our new semigroup with

@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href
 == Monads in Cats
 
 
@@ -9,7 +9,7 @@ As usual we'll look at the type class, instances, and syntax.
 <monad-type-class>
 
 
-The monad type class is [`cats.Monad`][cats.Monad].
+The monad type class is #href("http://typelevel.org/cats/api/cats/Monad.html")[`cats.Monad`].
 `Monad` extends two other type classes:
 `FlatMap`, which provides the `flatMap` method,
 and `Applicative`, which provides `pure`.
@@ -37,7 +37,7 @@ val list3 = Monad[List].map(list2)(a => a + 123)
 
 `Monad` provides many other methods,
 including all of the methods from `Functor`.
-See the [scaladoc][cats.Monad] for more information.
+See the #href("http://typelevel.org/cats/api/cats/Monad.html")[scaladoc] for more information.
 
 === Default Instances
 
@@ -92,11 +92,11 @@ We'll familiarise ourselves with some of these in a moment.
 
 The syntax for monads comes from three places:
 
- - [`cats.syntax.flatMap`][cats.syntax.flatMap]
+ - #href("http://typelevel.org/cats/api/cats/syntax/package$$flatMap$")[`cats.syntax.flatMap`]
    provides syntax for `flatMap`;
- - [`cats.syntax.functor`][cats.syntax.functor]
+ - #href("http://typelevel.org/cats/api/cats/syntax/package$$functor$")[`cats.syntax.functor`]
    provides syntax for `map`;
- - [`cats.syntax.applicative`][cats.syntax.applicative]
+ - #href("http://typelevel.org/cats/api/cats/syntax/package$$applicative$")[`cats.syntax.applicative`]
    provides syntax for `pure`.
 
 In practice it's often easier to import everything in one go

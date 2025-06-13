@@ -1,9 +1,9 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href
 == Semigroupal 
 <sec:semigroupal>
 
 
-[`cats.Semigroupal`][cats.semigroupal] is a type class that
+#href("http://typelevel.org/cats/api/cats/Semigroupal.html")[`cats.Semigroupal`] is a type class that
 allows us to combine contexts[^semigroupal-name].
 If we have two objects of type `F[A]` and `F[B]`,
 a `Semigroupal[F]` allows us to combine them to form an `F[(A, B)]`.
@@ -100,7 +100,7 @@ product(a, product(b, c)) == product(product(a, b), c)
 
 Cats provides a convenient _apply syntax_
 that provides a shorthand for the methods described above.
-We import the syntax from [`cats.syntax.apply`][cats.syntax.apply].
+We import the syntax from #href("http://typelevel.org/cats/api/cats/syntax/package$$semigroupal$")[`cats.syntax.apply`].
 Here's an example:
 
 ```scala mdoc:silent

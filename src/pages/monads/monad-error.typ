@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, href
 == Aside: Error Handling and MonadError
 
 
@@ -125,8 +125,8 @@ monadError.ensure(success)("Number too low!")(_ > 1000)
 ```
 
 Cats provides syntax for `raiseError` and `handleErrorWith`
-via [`cats.syntax.applicativeError`][cats.syntax.applicativeError]
-and `ensure` via [`cats.syntax.monadError`][cats.syntax.monadError]:
+via #href("http://typelevel.org/cats/api/cats/syntax/package$$applicativeError$")[`cats.syntax.applicativeError`]
+and `ensure` via #href("http://typelevel.org/cats/api/cats/syntax/package$$monadError$")[`cats.syntax.monadError`]:
 
 ```scala mdoc:invisible:reset
 import cats.MonadError
@@ -153,8 +153,8 @@ success.ensure("Number to low!")(_ > 1000)
 ```
 
 There are other useful variants of these methods.
-See the source of [`cats.MonadError`][cats.MonadError]
-and [`cats.ApplicativeError`][cats.ApplicativeError]
+See the source of #href("http://typelevel.org/cats/api/cats/MonadError.html")[`cats.MonadError`]
+and #href("http://typelevel.org/cats/api/cats/ApplicativeError.html")[`cats.ApplicativeError`]
 for more information.
 
 === Instances of MonadError
