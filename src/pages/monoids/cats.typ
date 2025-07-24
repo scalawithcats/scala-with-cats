@@ -28,10 +28,7 @@ or just
 import cats.*
 ```
 
-#info[
-==== Cats Kernel? {-}
-
-
+#info(title: "Cats Kernel?")[
 Cats Kernel is a subproject of Cats
 providing a small set of typeclasses
 for libraries that don't require the full Cats toolbox.
@@ -61,16 +58,13 @@ For example, if we want the monoid instance for `String`,
 and we have the correct given instances in scope,
 we can write the following:
 
-```scala mdoc:silent
-import cats.Monoid
-```
-
 ```scala mdoc
+import cats.Monoid
 Monoid[String].combine("Hi ", "there")
 Monoid[String].empty
 ```
 
-which is equivalent to:
+which is equivalent to
 
 ```scala mdoc
 Monoid.apply[String].combine("Hi ", "there")
@@ -78,11 +72,13 @@ Monoid.apply[String].empty
 ```
 
 As we know, `Monoid` extends `Semigroup`.
-If we don't need `empty` we can equivalently write:
+If we don't need `empty` we can instead write
 
 ```scala mdoc:silent
 import cats.Semigroup
 ```
+
+and then summon instances of `Semigroup` in the usual way:
 
 ```scala mdoc
 Semigroup[String].combine("Hi ", "there")
@@ -106,10 +102,12 @@ we access the syntax by importing from #href("http://typelevel.org/cats/api/cats
 import cats.syntax.semigroup.* // for |+|
 ```
 
+Now we can use `|+|` in place of calling `combine`.
+
 ```scala mdoc
 val stringResult = "Hi " |+| "there" |+| Monoid[String].empty
 
-val intResult = 1 |+| 2 |+| Monoid[Int].empty
+val intResult = 1 |+| 2
 ```
 
 As always,

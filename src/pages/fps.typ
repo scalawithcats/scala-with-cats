@@ -11,7 +11,7 @@
     paper: "us-trade"
 )
 
-#set text(font: "EB Garamond 12", size: 12pt)
+#set text(font: "EB Garamond", size: 12pt)
 
 #show raw.where(block: true): set block(fill: rgb("F7F7F7"), inset: 8pt, width: 100%)
 #show raw.where(block: true): set text(size: 8pt)

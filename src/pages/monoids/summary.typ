@@ -64,6 +64,6 @@ addAll(List(None, Some(1), Some(2)))
 They're easy to understand and simple to use.
 However, they're just the tip of the iceberg
 in terms of the abstractions Cats enables us to make.
-In the next chapter we'll look at _functors_,
+In the next chapter we'll look at *functors*,
 the type class personification of the beloved `map` method.
 That's where the fun really begins!

@@ -8,9 +8,6 @@ There are instances for `Ints`, `Strings`, `Lists`, `Options`, and many more.
 Let's start by looking at a few simple types and operations
 to see what common principles we can extract.
 
-==== Integer addition
-
-
 Addition of `Ints` is a binary operation that is _closed_,
 meaning that adding two `Ints` always produces another `Int`:
 
@@ -28,8 +25,8 @@ that `a + 0 == 0 + a == a` for any `Int` `a`:
 ```
 
 There are also other properties of addition.
-For instance, it doesn't matter in what order we add elements
-because we always get the same result.
+For instance, it doesn't matter in where we place brackets when we add elements,
+as we always get the same result.
 This is a property known as _associativity_:
 
 ```scala mdoc
@@ -37,9 +34,6 @@ This is a property known as _associativity_:
 
 1 + (2 + 3)
 ```
-
-
-==== Integer multiplication
 
 
 The same properties for addition also apply for multiplication,
@@ -58,9 +52,6 @@ Multiplication, like addition, is associative:
 
 1 * (2 * 3)
 ```
-
-
-==== String and sequence concatenation
 
 
 We can also add `Strings`,
@@ -146,11 +137,12 @@ is not a monoid because subtraction is not associative:
 
 In practice we only need to think about laws
 when we are writing our own `Monoid` instances.
-Unlawful instances are dangerous because
-they can yield unpredictable results
+Unlawful instances are dangerous,
+not because using them can cause us to end up in jail,
+but because they can yield unpredictable results
 when used with the rest of Cats' machinery.
 Most of the time we can rely on the instances provided by Cats
-and assume the library authors know what they're doing.
+and assume the library authors knew what they were doing.
 
 
 == Definition of a Semigroup
@@ -165,6 +157,7 @@ sequence concatenation and integer addition are monoids.
 However, if we restrict ourselves
 to non-empty sequences and positive integers,
 we are no longer able to define a sensible `empty` element.
+As a concrete example,
 Cats has a #href("http://typelevel.org/cats/api/cats/data/NonEmptyList.html")[`NonEmptyList`] data type
 that has an implementation of `Semigroup` but no implementation of `Monoid`.
 
@@ -214,7 +207,7 @@ object Monoid {
 
 #solution[
 There are at least four monoids for `Boolean`!
-First, we have _and_ with operator `&&` and identity `true`:
+First, we have *and* with operator `&&` and identity `true`:
 
 ```scala mdoc:silent
 given booleanAndMonoid: Monoid[Boolean] with {
@@ -223,7 +216,7 @@ given booleanAndMonoid: Monoid[Boolean] with {
 }
 ```
 
-Second, we have _or_ with operator `||` and identity `false`:
+Second, we have *or* with operator `||` and identity `false`:
 
 ```scala mdoc:silent
 given booleanOrMonoid: Monoid[Boolean] with {
@@ -232,7 +225,7 @@ given booleanOrMonoid: Monoid[Boolean] with {
 }
 ```
 
-Third, we have _exclusive or_ with identity `false`:
+Third, we have *exclusive or* with identity `false`:
 
 ```scala mdoc:silent
 given booleanEitherMonoid: Monoid[Boolean] with {
@@ -243,7 +236,7 @@ given booleanEitherMonoid: Monoid[Boolean] with {
 }
 ```
 
-Finally, we have _exclusive nor_ (the negation of exclusive or)
+Finally, we have *exclusive nor* (the negation of exclusive or)
 with identity `true`:
 
 ```scala mdoc:silent
@@ -302,7 +295,7 @@ given setIntersectionSemigroup[A]: Semigroup[Set[A]] with {
 ```
 
 Set complement and set difference are not associative,
-so they cannot be considered for either monoids or semigroups.
+so they cannot be either monoids or semigroups.
 However, symmetric difference (the union less the intersection)
 does form a monoid with the empty set:
 

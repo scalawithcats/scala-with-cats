@@ -40,7 +40,7 @@ For example,
 one machine may receive an update that other machines did not receive.
 We would like to reconcile these different views,
 so every machine has the same data if no more updates arrive.
-This is called _eventual consistency_.
+This is called *eventual consistency*.
 
 A particular class of data types support this reconciliation.
 These data types are called conflict-free replicated data types (CRDTs).
@@ -48,6 +48,7 @@ The key operation is the ability to merge two data instances,
 with a result that captures all the information in both instances.
 This operation relies on having a monoid instance.
 We explore this idea further in the CRDT case study.
+
 
 === Monoids in the Small
 
