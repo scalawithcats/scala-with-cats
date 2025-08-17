@@ -84,7 +84,8 @@ is more general than this.
 Let's investigate the behaviour of some other functors
 that apply the pattern in different ways.
 
-*Futures*
+
+=== Futures
 
 `Future` is a functor that
 sequences asynchronous computations by queueing them
@@ -129,12 +130,10 @@ val future: Future[String] =
 Await.result(future, 1.second)
 ```
 
-#info[
-*Futures and Referential Transparency*
-
+#info(title: "Futures and Referential Transparency")[
 Note that Scala's `Futures` aren't a great example
 of pure functional programming
-because they aren't _referentially transparent_.
+because they aren't *referentially transparent*.
 `Future` always computes and caches a result
 and there's no way for us to tweak this behaviour.
 This means we can get unpredictable results
@@ -197,7 +196,8 @@ If `Future` isn't referentially transparent,
 perhaps we should look at another similar data-type that is.
 You should recognise this one...
 
-*Functions (?!)*
+
+=== Functions (?!)
 
 It turns out that single argument functions are also functors.
 To see this we have to tweak the types a little.
@@ -266,9 +266,7 @@ val func =
 func(123)
 ```
 
-#warning[
-*Partial Unification*
-
+#warning(title: "Partial Unification")[
 For the above examples to work,
 in versions of Scala before 2.13,
 we need to add the following compiler option to `build.sbt`:
@@ -323,11 +321,9 @@ trait Functor[F[_]] {
 
 If you haven't seen syntax like `F[_]` before,
 it's time to take a brief detour to discuss
-*type constructors_ and _higher kinded types*.
+*type constructors* and *higher kinded types*.
 
-#warning[
-*Functor Laws*
-
+#warning(title: "Functor Laws")[
 Functors guarantee the same semantics
 whether we sequence many small operations one by one,
 or combine them into a larger function before `mapping`.
@@ -348,17 +344,17 @@ fa.map(g(f(_))) == fa.map(f).map(g)
 ```
 ]
 
-== Aside: Higher Kinds and Type Constructors
 
+== Higher Kinds and Type Constructors
 
 Kinds are like types for types.
 They describe the number of "holes" in a type.
 We distinguish between regular types that have no holes
-and "type constructors" that have
+and *type constructors* that have
 holes we can fill to produce types.
 
 For example, `List` is a type constructor with one hole.
-We fill that hole by specifying a parameter to produce
+We fill that hole with a type to produce
 a regular type like `List[Int]` or `List[A]`.
 The trick is not to confuse type constructors with generic types.
 `List` is a type constructor, `List[A]` is a type:
