@@ -1,7 +1,7 @@
 ## Parallel
 
 In the previous section we saw that
-when call `product` on a type that
+when we call `product` on a type that
 has a `Monad` instance
 we get sequential semantics.
 This makes sense from the point-of-view
@@ -155,7 +155,7 @@ Does `List` have a `Parallel` instance? If so, what does the `Parallel` instance
 <div class="solution">
 `List` does have a `Parallel` instance, 
 and it zips the `List`
-insted of creating the cartesian product.
+instead of creating the cartesian product.
 
 We can see by writing a little bit of code.
 

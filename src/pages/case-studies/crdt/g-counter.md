@@ -101,7 +101,7 @@ where we represent machine IDs as `Strings`.
 
 ```scala mdoc:reset-object:silent
 final case class GCounter(counters: Map[String, Int]) {
-  def increment(machine: String, amount: Int) =
+  def increment(machine: String, amount: Int): GCounter =
     ???
 
   def merge(that: GCounter): GCounter =
