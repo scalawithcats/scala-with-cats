@@ -14,7 +14,7 @@ enum Bool {
 The definition tells us there are two ways to construct an element of type `Bool`.
 Furthermore, if we have such an element we can tell exactly which case it is, by using a pattern match for example. Similarly, if the instances themselves hold data, as in `List` for example, we can always extract all the data within them. Again, we can use pattern matching to achieve this.
 
-Codata, in contrast, is defined in terms of operations we can perform on the elements of the type. These operations are sometimes called **destructors** (which we've already encountered), **observations**, or **eliminators**. A common example of codata is a data structures such as a set. We might define the operations on a `Set` with elements of type `A` as:
+Codata, in contrast, is defined in terms of operations we can perform on the elements of the type. These operations are sometimes called **destructors** (which we've already encountered), **observations**, or **eliminators**. A common example of codata is a data structure such as a set. We might define the operations on a `Set` with elements of type `A` as:
 
 - `contains` which takes a `Set[A]` and an element `A` and returns a `Boolean` indicating if the set contains the element;
 - `insert` which takes a `Set[A]` and an element `A` and returns a `Set[A]` containing all the elements from the original set and the new element; and
