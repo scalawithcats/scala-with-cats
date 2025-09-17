@@ -155,7 +155,7 @@ Does `List` have a `Parallel` instance? If so, what does the `Parallel` instance
 <div class="solution">
 `List` does have a `Parallel` instance, 
 and it zips the `List`
-insted of creating the cartesian product.
+instead of creating the cartesian product.
 
 We can see by writing a little bit of code.
 
