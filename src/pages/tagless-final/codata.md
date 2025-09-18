@@ -132,7 +132,7 @@ To solve the problem above we need `printRed` and `printBold` to accept not a `S
 We don't need to know what these programs do; we just need a way to run them.
 Then the combinators `printRed`, `printBold`, and so on, can also return programs.
 These programs will set the style appropriately before running their program parameter, and reset it after the parameter program has finished running.
-By accepting and returning programs the combinators have the property of closure, meaning that type of the input (a program) is the same as the type of the outpt. Closure in turn makes composition possible.
+By accepting and returning programs the combinators have the property of closure, meaning that type of the input (a program) is the same as the type of the output. Closure in turn makes composition possible.
 
 How should we represent a program?
 We will choose codata and in particular functions, the simplest form of codata.
