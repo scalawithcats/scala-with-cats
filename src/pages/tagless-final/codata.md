@@ -205,7 +205,7 @@ run(printBold(() => {
 
 We would expect output like 
 
-**This should be bold, as should that and this**
+**This should be bold, as should this and this**
 
 but we get 
 
