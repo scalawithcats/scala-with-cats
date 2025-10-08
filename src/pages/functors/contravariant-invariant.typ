@@ -11,9 +11,7 @@ and one representing building a _bidirectional_
 chain of operations. These are called _contravariant_
 and _invariant functors_ respectively.
 
-#info[
-*This Section is Optional!*
-
+#info(title: [This Section is Optional!])[
 You don't need to know about contravariant and invariant functors to understand monads,
 which are the most important type class in this book and the focus of the next chapter.
 However, contravariant and invariant do come in handy in
@@ -328,9 +326,7 @@ given booleanCodec: Codec[Boolean] =
   stringCodec.imap(_.toBoolean, _.toString)
 ```
 
-#info[
-*Coping with Failure*
-
+#info(title: [Coping with Failure])[
 Note that the `decode` method of our `Codec` type class
 doesn't account for failures.
 If we want to model more sophisticated relationships

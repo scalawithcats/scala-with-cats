@@ -16,9 +16,7 @@ can result in interleaved messages from different contexts.
 With `Writer` the log for the computation is tied to the result,
 so we can run concurrent computations without mixing logs.
 
-#info[
-*Cats Data Types*
-
+#info(title: [Cats Data Types])[
 `Writer` is the first data type we've seen
 from the [`cats.data`][cats.data.package] package.
 This package provides instances of various type classes

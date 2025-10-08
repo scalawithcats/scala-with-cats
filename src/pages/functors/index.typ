@@ -404,9 +404,7 @@ we can see that the Cats definition of `Functor`
 allows us to create instances for any single-parameter type constructor,
 such as `List`, `Option`, `Future`, or a type alias such as `MyFunc`.
 
-#info[
-*Language Feature Imports*
-
+#info(title: [Language Feature Imports])[
 In versions of Scala before 2.13
 we need to "enable" the higher kinded type language feature,
 to suppress warnings from the compiler,

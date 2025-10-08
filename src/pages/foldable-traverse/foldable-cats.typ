@@ -91,8 +91,7 @@ val eval: Eval[Long] =
 eval.value
 ```
 
-#info[
-*Stack Safety in the Standard Library*
+#info(title: [Stack Safety in the Standard Library])[
 
 Stack safety isn't typically an issue when using the standard library.
 The most commonly used collection types, such as `List` and `Vector`,
@@ -189,8 +188,7 @@ List(1, 2, 3).combineAll
 List(1, 2, 3).foldMap(_.toString)
 ```
 
-#info[
-*Explicits over Implicits*
+#info(title: [Explicits over Implicits])[
 
 Remember that Scala will only use an instance of `Foldable`
 if the method isn't explicitly available on the receiver.

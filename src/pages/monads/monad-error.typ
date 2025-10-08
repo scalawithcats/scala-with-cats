@@ -8,10 +8,7 @@ that are used for error handling.
 `MonadError` provides extra operations
 for raising and handling errors.
 
-#info[
-==== This Section is Optional! {-}
-
-
+#info(title: [this Section is Optional!])[
 You won't need to use `MonadError`
 unless you need to abstract over error handling monads.
 For example, you can use `MonadError`

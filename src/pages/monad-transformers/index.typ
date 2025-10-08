@@ -221,9 +221,7 @@ Concretely, some of the available instances are:
 - #href("http://typelevel.org/cats/api/cats/data/StateT.html")[`cats.data.StateT`] for `State`;
 - #href("http://typelevel.org/cats/api/cats/data/IdT.html")[`cats.data.IdT`] for the #href("http://typelevel.org/cats/api/cats/Id.html")[`Id`] monad.
 
-#info[
-*Kleisli Arrows*
-
+#info(title: [Kleisli Arrows])[
 In @sec:monads:reader
 we mentioned that the `Reader` monad was a specialisation
 of a more general concept called a "kleisli arrow",
