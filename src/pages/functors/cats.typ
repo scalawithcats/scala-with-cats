@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution, href
+#import "../stdlib.typ": info, warning, solution, href, exercise
 == Functors in Cats
 
 
@@ -214,7 +214,7 @@ Functor[Future](futureFunctor(executionContext))
 ```
 
 
-=== Exercise: Branching out with Functors
+#exercise[Branching out with Functors]
 
 Write a `Functor` for the following binary tree data type.
 Verify that the code works as expected on instances of `Branch` and `Leaf`:

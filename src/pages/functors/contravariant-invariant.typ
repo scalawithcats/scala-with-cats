@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, exercise
 == Contravariant and Invariant Functors 
 <sec:functors:contravariant-invariant>
 
@@ -63,8 +63,8 @@ def display[A](value: A)(using p: Display[A]): String =
   p.display(value)
 ```
 
-==== Exercise: Showing off with Contramap
 
+#exercise[Showing Off with Contramap]
 
 Implement the `contramap` method for `Display` above.
 Start with the following code template
