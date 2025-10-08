@@ -6,8 +6,8 @@ Let's look at the implementation of functors in Cats.
 We'll examine the same aspects we did for monoids:
 the _type class_, the _instances_, and the _syntax_.
 
-=== The Functor Type Class and Instances
 
+=== The Functor Type Class and Instances
 
 The functor type class is #href("http://typelevel.org/cats/api/cats/Functor.html")[`cats.Functor`].
 We obtain instances using the standard `Functor.apply`
@@ -20,6 +20,9 @@ import cats.*
 import cats.syntax.all.*
 ```
 
+Once we have the imports we use the `map` method defined by `Functor`.
+In the examples below we are explicitly summoning the type class instances to avoid using the built-ins that are defined on `List` and `Option`.
+
 ```scala mdoc
 val list1 = List(1, 2, 3)
 val list2 = Functor[List].map(list1)(_ * 2)
@@ -31,24 +34,29 @@ val option2 = Functor[Option].map(option1)(_.toString)
 `Functor` provides a method called `lift`,
 which converts a function of type `A => B`
 to one that operates over a functor and has type `F[A] => F[B]`:
+Let's lift a function into the `Option` functor.
 
-```scala mdoc
+```scala mdoc:silent
 val func = (x: Int) => x + 1
 
 val liftedFunc = Functor[Option].lift(func)
+```
 
+Now we can directly apply it to an `Option`.
+
+```scala mdoc
 liftedFunc(Option(1))
 ```
 
 The `as` method is the other method you are likely to use.
-It replaces with value inside the `Functor` with the given value.
+It replaces the value inside the `Functor` with the given value.
 
 ```scala mdoc
 Functor[List].as(list1, "As")
 ```
 
-=== Functor Syntax
 
+=== Functor Syntax
 
 The main method provided by the syntax for `Functor` is `map`.
 It's difficult to demonstrate this with `Options` and `Lists`
@@ -69,6 +77,8 @@ val func3 = (a: Int) => s"${a}!"
 val func4 = func1.map(func2).map(func3)
 ```
 
+Once we've constructed a function using `map` we can apply it.
+
 ```scala mdoc
 func4(123)
 ```
@@ -81,9 +91,18 @@ no matter what functor context it's in:
 
 ```scala mdoc:silent
 def doMath[F[_]](start: F[Int])
-    (implicit functor: Functor[F]): F[Int] =
-  start.map(n => n + 1 * 2)
+    (using functor: Functor[F]): F[Int] =
+  start.map(n => 2 * n + 1)
 ```
+
+We can write this more compactly with a context bound.
+
+```scala mdoc:nest
+def doMath[F[_]: Functor](start: F[Int]): F[Int] =
+  start.map(n => 2 * n + 1)
+```
+
+It works as expected, using whatever `Functor` instance we pass it.
 
 ```scala mdoc
 doMath(Option(20))
@@ -95,34 +114,33 @@ let's take a look at the definition of
 the `map` method in `cats.syntax.functor`.
 Here's a simplified version of the code:
 
-```scala
-implicit class FunctorOps[F[_], A](src: F[A]) {
+```scala mdoc:compile-only
+extension [F[_], A](src: F[A]) {
   def map[B](func: A => B)
-      (implicit functor: Functor[F]): F[B] =
+      (using functor: Functor[F]): F[B] =
     functor.map(src)(func)
 }
 ```
 
 The compiler can use this extension method
-to insert a `map` method wherever no built-in `map` is available:
+to insert a `map` method wherever no built-in `map` is available.
+If we have the code
 
 ```scala
 foo.map(value => value + 1)
 ```
 
-Assuming `foo` has no built-in `map` method,
+and assume `foo` has no built-in `map` method,
 the compiler detects the potential error and
-wraps the expression in a `FunctorOps` to fix the code:
-
-```scala
-new FunctorOps(foo).map(value => value + 1)
-```
-
-The `map` method of `FunctorOps` requires
-an implicit `Functor` as a parameter.
+uses the extension method to fix it.
+The `map` extension method requires
+a given `Functor` as a parameter.
 This means this code will only compile
 if we have a `Functor` for `F` in scope.
-If we don't, we get a compiler error:
+If we don't, we get a compiler error.
+
+Here's an example of the error.
+First we define a new type that has no `Functor` instance.
 
 ```scala mdoc:silent
 final case class Box[A](value: A)
@@ -130,18 +148,22 @@ final case class Box[A](value: A)
 val box = Box[Int](123)
 ```
 
+Now attempting to call `map` fails.
+Notice the error message gives us a hint as to what went wrong.
+
 ```scala mdoc:fail
 box.map(value => value + 1)
 ```
 
-The `as` method is also available as syntax.
+The `as` method is also available as syntax,
+and works in the same way.
 
 ```scala mdoc
 List(1, 2, 3).as("As")
 ```
 
-=== Instances for Custom Types
 
+=== Instances for Custom Types
 
 We can define a functor simply by defining its map method.
 Here's an example of a `Functor` for `Option`,
@@ -149,7 +171,7 @@ even though such a thing already exists in #href("http://typelevel.org/cats/api/
 The implementation is trivial---we simply call `Option's` `map` method:
 
 ```scala
-implicit val optionFunctor: Functor[Option] =
+given optionFunctor: Functor[Option] =
   new Functor[Option] {
     def map[A, B](value: Option[A])(func: A => B): Option[B] =
       value.map(func)
@@ -159,15 +181,14 @@ implicit val optionFunctor: Functor[Option] =
 Sometimes we need to inject dependencies into our instances.
 For example, if we had to define a custom `Functor` for `Future`
 (another hypothetical example---Cats provides one in `cats.instances.future`)
-we would need to account for the implicit `ExecutionContext` parameter on `future.map`.
+we would need to account for the given `ExecutionContext` parameter on `future.map`.
 We can't add extra parameters to `functor.map`
 so we have to account for the dependency when we create the instance:
 
 ```scala mdoc:silent
 import scala.concurrent.{Future, ExecutionContext}
 
-implicit def futureFunctor
-    (implicit ec: ExecutionContext): Functor[Future] =
+given futureFunctor(using ec: ExecutionContext): Functor[Future] =
   new Functor[Future] {
     def map[A, B](value: Future[A])(func: A => B): Future[B] =
       value.map(func)
@@ -192,19 +213,19 @@ Functor[Future](futureFunctor)
 Functor[Future](futureFunctor(executionContext))
 ```
 
-=== Exercise: Branching out with Functors
 
+=== Exercise: Branching out with Functors
 
 Write a `Functor` for the following binary tree data type.
 Verify that the code works as expected on instances of `Branch` and `Leaf`:
 
 ```scala mdoc:silent
-sealed trait Tree[+A]
+enum Tree[+A] {
+  case Branch[A](left: Tree[A], right: Tree[A])
+    extends Tree[A]
 
-final case class Branch[A](left: Tree[A], right: Tree[A])
-  extends Tree[A]
-
-final case class Leaf[A](value: A) extends Tree[A]
+  case Leaf[A](value: A) extends Tree[A]
+}
 ```
 
 #solution[
@@ -214,7 +235,9 @@ The functor laws intuitively require us to retain the same structure
 with the same pattern of `Branch` and `Leaf` nodes:
 
 ```scala mdoc:silent
-implicit val treeFunctor: Functor[Tree] =
+import Tree.{Branch, Leaf}
+
+given treeFunctor: Functor[Tree] =
   new Functor[Tree] {
     def map[A, B](tree: Tree[A])(func: A => B): Tree[B] =
       tree match {
@@ -232,26 +255,5 @@ Let's use our `Functor` to transform some `Trees`:
 Branch(Leaf(10), Leaf(20)).map(_ * 2)
 ```
 
-Oops! This falls foul of
-the same invariance problem we discussed in @sec:variance.
-The compiler can find a `Functor` instance for `Tree` but not for `Branch` or `Leaf`.
-Let's add some smart constructors to compensate:
-
-```scala mdoc:silent
-object Tree {
-  def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
-    Branch(left, right)
-
-  def leaf[A](value: A): Tree[A] =
-    Leaf(value)
-}
-```
-
-Now we can use our `Functor` properly:
-
-```scala mdoc
-Tree.leaf(100).map(_ * 2)
-
-Tree.branch(Tree.leaf(10), Tree.leaf(20)).map(_ * 2)
-```
+Perfect!
 ]
