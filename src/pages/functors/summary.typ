@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": href, info, warning, solution
 == Summary
 
 
@@ -27,13 +27,13 @@ but even then it is rare to use them on their own.
 Functors form a foundational building block of
 several more interesting abstractions that we use all the time.
 In the following chapters we will look at two of these abstractions:
-*monads_ and _applicative functors*.
+*monads* and *applicative functors*.
 
 Functors for collections are extremely important, as they transform each element independently of the rest.
 This allows us to parallelise or distribute
 transformations on large collections,
 a technique leveraged heavily in
-"map-reduce" frameworks like [Hadoop][link-hadoop].
+"map-reduce" frameworks popularized by #href("http://hadoop.apache.org")[Hadoop].
 We will investigate this approach in more detail in the
 map-reduce case study later in @sec:map-reduce.
 

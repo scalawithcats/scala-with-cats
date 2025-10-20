@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": href, info, warning, solution
 == Aside: Partial Unification 
 <sec:functors:partial-unification>
 
@@ -44,7 +44,7 @@ type F[A] = Int => A
 type F[A] = A => Double
 ```
 
-*We* know that the former of these is the correct choice.
+_We_ know that the first one is the correct choice.
 However the compiler doesn't understand what the code means.
 Instead it relies on a simple rule, 
 implementing what is called "partial unification".
@@ -83,7 +83,7 @@ In sbt we would add the compiler flag in `build.sbt`:
 scalacOptions += "-Ypartial-unification"
 ```
 
-The rationale behind this change is discussed in [SI-2712][link-si2712].
+The rationale behind this change is discussed in #href("https://issues.scala-lang.org/browse/SI-2712")[SI-2712].
 ]
 
 
@@ -93,7 +93,7 @@ The rationale behind this change is discussed in [SI-2712][link-si2712].
 
 There are situations where
 left-to-right elimination is not the correct choice.
-One example is the `Or` type in [Scalactic][link-scalactic],
+One example is the `Or` type in #href("http://scalactic.org")[Scalactic],
 which is a conventionally left-biased equivalent of `Either`:
 
 ```scala

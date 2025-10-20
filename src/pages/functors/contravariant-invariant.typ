@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution, exercise
+#import "../stdlib.typ": href, info, warning, solution, exercise
 == Contravariant and Invariant Functors 
 <sec:functors:contravariant-invariant>
 
@@ -256,10 +256,10 @@ a pair of bidirectional transformations.
 
 The most intuitive examples of this are a type class
 that represents encoding and decoding as some data type,
-such as Circe's [`Codec`][link-circe-codec]
-and Play JSON's [`Format`][link-play-json-format].
+such as Circe's #href("https://github.com/circe/circe/blob/series/0.14.x/modules/core/shared/src/main/scala/io/circe/Codec.scala")[`Codec`]
+and Play JSON's #href("https://www.playframework.com/documentation/2.6.x/ScalaJsonCombinators#Format")[`Format`].
 We can build our own `Codec` by enhancing `Display`
-to support encoding and decoding to/from a `String`:
+to support encoding and decoding to and from a `String`:
 
 ```scala mdoc:silent
 trait Codec[A] {
@@ -333,9 +333,8 @@ If we want to model more sophisticated relationships
 we can move beyond functors
 to look at _lenses_ and _optics_.
 
-Optics are beyond the scope of this book.
-However, Julien Truffaut's library
-[Monocle][link-monocle] provides a great
+Optics are beyond the scope of this book. However, the
+#href("https://github.com/optics-dev/Monocle")[Monocle] provides a great
 starting point for further investigation.
 ]
 
@@ -426,14 +425,12 @@ encode(Box(123.4))
 decode[Box[Double]]("123.4")
 ```
 
-#warning[
-*What's With the Names?*
-
+#info(title: [What's With the Names?])[
 What's the relationship between the terms
 "contravariance", "invariance", and "covariance"
 and these different kinds of functor?
 
-If you recall from @sec:variance,
+As we discussed in @sec:variance,
 variance affects subtyping,
 which is essentially our ability to use a value of one type
 in place of a value of another type
