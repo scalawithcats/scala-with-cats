@@ -37,47 +37,57 @@ val list3 = Monad[List].map(list2)(a => a + 123)
 
 `Monad` provides many other methods,
 including all of the methods from `Functor`.
-See the #href("http://typelevel.org/cats/api/cats/Monad.html")[scaladoc] for more information.
+See the #href("http://typelevel.org/cats/api/cats/Monad.html")[documentation] for more information.
+
+
 
 === Default Instances
-
 
 Cats provides instances for all the monads in the standard library
 (`Option`, `List`, `Vector` and so on).
 Cats also provides a `Monad` for `Future`.
 Unlike the methods on the `Future` class itself,
 the `pure` and `flatMap` methods on the monad
-can't accept implicit `ExecutionContext` parameters
+can't accept `ExecutionContext` parameters
 (because the parameters aren't part of the definitions in the `Monad` trait).
 To work around this, Cats requires us to have an `ExecutionContext` in scope
-when we summon a `Monad` for `Future`:
+when we summon a `Monad` for `Future`.
+
+Let's import `Future` (and some other imports we will use later.)
 
 ```scala mdoc:silent
 import scala.concurrent.*
 import scala.concurrent.duration.*
 ```
 
+We see that compilation fails without an `ExecutionContext` available.
+
 ```scala mdoc:fail
+
 val fm = Monad[Future]
 ```
 
-Bringing the `ExecutionContext` into scope
-fixes the implicit resolution required to summon the instance:
+Now we bring the `ExecutionContext` into scope.
 
 ```scala mdoc:silent
 import scala.concurrent.ExecutionContext.Implicits.global
 ```
+
+This provides the given instance required to summon the `Monad[Future]` instance:
 
 ```scala mdoc
 val fm = Monad[Future]
 ```
 
 The `Monad` instance uses the captured `ExecutionContext`
-for subsequent calls to `pure` and `flatMap`:
+for subsequent calls to `pure` and `flatMap`.
+We can construct a `Future` using calls to the monad instance we summoned above.
 
 ```scala mdoc:silent
 val future = fm.flatMap(fm.pure(1))(x => fm.pure(x + 2))
 ```
+
+If we await the result of the `Future` we get the expected result.
 
 ```scala mdoc
 Await.result(future, 1.second)
@@ -87,8 +97,8 @@ In addition to the above,
 Cats provides a host of new monads that we don't have in the standard library.
 We'll familiarise ourselves with some of these in a moment.
 
-=== Monad Syntax
 
+=== Monad Syntax
 
 The syntax for monads comes from three places:
 
@@ -100,7 +110,7 @@ The syntax for monads comes from three places:
    provides syntax for `pure`.
 
 In practice it's often easier to import everything in one go
-from `cats.syntax.all.**`.
+from `cats.syntax.all.*`.
 However, we'll use the individual imports here for clarity.
 
 We can use `pure` to construct instances of a monad.
