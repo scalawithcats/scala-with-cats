@@ -1,75 +1,128 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, exercise
 == Either
 
 
 Let's look at another useful monad:
 the `Either` type from the Scala standard library.
-In Scala 2.11 and earlier,
-many people didn't consider `Either` a monad
-because it didn't have `map` and `flatMap` methods.
-In Scala 2.12, however, `Either` became _right biased_.
+`Either` has two cases, `Left` and `Right`.
+By convention `Right` represents a success case,
+and `Left` a failure.
+When we call `flatMap` on `Either`, computation continues if we have a `Right` case.
 
-=== Left and Right Bias
-
-
-In Scala 2.11, `Either` had no default
-`map` or `flatMap` method.
-This made the Scala 2.11 version of `Either`
-inconvenient to use in for comprehensions.
-We had to insert calls to `.right`
-in every generator clause:
-
-```scala mdoc:silent:reset-object
-val either1: Either[String, Int] = Right(10)
-val either2: Either[String, Int] = Right(32)
+```scala mdoc
+Right(10).flatMap(a => Right(a + 32))
 ```
 
-```scala
-for {
-  a <- either1.right
-  b <- either2.right
-} yield a + b
+A `Left`, however, stops the computation.
+
+```scala mdoc
+Right(10).flatMap(a => Left("Oh no!"))
 ```
 
-In Scala 2.12, `Either` was redesigned.
-The modern `Either` makes the decision
-that the right side represents the success case
-and thus supports `map` and `flatMap` directly.
-This makes for comprehensions much more pleasant:
+AS these examples suggest,
+`Either` is typically used to implement fail-fast error handling.
+We sequence computations using `flatMap` as usual.
+If one computation fails,
+the remaining computations are not run.
+Here's an example where we fail if we attempt to divide by zero.
 
 ```scala mdoc
 for {
-  a <- either1
-  b <- either2
-} yield a + b
+  a <- Right(1)
+  b <- Right(0)
+  c <- if(b == 0) Left("DIV0")
+       else Right(a / b)
+} yield c * 100
 ```
 
-Cats back-ports this behaviour to Scala 2.11
-via the `cats.syntax.either` import,
-allowing us to use right-biased `Either`
-in all supported versions of Scala.
-In Scala 2.12+ we can either omit this import
-or leave it in place without breaking anything:
+We can see `Either` as similar to `Option`,
+but it allows us to record some information in the case of failure,
+whereas `Option` represents failure by `None`.
+In the examples above we used strings to hold information about the cause of failure,
+but we can use any type we like.
+For example, we could use `Throwable` instead:
 
 ```scala mdoc:silent
-import cats.syntax.either.* // for map and flatMap
-
-for {
-  a <- either1
-  b <- either2
-} yield a + b
+type Result[A] = Either[Throwable, A]
 ```
 
-=== Creating Instances
+This gives us similar semantics to `scala.util.Try`.
+The problem, however, is that `Throwable`
+is an extremely broad type.
+We have (almost) no idea about what type of error occurred.
 
+Another approach is to define an algebraic data type
+to represent errors that may occur in our program:
+
+```scala mdoc:silent
+enum LoginError {
+  case UserNotFound(username: String)
+  case PasswordIncorrect(username: String)
+  case UnexpectedError 
+}
+```
+
+We could use the `LoginError` type along with `Either` as shown below.
+
+```scala mdoc:silent
+case class User(username: String, password: String)
+
+type LoginResult = Either[LoginError, User]
+```
+
+This approach solves the problems we saw with `Throwable`.
+It gives us a fixed set of expected error types
+and a catch-all for anything else that we didn't expect.
+We also get the safety of exhaustivity checking
+on any pattern matching we do:
+
+```scala mdoc:silent
+import LoginError.*
+
+// Choose error-handling behaviour based on type:
+def handleError(error: LoginError): Unit =
+  error match {
+    case UserNotFound(u) =>
+      println(s"User not found: $u")
+
+    case PasswordIncorrect(u) =>
+      println(s"Password incorrect: $u")
+
+    case UnexpectedError =>
+      println(s"Unexpected error")
+  }
+```
+
+Here's an example of use.
+
+```scala mdoc
+val result1: LoginResult = Right(User("dave", "passw0rd"))
+val result2: LoginResult = Left(UserNotFound("dave"))
+
+result1.fold(handleError, println)
+result2.fold(handleError, println)
+```
+
+We have much more to say about error handling in @sec:error-handling.
+
+
+=== Cats Utilities
+
+Cats provides several utilities for working with `Either`.
+Here we go over the most useful of them.
+
+
+==== Creating Instances
 
 In addition to creating instances of `Left` and `Right` directly,
-we can also import the `asLeft` and `asRight` extension methods
-from [`cats.syntax.either`][cats.syntax.either]:
+we can also use the `asLeft` and `asRight` extension methods
+from Cats. For these methods we need to import the Cats syntax:
 
 ```scala mdoc:silent
-import cats.syntax.either.* // for asRight
+import cats.syntax.all.* 
 ```
+
+Now we can construct instances using the extensions.
 
 ```scala mdoc
 val a = 3.asRight[String]
@@ -82,8 +135,8 @@ for {
 ```
 
 These "smart constructors" have
-advantages over `Left.apply` and `Right.apply`
-because they return results of type `Either`
+advantages over `Left.apply` and `Right.apply`.
+They return results of type `Either`
 instead of `Left` and `Right`.
 This helps avoid type inference problems
 caused by over-narrowing,
@@ -128,7 +181,7 @@ countPositive(List(1, 2, 3))
 countPositive(List(1, -2, 3))
 ```
 
-`cats.syntax.either` adds
+The Cats syntax also adds
 some useful extension methods
 to the `Either` companion object.
 The `catchOnly` and `catchNonFatal` methods
@@ -148,24 +201,11 @@ Either.fromTry(scala.util.Try("foo".toInt))
 Either.fromOption[String, Int](None, "Badness")
 ```
 
-=== Transforming Eithers
 
+==== Transforming Eithers
 
-`cats.syntax.either` also adds
+Cats syntax also adds
 some useful methods for instances of `Either`.
-
-Users of Scala 2.11 or 2.12 
-can use `orElse` and `getOrElse` to extract
-values from the right side or return a default:
-
-```scala mdoc:silent
-import cats.syntax.either.*
-```
-
-```scala mdoc
-"Error".asLeft[Int].getOrElse(0)
-"Error".asLeft[Int].orElse(2.asRight[String])
-```
 
 The `ensure` method allows us
 to check whether the right-hand value
@@ -206,89 +246,10 @@ The `swap` method lets us exchange left for right:
 Finally, Cats adds a host of conversion methods:
 `toOption`, `toList`, `toTry`, `toValidated`, and so on.
 
-=== Error Handling
 
 
-`Either` is typically used to implement fail-fast error handling.
-We sequence computations using `flatMap` as usual.
-If one computation fails,
-the remaining computations are not run:
 
-```scala mdoc
-for {
-  a <- 1.asRight[String]
-  b <- 0.asRight[String]
-  c <- if(b == 0) "DIV0".asLeft[Int]
-       else (a / b).asRight[String]
-} yield c * 100
-```
-
-When using `Either` for error handling,
-we need to determine
-what type we want to use to represent errors.
-We could use `Throwable` for this:
-
-```scala mdoc:silent
-type Result[A] = Either[Throwable, A]
-```
-
-This gives us similar semantics to `scala.util.Try`.
-The problem, however, is that `Throwable`
-is an extremely broad type.
-We have (almost) no idea about what type of error occurred.
-
-Another approach is to define an algebraic data type
-to represent errors that may occur in our program:
-
-```scala mdoc:silent
-enum LoginError {
-  case UserNotFound(username: String)
-
-  case PasswordIncorrect(username: String)
-
-  case UnexpectedError 
-}
-```
-
-```scala mdoc:silent
-case class User(username: String, password: String)
-
-type LoginResult = Either[LoginError, User]
-```
-
-This approach solves the problems we saw with `Throwable`.
-It gives us a fixed set of expected error types
-and a catch-all for anything else that we didn't expect.
-We also get the safety of exhaustivity checking
-on any pattern matching we do:
-
-```scala mdoc:silent
-import LoginError.*
-
-// Choose error-handling behaviour based on type:
-def handleError(error: LoginError): Unit =
-  error match {
-    case UserNotFound(u) =>
-      println(s"User not found: $u")
-
-    case PasswordIncorrect(u) =>
-      println(s"Password incorrect: $u")
-
-    case UnexpectedError =>
-      println(s"Unexpected error")
-  }
-```
-
-```scala mdoc
-val result1: LoginResult = User("dave", "passw0rd").asRight
-val result2: LoginResult = UserNotFound("dave").asLeft
-
-result1.fold(handleError, println)
-result2.fold(handleError, println)
-```
-
-=== Exercise: What is Best?
-
+#exercise([What is Best?])
 
 Is the error handling strategy in the previous examples
 well suited for all purposes?

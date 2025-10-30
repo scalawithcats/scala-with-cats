@@ -8,8 +8,7 @@ by writing a method that abstracted over different monads:
 
 ```scala mdoc:silent
 import cats.Monad
-import cats.syntax.functor.* // for map
-import cats.syntax.flatMap.* // for flatMap
+import cats.syntax.all.*
 
 def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
   for {
@@ -91,8 +90,8 @@ and synchronously in test using `Id`.
 We'll see this in our first case study
 in @sec:case-studies:testing.
 
-=== Exercise: Monadic Secret Identities
 
+=== Exercise: Monadic Secret Identities
 
 Implement `pure`, `map`, and `flatMap` for `Id`!
 What interesting discoveries do you uncover about the implementation?
@@ -163,25 +162,38 @@ def flatMap[A, B](initial: Id[A])(func: A => Id[B]): Id[B] =
 ```scala mdoc
 flatMap(123)(_ * 2)
 ```
-
-This ties in with our understanding of functors and monads
-as sequencing type classes.
-Each type class allows us to sequence operations
-ignoring some kind of complication.
-In the case of `Id` there is no complication,
-making `map` and `flatMap` the same thing.
-
-Notice that we haven't had to write type annotations
-in the method bodies above.
-The compiler is able to interpret values of type `A` as `Id[A]` and vice versa
-by the context in which they are used.
-
-The only restriction we've seen to this is that Scala cannot unify
-types and type constructors when searching for given instances.
-Hence our need to re-type `Int` as `Id[Int]`
-in the call to `sumSquare` at the opening of this section:
-
-```scala mdoc:silent
-sumSquare(3 : Id[Int], 4 : Id[Int])
-```
 ]
+
+The `Id` monad does find occasional use in highly generic code,
+but I think it is more useful as a tool for understanding monads in general.
+Remember we said a monad is a tool for sequencing computations.
+When we write
+
+```scala
+a.flatMap(b)
+```
+
+we are saying that `b` occurs after `a`,
+subject to whatever complications the concrete monad and `a` might introduce.
+In other words, monads express control flow.
+Our programming languages already have built-in ways of expressing control flow.
+In Scala, like most languages, control flow goes top-to-bottom and left-to-right.
+We can think of this as an "ambient" monad,
+a monad that conceptually exists but we don't work with directly.
+When we write
+
+```scala mdoc
+1 + 2
+```
+
+we can instead express it in monadic terms as
+
+```scala mdoc
+Id(1).flatMap(_ + 2)
+```
+
+This shows us that monads are reifying control flow,
+making it explicit.
+This in turn puts the control flow
+under the control of the monad,
+which allows, for example, the error handling behaviour we saw with `Option`.
