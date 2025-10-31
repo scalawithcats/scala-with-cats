@@ -16,6 +16,14 @@
 #show raw.where(block: true): set block(fill: rgb("F7F7F7"), inset: 8pt, width: 100%)
 #show raw.where(block: true): set text(size: 8pt)
 
+// Table styling
+#set table(
+    inset: 8pt,
+    stroke: (_, y) => if y >= 0 { (top: 0.8pt) }
+)
+#show table.cell: set align(start)
+#show table.cell.where(y: 0): set text(weight: "bold")
+
 
 // Front matter
 #include "parts/frontmatter.typ"

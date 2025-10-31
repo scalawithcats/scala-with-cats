@@ -3,20 +3,20 @@
 <sec:monads:eval>
 
 
-[`cats.Eval`][cats.Eval] is a monad that allows us to
-abstract over different _models of evaluation_.
-We typically talk of two such models: _eager_ and _lazy_,
-also called _call-by-value_ and _call-by-name_ respectively.
-`Eval` also allows for a result to be _memoized_,
-which gives us _call-by-need_ evaluation.
+`cats.Eval` is a monad that allows us to
+abstract over different *models of evaluation*.
+We first met this concept, also known as evaluation strategies, in @sec:codata-structural.
+We typically talk of two such models: *eager* and *lazy*,
+also called *call-by-value* and *call-by-name* respectively.
+`Eval` also allows for a result to be *memoized*,
+which gives us *call-by-need* evaluation.
 
-`Eval` is also _stack-safe_,
+`Eval` is also *stack-safe*,
 which means we can use it in very deep recursions
 without blowing up the stack.
 
 
 === Eager, Lazy, Memoized, Oh My!
-
 
 What do these terms for models of evaluation mean?
 Let's see some examples.
@@ -26,7 +26,7 @@ We can see the evaluation model using
 a computation with a visible side-effect.
 In the following example,
 the code to compute the value of `x`
-happens at place where it is defined
+happens at the place where it is defined
 rather than on access.
 Accessing `x` recalls the stored value
 without re-running the code.
@@ -43,7 +43,7 @@ x // second access
 
 This is an example of call-by-value evaluation:
 
-- the computation is evaluated at point where it is defined (eager); and
+- the computation is evaluated at the point where it is defined (eager); and
 - the computation is evaluated once (memoized).
 
 
@@ -100,8 +100,7 @@ The final combination, eager and not memoized, is not possible.
 
 
 === Eval's Models of Evaluation
-
-
+fs
 `Eval` has three subtypes: `Now`, `Always`, and `Later`.
 They correspond to call-by-value, call-by-name, and call-by-need respectively.
 We construct these with three constructor methods,
@@ -172,17 +171,17 @@ z.value // second access
 ```
 
 
-The three behaviours are summarized below:
+The three behaviours are summarized below.
 
------------------------------------------------------------------------
-Scala              Cats                      Properties
------------------- ------------------------- --------------------------
-`val`              `Now`                     eager, memoized
-
-`def`              `Always`                  lazy, not memoized
-
-`lazy val`         `Later`                   lazy, memoized
------------------- ------------------------- --------------------------
+#align(center)[
+    #table(
+        columns: (auto, auto, auto),
+        table.header([*Scala*], [*Cats*], [*Properties*]),
+        [`val`], [`Now`], [eager, memoized],
+        [`def`], [`Always`], [lazy, not memoized],
+        [`lazy val`], [`Later`], [lazy, memoized]
+    )
+]
 
 === Eval as a Monad
 

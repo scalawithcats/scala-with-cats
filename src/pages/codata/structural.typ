@@ -1,5 +1,6 @@
 #import "../stdlib.typ": info, warning, solution, exercise
 == Structural Recursion and Corecursion for Codata
+<sec:codata-structural>
 
 
 In this section we'll build a library for streams, also known as lazy lists. These are the codata equivalent of lists. Whereas a list must have a finite length, streams have an infinite length. We'll use this example to explore structural recursion and structural corecursion as applied to codata.
@@ -582,13 +583,13 @@ twos.take(5)
 
 We get the same result whether we use a method or a `lazy val`, because we are assuming that we are only dealing with pure computations that have no dependency on state that might change. In this case a `lazy val` simply consumes additional space to save on time.
 
-Recomputing a result every time it is needed is known as *call by name*, while caching the result the first time it is computed is known as *call by need*. These two different *evaluation strategies* can be applied to individual values, as we've done here, or across an entire programming. Haskell, for example, uses call by need; all values in Haskell are only computed the first time they are needed. Call by need is also commonly known as *lazy evaluation*. Another alternative, called *call by value*, computes results when they are defined instead of waiting until they are needed. This is the default in Scala.
+Recomputing a result every time it is needed is known as *call-by-name*, while caching the result the first time it is computed is known as *call-by-need*. These two different *evaluation strategies* can be applied to individual values, as we've done here, or across an entire programming. Haskell, for example, uses call-by-need; all values in Haskell are only computed the first time they are needed. call-by-need is also commonly known as *lazy evaluation*. Another alternative, called *call-by-value*, computes results when they are defined instead of waiting until they are needed. This is the default in Scala.
 
-We can illustrate the difference between call by name and call by need if we use an impure computation. 
+We can illustrate the difference between call-by-name and call-by-need if we use an impure computation. 
 For example, we can define a stream of random numbers.
 Random number generators depend on some internal state.
 
-Here's the call by name implementation, using the methods we have already defined.
+Here's the call-by-name implementation, using the methods we have already defined.
 
 ```scala mdoc:silent
 import scala.util.Random
@@ -605,7 +606,7 @@ randoms.take(5)
 randoms.take(5)
 ```
 
-Now let's define the same stream in a call by need style, using `lazy val`.
+Now let's define the same stream in a call-by-need style, using `lazy val`.
 
 ```scala mdoc:silent
 val randomsByNeed: Stream[Double] =
@@ -622,7 +623,7 @@ randomsByNeed.take(5)
 randomsByNeed.take(5)
 ```
 
-If we wanted a stream that had a different random number for each element but those numbers were constant, we could redefine `unfold` to use call by need.
+If we wanted a stream that had a different random number for each element but those numbers were constant, we could redefine `unfold` to use call-by-need.
 
 ```scala mdoc:silent
 def unfoldByNeed[A, B](seed: A, f: A => B, next: A => A): Stream[B] =
