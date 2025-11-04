@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, exercise, solution
 == Defining Custom Monads
 
 
@@ -33,13 +33,13 @@ val optionMonad = new Monad[Option] {
 
 The `tailRecM` method is an optimisation used in Cats to limit
 the amount of stack space consumed by nested calls to `flatMap`.
-The technique comes from a [2015 paper][link-phil-freeman-tailrecm]
-by PureScript creator Phil Freeman.
+The technique comes from a 2015 paper
+by PureScript creator Phil Freeman @freeman15:stack.
 The method should recursively call itself
 until the result of `fn` returns a `Right`.
 
 To motivate its use let's use the following example:
-Suppose we want to write a method that calls a
+suppose we want to write a method that calls a
 function until the function indicates it should stop.
 The function will return a monad instance because,
 as we know,
@@ -49,7 +49,7 @@ and many monads have some notion of stopping.
 We can write this method in terms of `flatMap`.
 
 ```scala mdoc:silent
-import cats.syntax.flatMap._ // For flatMap
+import cats.syntax.all.*
 
 def retry[F[_]: Monad, A](start: A)(f: A => F[A]): F[A] =
   f(start).flatMap{ a =>
@@ -61,8 +61,6 @@ Unfortunately it is not stack-safe.
 It works for small input.
 
 ```scala mdoc
-import cats.instances.option._
-
 retry(100)(a => if(a == 0) None else Some(a - 1))
 ```
 
@@ -77,8 +75,6 @@ We can instead rewrite this method
 using `tailRecM`.
 
 ```scala mdoc:silent
-import cats.syntax.functor._ // for map
-
 def retryTailRecM[F[_]: Monad, A](start: A)(f: A => F[A]): F[A] =
   Monad[F].tailRecM(start){ a =>
     f(a).map(a2 => Left(a2))
@@ -106,11 +102,11 @@ in terms of `iterateWhileM`
 and we don't have to explicitly call `tailRecM`.
 
 ```scala mdoc:silent
-import cats.syntax.monad._ // for iterateWhileM
-
 def retryM[F[_]: Monad, A](start: A)(f: A => F[A]): F[A] =
   start.iterateWhileM(f)(a => true)
 ```
+
+This implementation is stack-safe.
 
 ```scala mdoc
 retryM(100000)(a => if(a == 0) None else Some(a - 1))
@@ -123,25 +119,24 @@ tail-recursive implementations of `tailRecM`,
 although writing one for custom monads
 can be a challenge... as we shall see.
 
-=== Exercise: Branching out Further with Monads
 
+#exercise([Branching out Further with Monads])
 
 Let's write a `Monad` for our `Tree` data type from last chapter.
 Here's the type again:
 
 ```scala mdoc:silent
-sealed trait Tree[+A]
+enum Tree[+A] {
+  case Branch(left: Tree[A], right: Tree[A])
+  case Leaf(value: A) extends Tree[A]
+}
+object Tree {
+  def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
+    Branch(left, right)
 
-final case class Branch[A](left: Tree[A], right: Tree[A])
-  extends Tree[A]
-
-final case class Leaf[A](value: A) extends Tree[A]
-
-def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
-  Branch(left, right)
-
-def leaf[A](value: A): Tree[A] =
-  Leaf(value)
+  def leaf[A](value: A): Tree[A] =
+    Leaf(value)
+}
 ```
 
 Verify that the code works on instances of `Branch` and `Leaf`,
@@ -170,16 +165,16 @@ the non-tail-recursive solution falls out:
 ```scala mdoc:silent
 import cats.Monad
 
-implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
+given treeMonad: Monad[Tree] = new Monad[Tree] {
   def pure[A](value: A): Tree[A] =
-    Leaf(value)
+    Tree.Leaf(value)
 
   def flatMap[A, B](tree: Tree[A])
       (func: A => Tree[B]): Tree[B] =
     tree match {
-      case Branch(l, r) =>
-        Branch(flatMap(l)(func), flatMap(r)(func))
-      case Leaf(value)  =>
+      case Tree.Branch(l, r) =>
+        Tree.Branch(flatMap(l)(func), flatMap(r)(func))
+      case Tree.Leaf(value)  =>
         func(value)
     }
 
@@ -188,7 +183,7 @@ implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
       case Left(value) =>
         tailRecM(value)(func)
       case Right(value) =>
-        Leaf(value)
+        Tree.Leaf(value)
     }
   }
 }
@@ -205,33 +200,32 @@ maintaining an `open` list of nodes to visit
 and a `closed` list of nodes to use to reconstruct the tree:
 
 ```scala mdoc:invisible:reset-object
-sealed trait Tree[+A]
+enum Tree[+A] {
+  case Branch(left: Tree[A], right: Tree[A])
+  case Leaf(value: A) extends Tree[A]
+}
+object Tree {
+  def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
+    Branch(left, right)
 
-final case class Branch[A](left: Tree[A], right: Tree[A])
-  extends Tree[A]
-
-final case class Leaf[A](value: A) extends Tree[A]
-
-def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
-  Branch(left, right)
-
-def leaf[A](value: A): Tree[A] =
-  Leaf(value)
+  def leaf[A](value: A): Tree[A] =
+    Leaf(value)
+}
 ```
 ```scala mdoc:silent
 import cats.Monad
 import scala.annotation.tailrec
 
-implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
+given treeMonad: Monad[Tree] = new Monad[Tree] {
   def pure[A](value: A): Tree[A] =
-    Leaf(value)
+    Tree.Leaf(value)
 
   def flatMap[A, B](tree: Tree[A])
       (func: A => Tree[B]): Tree[B] =
     tree match {
-      case Branch(l, r) =>
-        Branch(flatMap(l)(func), flatMap(r)(func))
-      case Leaf(value)  =>
+      case Tree.Branch(l, r) =>
+        Tree.Branch(flatMap(l)(func), flatMap(r)(func))
+      case Tree.Leaf(value)  =>
         func(value)
     }
 
@@ -242,20 +236,20 @@ implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
           open: List[Tree[Either[A, B]]],
           closed: List[Option[Tree[B]]]): List[Tree[B]] =
       open match {
-        case Branch(l, r) :: next =>
+        case Tree.Branch(l, r) :: next =>
           loop(l :: r :: next, None :: closed)
 
-        case Leaf(Left(value)) :: next =>
+        case Tree.Leaf(Left(value)) :: next =>
           loop(func(value) :: next, closed)
 
-        case Leaf(Right(value)) :: next =>
+        case Tree.Leaf(Right(value)) :: next =>
           loop(next, Some(pure(value)) :: closed)
 
         case Nil =>
           closed.foldLeft(Nil: List[Tree[B]]) { (acc, maybeTree) =>
             maybeTree.map(_ :: acc).getOrElse {
               acc match {
-                case left :: right :: tail => branch(left, right) :: tail
+                case left :: right :: tail => Tree.Branch(left, right) :: tail
               }
             }
           }
@@ -270,22 +264,19 @@ Regardless of which version of `tailRecM` we define,
 we can use our `Monad` to `flatMap` and `map` on `Trees`:
 
 ```scala mdoc:silent
-import cats.syntax.functor._ // for map
-import cats.syntax.flatMap._ // for flatMap
-```
+import cats.syntax.all.*
 
-```scala mdoc
-branch(leaf(100), leaf(200)).
-  flatMap(x => branch(leaf(x - 1), leaf(x + 1)))
+Tree.Branch(Tree.Leaf(100), Tree.Leaf(200))
+  .flatMap(x => Tree.Branch(Tree.Leaf(x - 1), Tree.Leaf(x + 1)))
 ```
 
 We can also transform `Trees` using for comprehensions:
 
 ```scala mdoc
 for {
-  a <- branch(leaf(100), leaf(200))
-  b <- branch(leaf(a - 10), leaf(a + 10))
-  c <- branch(leaf(b - 1), leaf(b + 1))
+  a <- Tree.branch(Tree.Leaf(100), Tree.Leaf(200))
+  b <- Tree.branch(Tree.Leaf(a - 10), Tree.Leaf(a + 10))
+  c <- Tree.branch(Tree.Leaf(b - 1), Tree.Leaf(b + 1))
 } yield c
 ```
 
