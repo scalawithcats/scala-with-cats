@@ -153,6 +153,7 @@
 #include  "monads/state.typ"
 #include  "monads/custom-instances.typ"
 #include  "monads/summary.typ"
+// Monad transformers
 #include  "monad-transformers/index.typ"
 #include  "monad-transformers/summary.typ"
 // Applicative
