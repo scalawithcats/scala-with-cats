@@ -266,7 +266,7 @@ we can use our `Monad` to `flatMap` and `map` on `Trees`:
 ```scala mdoc:silent
 import cats.syntax.all.*
 
-Tree.Branch(Tree.Leaf(100), Tree.Leaf(200))
+Tree.branch(Tree.leaf(100), Tree.leaf(200))
   .flatMap(x => Tree.Branch(Tree.Leaf(x - 1), Tree.Leaf(x + 1)))
 ```
 
