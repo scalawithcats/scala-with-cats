@@ -1,9 +1,8 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, exercise, solution
 == The Reader Monad 
 <sec:monads:reader>
 
-
-[`cats.data.Reader`][cats.data.Reader] is a monad
+`cats.data.Reader` is a monad
 that allows us to sequence operations that depend on some input.
 Instances of `Reader` wrap up functions of one argument,
 providing us with useful methods for composing them.
@@ -22,11 +21,9 @@ and runs our program in the order specified.
 We can create a `Reader[A, B]` from a function `A => B`
 using the `Reader.apply` constructor:
 
-```scala mdoc:silent:reset-object
-import cats.data.Reader
-```
-
 ```scala mdoc
+import cats.data.Reader
+
 final case class Cat(name: String, favoriteFood: String)
 
 val catName: Reader[Cat, String] =
@@ -44,8 +41,8 @@ catName.run(Cat("Garfield", "lasagne"))
 So far so simple,
 but what advantage do `Readers` give us over the raw functions?
 
-=== Composing Readers
 
+=== Composing Readers
 
 The power of `Readers` comes from their `map` and `flatMap` methods,
 which represent different kinds of function composition.
@@ -55,7 +52,7 @@ combine them with `map` and `flatMap`,
 and then call `run` to inject the config at the end.
 
 The `map` method simply extends the computation in the `Reader`
-by passing its result through a function:
+by passing its result through a function.
 
 ```scala mdoc:silent
 val greetKitty: Reader[Cat, String] =
@@ -69,7 +66,7 @@ greetKitty.run(Cat("Heathcliff", "junk food"))
 The `flatMap` method is more interesting.
 It allows us to combine readers that depend on the same input type.
 To illustrate this, let's extend our greeting example
-to also feed the cat:
+to also feed the cat.
 
 ```scala mdoc:silent
 val feedKitty: Reader[Cat, String] =
@@ -87,8 +84,8 @@ greetAndFeed(Cat("Garfield", "lasagne"))
 greetAndFeed(Cat("Heathcliff", "junk food"))
 ```
 
-=== Exercise: Hacking on Readers
 
+#exercise([Hacking on Readers])
 
 The classic use of `Readers` is to build programs
 that accept a configuration as a parameter.
@@ -229,8 +226,8 @@ checkLogin(1, "zerocool").run(db)
 checkLogin(4, "davinci").run(db)
 ```
 
-=== When to Use Readers?
 
+=== When to Use Readers?
 
 `Readers` provide a tool for doing dependency injection.
 We write steps of our program as instances of `Reader`,
@@ -261,12 +258,10 @@ For more complicated problems where we have lots of dependencies,
 or where a program isn't easily represented as a pure function,
 other dependency injection techniques tend to be more appropriate.
 
-#warning[
-  _Kleisli Arrows_
-
+#info(title: [Kleisli Arrows])[
   You may have noticed from console output
   that `Reader` is implemented in terms of another type called `Kleisli`.
-  _Kleisli arrows_ provide a more general form of `Reader`
+  *Kleisli arrows* provide a more general form of `Reader`
   that generalise over the type constructor of the result type.
   We will encounter Kleislis again in @sec:monad-transformers.
 ]
