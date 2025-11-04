@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, exercise, solution
 == The Eval Monad 
 <sec:monads:eval>
 
@@ -309,8 +309,8 @@ It avoids consuming stack by creating a chain of function objects on the heap.
 There are still limits on how deeply we can nest computations,
 but they are bounded by the size of the heap rather than the stack.
 
-=== Exercise: Safer Folding using Eval
 
+#exercise([Safer Folding using Eval])
 
 The naive implementation of `foldRight` below is not stack safe.
 Make it so using `Eval`:
