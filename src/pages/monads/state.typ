@@ -1,31 +1,45 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, exercise, solution
 == The State Monad 
 <sec:monad:state>
 
 
-[`cats.data.State`][cats.data.State]
+`cats.data.State`
 allows us to pass additional state around as part of a computation.
 We define `State` instances representing atomic state operations
 and thread them together using `map` and `flatMap`.
 In this way we can model mutable state in a purely functional way,
 without using actual mutation.
 
-=== Creating and Unpacking State
 
+=== Creating and Unpacking State
 
 Boiled down to their simplest form,
 instances of `State[S, A]` represent functions of type `S => (S, A)`.
 `S` is the type of the state and `A` is the type of the result.
+In the example below, the state has type `Int`,
+and we return a `String` result computed from the state.
 
-```scala mdoc:silent
+```scala mdoc
 import cats.data.State
-```
 
-```scala mdoc:silent
 val a = State[Int, String]{ state =>
   (state, s"The state is $state")
 }
 ```
+
+#info(title: [State and IndexedStateT])[
+    You may have noticed the console output
+    reports a type of `IndexedStateT`
+    when we create an instance of `State`. 
+    Just like with `Writer` and `Reader`,
+    `State` is defined as a type alias of a more complicated type `IndexedStateT`:
+
+```scala
+type State[S, A] = IndexedStateT[Eval, S, S, A]
+```
+
+    We can ignore this more complicated type.
+]
 
 In other words, an instance of `State` is a function
 that does two things:
@@ -51,8 +65,8 @@ val justTheState = a.runS(10).value
 val justTheResult = a.runA(10).value
 ```
 
-=== Composing and Transforming State
 
+=== Composing and Transforming State
 
 As we've seen with `Reader` and `Writer`,
 the power of the `State` monad comes from combining instances.
@@ -60,13 +74,7 @@ The `map` and `flatMap` methods thread the state from one instance to another.
 Each individual instance represents an atomic state transformation,
 and their combination represents a complete sequence of changes:
 
-```scala mdoc:invisible:reset-object
-import cats.data.State
-val a = State[Int, String]{ state =>
-  (state, s"The state is $state")
-}
-```
-```scala mdoc:silent
+```scala mdoc:silent:nest
 val step1 = State[Int, String]{ num =>
   val ans = num + 1
   (ans, s"Result of step1: $ans")
@@ -83,14 +91,14 @@ val both = for {
 } yield (a, b)
 ```
 
+When we run this program
+we get the result of applying each step in sequence.
+State is threaded from step to step
+even though we don't interact with it in the for comprehension.
+
 ```scala mdoc
 val (state, result) = both.run(20).value
 ```
-
-As you can see, in this example the final state
-is the result of applying both transformations in sequence.
-State is threaded from step to step
-even though we don't interact with it in the for comprehension.
 
 The general model for using the `State` monad
 is to represent each step of a computation as an instance
@@ -104,32 +112,25 @@ Cats provides several convenience constructors for creating primitive steps:
   - `modify` updates the state using an update function.
 
 ```scala mdoc
-val getDemo = State.get[Int]
-getDemo.run(10).value
+State.get[Int].run(10).value
 
-val setDemo = State.set[Int](30)
-setDemo.run(10).value
+State.set[Int](30).run(10).value
 
-val pureDemo = State.pure[Int, String]("Result")
-pureDemo.run(10).value
+State.pure[Int, String]("Result").run(10).value
 
-val inspectDemo = State.inspect[Int, String](x => s"${x}!")
-inspectDemo.run(10).value
+State.inspect[Int, String](x => s"${x}!").run(10).value
 
-val modifyDemo = State.modify[Int](_ + 1)
-modifyDemo.run(10).value
+State.modify[Int](_ + 1).run(10).value
 ```
 
 We can assemble these building blocks using a for comprehension.
 We typically ignore the result of intermediate stages
-that only represent transformations on the state:
+that only represent transformations on the state.
 
-```scala mdoc:silent:reset-object
+```scala mdoc:silent:nest
 import cats.data.State
-import State._
-```
+import State.*
 
-```scala mdoc
 val program: State[Int, (Int, Int, Int)] = for {
   a <- get[Int]
   _ <- set[Int](a + 1)
@@ -137,12 +138,17 @@ val program: State[Int, (Int, Int, Int)] = for {
   _ <- modify[Int](_ + 1)
   c <- inspect[Int, Int](_ * 1000)
 } yield (a, b, c)
+```
 
+As we expect,
+the result is the composition of the individual stages.
+
+```scala mdoc
 val (state, result) = program.run(1).value
 ```
 
-=== Exercise: Post-Order Calculator
 
+#exercise([Post-Order Calculator])
 
 The `State` monad allows us to implement
 simple interpreters for complex expressions,
