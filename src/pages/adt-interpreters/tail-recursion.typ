@@ -203,6 +203,7 @@ isTailRecursive(100000)
 
 
 === Continuation-Passing Style
+<sec:interpreters:cps>
 
 Now that we know about tail calls, how do we convert the regular expression interpreter to use them? Any program can be converted to an equivalent program with all calls in tail position. This conversion is known as *continuation-passing style* or CPS for short. Our first step to understanding CPS is to understand *continuations*.
 

@@ -1,5 +1,5 @@
-#import "../stdlib.typ": info, warning, solution
-== Summary
+#import "../stdlib.typ": info, warning, solution, narrative-cite
+== Conclusions
 
 
 In this chapter we've seen monads up-close.
@@ -26,3 +26,5 @@ a functional programming library that is stack-safe by default.
 We don't need to understand `tailRecM` to understand monads,
 but having it around gives us benefits
 of which we can be grateful when writing monadic code.
+
+#narrative-cite(<wadler92:essence>) introduced monads to functional programming. It describes monads in terms of `bind` and `unit`, which in Scala we call `flatMap` and `pure` respectively. It has several examples of interpreters built using monads, and relates monads to continuation-passing style, which we first met in @sec:interpreters:cps.

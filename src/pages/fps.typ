@@ -152,7 +152,7 @@
 #include  "monads/reader.typ"
 #include  "monads/state.typ"
 #include  "monads/custom-instances.typ"
-#include  "monads/summary.typ"
+#include  "monads/conclusions.typ"
 // Monad transformers
 #include  "monad-transformers/index.typ"
 #include  "monad-transformers/summary.typ"
