@@ -39,18 +39,14 @@ def lookupUserName(id: Long): Either[Error, Option[String]] =
 
 This quickly becomes very tedious.
 
-== Exercise: Composing Monads
 
+== Composing Monads
 
 A question arises.
 Given two arbitrary monads,
 can we combine them in some way to make a single monad?
 That is, do monads _compose_?
 We can try to write the code but we soon hit problems:
-
-```scala mdoc:silent
-import cats.syntax.applicative.* // for pure
-```
 
 ```scala
 // Hypothetical example. This won't actually compile:
@@ -82,7 +78,7 @@ def flatMap[A, B](fa: Composed[A])
   fa.flatMap(_.fold[Composed[B]](None.pure[M1])(f))
 ```
 
-Notice that the definition above makes use of `None`---an
+Notice that the definition above makes use of `None`, an
 `Option`-specific concept that
 doesn't appear in the general `Monad` interface.
 We need this extra detail to combine `Option` with other monads.
@@ -94,8 +90,8 @@ each providing the extra knowledge we need
 to compose that monad with others.
 Let's look at some examples.
 
-== A Transformative Example
 
+== A Transformative Example
 
 Cats provides transformers for many monads,
 each named with a `T` suffix:
@@ -123,12 +119,9 @@ We can create instances of `ListOption`
 using the `OptionT` constructor,
 or more conveniently using `pure`:
 
-```scala mdoc:silent
-import cats.instances.list.*     // for Monad
-import cats.syntax.applicative.* // for pure
-```
-
 ```scala mdoc
+import cats.syntax.all.*
+
 val result1: ListOption[Int] = OptionT(List(Option(10)))
 
 val result2: ListOption[Int] = 32.pure[ListOption]
@@ -153,44 +146,8 @@ without having to recursively unpack
 and repack values at each stage in the computation.
 Now let's look at the API in more depth.
 
-#warning[
-*Complexity of Imports*
-
-The imports in the code samples above
-hint at how everything bolts together.
-
-We import #href("http://typelevel.org/cats/api/cats/syntax/package$$applicative$")[`cats.syntax.applicative`]
-to get the `pure` syntax.
-`pure` requires an implicit parameter of type `Applicative[ListOption]`.
-We haven't met `Applicatives` yet,
-but all `Monads` are also `Applicatives`
-so we can ignore that difference for now.
-
-In order to generate our `Applicative[ListOption]`
-we need instances of `Applicative` for `List` and `OptionT`.
-`OptionT` is a Cats data type so its instance
-is provided by its companion object.
-The instance for `List` comes from
-#href("http://typelevel.org/cats/api/cats/instances/package$$list$")[`cats.instances.list`].
-
-Notice we're not importing
-#href("http://typelevel.org/cats/api/cats/syntax/package$$functor$")[`cats.syntax.functor`] or
-#href("http://typelevel.org/cats/api/cats/syntax/package$$flatMap$")[`cats.syntax.flatMap`].
-This is because `OptionT` is a concrete data type
-with its own explicit `map` and `flatMap` methods.
-It wouldn't cause problems if we imported the syntax---the
-compiler would ignore it in favour of the explicit methods.
-
-Remember that we're subjecting ourselves to these shenanigans
-because we're stubbornly refusing to use the universal Cats import,
-#href("http://typelevel.org/cats/api/cats/implicits$.html")[`cats.implicits`].
-If we did use that import,
-all of the instances and syntax we needed would be in scope
-and everything would just work.
-]
 
 == Monad Transformers in Cats
-
 
 Each monad transformer is a data type,
 defined in #href("http://typelevel.org/cats/api/cats/data/")[`cats.data`],
@@ -205,8 +162,8 @@ to understand monad transformers are:
 - how to construct instances of a monad stack; and
 - how to pull apart a stack to access the wrapped monads.
 
-=== The Monad Transformer Classes
 
+=== The Monad Transformer Classes
 
 By convention, in Cats a monad `Foo`
 will have a transformer class called `FooT`.
@@ -235,8 +192,8 @@ Hence, we were creating `Readers` last chapter
 and seeing `Kleislis` on the console.
 ]
 
-=== Building Monad Stacks
 
+=== Building Monad Stacks
 
 All of these monad transformers follow the same convention.
 The transformer itself represents the _inner_ monad in a stack,
@@ -295,11 +252,11 @@ when we want to stack three or more monads.
 For example, let's create a `Future` of an `Either` of `Option`.
 Once again we build this from the inside out
 with an `OptionT` of an `EitherT` of `Future`.
-However, we can't define this in one line
+However, defining this in one line is harder
 because `EitherT` has three type parameters:
 
 ```scala
-case class EitherT[F[_], E, A](stack: F[Either[E, A]]) {
+final case class EitherT[F[_], E, A](stack: F[Either[E, A]]) {
   // etc...
 }
 ```
@@ -310,7 +267,7 @@ The three type parameters are as follows:
 - `E` is the error type for the `Either`;
 - `A` is the result type for the `Either`.
 
-This time we create an alias for `EitherT` that
+The simplest approach is to create an alias for `EitherT` that
 fixes `Future` and `Error` and allows `A` to vary:
 
 ```scala mdoc:silent
@@ -329,9 +286,7 @@ cut through three layers of abstraction:
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.*
-```
 
-```scala mdoc:silent
 val futureEitherOr: FutureEitherOption[Int] =
   for {
     a <- 10.pure[FutureEitherOption]
@@ -339,32 +294,44 @@ val futureEitherOr: FutureEitherOption[Int] =
   } yield a + b
 ```
 
-#warning[
-*Kind Projector*
+We can define `FutureEitherOption` in a single line if we use type lambdas in Scala 3.
 
-If you frequently find yourself
-defining multiple type aliases when building monad stacks,
-you may want to try
-the #href("https://github.com/typelevel/kind-projector")[Kind Projector] compiler plugin.
-Kind Projector enhances Scala's type syntax
-to make it easier to define partially applied type constructors.
-For example:
 
-```scala mdoc
-123.pure[[A] =>> EitherT[Option, String, A]]
+
+#info(title: [Type Lambdas])[
+    If you frequently find yourself
+    defining multiple type aliases when building monad stacks,
+    you may want to try Scala 3's type lambdas.
+    In Scala 2.13
+    you can use the #href("https://github.com/typelevel/kind-projector")[Kind Projector] compiler plugin
+    to get the same functionality with slightly different syntax.
+
+    Type lambdas make it more compact to define partially applied type constructors.
+    For example we can write
+
+```scala mdoc:nest
+type FutureEitherOption[A] = OptionT[[A] =>> EitherT[Future, String, A], A]
 ```
 
-Kind Projector can't simplify all type declarations down to a single line,
-but it can reduce the number of intermediate type definitions
-needed to keep our code readable.
+    instead of the longer (but perhaps clearer!)
+
+```scala mdoc:nest
+type FutureEither[A] = EitherT[Future, String, A]
+
+type FutureEitherOption[A] = OptionT[FutureEither, A]
+```
 ]
+
 
 === Constructing and Unpacking Instances
 
-
 As we saw above, we can create transformed monad stacks
 using the relevant monad transformer's `apply` method
-or the usual `pure` syntax[^eithert-monad-error]:
+or the usual `pure` syntax#footnote[Cats provides an instance
+of `MonadError` for `EitherT`,
+allowing us to create instances
+using `raiseError` as well as `pure`.
+]:
 
 ```scala mdoc
 // Create using apply:
@@ -373,11 +340,6 @@ val errorStack1 = OptionT[ErrorOr, Int](Right(Some(10)))
 // Create using pure:
 val errorStack2 = 32.pure[ErrorOrOption]
 ```
-
-[^eithert-monad-error]: Cats provides an instance
-of `MonadError` for `EitherT`,
-allowing us to create instances
-using `raiseError` as well as `pure`.
 
 Once we've finished with a monad transformer stack,
 we can unpack it using its `value` method.
@@ -407,8 +369,8 @@ val stack = intermediate.value
 Await.result(stack, 1.second)
 ```
 
-=== Default Instances
 
+=== Default Instances
 
 Many monads in Cats are defined
 using the corresponding transformer and the `Id` monad.
@@ -431,8 +393,8 @@ For example, `OptionT` defines `getOrElse`,
 and `EitherT` defines `fold`, `bimap`, `swap`,
 and other useful methods.
 
-=== Usage Patterns
 
+=== Usage Patterns
 
 Widespread use of monad transformers is sometimes difficult
 because they fuse monads together in predefined ways.
