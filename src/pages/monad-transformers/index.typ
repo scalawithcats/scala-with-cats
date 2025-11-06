@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution, chapter, href
+#import "../stdlib.typ": info, warning, exercise, solution, chapter, href
 #chapter[Monad Transformers] <sec:monad-transformers>
 
 
@@ -171,19 +171,19 @@ In fact, many monads in Cats are defined
 by combining a monad transformer with the `Id` monad.
 Concretely, some of the available instances are:
 
-- #href("http://typelevel.org/cats/api/cats/data/OptionT.html")[`cats.data.OptionT`] for `Option`;
-- #href("http://typelevel.org/cats/api/cats/data/EitherT.html")[`cats.data.EitherT`] for `Either`;
-- #href("http://typelevel.org/cats/api/cats/data/?search=reader#ReaderT[F[_],A,B]=cats.data.Kleisli[F,A,B]")[`cats.data.ReaderT`] for `Reader`;
-- #href("http://typelevel.org/cats/api/cats/data/WriterT.html")[`cats.data.WriterT`] for `Writer`;
-- #href("http://typelevel.org/cats/api/cats/data/StateT.html")[`cats.data.StateT`] for `State`;
-- #href("http://typelevel.org/cats/api/cats/data/IdT.html")[`cats.data.IdT`] for the #href("http://typelevel.org/cats/api/cats/Id.html")[`Id`] monad.
+- `cats.data.OptionT` for `Option`;
+- `cats.data.EitherT` for `Either`;
+- `cats.data.ReaderT` for `Reader`;
+- `cats.data.WriterT` for `Writer`;
+- `cats.data.StateT` for `State`;
+- `cats.data.IdT` for the `Id` monad.
 
 #info(title: [Kleisli Arrows])[
 In @sec:monads:reader
 we mentioned that the `Reader` monad was a specialisation
 of a more general concept called a "kleisli arrow",
 represented in Cats as
-#href("http://typelevel.org/cats/api/cats/data/Kleisli.html")[`cats.data.Kleisli`].
+`cats.data.Kleisli`.
 
 We can now reveal that `Kleisli` and `ReaderT`
 are, in fact, the same thing!
@@ -216,7 +216,7 @@ type ListOption[A] = OptionT[List, A]
 ```
 
 Many monads and all transformers have at least two type parameters,
-so we often have to define type aliases for intermediate stages.
+so we often end up defining type aliases for intermediate stages.
 
 For example, suppose we want to wrap `Either` around `Option`.
 `Option` is the innermost type
@@ -224,8 +224,8 @@ so we want to use the `OptionT` monad transformer.
 We need to use `Either` as the first type parameter.
 However, `Either` itself has two type parameters
 and monads only have one.
-We need a type alias
-to convert the type constructor to the correct shape:
+We can use a type alias
+to convert the type constructor to the correct shape.
 
 ```scala mdoc:silent
 // Alias Either to a type constructor with one parameter:
@@ -237,7 +237,7 @@ type ErrorOrOption[A] = OptionT[ErrorOr, A]
 
 `ErrorOrOption` is a monad, just like `ListOption`.
 We can use `pure`, `map`, and `flatMap` as usual
-to create and transform instances:
+to create and transform instances.
 
 ```scala mdoc
 val a = 10.pure[ErrorOrOption]
@@ -268,7 +268,7 @@ The three type parameters are as follows:
 - `A` is the result type for the `Either`.
 
 The simplest approach is to create an alias for `EitherT` that
-fixes `Future` and `Error` and allows `A` to vary:
+fixes `Future` and `Error` but allows `A` to vary.
 
 ```scala mdoc:silent
 import scala.concurrent.Future
@@ -280,7 +280,7 @@ type FutureEitherOption[A] = OptionT[FutureEither, A]
 
 Our mammoth stack now composes three monads
 and our `map` and `flatMap` methods
-cut through three layers of abstraction:
+cut through three layers of abstraction.
 
 ```scala mdoc:silent
 import scala.concurrent.Await
@@ -293,9 +293,6 @@ val futureEitherOr: FutureEitherOption[Int] =
     b <- 32.pure[FutureEitherOption]
   } yield a + b
 ```
-
-We can define `FutureEitherOption` in a single line if we use type lambdas in Scala 3.
-
 
 
 #info(title: [Type Lambdas])[
@@ -331,7 +328,7 @@ or the usual `pure` syntax#footnote[Cats provides an instance
 of `MonadError` for `EitherT`,
 allowing us to create instances
 using `raiseError` as well as `pure`.
-]:
+].
 
 ```scala mdoc
 // Create using apply:
@@ -344,7 +341,7 @@ val errorStack2 = 32.pure[ErrorOrOption]
 Once we've finished with a monad transformer stack,
 we can unpack it using its `value` method.
 This returns the untransformed stack.
-We can then manipulate the individual monads in the usual way:
+We can then manipulate the individual monads in the usual way.
 
 ```scala mdoc
 // Extracting the untransformed monad stack:
@@ -357,7 +354,7 @@ errorStack2.value.map(_.getOrElse(-1))
 Each call to `value` unpacks a single monad transformer.
 We may need more than one call to completely unpack a large stack.
 For example, to `Await` the `FutureEitherOption` stack above,
-we need to call `value` twice:
+we need to call `value` twice.
 
 ```scala mdoc
 futureEitherOr
@@ -403,8 +400,12 @@ we can end up having to unpack and repack monads
 in different configurations
 to operate on them in different contexts.
 
-We can cope with this in multiple ways.
-One approach involves creating a single "super stack"
+The most practical solution is to forego monad transformers entirely,
+and use a single "super-monad" that combines several useful monads into one.
+This is the approach taken by so-called IO monads, such as #href("https://typelevel.org/cats-effect/")[Cats Effect].
+These monad types usually provide asynchronicity, error-handling, and more in one type.
+
+A similar approach is to create a single "super stack"
 and sticking to it throughout our code base.
 This works if the code is simple and largely uniform in nature.
 For example, in a web application,
@@ -478,8 +479,8 @@ the complexity of your code base, and so on.
 You may need to experiment and gather feedback from colleagues
 to determine whether monad transformers are a good fit.
 
-== Exercise: Monads: Transform and Roll Out
 
+#exercise[Monads: Transform and Roll Out]
 
 The Autobots, well-known robots in disguise,
 frequently send messages during battle
@@ -495,16 +496,15 @@ def getPowerLevel(autobot: String): Response[Int] =
 
 Transmissions take time in Earth's viscous atmosphere,
 and messages are occasionally lost
-due to satellite malfunction or sabotage by pesky Decepticons[^transformers].
-`Responses` are therefore represented as a stack of monads:
+due to satellite malfunction or sabotage by pesky Decepticons#footnote[
+It is a well known fact
+that Autobot neural nets are implemented in Scala.
+Decepticon brains are, of course, dynamically typed.
+]. `Responses` are therefore represented as a stack of monads:
 
 ```scala mdoc
 type Response[A] = Future[Either[String, A]]
 ```
-
-[^transformers]: It is a well known fact
-that Autobot neural nets are implemented in Scala.
-Decepticon brains are, of course, dynamically typed.
 
 Optimus Prime is getting tired of
 the nested for comprehensions in his neural matrix.

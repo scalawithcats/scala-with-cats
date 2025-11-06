@@ -155,7 +155,7 @@
 #include  "monads/conclusions.typ"
 // Monad transformers
 #include  "monad-transformers/index.typ"
-#include  "monad-transformers/summary.typ"
+#include  "monad-transformers/conclusions.typ"
 // Applicative
 #include  "applicatives/index.typ"
 #include  "applicatives/semigroupal.typ"

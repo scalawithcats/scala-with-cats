@@ -1,5 +1,5 @@
 #import "../stdlib.typ": info, warning, solution
-== Summary
+== Conclusions
 
 
 In this chapter we introduced monad transformers,
