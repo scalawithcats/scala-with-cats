@@ -16,17 +16,19 @@ return _all_ the errors to the user,
 not stop on the first error we encounter.
 If we model this with a monad like `Either`,
 we fail fast and lose errors.
-For example, the code below
-fails on the first call to `parseInt`
-and doesn't go any further:
+For example, consider `parseInt` below
+that represents errors with `Either`.
 
 ```scala mdoc:silent
-import cats.syntax.either.* // for catchOnly
+import cats.syntax.all.*
 
 def parseInt(str: String): Either[String, Int] =
   Either.catchOnly[NumberFormatException](str.toInt).
     leftMap(_ => s"Couldn't read $str")
 ```
+
+Uses of `parseInt` fail on the first call
+and don't go any further.
 
 ```scala mdoc
 for {
@@ -62,7 +64,7 @@ that support this pattern:
 
   - `Semigroupal` encompasses
     the notion of composing pairs of contexts.
-    Cats provides a #href("http://typelevel.org/cats/api/cats/syntax/package$$semigroupal$")[`cats.syntax.apply`] module
+    Cats provides syntax
     that makes use of `Semigroupal` and `Functor`
     to allow users to sequence functions with multiple arguments.
     
@@ -77,8 +79,8 @@ that support this pattern:
 
 Applicatives are often formulated in terms of function application,
 instead of the semigroupal formulation that is emphasised in Cats.
-This alternative formulation provides a link
-to other libraries and languages such as Scalaz and Haskell.
+This alternative formulation provides a link to much of the published research,
+and to other languages such as Haskell.
 We'll take a look at different formulations of Applicative,
 as well as the relationships between
 `Semigroupal`, `Functor`, `Applicative`, and `Monad`,
