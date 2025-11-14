@@ -162,7 +162,7 @@
 #include  "applicatives/examples.typ"
 #include  "applicatives/parallel.typ"
 #include  "applicatives/applicative.typ"
-#include  "applicatives/summary.typ"
+#include  "applicatives/conclusions.typ"
 // Parallel
 // Traverse
 #include  "foldable-traverse/index.typ"

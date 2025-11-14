@@ -1,26 +1,18 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, narrative-cite
 == Apply and Applicative
 
 
 Semigroupals aren't mentioned frequently
 in the wider functional programming literature.
 They provide a subset of the functionality of a related type class
-called an _applicative functor_ ("applicative" for short).
-
-`Semigroupal` and `Applicative` effectively provide
-alternative encodings of the same notion of joining contexts.
-Both encodings are introduced in
-the [same 2008 paper][link-applicative-programming]
-by Conor McBride and Ross Paterson[^semigroupal-monoidal].
-
-[^semigroupal-monoidal]: Semigroupal is referred to as "monoidal" in the paper.
+called an *applicative functor* ("applicative" for short).
 
 Cats models applicatives using two type classes.
-The first, [`cats.Apply`][cats.Apply],
+The first, `cats.Apply`,
 extends `Semigroupal` and `Functor`
 and adds an `ap` method that applies a parameter
 to a function within a context.
-The second, [`cats.Applicative`][cats.Applicative],
+The second, `cats.Applicative`,
 extends `Apply` and adds the `pure` method
 introduced in @sec:monads.
 Here's a simplified definition in code:
@@ -63,16 +55,12 @@ With the introduction of `Apply` and `Applicative`,
 we can zoom out and see a whole family of type classes
 that concern themselves with sequencing computations in different ways.
 @fig:applicatives:hierarchy shows
-the relationship between the type classes covered in this book[^cats-infographic].
+the relationship between the type classes covered in this book.
 
 #figure(
     image("hierarchy.png"),
     caption: [Monad type class hierarchy]
 )<fig:applicatives:hierarchy>
-
-[^cats-infographic]: See
-[Rob Norris' infographic][link-cats-infographic]
-for a the complete picture.
 
 Each type class in the hierarchy
 represents a particular set of sequencing semantics,
@@ -135,7 +123,7 @@ on the computations they model,
 applicatives and semigroupals impose no such restriction.
 This puts them in a different sweet spot in the hierarchy.
 We can use them to represent
-classes of parallel / independent computations
+classes of independent computations
 that monads cannot.
 
 We choose our semantics by choosing our data structures.

@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, exercise, solution
 == Parallel
 
 
@@ -16,29 +16,31 @@ for certain monads.
 
 We've seen how the `product` method on `Either`
 stops at the first error.
+If we define some `Left` instances of `Either`
 
 ```scala mdoc:silent
 import cats.Semigroupal
-import cats.instances.either._ // for Semigroupal
 
 type ErrorOr[A] = Either[Vector[String], A]
 val error1: ErrorOr[Int] = Left(Vector("Error 1"))
 val error2: ErrorOr[Int] = Left(Vector("Error 2"))
 ```
 
+and then call `product` on them
+
 ```scala mdoc
 Semigroupal[ErrorOr].product(error1, error2)
 ```
+
+we see we only get the one `Left`.
 
 We can also write this
 using `tupled`
 as a short-cut.
 
 ```scala mdoc:silent
-import cats.syntax.apply._ // for tupled
-import cats.instances.vector._ // for Semigroup on Vector
-```
-```scala mdoc
+import cats.syntax.all.* 
+
 (error1, error2).tupled
 ```
 
@@ -46,9 +48,6 @@ To collect all the errors
 we simply replace `tupled` with its "parallel" version
 called `parTupled`.
 
-```scala mdoc:silent
-import cats.syntax.parallel._ // for parTupled
-```
 ```scala mdoc
 (error1, error2).parTupled
 ```
@@ -56,37 +55,42 @@ import cats.syntax.parallel._ // for parTupled
 Notice that both errors are returned! 
 This behaviour is not special to using `Vector` as the error type.
 Any type that has a `Semigroup` instance will work.
-For example, here we use `List` instead.
+For example, we can use a use `List` instead
 
 ```scala mdoc:silent
-import cats.instances.list._ // for Semigroup on List
-
 type ErrorOrList[A] = Either[List[String], A]
 val errStr1: ErrorOrList[Int] = Left(List("error 1"))
 val errStr2: ErrorOrList[Int] = Left(List("error 2"))
 ```
-```scala mdoc
 
+and `parTupled` will collect all the errors as before.
+
+```scala mdoc
 (errStr1, errStr2).parTupled
 ```
 
 There are many syntax methods provided by `Parallel`
 for methods on `Semigroupal` and related types,
 but the most commonly used is `parMapN`.
-Here's an example of `parMapN` 
-in an error handling situation.
+
+Let's define some successes
 
 ```scala mdoc:silent
 val success1: ErrorOr[Int] = Right(1)
 val success2: ErrorOr[Int] = Right(2)
 val addTwo = (x: Int, y: Int) => x + y
 ```
+
+and see how we can use `parMapN` 
+to apply a function
+in an error handling situation.
+
 ```scala mdoc
 (error1, error2).parMapN(addTwo)
 (success1, success2).parMapN(addTwo)
 ```
 
-Let's dig into how `Parallel` works.
+It's time we looked into how `Parallel` works.
 The definition below is the core of `Parallel`.
 
 ```scala
@@ -106,7 +110,7 @@ This tells us if there is a `Parallel` instance for some type constructor `M` th
 - we can convert `M` to `F`.
 
 We haven't seen `~>` before. 
-It's a type alias for [`FunctionK`][cats.arrow.FunctionK] 
+It's a type alias for `cats.arrow.FunctionK` 
 and is what performs the conversion from `M` to `F`. 
 A normal function `A => B` converts values of type `A` to values of type `B`. 
 Remember that `M` and `F` are not types; they are type constructors. 
@@ -125,6 +129,9 @@ object optionToList extends FunctionK[Option, List] {
     }
 }
 ```
+
+We can use it like a function to perform the expected transformation.
+
 ```scala mdoc
 optionToList(Some(1))
 optionToList(None)
@@ -140,7 +147,7 @@ this is indeed the case.
 So in summary,
 `Parallel` allows us to take a type that has a monad instance
 and convert it to some related type 
-that instead has an applicative (or semigroupal) instance.
+that instead has an applicative (which is equivalent to `Semigroupal`) instance.
 This related type will have some useful alternate semantics.
 We've seen the case above where the related applicative for `Either`
 allows for accumulation of errors
@@ -150,8 +157,7 @@ Now we've seen `Parallel`
 it's time to finally learn about `Applicative`.
 
 
-==== Exercise: Parallel List
-
+#exercise[Parallel List]
 
 Does `List` have a `Parallel` instance? If so, what does the `Parallel` instance do?
 
@@ -162,9 +168,6 @@ instead of creating the cartesian product.
 
 We can see by writing a little bit of code.
 
-```scala mdoc:silent
-import cats.instances.list._
-```
 ```scala mdoc
 (List(1, 2), List(3, 4)).tupled
 (List(1, 2), List(3, 4)).parTupled
