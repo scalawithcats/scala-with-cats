@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, solution, narrative-cite
 == Summary
 
 
