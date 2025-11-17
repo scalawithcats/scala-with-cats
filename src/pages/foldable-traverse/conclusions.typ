@@ -1,6 +1,5 @@
 #import "../stdlib.typ": info, warning, solution
-== Summary
-
+== Conclusions
 
 In this chapter we were introduced to `Foldable` and `Traverse`,
 two type classes for iterating over sequences.

@@ -11,35 +11,32 @@ for a handful of Scala data types:
 
 We can summon instances as usual using `Foldable.apply`
 and call their implementations of `foldLeft` directly.
-Here is an example using `List`:
+Let's define an instance of `List`.
 
 ```scala mdoc:silent
-import cats.Foldable
-import cats.instances.list._ // for Foldable
-
 val ints = List(1, 2, 3)
 ```
 
+Here is an example using the `Foldable` instance on `List`.
+
 ```scala mdoc
+import cats.Foldable
+
 Foldable[List].foldLeft(ints, 0)(_ + _)
 ```
 
 Other sequences like `Vector` and `LazyList` work in the same way.
 Here is an example using `Option`,
-which is treated like a sequence of zero or one elements:
+which is treated like a sequence of zero or one elements.
 
 ```scala mdoc:silent
-import cats.instances.option._ // for Foldable
-
 val maybeInt = Option(123)
-```
 
-```scala mdoc
 Foldable[Option].foldLeft(maybeInt, 10)(_ * _)
 ```
 
-==== Folding Right
 
+==== Folding Right
 
 `Foldable` defines `foldRight` differently to `foldLeft`,
 in terms of the `Eval` monad:
@@ -49,37 +46,33 @@ def foldRight[A, B](fa: F[A], lb: Eval[B])
                      (f: (A, Eval[B]) => Eval[B]): Eval[B]
 ```
 
-Using `Eval` means folding is always _stack safe_,
+Using `Eval` means folding is always stack safe,
 even when the collection's default definition of `foldRight` is not.
 For example, the default implementation of `foldRight` for `LazyList` is not stack safe.
 The longer the lazy list, the larger the stack requirements for the fold.
 A sufficiently large lazy list will trigger a `StackOverflowError`:
 
-```scala mdoc:silent
-import cats.Eval
-import cats.Foldable
-
-def bigData = (1 to 100000).to(LazyList)
-```
-
 ```scala mdoc:fail:invisible
 // This example isn't printed... it's here to check the next code block is ok:
+val bigData = (1 to 100000).to(LazyList)
 bigData.foldRight(0L)(_ + _)
 ```
 
 ```scala
+val bigData = (1 to 100000).to(LazyList)
+
 bigData.foldRight(0L)(_ + _)
 // java.lang.StackOverflowError ...
 ```
 
-Using `Foldable` forces us to use stack safe operations,
-which fixes the overflow exception:
+Using `Foldable` forces us to use stack safe operations.
 
-```scala mdoc:silent
-import cats.instances.lazyList._ // for Foldable
+```scala mdoc:invisible
+val bigData = (1 to 100000).to(LazyList)
 ```
-
 ```scala mdoc:silent
+import cats.Eval
+
 val eval: Eval[Long] =
   Foldable[LazyList].
     foldRight(bigData, Eval.now(0L)) { (num, eval) =>
@@ -87,32 +80,35 @@ val eval: Eval[Long] =
     }
 ```
 
+This fixes the overflow exception.
+
 ```scala mdoc
 eval.value
 ```
+
 
 #info(title: [Stack Safety in the Standard Library])[
 
 Stack safety isn't typically an issue when using the standard library.
 The most commonly used collection types, such as `List` and `Vector`,
-provide stack safe implementations of `foldRight`:
+provide stack safe implementations of `foldRight`.
 
 ```scala mdoc
 (1 to 100000).toList.foldRight(0L)(_ + _)
 (1 to 100000).toVector.foldRight(0L)(_ + _)
 ```
 
-We've called out `Stream` because it is an exception to this rule.
+We've called out `LazyList` because it is an exception to this rule.
 Whatever data type we're using, though,
 it's useful to know that `Eval` has our back.
 ]
 
-==== Folding with Monoids
 
+==== Folding with Monoids
 
 `Foldable` provides us with
 a host of useful methods defined on top of `foldLeft`.
-Many of these are facsimiles of familiar methods from the standard library:
+Many of these are copies of familiar methods from the standard library:
 `find`, `exists`, `forall`, `toList`, `isEmpty`, `nonEmpty`, and so on:
 
 ```scala mdoc
@@ -125,84 +121,65 @@ In addition to these familiar methods,
 Cats provides two methods that make use of `Monoids`:
 
 - `combineAll` (and its alias `fold`) combines
-  all elements in the sequence using their `Monoid`;
+  all elements in the sequence using a `Monoid`;
 
 - `foldMap` maps a user-supplied function over the sequence
   and combines the results using a `Monoid`.
 
-For example, we can use `combineAll` to sum over a `List[Int]`:
-
-```scala mdoc:silent
-import cats.instances.int._ // for Monoid
-```
+For example, we can use `combineAll` to sum over a `List[Int]`.
 
 ```scala mdoc
 Foldable[List].combineAll(List(1, 2, 3))
 ```
 
 Alternatively, we can use `foldMap`
-to convert each `Int` to a `String` and concatenate them:
-
-```scala mdoc:silent
-import cats.instances.string._ // for Monoid
-```
+to convert each `Int` to a `String` and concatenate them.
 
 ```scala mdoc
 Foldable[List].foldMap(List(1, 2, 3))(_.toString)
 ```
 
-Finally, we can compose `Foldables`
-to support deep traversal of nested sequences:
+Finally, we can compose `Foldables` to work on nested sequences.
+Take `ints` below.
 
-```scala mdoc:invisible:reset-object
-import cats.Foldable
-import cats.instances.list._
-import cats.instances.int._
-import cats.instances.string._
-```
-```scala mdoc:silent
-import cats.instances.vector._ // for Monoid
-
+```scala mdoc:silent:nest
 val ints = List(Vector(1, 2, 3), Vector(4, 5, 6))
 ```
 
+Composing `Foldables` for `List` and `Vector` supports deep traversal on `ints`.
+
 ```scala mdoc
-(Foldable[List] compose Foldable[Vector]).combineAll(ints)
+(Foldable[List].compose(using Foldable[Vector])).combineAll(ints)
 ```
+
 
 ==== Syntax for Foldable
 
-
-Every method in `Foldable` is available in syntax form
-via #href("http://typelevel.org/cats/api/cats/syntax/package$$foldable$")[`cats.syntax.foldable`].
+Every method in `Foldable` is available in syntax form.
 In each case, the first argument to the method on `Foldable`
 becomes the receiver of the method call:
 
-```scala mdoc:silent
-import cats.syntax.foldable._ // for combineAll and foldMap
-```
-
 ```scala mdoc
+import cats.syntax.all.*
+
 List(1, 2, 3).combineAll
 
 List(1, 2, 3).foldMap(_.toString)
 ```
+
 
 #info(title: [Explicits over Implicits])[
 
 Remember that Scala will only use an instance of `Foldable`
 if the method isn't explicitly available on the receiver.
 For example, the following code will
-use the version of `foldLeft` defined on `List`:
+use the version of `foldLeft` defined on `List`
 
 ```scala mdoc
 List(1, 2, 3).foldLeft(0)(_ + _)
 ```
 
-whereas the following generic code will use `Foldable`:
-
-```scala mdoc:silent
-```
+whereas the following generic code will use `Foldable`.
 
 ```scala mdoc
 def sum[F[_]: Foldable](values: F[Int]): Int =

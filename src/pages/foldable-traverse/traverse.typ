@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": info, warning, exercise, solution
 == Traverse 
 <sec:traverse>
 
@@ -10,18 +10,18 @@ The `Traverse` type class is a higher level tool
 that leverages `Applicatives` to provide
 a more convenient, more lawful, pattern for iteration.
 
-=== Traversing with Futures
 
+=== Traversing with Futures
 
 We can demonstrate `Traverse` using
 the `Future.traverse` and `Future.sequence` methods in the Scala standard library.
 These methods provide `Future`-specific implementations of the traverse pattern.
 As an example, suppose we have a list of server hostnames
-and a method to poll a host for its uptime:
+and a method to poll a host for its uptime.
 
 ```scala mdoc:silent
-import scala.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent.*
+import scala.concurrent.duration.*
 import scala.concurrent.ExecutionContext.Implicits.global
 
 val hostnames = List(
@@ -40,7 +40,7 @@ because the result---a `List[Future[Int]]`---would
 contain more than one `Future`.
 We need to reduce the results to a single `Future`
 to get something we can block on.
-Let's start by doing this manually using a fold:
+Let's start by doing this manually using a fold.
 
 ```scala mdoc:silent
 val allUptimes: Future[List[Int]] =
@@ -54,20 +54,22 @@ val allUptimes: Future[List[Int]] =
   }
 ```
 
+Intuitively, we iterate over `hostnames`, call `func` for each item,
+and combine the results into a list.
+This produces a correct result.
+
 ```scala mdoc
 Await.result(allUptimes, 1.second)
 ```
 
-Intuitively, we iterate over `hostnames`, call `func` for each item,
-and combine the results into a list.
-This sounds simple, but the code is fairly unwieldy
+However, the code is fairly unwieldy
 because of the need to create and combine `Futures` at every iteration.
 We can improve on things greatly using `Future.traverse`,
-which is tailor-made for this pattern:
+which is tailor-made for this pattern.
 
 ```scala mdoc:invisible:reset-object
-import scala.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent.*
+import scala.concurrent.duration.*
 import scala.concurrent.ExecutionContext.Implicits.global
 
 val hostnames = List(
@@ -83,11 +85,14 @@ val allUptimes: Future[List[Int]] =
   Future.traverse(hostnames)(getUptime)
 ```
 
+This produces the same result as before,
+but the code is much clearer and more concise.
+
 ```scala mdoc
 Await.result(allUptimes, 1.second)
 ```
 
-This is much clearer and more concise---let's see how it works.
+Let's see how it works.
 If we ignore distractions like `CanBuildFrom` and `ExecutionContext`,
 the implementation of `Future.traverse` in the standard library looks like this:
 
@@ -109,12 +114,12 @@ and defining accumulators and combination functions.
 It gives us a clean high-level interface to do what we want:
 
 - start with a `List[A]`;
-- provide a function `A => Future[B]`;
+- provide a function `A => Future[B]`; and
 - end up with a `Future[List[B]]`.
 
 The standard library also provides another method, `Future.sequence`,
 that assumes we're starting with a `List[Future[B]]`
-and don't need to provide an identity function:
+and doesn't require us to provide a transformation function.
 
 ```scala
 object Future {
@@ -127,7 +132,7 @@ object Future {
 
 In this case the intuitive understanding is even simpler:
 
-- start with a `List[Future[A]]`;
+- start with a `List[Future[A]]`; and
 - end up with a `Future[List[A]]`.
 
 `Future.traverse` and `Future.sequence`
@@ -140,15 +145,15 @@ work with any standard Scala collection.
 
 Cats' `Traverse` type class generalises these patterns
 to work with any type of `Applicative`:
-`Future`, `Option`, `Validated`, and so on.
+`Future`, `Option`, `List`, and so on.
 We'll approach `Traverse` in the next sections in two steps:
 first we'll generalise over the `Applicative`,
 then we'll generalise over the sequence type.
 We'll end up with an extremely valuable tool that trivialises
 many operations involving sequences and other data types.
 
-=== Traversing with Applicatives
 
+=== Traversing with Applicatives
 
 If we squint, we'll see that we can rewrite `traverse`
 in terms of an `Applicative`.
@@ -158,12 +163,10 @@ Our accumulator from the example above:
 Future(List.empty[Int])
 ```
 
-is equivalent to `Applicative.pure`:
+can be generalized to a use of `Applicative.pure`.
 
 ```scala mdoc:silent
-import cats.Applicative
-import cats.instances.future._   // for Applicative
-import cats.syntax.applicative._ // for pure
+import cats.syntax.all.*
 
 List.empty[Int].pure[Future]
 ```
@@ -183,21 +186,22 @@ def oldCombine(
 }
 ```
 
-is now equivalent to `Semigroupal.combine`:
+can be rewritten to use `mapN`, another `Applicative` operation.
 
 ```scala mdoc:silent
-import cats.syntax.apply._ // for mapN
-
 // Combining accumulator and hostname using an Applicative:
-def newCombine(accum: Future[List[Int]],
-      host: String): Future[List[Int]] =
+def newCombine(
+    accum: Future[List[Int]],
+    host: String
+): Future[List[Int]] =
   (accum, getUptime(host)).mapN(_ :+ _)
 ```
 
 By substituting these snippets back into the definition of `traverse`
-we can generalise it to to work with any `Applicative`:
+we can generalise it to to work with any `Applicative`.
 
 ```scala mdoc:silent
+import cats.Applicative
 
 def listTraverse[F[_]: Applicative, A, B]
       (list: List[A])(func: A => F[B]): F[List[B]] =
@@ -210,11 +214,13 @@ def listSequence[F[_]: Applicative, B]
   listTraverse(list)(identity)
 ```
 
-We can use `listTraverse` to re-implement our uptime example:
+We can use `listTraverse` to re-implement our uptime example.
 
 ```scala mdoc:silent
 val totalUptime = listTraverse(hostnames)(getUptime)
 ```
+
+Once again, we get the same result.
 
 ```scala mdoc
 Await.result(totalUptime, 1.second)
@@ -223,14 +229,12 @@ Await.result(totalUptime, 1.second)
 or we can use it with other `Applicative` data types
 as shown in the following exercises.
 
-==== Exercise: Traversing with Vectors
 
+#exercise[Traversing with Vectors]
 
 What is the result of the following?
 
 ```scala mdoc:silent
-import cats.instances.vector._ // for Applicative
-
 listSequence(List(Vector(1, 2), Vector(3, 4)))
 ```
 
@@ -264,14 +268,12 @@ listSequence(List(Vector(1, 2), Vector(3, 4), Vector(5, 6)))
 ```
 ]
 
-==== Exercise: Traversing with Options
 
+#exercise[Traversing with Options]
 
 Here's an example that uses `Options`:
 
 ```scala mdoc:silent
-import cats.instances.option._ // for Applicative
-
 def process(inputs: List[Int]) =
   listTraverse(inputs)(n => if(n % 2 == 0) Some(n) else None)
 ```
@@ -298,15 +300,14 @@ process(List(1, 2, 3))
 ```
 ]
 
-==== Exercise: Traversing with Validated
 
+#exercise[Traversing with Validated]
 
 Finally, here is an example that uses `Validated`:
 
 ```scala mdoc:invisible:reset
 import cats.Applicative
-import cats.syntax.applicative._ // for pure
-import cats.syntax.apply._ // for mapN
+
 def listTraverse[F[_]: Applicative, A, B]
       (list: List[A])(func: A => F[B]): F[List[B]] =
   list.foldLeft(List.empty[B].pure[F]) { (accum, item) =>
@@ -315,7 +316,6 @@ def listTraverse[F[_]: Applicative, A, B]
 ```
 ```scala mdoc:silent
 import cats.data.Validated
-import cats.instances.list._ // for Monoid
 
 type ErrorsOr[A] = Validated[List[String], A]
 

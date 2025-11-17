@@ -27,11 +27,11 @@ for `List`, `Vector`, `Stream`, `Option`, `Either`,
 and a variety of other types.
 We can summon instances as usual using `Traverse.apply`
 and use the `traverse` and `sequence` methods
-as described in the previous section:
+as described in the previous section.
 
 ```scala mdoc:invisible
-import scala.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent.*
+import scala.concurrent.duration.*
 import scala.concurrent.ExecutionContext.Implicits.global
 
 val hostnames = List(
@@ -46,41 +46,25 @@ def getUptime(hostname: String): Future[Int] =
 
 ```scala mdoc:silent
 import cats.Traverse
-import cats.instances.future._ // for Applicative
-import cats.instances.list._   // for Traverse
 
 val totalUptime: Future[List[Int]] =
   Traverse[List].traverse(hostnames)(getUptime)
 ```
 
+We get the same result as before.
+
 ```scala mdoc
 Await.result(totalUptime, 1.second)
 ```
 
-```scala mdoc:silent
-val numbers = List(Future(1), Future(2), Future(3))
-
-val numbers2: Future[List[Int]] =
-  Traverse[List].sequence(numbers)
-```
-
-```scala mdoc
-Await.result(numbers2, 1.second)
-```
-
-There are also syntax versions of the methods,
-imported via #href("http://typelevel.org/cats/api/cats/syntax/package$$traverse$")[`cats.syntax.traverse`]:
+There are also syntax versions of the methods.
 
 ```scala mdoc:silent
-import cats.syntax.traverse._ // for sequence and traverse
-```
+import cats.syntax.all.*
 
-```scala mdoc
-val numbers3 = hostnames.traverse(getUptime)
-val numbers4 = numbers.sequence
-
-Await.result(numbers3, 1.second)
-Await.result(numbers4, 1.second)
+val numbers  = hostnames.traverse(getUptime)
+val numbers2 =
+  List(Future(1), Future(2), Future(3)).sequence
 ```
 
 As you can see, this is much more compact and readable

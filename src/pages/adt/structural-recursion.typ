@@ -1,6 +1,6 @@
 #import "../stdlib.typ": info, warning, solution, exercise
 == Structural Recursion
-
+<sec:adt:structural>
 
 Structural recursion is our second programming strategy. 
 Algebraic data types tell us how to create data given a certain structure.

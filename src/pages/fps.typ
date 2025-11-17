@@ -170,7 +170,7 @@
 #include  "foldable-traverse/foldable-cats.typ"
 #include  "foldable-traverse/traverse.typ"
 #include  "foldable-traverse/traverse-cats.typ"
-#include  "foldable-traverse/summary.typ"
+#include  "foldable-traverse/conclusions.typ"
 // Part 3: Interpreters
 #include  "parts/part3.typ"
 // Indexed Types
