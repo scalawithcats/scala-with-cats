@@ -1,5 +1,5 @@
 #import "../stdlib.typ": href, info, warning, solution
-== Summary
+== Conclusions
 
 
 Functors represent sequencing behaviours.

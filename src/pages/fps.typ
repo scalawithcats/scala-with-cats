@@ -140,7 +140,7 @@
 #include  "functors/contravariant-invariant.typ"
 #include  "functors/contravariant-invariant-cats.typ"
 #include  "functors/partial-unification.typ"
-#include  "functors/summary.typ"
+#include  "functors/conclusions.typ"
 // Monad
 #include  "monads/index.typ"
 #include  "monads/cats.typ"
