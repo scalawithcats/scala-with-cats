@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution
+#import "../stdlib.typ": narrative-cite, info, warning, solution
 == Conclusions
 
 In this chapter we were introduced to `Foldable` and `Traverse`,
@@ -21,12 +21,9 @@ for any `F` with an instance of `Traverse`
 and any `G` with an instance of `Applicative`.
 In terms of the reduction we get in lines of code,
 `Traverse` is one of the most powerful patterns in this book.
-We can reduce `folds` of many lines down to a single `foo.traverse`.
+We can reduce `folds` of many lines down to a single `traverse`.
 
------
-
-...and with that,
-we've finished all of the theory in this book.
-There's plenty more to come, though,
-as we put everything we've learned into practice
-in a series of in-depth case studies in Part II!
+As far as I know,
+the `Foldable` type class was cooked up by the Haskell community
+as a simple abstraction over the well known left- and right-folds.
+The `traverse` method, however, comes from #narrative-cite(<gibbons08:essence>).

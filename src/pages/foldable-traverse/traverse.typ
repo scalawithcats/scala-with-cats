@@ -307,6 +307,7 @@ Finally, here is an example that uses `Validated`:
 
 ```scala mdoc:invisible:reset
 import cats.Applicative
+import cats.syntax.all.*
 
 def listTraverse[F[_]: Applicative, A, B]
       (list: List[A])(func: A => F[B]): F[List[B]] =
