@@ -1050,3 +1050,267 @@ number = 1,
   volume = "19",
   doi = "10.1017/S0956796809007291",
 }
+
+@article{owen09:rere
+, title={Regular-Expression Derivatives Re-Examined}
+, volume=19
+, DOI={10.1017/S0956796808007090}
+, url={https://www.khoury.northeastern.edu/home/turon/re-deriv.pdf}
+, number=2
+, journal={Journal of Functional Programming}
+, author={OWENS , SCOTT and REPPY , JOHN and TURON , AARON}
+, year=2009
+, pages={173–190}
+}
+
+
+@article{brzozowski64:deriv,
+  title={Derivatives of Regular Expressions},
+  year=1964,
+  volume=11,
+  issue=4,
+  journal={Journal of the ACM (JACM)},
+  pages={481-494},
+  doi={10.1145/321239.321249},
+  author={Janusz A. Brzozowski}
+}
+
+ 
+@inproceedings{might11:parsing,
+  author       = {Matthew Might and
+                  David Darais and
+                  Daniel Spiewak},
+  editor       = {Manuel M. T. Chakravarty and
+                  Zhenjiang Hu and
+                  Olivier Danvy},
+  title        = {Parsing with Derivatives: a Functional Pearl},
+  booktitle    = {Proceeding of the 16th {ACM} {SIGPLAN} international conference on
+                  Functional Programming, {ICFP} 2011, Tokyo, Japan, September 19-21,
+                  2011},
+  pages        = {189--195},
+  publisher    = {{ACM}},
+  year         = 2011,
+  url          = {https://doi.org/10.1145/2034773.2034801},
+  doi          = {10.1145/2034773.2034801},
+  timestamp    = {Thu, 24 Jun 2021 16:19:30 +0200},
+  biburl       = {https://dblp.org/rec/conf/icfp/MightDS11.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{moseley23:deriv,
+author = {Moseley, Dan and Nishio, Mario and Perez Rodriguez, Jose and Saarikivi, Olli and Toub, Stephen and Veanes, Margus and Wan, Tiki and Xu, Eric},
+title = {Derivative Based Nonbacktracking Real-World Regex Matching with Backtracking Semantics},
+year = 2023,
+issue_date = {June 2023},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = 7,
+number = {PLDI},
+url = {https://doi.org/10.1145/3591262},
+doi = {10.1145/3591262},
+abstract = {We develop a new derivative based theory and algorithm for nonbacktracking regex matching that supports anchors and counting, preserves backtracking semantics, and can be extended with lookarounds. The algorithm has been implemented as a new regex backend in .NET and was extensively tested as part of the formal release process of .NET7. We present a formal proof of the correctness of the algorithm, which we believe to be the first of its kind concerning industrial implementations of regex matchers. The paper describes the complete foundation, the matching algorithm, and key aspects of the implementation involving a regex rewrite system, as well as a comprehensive evaluation over industrial case studies and other regex engines.},
+journal = {Proceedings of the ACM on Programming Languages},
+month = jun,
+articleno = 148,
+numpages = 24,
+keywords = {PCRE, automata, derivative, matching, regex, symbolic}
+}
+
+@article{varatalu25:re,
+    author = {Varatalu, Ian Erik and Veanes, Margus and Ernits, Juhan},
+    title = {RE#: High Performance Derivative-Based Regex Matching with Intersection, Complement, and Restricted Lookarounds},
+    year = 2025,
+    issue_date = {January 2025},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = 9,
+    number = {POPL},
+    url = {https://doi.org/10.1145/3704837},
+    doi = {10.1145/3704837},
+    abstract = {We present a tool and theory RE# for regular expression matching that is built on symbolic derivatives, does not use backtracking, and, in addition to the classical operators, also supports complement, intersection and restricted lookarounds. We develop the theory formally and show that the main matching algorithm has input-linear complexity both in theory as well as experimentally. We apply thorough evaluation on popular benchmarks that show that RE# is over 71\% faster than the next fastest regex engine in Rust on the baseline, and outperforms all state-of-the-art engines on extensions of the benchmarks often by several orders of magnitude.},
+    journal = {Proceedings of the ACM on Programming Languages},
+    month = jan,
+    articleno = 1,
+    numpages = 32,
+    keywords = {POSIX, automata, derivative, regex}
+    }
+
+@article{ager03:interpreter,
+  title={From interpreter to compiler and virtual machine: a functional derivation},
+  author={Ager, Mads Sig and Biernacki, Dariusz and Danvy, Olivier and Midtgaard, Jan},
+  journal={BRICS Report Series},
+  volume={10},
+  number={14},
+  month={March},
+  year={2003}
+}
+
+@article{bahr15:calculate
+, title={Calculating correct compilers}
+, volume=25
+, DOI={10.1017/S0956796815000180}
+, journal={Journal of Functional Programming}
+, author={BAHR
+, PATRICK and HUTTON
+, GRAHAM}
+, year=2015
+, pages={e14}}
+
+
+@inproceedings{ertl95:stack-caching,
+  author       = {M. Anton Ertl},
+  editor       = {David W. Wall},
+  title        = {Stack Caching for Interpreters},
+  booktitle    = {Proceedings of the {ACM} SIGPLAN'95 Conference on Programming Language
+                  Design and Implementation (PLDI), La Jolla, California, USA, June
+                  18-21, 1995},
+  pages        = {315--327},
+  publisher    = {{ACM}},
+  year         = {1995},
+  url          = {https://doi.org/10.1145/207110.207165},
+  doi          = {10.1145/207110.207165},
+  timestamp    = {Thu, 08 Jul 2021 16:04:02 +0200},
+  biburl       = {https://dblp.org/rec/conf/pldi/Ertl95.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{proebsting95:superoperators,
+  author       = {Todd A. Proebsting},
+  editor       = {Ron K. Cytron and
+                  Peter Lee},
+  title        = {Optimizing an {ANSI} {C} Interpreter with Superoperators},
+  booktitle    = {Conference Record of POPL'95: 22nd {ACM} {SIGPLAN-SIGACT} Symposium
+                  on Principles of Programming Languages, San Francisco, California,
+                  USA, January 23-25, 1995},
+  pages        = {322--332},
+  publisher    = {{ACM} Press},
+  year         = {1995},
+  url          = {https://doi.org/10.1145/199448.199526},
+  doi          = {10.1145/199448.199526},
+  timestamp    = {Tue, 06 Nov 2018 11:07:44 +0100},
+  biburl       = {https://dblp.org/rec/conf/popl/Proebsting95.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{casey03:superinstructions,
+  author       = {Kevin Casey and
+                  David Gregg and
+                  M. Anton Ertl and
+                  Andrew Nisbet},
+  editor       = {Andreas Krall},
+  title        = {Towards Superinstructions for Java Interpreters},
+  booktitle    = {Software and Compilers for Embedded Systems, 7th International Workshop,
+                  {SCOPES} 2003, Vienna, Austria, September 24-26, 2003, Proceedings},
+  series       = {Lecture Notes in Computer Science},
+  volume       = {2826},
+  pages        = {329--343},
+  publisher    = {Springer},
+  year         = {2003},
+  url          = {https://doi.org/10.1007/978-3-540-39920-9\_23},
+  doi          = {10.1007/978-3-540-39920-9\_23},
+  timestamp    = {Tue, 14 May 2019 10:00:53 +0200},
+  biburl       = {https://dblp.org/rec/conf/scopes/CaseyGEN03.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{ertl03:spei,
+  author       = {M. Anton Ertl and
+                  David Gregg},
+  title        = {The Structure and Performance of Efficient Interpreters},
+  journal      = {J. Instr. Level Parallelism},
+  volume       = {5},
+  year         = {2003},
+  url          = {http://www.jilp.org/vol5/v5paper12.pdf},
+  timestamp    = {Mon, 11 May 2020 22:59:10 +0200},
+  biburl       = {https://dblp.org/rec/journals/jilp/ErtlG03.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{bell73:threaded,
+  author       = {James R. Bell},
+  title        = {Threaded Code},
+  journal      = {Commun. {ACM}},
+  volume       = {16},
+  number       = {6},
+  pages        = {370--372},
+  year         = {1973},
+  url          = {https://doi.org/10.1145/362248.362270},
+  doi          = {10.1145/362248.362270},
+  timestamp    = {Wed, 27 Apr 2022 20:27:47 +0200},
+  biburl       = {https://dblp.org/rec/journals/cacm/Bell73.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{dewar75:indirect,
+  author       = {Robert B. K. Dewar},
+  title        = {Indirect Threaded Code},
+  journal      = {Commun. {ACM}},
+  volume       = {18},
+  number       = {6},
+  pages        = {330--331},
+  year         = {1975},
+  url          = {https://doi.org/10.1145/360825.360849},
+  doi          = {10.1145/360825.360849},
+  timestamp    = {Wed, 14 Nov 2018 10:22:32 +0100},
+  biburl       = {https://dblp.org/rec/journals/cacm/Dewar75.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{shi08:showdown,
+  author       = {Yunhe Shi and
+                  Kevin Casey and
+                  M. Anton Ertl and
+                  David Gregg},
+  title        = {Virtual machine showdown: Stack versus registers},
+  journal      = {{ACM} Trans. Archit. Code Optim.},
+  volume       = {4},
+  number       = {4},
+  pages        = {2:1--2:36},
+  year         = {2008},
+  url          = {https://doi.org/10.1145/1328195.1328197},
+  doi          = {10.1145/1328195.1328197},
+  timestamp    = {Sun, 19 Jan 2025 14:19:36 +0100},
+  biburl       = {https://dblp.org/rec/journals/taco/ShiCEG08.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{haas17:wasm,
+  author       = {Andreas Haas and
+                  Andreas Rossberg and
+                  Derek L. Schuff and
+                  Ben L. Titzer and
+                  Michael Holman and
+                  Dan Gohman and
+                  Luke Wagner and
+                  Alon Zakai and
+                  J. F. Bastien},
+  editor       = {Albert Cohen and
+                  Martin T. Vechev},
+  title        = {Bringing the web up to speed with WebAssembly},
+  booktitle    = {Proceedings of the 38th {ACM} {SIGPLAN} Conference on Programming
+                  Language Design and Implementation, {PLDI} 2017, Barcelona, Spain,
+                  June 18-23, 2017},
+  pages        = {185--200},
+  publisher    = {{ACM}},
+  year         = {2017},
+  url          = {https://doi.org/10.1145/3062341.3062363},
+  doi          = {10.1145/3062341.3062363},
+  timestamp    = {Wed, 23 Jun 2021 15:34:31 +0200},
+  biburl       = {https://dblp.org/rec/conf/pldi/HaasRSTHGWZB17.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{titzer22:in-place,
+  author       = {Ben L. Titzer},
+  title        = {A fast in-place interpreter for WebAssembly},
+  journal      = {Proc. {ACM} Program. Lang.},
+  volume       = {6},
+  number       = {{OOPSLA2}},
+  pages        = {646--672},
+  year         = {2022},
+  url          = {https://doi.org/10.1145/3563311},
+  doi          = {10.1145/3563311},
+  timestamp    = {Sun, 19 Jan 2025 14:47:44 +0100},
+  biburl       = {https://dblp.org/rec/journals/pacmpl/Titzer22.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
