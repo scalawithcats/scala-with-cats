@@ -12,14 +12,13 @@
 
 @inproceedings{lewis00:implicit,
 author = {Lewis, Jeffrey R. and Launchbury, John and Meijer, Erik and Shields, Mark B.},
-title = {Implicit parameters: dynamic scoping with static types},
+title = {Implicit Parameters: Dynamic Scoping with Static Types},
 year = {2000},
 isbn = {1581131259},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
 url = {https://doi.org/10.1145/325694.325708},
 doi = {10.1145/325694.325708},
-abstract = {This paper introduces a language feature, called implicit parameters, that provides dynamically scoped variables within a statically-typed Hindley-Milner framework. Implicit parameters are lexically distinct from regular identifiers, and are bound by a special with construct whose scope is dynamic, rather than static as with let. Implicit parameters are treated by the type system as parameters that are not explicitly declared, but are inferred from their use.We present implicit parameters within a small call-by-name λ-calculus. We give a type system, a type inference algorithm, and several semantics. We also explore implicit parameters in the wider settings of call-by-need languages with overloading, and call-by-value languages with effects. As a witness to the former, we have implemented implicit parameters as an extension of Haskell within the Hugs interpreter, which we use to present several motivating examples.},
 booktitle = {Proceedings of the 27th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
 pages = {108–118},
 numpages = {11},
@@ -36,7 +35,6 @@ publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
 url = {https://doi.org/10.1145/75277.75283},
 doi = {10.1145/75277.75283},
-abstract = {This paper presents type classes, a new approach to ad-hoc polymorphism. Type classes permit overloading of arithmetic operators such as multiplication, and generalise the “eqtype variables” of Standard ML. Type classes extend the Hindley/Milner polymorphic type system, and provide a new approach to issues that arise in object-oriented programming, bounded type quantification, and abstract data types. This paper provides an informal introduction to type classes, and defines them formally by means of type inference rules.},
 booktitle = {Proceedings of the 16th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
 pages = {60–76},
 numpages = {17},
@@ -47,26 +45,24 @@ series = {POPL '89}
 @InProceedings{stefan88:overloading,
 author="Kaes, Stefan",
 editor="Ganzinger, H.",
-title="Parametric overloading in polymorphic programming languages",
+title="Parametric Overloading in Polymorphic Programming Languages",
 booktitle="ESOP '88",
 year="1988",
 publisher="Springer Berlin Heidelberg",
 address="Berlin, Heidelberg",
 pages="131--144",
-abstract="The introduction of unrestricted overloading in languages with type systems based on implicit parametric polymorphism generally destroys the principal type property: namely that the type of every expression can uniformly be represented by a single type expression over some set of type variables. As a consequence, type inference in the presence of unrestricted overloading can become a NP-complete problem. In this paper we define the concept of parametric overloading as a restricted form of overloading which is easily combined with parametric polymorphism. Parametric overloading preserves the principal type property, thereby allowing the design of efficient type inference algorithms. We present sound type deduction systems, both for predefined and programmer defined overloading. Finally we state that parametric overloading can be resolved either statically, at compile time, or dynamically, during program execution.",
 isbn="978-3-540-38941-5"
 }
 
 @inproceedings{oliveira10:type-classes,
 author = {Oliveira, Bruno C.d.S. and Moors, Adriaan and Odersky, Martin},
-title = {Type classes as objects and implicits},
+title = {Type Classes as Objects and Implicits},
 year = {2010},
 isbn = {9781450302036},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
 url = {https://doi.org/10.1145/1869459.1869489},
 doi = {10.1145/1869459.1869489},
-abstract = {Type classes were originally developed in Haskell as a disciplined alternative to ad-hoc polymorphism. Type classes have been shown to provide a type-safe solution to important challenges in software engineering and programming languages such as, for example, retroactive extension of programs. They are also recognized as a good mechanism for concept-based generic programming and, more recently, have evolved into a mechanism for type-level computation.This paper presents a lightweight approach to type classes in object-oriented (OO) languages with generics using the CONCEPT pattern and implicits (a type-directed implicit parameter passing mechanism). This paper also shows how Scala's type system conspires with implicits to enable, and even surpass, many common extensions of the Haskell type class system, making Scala ideally suited for generic programming in the large.},
 booktitle = {Proceedings of the ACM International Conference on Object Oriented Programming Systems Languages and Applications},
 pages = {341–360},
 numpages = {20},
@@ -93,7 +89,7 @@ series = {FPCA '89}
 
 @article{krikava19:implicits,
 author = {K\v{r}ikava, Filip and Miller, Heather and Vitek, Jan},
-title = {Scala implicits are everywhere: a large-scale study of the use of Scala implicits in the wild},
+title = {Scala Implicits Are Everywhere: A Large-Scale Study of the Use of Scala Implicits in the Wild},
 year = {2019},
 issue_date = {October 2019},
 publisher = {Association for Computing Machinery},
@@ -102,8 +98,7 @@ volume = {3},
 number = {OOPSLA},
 url = {https://doi.org/10.1145/3360589},
 doi = {10.1145/3360589},
-abstract = {The Scala programming language offers two distinctive language features implicit parameters and implicit conversions, often referred together as implicits. Announced without fanfare in 2004, implicits have quickly grown to become a widely and pervasively used feature of the language. They provide a way to reduce the boilerplate code in Scala programs. They are also used to implement certain language features without having to modify the compiler. We report on a large-scale study of the use of implicits in the wild. For this, we analyzed 7,280 Scala projects hosted on GitHub, spanning over 8.1M call sites involving implicits and 370.7K implicit declarations across 18.7M lines of Scala code.},
-journal = {Proc. ACM Program. Lang.},
+journal = {Proceedings of the ACM on Programming Languages},
 month = {oct},
 articleno = {163},
 numpages = {28},
@@ -111,7 +106,7 @@ keywords = {Implicit parameters, Scala, corpora analysis, implicit conversions}
 }
 
 @article{oliveira10:generic,
-  title={Scala for generic programmers: Comparing Haskell and Scala support for generic programming}
+  title={Scala for Generic Programmers: Comparing Haskell and Scala Support for Generic Programming}
 , volume={20}
 , DOI={10.1017/S0956796810000171}
 , url={https://www.cambridge.org/core/journals/journal-of-functional-programming/article/scala-for-generic-programmers/223EB37E77EA36B27AE33A644DA70926}
@@ -133,7 +128,6 @@ volume = {2},
 number = {POPL},
 url = {https://doi.org/10.1145/3158130},
 doi = {10.1145/3158130},
-abstract = {Understanding a program entails understanding its context; dependencies, configurations and even implementations are all forms of contexts. Modern programming languages and theorem provers offer an array of constructs to define contexts, implicitly. Scala offers implicit parameters which are used pervasively, but which cannot be abstracted over. This paper describes a generalization of implicit parameters to implicit function types, a powerful way to abstract over the context in which some piece of code is run. We provide a formalization based on bidirectional type-checking that closely follows the semantics implemented by the Scala compiler. To demonstrate their range of abstraction capabilities, we present several applications that make use of implicit function types. We show how to encode the builder pattern, tagless interpreters, reader and free monads and we assess the performance of the monadic structures presented.},
 journal = {Proc. ACM Program. Lang.},
 month = {dec},
 articleno = {42},
@@ -173,13 +167,14 @@ keywords = {implicit parameters, Scala, Dotty}
 @TechReport{conley14:strategies,
   author          = {Conley, David},
   title           = {Learning Strategies as Metacognitive Factors: A Critical Review},
+  publisher       = {Educational Policy Improvement Center},
   institution     = {Educational Policy Improvement Center},
   date            = 2014,
   location     = {Eugene, OR}}
 
 @Article{macintyre14:metacognition,
   author          = {Tadhg E. MacIntyre and Eric R. Igou and Mark J. Campbell and Aidan P. Moran and James Matthews},
-  title           = {Metacognition and action: a new pathway to understanding social and cognitive aspects of expertise in sport},
+  title           = {Metacognition and Action: A New Pathway to Understanding Social and Cognitive Aspects of Expertise in Sport},
   journaltitle    = {Frontiers in Psychology},
   year            = 2014,
   volume       = 5,
@@ -199,7 +194,8 @@ keywords = {implicit parameters, Scala, Dotty}
 
 @PhdThesis{uesbeck19:human,
   author  = {Uesbeck, Phillip Merlin},
-  title   = {On the human factors impact of polyglot programming on programmer productivity},
+  title   = {On the Human Factors Impact of Polyglot Programming on Programmer Productivity},
+  publisher  = {University of Nevada, Las Vegas},
   school  = {University of Nevada, Las Vegas},
   year    = 2019,
   month   = {November},
@@ -261,18 +257,16 @@ url={https://ris.utwente.nl/ws/portalfiles/portal/6142049/meijer91functional.pdf
 
 @inproceedings{gibbons98:unfold,
 author = {Gibbons, Jeremy and Jones, Geraint},
-title = {The under-appreciated unfold},
+title = {The Under-appreciated Unfold},
 year = {1998},
 isbn = {1581130244},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
 url = {https://doi.org/10.1145/289423.289455},
 doi = {10.1145/289423.289455},
-abstract = {Folds are appreciated by functional programmers. Their dual, unfolds, are not new, but they are not nearly as well appreciated. We believe they deserve better. To illustrate, we present (indeed, we calculate) a number of algorithms for computing the breadth-first traversal of a tree. We specify breadth-first traversal in terms of level-order traversal, which we characterize first as a fold. The presentation as a fold is simple, but it is inefficient, and removing the inefficiency makes it no longer a fold. We calculate a characterization as an unfold from the characterization as a fold; this unfold is equally clear, but more efficient. We also calculate a characterization of breadth-first traversal directly as an unfold; this turns out to be the 'standard' queue-based algorithm.},
 booktitle = {Proceedings of the Third ACM SIGPLAN International Conference on Functional Programming},
 pages = {273–279},
 numpages = {7},
-keywords = {anamorphism, breadth-first, co-induction, fold, functional programing, level-order, program calculation, traversal, unfold},
 location = {Baltimore, Maryland, USA},
 series = {ICFP '98}
 }
@@ -312,6 +306,7 @@ abstract = {A new data type declaration mechanism of defining codatatypes is int
    type = {Directed Research Project},
    author = {Zachary Sullivan},
    title = {Exploring Codata: The Relation to Object-Orientation},
+   publisher = {University of Oregon, Computer and Information Sciences Department},
    institution = {University of Oregon, Computer and Information Sciences Department},
    number = {DRP-201905-Sullivan},
    month = 5,
@@ -336,9 +331,6 @@ abstract = {A new data type declaration mechanism of defining codatatypes is int
   url          = {https://arxiv.org/abs/2103.06913},
   eprinttype    = {arXiv},
   eprint       = {2103.06913},
-  timestamp    = {Thu, 14 Oct 2021 09:14:34 +0200},
-  biburl       = {https://dblp.org/rec/journals/corr/abs-2103-06913.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 
 @unpublished{kiselyov05:beyond,
@@ -400,7 +392,7 @@ series = {PPDP '01}
   title           = {What is generative art?},
   journaltitle    = {Digital Creativity},
   year            = 2009,
-  series       = 20,
+  number       = 20,
   volume       = {1-2},
   pages        = {21-46},
   doi = {10.1080/14626260902867915}
@@ -408,7 +400,7 @@ series = {PPDP '01}
 
 @Article{dorin12:generative,
   author          = {Alan Dorin and Jonathan McCabe and Jon McCormack and Gordon Monro and Mitchell Whitelaw},
-  title           = {A framework for understanding generative art},
+  title           = {A Framework for Understanding Generative Art},
   journaltitle    = {Digital Creativity},
   year            = 2012,
   series       = 23,
@@ -419,14 +411,13 @@ series = {PPDP '01}
 
 @inproceedings{leijen00:dsec,
 author = {Leijen, Daan and Meijer, Erik},
-title = {Domain specific embedded compilers},
+title = {Domain Specific Embedded Compilers},
 year = {2000},
 isbn = {1581132557},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
 url = {https://doi.org/10.1145/331960.331977},
 doi = {10.1145/331960.331977},
-abstract = {Domain-specific embedded languages (DSELs) expressed in higher-order, typed (HOT) languages provide a composable framework for domain-specific abstractions. Such a framework is of greater utility than a collection of stand-alone domain-specific languages. Usually, embedded domain specific languages are build on top of a set of domain specific primitive functions that are ultimately implemented using some form of foreign function call. We sketch a general design pattern/or embedding client-server style services into Haskell using a domain specific embedded compiler for the server's source language. In particular we apply this idea to implement Haskell/DB, a domain specific embdedded compiler that dynamically generates of SQL queries from monad comprehensions, which are then executed on an arbitrary ODBC database server.},
 booktitle = {Proceedings of the 2nd Conference on Domain-Specific Languages},
 pages = {109–122},
 numpages = {14},
@@ -437,13 +428,14 @@ series = {DSL '99}
 @TechReport{cheney03:first-class,
   author          = {Cheney, James and Hinze, Ralf},
   title           = {First-class Phantom Types},
+  publisher       = {Cornell University},
   institution     = {Cornell University},
   date            = 2003,
   url          = {https://ecommons.cornell.edu/server/api/core/bitstreams/6cf38000-1bc3-4572-b71f-9ddb06f3565c/content}}
 
 @inproceedings{hongwei03:grdc,
 author = {Xi, Hongwei and Chen, Chiyan and Chen, Gang},
-title = {Guarded recursive datatype constructors},
+title = {Guarded Recursive Datatype Constructors},
 year = {2003},
 isbn = {1581136285},
 publisher = {Association for Computing Machinery},
@@ -521,7 +513,7 @@ series = {POPL '03}
 
 @inproceedings{thibodeau16:indexed-codata,
 author = {Thibodeau, David and Cave, Andrew and Pientka, Brigitte},
-title = {Indexed codata types},
+title = {Indexed Codata Types},
 year = {2016},
 isbn = {9781450342193},
 publisher = {Association for Computing Machinery},
@@ -535,26 +527,6 @@ numpages = {13},
 keywords = {Logical frameworks, Functional programming, Dependent types, Coinduction},
 location = {Nara, Japan},
 series = {ICFP 2016}
-}
-
-@article{10.1145/3022670.2951929,
-author = {Thibodeau, David and Cave, Andrew and Pientka, Brigitte},
-title = {Indexed codata types},
-year = {2016},
-issue_date = {September 2016},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-volume = {51},
-number = {9},
-issn = {0362-1340},
-url = {https://doi.org/10.1145/3022670.2951929},
-doi = {10.1145/3022670.2951929},
-abstract = {Indexed data types allow us to specify and verify many interesting invariants about finite data in a general purpose programming language. In this paper we investigate the dual idea: indexed codata types, which allow us to describe data-dependencies about infinite data structures. Unlike finite data which is defined by constructors, we define infinite data by observations. Dual to pattern matching on indexed data which may refine the type indices, we define copattern matching on indexed codata where type indices guard observations we can make.  Our key technical contributions are three-fold: first, we extend Levy's call-by-push value language with support for indexed (co)data and deep (co)pattern matching; second, we provide a clean foundation for dependent (co)pattern matching using equality constraints; third, we describe a small-step semantics using a continuation-based abstract machine, define coverage for indexed (co)patterns, and prove type safety. This is an important step towards building a foundation where (co)data type definitions and dependent types can coexist.},
-journal = {SIGPLAN Not.},
-month = {sep},
-pages = {351–363},
-numpages = {13},
-keywords = {Logical frameworks, Functional programming, Dependent types, Coinduction}
 }
 
 @InProceedings{ostermann18:matrix,
@@ -571,7 +543,7 @@ keywords = {Logical frameworks, Functional programming, Dependent types, Coinduc
 
 @Unpublished{zhang22:decomposition,
   author          = {Weixin Zhang and Cristina David and Meng Wang},
-  title           = {Decomposition without regret},
+  title           = {Decomposition Without Regret},
   year            = 2022,
   url          = {https://arxiv.org/abs/2204.10411}}
 
@@ -647,27 +619,10 @@ keywords = {Logical frameworks, Functional programming, Dependent types, Coinduc
   pages={423–436},
   url={https://www.cambridge.org/core/journals/journal-of-functional-programming/article/data-types-a-la-carte/14416CB20C4637164EA9F77097909409}
 }
-@inproceedings{10.1145/2628136.2628138,
-author = {Gibbons, Jeremy and Wu, Nicolas},
-title = {Folding domain-specific languages: deep and shallow embeddings (functional Pearl)},
-year = {2014},
-isbn = {9781450328739},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/2628136.2628138},
-doi = {10.1145/2628136.2628138},
-abstract = {A domain-specific language can be implemented by embedding within a general-purpose host language. This embedding may be deep or shallow, depending on whether terms in the language construct syntactic or semantic representations. The deep and shallow styles are closely related, and intimately connected to folds; in this paper, we explore that connection.},
-booktitle = {Proceedings of the 19th ACM SIGPLAN International Conference on Functional Programming},
-pages = {339–347},
-numpages = {9},
-keywords = {folds, domain-specific languages, deep and shallow embedding},
-location = {Gothenburg, Sweden},
-series = {ICFP '14}
-}
 
 @article{gibbons14:folding,
   author = {Gibbons, Jeremy and Wu, Nicolas},
-  title = {Folding domain-specific languages: deep and shallow embeddings (functional Pearl)},
+  title = {Folding Domain-Specific Languages: Deep and Shallow Embeddings (Functional Pearl)},
   year = {2014},
   issue_date = {September 2014},
   publisher = {Association for Computing Machinery},
@@ -677,18 +632,15 @@ series = {ICFP '14}
   issn = {0362-1340},
   url = {https://doi.org/10.1145/2692915.2628138},
   doi = {10.1145/2692915.2628138},
-  abstract = {A domain-specific language can be implemented by embedding within a general-purpose host language. This embedding may be deep or shallow, depending on whether terms in the language construct syntactic or semantic representations. The deep and shallow styles are closely related, and intimately connected to folds; in this paper, we explore that connection.},
   journal = {SIGPLAN Not.},
   month = aug,
   pages = {339–347},
   numpages = {9},
-  keywords = {folds, domain-specific languages, deep and shallow embedding}
 }
-
 
 @inproceedings{scibior15:monads,
 author = {Scibior, Adam and Ghahramani, Zoubin and Gordon, Andrew D.},
-title = {Practical probabilistic programming with monads},
+title = {Practical Probabilistic Programming with Monads},
 year = {2015},
 isbn = {9781450338080},
 publisher = {Association for Computing Machinery},
@@ -698,7 +650,6 @@ doi = {10.1145/2804302.2804317},
 booktitle = {Proceedings of the 2015 ACM SIGPLAN Symposium on Haskell},
 pages = {165–176},
 numpages = {12},
-keywords = {probabilistic programming, monads, Monte Carlo, Haskell, Bayesian statistics},
 location = {Vancouver, BC, Canada},
 series = {Haskell '15}
 }
@@ -712,7 +663,7 @@ series = {Haskell '15}
 }
 
 @article{erwig06:pfp,
- title={FUNCTIONAL PEARLS: Probabilistic functional programming in Haskell},
+ title={Functional Pearls: Probabilistic Functional Programming in Haskell},
  volume={16},
  DOI={10.1017/S0956796805005721},
  number={1},
@@ -724,7 +675,7 @@ series = {Haskell '15}
 
 @article{scibor18:modular,
 author = {Scibior, Adam and Kammar, Ohad and Ghahramani, Zoubin},
-title = {Functional programming for modular Bayesian inference},
+title = {Functional Programming for Modular Bayesian Inference},
 year = {2018},
 issue_date = {September 2018},
 publisher = {Association for Computing Machinery},
@@ -772,7 +723,7 @@ numpages = {29},
 
 @article{duregard12:feat,
 author = {Dureg\r{a}rd, Jonas and Jansson, Patrik and Wang, Meng},
-title = {Feat: functional enumeration of algebraic types},
+title = {Feat: Functional Enumeration of Algebraic Types},
 year = {2012},
 issue_date = {December 2012},
 publisher = {Association for Computing Machinery},
@@ -782,12 +733,10 @@ number = {12},
 issn = {0362-1340},
 url = {https://doi.org/10.1145/2430532.2364515},
 doi = {10.1145/2430532.2364515},
-abstract = {In mathematics, an enumeration of a set S is a bijective function from (an initial segment of) the natural numbers to S. We define "functional enumerations" as efficiently computable such bijections. This paper describes a theory of functional enumeration and provides an algebra of enumerations closed under sums, products, guarded recursion and bijections. We partition each enumerated set into numbered, finite subsets.We provide a generic enumeration such that the number of each part corresponds to the size of its values (measured in the number of constructors). We implement our ideas in a Haskell library called testing-feat, and make the source code freely available. Feat provides efficient "random access" to enumerated values. The primary application is property-based testing, where it is used to define both random sampling (for example QuickCheck generators) and exhaustive enumeration (in the style of SmallCheck). We claim that functional enumeration is the best option for automatically generating test cases from large groups of mutually recursive syntax tree types. As a case study we use Feat to test the pretty-printer of the Template Haskell library (uncovering several bugs).},
-journal = {SIGPLAN Not.},
+journal = {ACM SIGPLAN Notices},
 month = sep,
 pages = {61–72},
 numpages = {12},
-keywords = {enumeration, memoisation, property-based testing}
 }
 
 @inproceedings{goldstein24:practice,
@@ -832,7 +781,7 @@ keywords = {enumeration, memoisation, property-based testing}
 
 @inproceedings{freeman06:jmock,
   author = {Freeman, Steve and Pryce, Nat},
-  title = {Evolving an embedded domain-specific language in Java},
+  title = {Evolving an Embedded Domain-Specific Language in Java},
   year = {2006},
   isbn = {159593491X},
   publisher = {Association for Computing Machinery},
@@ -864,7 +813,6 @@ keywords = {enumeration, memoisation, property-based testing}
   address = {New York, NY, USA},
   url = {https://doi.org/10.1145/3039895.3039898},
   doi = {10.1145/3039895.3039898},
-  abstract = {Recent years have seen a surge of interest in deep learning models that outperform other machine learning algorithms on benchmarks across many disciplines. Most existing deep learning libraries facilitate the development of neural nets by providing a mathematical framework that helps users implement their models more efficiently. This still represents a substantial investment of time and effort, however, when the intention is to compare a range of competing models quickly for a specific task. We present DEFIne, a fluent interface DSL for the specification, optimisation and evaluation of deep learning models. The fluent interface is implemented through method chaining. DEFIne is embedded in Python and is build on top of its most popular deep learning libraries, Keras and Theano. It extends these with common operations for data pre-processing and representation as well as visualisation of datasets and results. We test our framework on three benchmark tasks from different domains: heart disease diagnosis, hand-written digit recognition and weather forecast generation. Results in terms of accuracy, runtime and lines of code show that our DSL achieves equivalent accuracy and runtime to state-of-the-art models, while requiring only about 10 lines of code per application.},
   booktitle = {Proceedings of the 2nd International Workshop on Real World Domain Specific Languages},
   articleno = {3},
   numpages = {10},
@@ -882,7 +830,6 @@ keywords = {enumeration, memoisation, property-based testing}
   address = {New York, NY, USA},
   url = {https://doi.org/10.1145/3472749.3474744},
   doi = {10.1145/3472749.3474744},
-  abstract = {Data scientists have adopted a popular design pattern in programming called the fluent interface for composing data wrangling code. The fluent interface works by combining multiple transformations on a data table—or dataframes—with a single chain of expressions, which produces an output. Although fluent code promotes legibility, the intermediate dataframes are lost, forcing data scientists to unravel the chain through tedious code edits and re-execution. Existing tools for data scientists do not allow easy exploration or support understanding of fluent code. To address this gap, we designed a tool called Unravel that enables structural edits via drag-and-drop and toggle switch interactions to help data scientists explore and understand fluent code. Data scientists can apply simple structural edits via drag-and-drop and toggle switch interactions to reorder and (un)comment lines. To help data scientists understand fluent code, Unravel provides function summaries and always-on visualizations highlighting important changes to a dataframe. We discuss the design motivations behind Unravel and how it helps understand and explore fluent code. In a first-use study with 14 data scientists, we found that Unravel facilitated diverse activities such as validating assumptions about the code or data, exploring alternatives, and revealing function behavior.},
   booktitle = {The 34th Annual ACM Symposium on User Interface Software and Technology},
   pages = {198–207},
   numpages = {10},
@@ -895,7 +842,7 @@ keywords = {enumeration, memoisation, property-based testing}
   author = {K. A. Hawick},
   title = {Fluent Interfaces and Domain-Specific Languages for Graph Generation
   and Network Analysis Calculations},
-  booktitle = {Proc. Int. Conf. on Software Engineering (SE’13)},
+  booktitle = {Procceedings of the International Conference on Software Engineering (SE’13)},
   year = {2013},
   pages = {752-759},
   address = {Innsbruck, Austria},
@@ -924,28 +871,9 @@ keywords = {enumeration, memoisation, property-based testing}
   annote =  {Keywords: fluent API, type system, compilation, code generation}
 }
 
-
-@inproceedings{10.1145/3136040.3136041,
-author = {Nakamaru, Tomoki and Ichikawa, Kazuhiro and Yamazaki, Tetsuro and Chiba, Shigeru},
-title = {Silverchain: a fluent API generator},
-year = {2017},
-isbn = {9781450355247},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3136040.3136041},
-doi = {10.1145/3136040.3136041},
-abstract = {This paper presents a tool named Silverchain, which generates class definitions for a fluent API from the grammar of the API. A fluent API is an API that is used by method chaining and its grammar is a BNF-like set of rules that defines method chains accepted in type checking. Fluent APIs generated by Silverchain provide two styles of APIs: One is for building a chain by concatenating all method calls in series. The other is for building a chain from partial chains by passing child chains to method calls in the parent chain as their arguments. To generate such a fluent API, Silverchain first translates given grammar into a set of deterministic pushdown automata without ϵ-transitions, then encodes these automata into class definitions. Each constructed automata corresponds to a nonterminal in given grammar and recognizes symbol sequences produced from its corresponding nonterminal.},
-booktitle = {Proceedings of the 16th ACM SIGPLAN International Conference on Generative Programming: Concepts and Experiences},
-pages = {199–211},
-numpages = {13},
-keywords = {Fluent API, Embedded DSL},
-location = {Vancouver, BC, Canada},
-series = {GPCE 2017}
-}
-
 @article{nakamaru17:silverchain,
   author = {Nakamaru, Tomoki and Ichikawa, Kazuhiro and Yamazaki, Tetsuro and Chiba, Shigeru},
-  title = {Silverchain: a fluent API generator},
+  title = {Silverchain: A Fluent API Generator},
   year = {2017},
   issue_date = {December 2017},
   publisher = {Association for Computing Machinery},
@@ -955,7 +883,6 @@ series = {GPCE 2017}
   issn = {0362-1340},
   url = {https://doi.org/10.1145/3170492.3136041},
   doi = {10.1145/3170492.3136041},
-  abstract = {This paper presents a tool named Silverchain, which generates class definitions for a fluent API from the grammar of the API. A fluent API is an API that is used by method chaining and its grammar is a BNF-like set of rules that defines method chains accepted in type checking. Fluent APIs generated by Silverchain provide two styles of APIs: One is for building a chain by concatenating all method calls in series. The other is for building a chain from partial chains by passing child chains to method calls in the parent chain as their arguments. To generate such a fluent API, Silverchain first translates given grammar into a set of deterministic pushdown automata without ϵ-transitions, then encodes these automata into class definitions. Each constructed automata corresponds to a nonterminal in given grammar and recognizes symbol sequences produced from its corresponding nonterminal.},
   journal = {SIGPLAN Not.},
   month = oct,
   pages = {199–211},
@@ -965,7 +892,8 @@ series = {GPCE 2017}
 
 @MastersThesis{levy16:fluent,
   author          = {Tomer Levy},
-  title           = {A Fluent API for Automatic Generation of FLuent APIs in Java},
+  title           = {A Fluent API for Automatic Generation of Fluent APIs in Java},
+  publisher       = {Technion},
   institution     = {Technion},
   year            = 2016
 }
@@ -1015,7 +943,6 @@ publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
 url = {https://doi.org/10.1145/143165.143169},
 doi = {10.1145/143165.143169},
-abstract = {This paper explores the use monads to structure functional programs. No prior knowledge of monads or category theory is required.Monads increase the ease with which programs may be modified. They can mimic the effect of impure features such as exceptions, state, and continuations; and also provide effects not easily achieved with such features. The types of a program reflect which effects occur.The first section is an extended example of the use of monads. A simple interpreter is modified to support various extra features: error messages, state, output, and non-deterministic choice. The second section describes the relation between monads and the continuation-passing style. The third section sketches how monads are used in a compiler for Haskell that is written in Haskell.},
 booktitle = {Proceedings of the 19th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
 pages = {1–14},
 numpages = {14},
@@ -1025,7 +952,6 @@ series = {POPL '92}
 
 @article{mcbride08:applicative,
 title = "Applicative Programming with Effects",
-abstract = "In this article, we introduce Applicative functors – an abstract characterisation of an applicative style of effectful programming, weaker than Monads and hence more widespread. Indeed, it is the ubiquity of this programming pattern that drew us to the abstraction. We retrace our steps in this article, introducing the applicative pattern by diverse examples, then abstracting it to define the Applicative type class and introducing a bracket notation that interprets the normal application syntax in the idiom of an Applicative functor. Furthermore, we develop the properties of applicative functors and the generic operations they support. We close by identifying the categorical structure of applicative functors and examining their relationship both with Monads and with Arrow.",
 author = "Conor Mcbride and Ross Paterson",
 year = 2008,
 doi = "10.1017/S0956796807006326",
@@ -1051,16 +977,16 @@ number = 1,
   doi = "10.1017/S0956796809007291",
 }
 
-@article{owen09:rere
-, title={Regular-Expression Derivatives Re-Examined}
-, volume=19
-, DOI={10.1017/S0956796808007090}
-, url={https://www.khoury.northeastern.edu/home/turon/re-deriv.pdf}
-, number=2
-, journal={Journal of Functional Programming}
-, author={OWENS , SCOTT and REPPY , JOHN and TURON , AARON}
-, year=2009
-, pages={173–190}
+@article{owen09:rere,
+  title={Regular-Expression Derivatives Re-Examined},
+  volume=19,
+  DOI={10.1017/S0956796808007090},
+  url={https://www.khoury.northeastern.edu/home/turon/re-deriv.pdf},
+  number=2,
+  journal={Journal of Functional Programming},
+  author={Owens, Scott and Reppy, John and Turon, Aaron},
+  year=2009,
+  pages={173–190}
 }
 
 
@@ -1068,7 +994,7 @@ number = 1,
   title={Derivatives of Regular Expressions},
   year=1964,
   volume=11,
-  issue=4,
+  number=4,
   journal={Journal of the ACM (JACM)},
   pages={481-494},
   doi={10.1145/321239.321249},
@@ -1136,7 +1062,7 @@ keywords = {PCRE, automata, derivative, matching, regex, symbolic}
     }
 
 @article{ager03:interpreter,
-  title={From interpreter to compiler and virtual machine: a functional derivation},
+  title={From Interpreter to Compiler and Virtual Machine: A Functional Derivation},
   author={Ager, Mads Sig and Biernacki, Dariusz and Danvy, Olivier and Midtgaard, Jan},
   journal={BRICS Report Series},
   volume={10},
@@ -1150,12 +1076,10 @@ keywords = {PCRE, automata, derivative, matching, regex, symbolic}
 , volume=25
 , DOI={10.1017/S0956796815000180}
 , journal={Journal of Functional Programming}
-, author={BAHR
-, PATRICK and HUTTON
-, GRAHAM}
+, author={Bahr, Patrick and Hutton, Graham}
 , year=2015
-, pages={e14}}
-
+, pages={e14}
+}
 
 @inproceedings{ertl95:stack-caching,
   author       = {M. Anton Ertl},
@@ -1217,34 +1141,28 @@ keywords = {PCRE, automata, derivative, matching, regex, symbolic}
   author       = {M. Anton Ertl and
                   David Gregg},
   title        = {The Structure and Performance of Efficient Interpreters},
-  journal      = {J. Instr. Level Parallelism},
+  journal      = {Journal of Instruction Level Parallelism},
   volume       = {5},
   year         = {2003},
   url          = {http://www.jilp.org/vol5/v5paper12.pdf},
-  timestamp    = {Mon, 11 May 2020 22:59:10 +0200},
-  biburl       = {https://dblp.org/rec/journals/jilp/ErtlG03.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 
 @article{bell73:threaded,
   author       = {James R. Bell},
   title        = {Threaded Code},
-  journal      = {Commun. {ACM}},
+  journal      = {Communications of the {ACM}},
   volume       = {16},
   number       = {6},
   pages        = {370--372},
   year         = {1973},
   url          = {https://doi.org/10.1145/362248.362270},
   doi          = {10.1145/362248.362270},
-  timestamp    = {Wed, 27 Apr 2022 20:27:47 +0200},
-  biburl       = {https://dblp.org/rec/journals/cacm/Bell73.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 
 @article{dewar75:indirect,
   author       = {Robert B. K. Dewar},
   title        = {Indirect Threaded Code},
-  journal      = {Commun. {ACM}},
+  journal      = {Communications of the {ACM}},
   volume       = {18},
   number       = {6},
   pages        = {330--331},
@@ -1252,8 +1170,6 @@ keywords = {PCRE, automata, derivative, matching, regex, symbolic}
   url          = {https://doi.org/10.1145/360825.360849},
   doi          = {10.1145/360825.360849},
   timestamp    = {Wed, 14 Nov 2018 10:22:32 +0100},
-  biburl       = {https://dblp.org/rec/journals/cacm/Dewar75.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 
 @article{shi08:showdown,
@@ -1261,7 +1177,7 @@ keywords = {PCRE, automata, derivative, matching, regex, symbolic}
                   Kevin Casey and
                   M. Anton Ertl and
                   David Gregg},
-  title        = {Virtual machine showdown: Stack versus registers},
+  title        = {Virtual Machine Showdown: Stack versus Registers},
   journal      = {{ACM} Trans. Archit. Code Optim.},
   volume       = {4},
   number       = {4},
@@ -1286,7 +1202,7 @@ keywords = {PCRE, automata, derivative, matching, regex, symbolic}
                   J. F. Bastien},
   editor       = {Albert Cohen and
                   Martin T. Vechev},
-  title        = {Bringing the web up to speed with WebAssembly},
+  title        = {Bringing the Web up to Speed with WebAssembly},
   booktitle    = {Proceedings of the 38th {ACM} {SIGPLAN} Conference on Programming
                   Language Design and Implementation, {PLDI} 2017, Barcelona, Spain,
                   June 18-23, 2017},
@@ -1295,22 +1211,16 @@ keywords = {PCRE, automata, derivative, matching, regex, symbolic}
   year         = {2017},
   url          = {https://doi.org/10.1145/3062341.3062363},
   doi          = {10.1145/3062341.3062363},
-  timestamp    = {Wed, 23 Jun 2021 15:34:31 +0200},
-  biburl       = {https://dblp.org/rec/conf/pldi/HaasRSTHGWZB17.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 
 @article{titzer22:in-place,
   author       = {Ben L. Titzer},
-  title        = {A fast in-place interpreter for WebAssembly},
-  journal      = {Proc. {ACM} Program. Lang.},
+  title        = {A Fast In-Place Interpreter for WebAssembly},
+  journal      = {Proceedings of the {ACM} on Programming Languages},
   volume       = {6},
   number       = {{OOPSLA2}},
   pages        = {646--672},
   year         = {2022},
   url          = {https://doi.org/10.1145/3563311},
   doi          = {10.1145/3563311},
-  timestamp    = {Sun, 19 Jan 2025 14:47:44 +0100},
-  biburl       = {https://dblp.org/rec/journals/pacmpl/Titzer22.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
