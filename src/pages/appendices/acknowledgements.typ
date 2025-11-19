@@ -102,7 +102,7 @@ please raise an issue or submit a PR
 on the book's [Github page][link-github].
 
 
-=== Backers {-}
+=== Backers
 
 
 We'd also like to extend very special thanks
