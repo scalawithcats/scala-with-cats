@@ -1,4 +1,4 @@
-#import "../stdlib.typ": info, warning, solution, href
+#import "../stdlib.typ": info, warning, exercise, solution, href
 == Example: Eq
 
 
@@ -158,8 +158,7 @@ x === y
 ```
 
 
-==== Exercise: Equality, Liberty, and Felinity
-
+#exercise[Equality, Liberty, and Felinity]
 
 Implement an instance of `Eq` for our running `Cat` example:
 
