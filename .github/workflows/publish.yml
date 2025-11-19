@@ -22,34 +22,10 @@ jobs:
           cache: "npm"
       - run: npm ci
 
-      # - name: Install TeX Live
-      #   uses: zauguin/install-texlive@v2
-      #   with:
-      #     packages: >
-      #       l3build latex latex-bin luatex latex-bin-dev xetex mdframed amsmath listings xcolor fancyvrb kvoptions etoolbox booktabs hyperref zref infwarerr pdftexcmds iftex needspace
-
-      # MikTex automatically installs the latex packages that are needed by the document
-      - name: Setup MikTex
-        run: |
-          sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys D6BC243565B2087BC3F897C9277A7293F59E4889
-          echo "deb http://miktex.org/download/ubuntu noble universe" | sudo tee /etc/apt/sources.list.d/miktex.list
-          sudo apt-get update
-          sudo apt-get install miktex
-          sudo miktexsetup --shared=yes finish
-          sudo initexmf --admin --set-config-value [MPM]AutoInstall=yes
-          sudo miktex --admin packages update
-          miktex packages update
-
-      - name: Setup Pandoc
-
-        run: |
-          curl -Ls https://github.com/jgm/pandoc/releases/download/3.1.11/pandoc-3.1.11-linux-amd64.tar.gz > /tmp/pandoc.tgz
-          tar zxvf /tmp/pandoc.tgz
-          mv pandoc-3.1.11/bin/pandoc /usr/local/bin/pandoc
-
-          curl -Ls https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.17.0b/pandoc-crossref-Linux.tar.xz > /tmp/pandoc-crossref.tgz
-          tar xvf /tmp/pandoc-crossref.tgz
-          mv pandoc-crossref /usr/local/bin/pandoc-crossref
+      - name: Install Typst
+      - uses: typst-community/setup-typst@v4
+        with:
+          typst-version: ^0.14.0
 
       - name: Cache sbt
         uses: actions/cache@v4
