@@ -1,6 +1,5 @@
-#import "../stdlib.typ": info, warning, solution
-== Exercise: Sets
-
+#import "../stdlib.typ": exercise, info, warning, solution
+#exercise[Sets]
 
 In this extended exercise we'll explore the `Set` interface we have already used in several examples, reproduced below.
 
