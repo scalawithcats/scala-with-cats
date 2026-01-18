@@ -422,8 +422,8 @@ trait PoundsFeet
 // An instance exists if A * B = C
 trait Multiply[A, B, C]
 object Multiply {
-  given Multiply[Metres, Newtons, NewtonMetres] = new Multiply {}
-  given Multiply[Feet, Pounds, PoundsFeet] = new Multiply {}
+  given Multiply[Metres, Newtons, NewtonMetres] with {}
+  given Multiply[Feet, Pounds, PoundsFeet] with {}
 }
 ```
 
@@ -482,7 +482,7 @@ To solve this I defined a given instance called `commutative`, as shown below.
 // An instance exists if A * B = C
 trait Multiply[A, B, C]
 object Multiply {
-  given Multiply[Metres, Newtons, NewtonMetres] = new Multiply {}
+  given Multiply[Metres, Newtons, NewtonMetres] with {}
   
   // A * B == B * A
   given commutative[A, B, C](using Multiply[A, B, C]): Multiply[B, A, C] =

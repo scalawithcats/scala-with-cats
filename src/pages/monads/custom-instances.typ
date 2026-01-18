@@ -165,7 +165,7 @@ the non-tail-recursive solution falls out:
 ```scala mdoc:silent
 import cats.Monad
 
-given treeMonad: Monad[Tree] = new Monad[Tree] {
+given treeMonad: Monad[Tree] with {
   def pure[A](value: A): Tree[A] =
     Tree.Leaf(value)
 
@@ -216,7 +216,7 @@ object Tree {
 import cats.Monad
 import scala.annotation.tailrec
 
-given treeMonad: Monad[Tree] = new Monad[Tree] {
+given treeMonad: Monad[Tree] with {
   def pure[A](value: A): Tree[A] =
     Tree.Leaf(value)
 

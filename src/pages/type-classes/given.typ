@@ -186,18 +186,16 @@ Now we'll define some given instances. Notice that they are defined on the relev
 ```scala mdoc:silent
 trait Cat
 object Cat {
-  given catSound: Sound[Cat] =
-    new Sound[Cat]{
-      def sound: String = "meow"
-    }
+  given catSound: Sound[Cat] with {
+    def sound: String = "meow"
+  }
 }
 
 trait Dog
 object Dog {
-  given dogSound: Sound[Dog] = 
-    new Sound[Dog]{
-      def sound: String = "woof"
-    }
+  given dogSound: Sound[Dog] with {
+    def sound: String = "woof"
+  }
 }
 ```
 

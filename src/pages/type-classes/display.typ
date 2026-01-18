@@ -130,7 +130,7 @@ These either go into the companion object of `Cat`
 or a separate object to act as a namespace:
 
 ```scala mdoc:silent
-given catDisplay: Display[Cat] = new Display[Cat] {
+given catDisplay: Display[Cat] with {
   def display(cat: Cat) = {
     val name  = Display.display(cat.name)
     val age   = Display.display(cat.age)
