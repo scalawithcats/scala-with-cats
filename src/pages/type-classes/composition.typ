@@ -41,11 +41,13 @@ We could try to brute force the problem by creating
 a library of given instances:
 
 ```scala
-given optionIntWriter: JsonWriter[Option[Int]] =
+given optionIntWriter: JsonWriter[Option[Int]] with {
   ???
+}
 
-given optionPersonWriter: JsonWriter[Option[Person]] =
+given optionPersonWriter: JsonWriter[Option[Person]] with {
   ???
+}
 
 // and so on...
 ```
@@ -66,14 +68,13 @@ into a common constructor based on the instance for `A`:
 Here is the same code written out using a parameterized given instance:
 
 ```scala mdoc:silent
-given optionWriter[A](using writer: JsonWriter[A]): JsonWriter[Option[A]] =
-  new JsonWriter[Option[A]] {
-    def write(option: Option[A]): Json =
-      option match {
-        case Some(aValue) => writer.write(aValue)
-        case None         => Json.JsNull
-      }
-  }
+given optionWriter[A](using writer: JsonWriter[A]): JsonWriter[Option[A]] with {
+  def write(option: Option[A]): Json =
+    option match {
+      case Some(aValue) => writer.write(aValue)
+      case None         => Json.JsNull
+    }
+}
 ```
 
 This method constructs a `JsonWriter` for `Option[A]` by
@@ -82,10 +83,9 @@ fill in the `A`-specific functionality.
 When the compiler sees an expression like this:
 
 ```scala mdoc:invisible
-given stringWriter: JsonWriter[String] =
-  new JsonWriter[String] {
-    def write(value: String): Json = Json.JsString(value)
-  }
+given stringWriter: JsonWriter[String] with {
+  def write(value: String): Json = Json.JsString(value)
+}
 ```
 ```scala mdoc:silent
 Json.toJson(Option("A string"))

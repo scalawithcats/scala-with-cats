@@ -235,10 +235,9 @@ trait Sound[A] {
 }
 trait Cat
 object Cat {
-  given catSound: Sound[Cat] =
-    new Sound[Cat]{
-      def sound: String = "meow"
-    }
+  given catSound: Sound[Cat] with {
+    def sound: String = "meow"
+  }
 }
 
 def soundOf[A](using s: Sound[A]): String =
@@ -248,10 +247,9 @@ def soundOf[A](using s: Sound[A]): String =
 Now we define an instance in the lexical scope, and we see it is chosen in preference to the instance on the companion object.
 
 ```scala mdoc
-given purr: Sound[Cat]  =
-  new Sound[Cat]{
-    def sound: String = "purr"
-  }
+given purr: Sound[Cat] with {
+  def sound: String = "purr"
+}
 
 soundOf[Cat]
 ```
@@ -260,16 +258,14 @@ The final rule is that instances in a closer lexical scope take preference over 
 
 ```scala mdoc
 {
-  given growl: Sound[Cat] =
-   new Sound[Cat]{
-     def sound: String = "growl"
-   }
+  given growl: Sound[Cat] with {
+    def sound: String = "growl"
+  }
    
   {
-    given mew: Sound[Cat] =
-     new Sound[Cat]{
-       def sound: String = "mew"
-     }
+    given mew: Sound[Cat] with {
+      def sound: String = "mew"
+    }
      
     soundOf[Cat]
   }

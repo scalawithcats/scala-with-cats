@@ -485,8 +485,7 @@ object Multiply {
   given Multiply[Metres, Newtons, NewtonMetres] with {}
   
   // A * B == B * A
-  given commutative[A, B, C](using Multiply[A, B, C]): Multiply[B, A, C] =
-    new Multiply {}
+  given commutative[A, B, C](using Multiply[A, B, C]): Multiply[B, A, C] with {}
 }
 ```
 ```scala mdoc:invisible

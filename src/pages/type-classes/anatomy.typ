@@ -64,11 +64,10 @@ given instances implementing the type class.
 
 ```scala mdoc:silent
 object JsonWriterInstances {
-  given stringWriter: JsonWriter[String] =
-    new JsonWriter[String] {
-      def write(value: String): Json =
-        Json.JsString(value)
-    }
+  given stringWriter: JsonWriter[String] with {
+    def write(value: String): Json =
+      Json.JsString(value)
+  }
   
   final case class Person(name: String, email: String)
   
@@ -192,11 +191,10 @@ trait JsonWriter[A] {
 }
 
 object JsonWriter {
-  given stringWriter: JsonWriter[String] =
-    new JsonWriter[String] {
-      extension (value: String) 
-        def toJson: Json = Json.JsString(value)
-    }
+  given stringWriter: JsonWriter[String] with {
+    extension (value: String) 
+      def toJson: Json = Json.JsString(value)
+  }
   
   // etc...
 }

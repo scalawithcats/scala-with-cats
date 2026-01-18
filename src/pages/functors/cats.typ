@@ -171,11 +171,10 @@ even though such a thing already exists in #href("http://typelevel.org/cats/api/
 The implementation is trivial---we simply call `Option's` `map` method:
 
 ```scala
-given optionFunctor: Functor[Option] =
-  new Functor[Option] {
-    def map[A, B](value: Option[A])(func: A => B): Option[B] =
-      value.map(func)
-  }
+given optionFunctor: Functor[Option] with {
+  def map[A, B](value: Option[A])(func: A => B): Option[B] =
+    value.map(func)
+}
 ```
 
 Sometimes we need to inject dependencies into our instances.
@@ -188,11 +187,10 @@ so we have to account for the dependency when we create the instance:
 ```scala mdoc:silent
 import scala.concurrent.{Future, ExecutionContext}
 
-given futureFunctor(using ec: ExecutionContext): Functor[Future] =
-  new Functor[Future] {
-    def map[A, B](value: Future[A])(func: A => B): Future[B] =
-      value.map(func)
-  }
+given futureFunctor(using ec: ExecutionContext): Functor[Future] with {
+  def map[A, B](value: Future[A])(func: A => B): Future[B] =
+    value.map(func)
+}
 ```
 
 Whenever we summon a `Functor` for `Future`,
@@ -237,16 +235,15 @@ with the same pattern of `Branch` and `Leaf` nodes:
 ```scala mdoc:silent
 import Tree.{Branch, Leaf}
 
-given treeFunctor: Functor[Tree] =
-  new Functor[Tree] {
-    def map[A, B](tree: Tree[A])(func: A => B): Tree[B] =
-      tree match {
-        case Branch(left, right) =>
-          Branch(map(left)(func), map(right)(func))
-        case Leaf(value) =>
-          Leaf(func(value))
-      }
-  }
+given treeFunctor: Functor[Tree] with {
+  def map[A, B](tree: Tree[A])(func: A => B): Tree[B] =
+    tree match {
+      case Branch(left, right) =>
+        Branch(map(left)(func), map(right)(func))
+      case Leaf(value) =>
+        Leaf(func(value))
+    }
+}
 ```
 
 Let's use our `Functor` to transform some `Trees`:

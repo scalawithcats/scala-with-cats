@@ -215,17 +215,15 @@ trait Display[A] {
 def display[A](value: A)(implicit p: Display[A]): String =
   p.display(value)
 
-given stringDisplay: Display[String] =
-  new Display[String] {
-    def display(value: String): String =
-      s"'${value}'"
-  }
+given stringDisplay: Display[String] with {
+  def display(value: String): String =
+    s"'${value}'"
+}
 
-given booleanDisplay: Display[Boolean] =
-  new Display[Boolean] {
-    def display(value: Boolean): String =
-      if(value) "yes" else "no"
-  }
+given booleanDisplay: Display[Boolean] with {
+  def display(value: Boolean): String =
+    if(value) "yes" else "no"
+}
 final case class Box[A](value: A)
 ```
 ```scala mdoc:silent
@@ -365,11 +363,10 @@ trait Codec[A] { self =>
 ```
 
 ```scala mdoc:invisible
-given stringCodec: Codec[String] =
-  new Codec[String] {
-    def encode(value: String): String = value
-    def decode(value: String): String = value
-  }
+given stringCodec: Codec[String] with {
+  def encode(value: String): String = value
+  def decode(value: String): String = value
+}
 
 given intCodec: Codec[Int] =
   stringCodec.imap[Int](_.toInt, _.toString)
