@@ -1,4 +1,4 @@
-# Functional Programming Strategies in Scala with Cats
+# Scala with Cats
 
 This is the repository for the book [Scala with Cats](https://scalawithcats.com/).
 It has evolved into a new book,  [Functional Programming Strategies ](https://github.com/functionalprogrammingstrategies/functionalprogrammingstrategies).
