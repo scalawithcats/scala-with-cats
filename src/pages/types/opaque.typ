@@ -14,7 +14,7 @@ opaque type EmailAddress = String
 
 This is enough to define the type `EmailAddress` as represented by a `String`.
 However, it's a useless definition as it lacks any way to construct an `EmailAddress`.
-To properly understand how we can define a constructor, we need to understand that opaque types divide our code base into two distinct parts: that where our type is transparent, where we know the underlying representation, and the remainder where it is opaque.
+To properly understand how we can define a constructor, we need to understand that opaque types divide our code base into two distinct parts: where our type is transparent, which is where we know the underlying representation, and the remainder where it is opaque.
 The rule is pretty simple: an opaque type is transparent within the scope in which it is defined, so within an enclosing object or class.
 If there is no enclosing scope, as in the example above,
 it is transparent only within the file in which it is defined.
@@ -94,13 +94,13 @@ yet it is a different type.
 Alternatively, we can view it as a semantic gain.
 An `EmailAddress` _is_ a sequence of characters,
 the same as a `String`,
-but it has additional properties.
+but it has additional constraints.
 In this case we verify it contains exactly one `@` character,
-and our email addresses are case insensitive.
+and ensure it is case insensitive.
 
 We've seen how to define opaque types and their constructors.
 What about other methods?
-For example, for an `EmailAddress` we might want to get the username and domain.
+For example, for an `EmailAddress` we might want methods to get the username and domain.
 We can use extension methods to do this.
 As with the constructor, we just need to define these extension methods in a place where the type is transparent.
 
@@ -138,17 +138,108 @@ email.username
 email.domain
 ```
 
+There are two other features of opaque types that we should mention:
+
+1. they can have type parameters; and
+2. they can have type bounds.
+
+Let's see an example of these two features used together. 
+Earlier we saw an example of using an `Option` to represent two different types of database columns:
+nullable columns, where `None` mean to set the column to null, and non-nullable, where `None` means to keep the existing value.
+We can define these as opaque types with a type parameter.
+
+```scala mdoc:silent
+// null is a reserved word in Scala, so we use the name nil
+// instead.
+opaque type Nilable[+A] = Option[A]
+object Nilable {
+  def apply[A](value: A): Nilable[A] = Some(value)
+
+  def fromOption[A](option: Option[A]): Nilable[A] = option
+
+  val nil: Nilable[Nothing] = None
+}
+
+opaque type Default[+A] = Option[A]
+object Default {
+  def apply[A](value: A): Default[A] = Some(value)
+
+  def fromOption[A](option: Option[A]): Default[A] = option
+
+  val default: Default[Nothing] = None
+}
+```
+
+This works just as we'd expect, but we users will probably want to use the `Option` API on `Nilable` and `Default`.
+We can avoid tediously reimplementing it as extension methods by declaring that `Nilable` and `Default` are subtypes of `Option`.
+
+```scala mdoc:reset:silent
+opaque type Nilable[+A] <: Option[A] = Option[A]
+object Nilable {
+  def apply[A](value: A): Nilable[A] = Some(value)
+
+  def fromOption[A](option: Option[A]): Nilable[A] = option
+
+  val nil: Nilable[Nothing] = None
+}
+
+opaque type Default[+A] <: Option[A] = Option[A]
+object Default {
+  def apply[A](value: A): Default[A] = Some(value)
+
+  def fromOption[A](option: Option[A]): Default[A] = option
+
+  val default: Default[Nothing] = None
+}
+```
+
+The type bound `Default[+A] <: Option[A]` says that `Default` is a subtype of `Option`,
+and crucially this information is publically available.
+Therefore all of the methods on `Option` are available on `Default`.
+
+```scala mdoc:reset:invisible
+object Wrapper {
+  opaque type Nilable[+A] <: Option[A] = Option[A]
+  object Nilable {
+    def apply[A](value: A): Nilable[A] = Some(value)
+    def fromOption[A](option: Option[A]): Nilable[A] = option
+    val nil: Nilable[Nothing] = None
+  }
+  
+  opaque type Default[+A] <: Option[A] = Option[A]
+  object Default {
+    def apply[A](value: A): Default[A] = Some(value)
+    def fromOption[A](option: Option[A]): Default[A] = option
+    val default: Default[Nothing] = None
+  }
+}
+import Wrapper.*
+```
+
+We can verify this with a few examples.
+
+```scala mdoc
+Nilable(1).orElse(Nilable.nil)
+
+Default(1).map(_ + 1)
+```
+
+Notice that the results have type `Option`,
+because the methods on `Option` that we call have return type `Option`.
+We can easily convert back to `Nilable` or `Default` as required by using the `fromOption` constructor.
+
+
 === Best Practices
 
 We've seen all the important technical details for opaque types,
-so let's now discuss some of the best practices---the craft---of using them.
+so let's now discuss some of the best practices of using them.
 
-The first point I want to address is the constructor. "Types as constraints" is the strategy we're covering in this chapter.
+The first point I want to address is illustrated by the constructor for `EmailAddress`. 
 There is a constraint on the `String` input to the constructor: it must contain an `@` character.
-We should represent this as a type!
-We could create another opaque type, called something like `StringWithAnAtCharacter`, but this approaches leads to infinite regress.
-We cannot push constraints forward indefinitely.
-At some point we have to work with primitive types and return a result that indicates the possibility of error.
+This is a constraint and we should represent this as a type!
+We could create another opaque type, called something like `StringWithAnAtCharacter`, but this approach leads to infinite regress.
+We cannot push constraints upstream indefinitely.
+At some point we have to return a result that indicates the possibility of error.
 So our constructor would be better if it returned, say, an `Option` or `Either` to indicate that construction can fail.
 
 There are cases where we know the constructor cannot fail,
@@ -157,7 +248,7 @@ For example, if we're loading email addresses from a list that is known to be go
 For this reason I recommend including a constructor that doesn't do any validation.
 I usually call this method `unsafeApply`, to indicate to the reader that certain checks are not being done.
 These changes are shown below.
-For simplicity I've used `Option` as the result type.
+For simplicity I've used `Option` as the result type to indicate the possibility of failure.
 
 ```scala mdoc:reset:silent
 type EmailAddress = String
@@ -173,9 +264,9 @@ object EmailAddress {
 }
 ```
 
-At some point we'll almost certainly need to convert from our opaque type back to its underlying type.
+We'll almost certainly need to convert from our opaque type back to its underlying type at some point in our code.
 I've seen a few conventions for naming such a method; `value` and `get` are popular.
-However, I prefer a more descriptive `toType`, replacing `Type` with the concreate type name,
+However, I prefer a more descriptive `toType`, replacing `Type` with the concrete type name,
 as this extends to conversions to other types.
 For `EmailAddress` this means an extension method `toString`, as shown below.
 Notice that the method simply returns the `address` value,
@@ -197,12 +288,11 @@ For example, a (two-dimensional) point requires two coordinates, so there is no 
     We could use an `Array[Double]` or `Tuple2[Double, Double]`,
     but it's simpler to just define a class in the usual way.
 ].
-We also cannot define opaque types with type parameters.
 In these cases we're probably looking for an algebraic data type,
 which is discussed in @sec:adt.
 
 The second case is when we need to reimplement one of the methods, most commonly `toString`, that opaque types cannot override.
 For example,
-if we're creating types that represent personal information such as addresses and passwords, we might want to ensure they cannot be accidentally exposed in logs.
+we might want to ensure that types representing personal information, such as addresses and passwords, cannot be accidentally exposed in logs.
 Overriding `toString` helps ensure this, but we cannot do this for opaque types.
 
